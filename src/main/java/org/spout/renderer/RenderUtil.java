@@ -26,5 +26,48 @@
  */
 package org.spout.renderer;
 
-public class OpenGL32Renderer {
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+
+import gnu.trove.list.TFloatList;
+import gnu.trove.list.TIntList;
+
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.OpenGLException;
+import org.lwjgl.util.glu.GLU;
+
+public class RenderUtil {
+	/**
+	 * Converts a float list to a float buffer.
+	 *
+	 * @param floats The float list to convert
+	 * @return The float buffer for the list
+	 */
+	public static FloatBuffer toBuffer(TFloatList floats) {
+		final FloatBuffer floatsBuffer = BufferUtils.createFloatBuffer(floats.size());
+		floatsBuffer.put(floats.toArray());
+		floatsBuffer.flip();
+		return floatsBuffer;
+	}
+
+	/**
+	 * Converts an integer list to an integer buffer.
+	 *
+	 * @param ints The integer list to convert
+	 * @return The integer buffer for the list
+	 */
+	public static IntBuffer toBuffer(TIntList ints) {
+		final IntBuffer intsBuffer = BufferUtils.createIntBuffer(ints.size());
+		intsBuffer.put(ints.toArray());
+		intsBuffer.flip();
+		return intsBuffer;
+	}
+
+	public static void checkForOpenGLError() {
+		final int errorValue = GL11.glGetError();
+		if (errorValue != GL11.GL_NO_ERROR) {
+			throw new OpenGLException("OPEN GL ERROR: " + GLU.gluErrorString(errorValue));
+		}
+	}
 }
