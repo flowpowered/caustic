@@ -50,6 +50,7 @@ public class OpenGL20Shader {
 
 	/**
 	 * Creates a new shader in the OpenGL context from the input stream for the shaders.
+	 *
 	 * @param shaderResource The shader input stream
 	 * @param type The type of shader, either {@link GL20#GL_VERTEX_SHADER} or {@link
 	 * GL20#GL_FRAGMENT_SHADER}
@@ -96,6 +97,7 @@ public class OpenGL20Shader {
 
 	/**
 	 * Gets the ID for this shader as assigned by OpenGL.
+	 *
 	 * @return The ID
 	 */
 	public int getID() {

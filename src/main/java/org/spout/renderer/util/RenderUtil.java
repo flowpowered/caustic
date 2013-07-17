@@ -40,6 +40,7 @@ import org.lwjgl.util.glu.GLU;
 public class RenderUtil {
 	/**
 	 * Converts a float list to a float buffer.
+	 *
 	 * @param floats The float list to convert
 	 * @return The float buffer for the list
 	 */
@@ -52,6 +53,7 @@ public class RenderUtil {
 
 	/**
 	 * Converts an integer list to an integer buffer.
+	 *
 	 * @param ints The integer list to convert
 	 * @return The integer buffer for the list
 	 */

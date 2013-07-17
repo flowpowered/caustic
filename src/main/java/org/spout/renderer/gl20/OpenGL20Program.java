@@ -62,6 +62,7 @@ public class OpenGL20Program {
 	/**
 	 * Creates a new program in the OpenGL context from the input streams for the vertex and fragment
 	 * shaders.
+	 *
 	 * @param vertShader The vertex shader input stream
 	 * @param fragShader The fragment shader input stream
 	 */
@@ -114,6 +115,7 @@ public class OpenGL20Program {
 
 	/**
 	 * Gets the ID for this program as assigned by OpenGL.
+	 *
 	 * @return The ID
 	 */
 	public int getID() {
@@ -122,6 +124,7 @@ public class OpenGL20Program {
 
 	/**
 	 * Sets a uniform boolean in the shader to the desired value.
+	 *
 	 * @param name The name of the uniform to set
 	 * @param b The boolean value
 	 */
@@ -135,6 +138,7 @@ public class OpenGL20Program {
 
 	/**
 	 * Sets a uniform integer in the shader to the desired value.
+	 *
 	 * @param name The name of the uniform to set
 	 * @param i The integer value
 	 */
@@ -148,6 +152,7 @@ public class OpenGL20Program {
 
 	/**
 	 * Sets a uniform float in the shader to the desired value.
+	 *
 	 * @param name The name of the uniform to set
 	 * @param f The float value
 	 */
@@ -161,6 +166,7 @@ public class OpenGL20Program {
 
 	/**
 	 * Sets a uniform {@link org.spout.math.vector.Vector3} in the shader to the desired value.
+	 *
 	 * @param name The name of the uniform to set
 	 * @param v The vector value
 	 */
@@ -174,6 +180,7 @@ public class OpenGL20Program {
 
 	/**
 	 * Sets a uniform {@link org.spout.math.matrix.Matrix4} in the shader to the desired value.
+	 *
 	 * @param name The name of the uniform to set
 	 * @param m The matrix value
 	 */
@@ -190,6 +197,7 @@ public class OpenGL20Program {
 
 	/**
 	 * Sets a uniform {@link java.awt.Color} in the shader to the desired value.
+	 *
 	 * @param name The name of the uniform to set
 	 * @param c The color value
 	 */
@@ -205,6 +213,7 @@ public class OpenGL20Program {
 
 	/**
 	 * Returns an immutable set containing all of the uniform names for this program.
+	 *
 	 * @return A set of all the uniform names
 	 */
 	public Set<String> getUniformNames() {

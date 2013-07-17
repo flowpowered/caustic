@@ -24,7 +24,7 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.resource;
+package org.spout.renderer;
 
 import java.awt.Color;
 
@@ -64,6 +64,7 @@ public abstract class Model {
 
 	/**
 	 * Returns true if the display was created and is ready for rendering, false if otherwise.
+	 *
 	 * @return True if the model can be rendered, false if not
 	 */
 	public boolean isCreated() {
@@ -80,6 +81,7 @@ public abstract class Model {
 
 	/**
 	 * Gets the model color.
+	 *
 	 * @return The model color
 	 */
 	public Color color() {
@@ -88,6 +90,7 @@ public abstract class Model {
 
 	/**
 	 * Sets the model color.
+	 *
 	 * @param color The model color
 	 */
 	public void color(Color color) {
@@ -96,6 +99,7 @@ public abstract class Model {
 
 	/**
 	 * Gets the model position.
+	 *
 	 * @return The model position
 	 */
 	public Vector3 position() {
@@ -104,6 +108,7 @@ public abstract class Model {
 
 	/**
 	 * Sets the model position.
+	 *
 	 * @param position The model position
 	 */
 	public void position(Vector3 position) {
@@ -113,6 +118,7 @@ public abstract class Model {
 
 	/**
 	 * Gets the model rotation.
+	 *
 	 * @return The model rotation
 	 */
 	public Quaternion rotation() {
@@ -121,6 +127,7 @@ public abstract class Model {
 
 	/**
 	 * Sets the model rotation.
+	 *
 	 * @param rotation The model rotation
 	 */
 	public void rotation(Quaternion rotation) {
@@ -130,6 +137,7 @@ public abstract class Model {
 
 	/**
 	 * Gets the model scale.
+	 *
 	 * @return The model scale
 	 */
 	public Vector3 scale() {
@@ -138,6 +146,7 @@ public abstract class Model {
 
 	/**
 	 * Sets the model scale.
+	 *
 	 * @param scale The model scale
 	 */
 	public void scale(Vector3 scale) {

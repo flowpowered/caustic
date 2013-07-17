@@ -36,7 +36,7 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
-import org.spout.renderer.resource.Model;
+import org.spout.renderer.Model;
 import org.spout.renderer.util.RenderUtil;
 
 /**
@@ -64,9 +64,6 @@ public class OpenGL30Wireframe extends Model {
 	 */
 	@Override
 	public void create() {
-		if (!OpenGL30Renderer.isCreated()) {
-			throw new IllegalStateException("Display needs to be created first.");
-		}
 		if (created) {
 			throw new IllegalStateException("Wireframe has already been created.");
 		}
@@ -137,6 +134,7 @@ public class OpenGL30Wireframe extends Model {
 	/**
 	 * Returns the list of indices used by OpenGL to pick the vertices to draw the object with in the
 	 * correct order. Use it to add mesh data.
+	 *
 	 * @return The indices list
 	 */
 	public TIntList indices() {
@@ -146,6 +144,7 @@ public class OpenGL30Wireframe extends Model {
 	/**
 	 * Returns the list of vertex positions, which are the groups of three successive floats starting
 	 * at 0 (x1, y1, z1, x2, y2, z2, x3, ...). Use it to add mesh data.
+	 *
 	 * @return The position list
 	 */
 	public TFloatList positions() {
