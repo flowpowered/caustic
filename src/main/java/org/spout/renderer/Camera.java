@@ -156,7 +156,35 @@ public class Camera {
 		if (near == 0) {
 			throw new IllegalArgumentException("Near cannot be zero");
 		}
-		final float aspectRatio = windowWidth / windowHeight;
-		return new Camera(Matrix4.createPerspective(fieldOfView, aspectRatio, near, far));
+		return new Camera(Matrix4.createPerspective(fieldOfView, (float) windowWidth / windowHeight, near, far));
+	}
+
+	/**
+	 * Creates a new orthographic camera.
+	 *
+	 * @param right The right
+	 * @param left The left
+	 * @param top The top plane
+	 * @param bottom The bottom plane
+	 * @param near The near plane, cannot be 0
+	 * @param far The far plane
+	 * @return The camera
+	 */
+	public static Camera createOrthographic(float right, float left, float top, float bottom,
+											float near, float far) {
+		if (near == 0) {
+			throw new IllegalArgumentException("Near cannot be zero");
+		}
+		return new Camera(Matrix4.createOrthographic(right, left, top, bottom, near, far));
+	}
+
+	/**
+	 * Creates a new camera from the supplied project matrix.
+	 *
+	 * @param projection The projection matrix
+	 * @return The camera
+	 */
+	public static Camera createProjection(Matrix4 projection) {
+		return new Camera(projection);
 	}
 }
