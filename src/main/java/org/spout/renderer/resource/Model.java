@@ -24,33 +24,7 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-/*
- * This file is part of ReactSandbox.
- *
- * Copyright (c) 2013 Spout LLC <http://www.spout.org/>
- * ReactSandbox is licensed under the Spout License Version 1.
- *
- * ReactSandbox is free software: you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * In addition, 180 days after any changes are published, you can use the
- * software, incorporating those changes, under the terms of the MIT license,
- * as described in the Spout License Version 1.
- *
- * ReactSandbox is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
- * more details.
- *
- * You should have received a copy of the GNU Lesser General Public License,
- * the MIT license and the Spout License Version 1 along with this program.
- * If not, see <http://www.gnu.org/licenses/> for the GNU Lesser General Public
- * License and see <http://spout.in/licensev1> for the full license, including
- * the MIT license.
- */
-package org.spout.renderer;
+package org.spout.renderer.resource;
 
 import java.awt.Color;
 
@@ -90,7 +64,6 @@ public abstract class Model {
 
 	/**
 	 * Returns true if the display was created and is ready for rendering, false if otherwise.
-	 *
 	 * @return True if the model can be rendered, false if not
 	 */
 	public boolean isCreated() {
@@ -107,7 +80,6 @@ public abstract class Model {
 
 	/**
 	 * Gets the model color.
-	 *
 	 * @return The model color
 	 */
 	public Color color() {
@@ -116,7 +88,6 @@ public abstract class Model {
 
 	/**
 	 * Sets the model color.
-	 *
 	 * @param color The model color
 	 */
 	public void color(Color color) {
@@ -125,7 +96,6 @@ public abstract class Model {
 
 	/**
 	 * Gets the model position.
-	 *
 	 * @return The model position
 	 */
 	public Vector3 position() {
@@ -134,7 +104,6 @@ public abstract class Model {
 
 	/**
 	 * Sets the model position.
-	 *
 	 * @param position The model position
 	 */
 	public void position(Vector3 position) {
@@ -144,7 +113,6 @@ public abstract class Model {
 
 	/**
 	 * Gets the model rotation.
-	 *
 	 * @return The model rotation
 	 */
 	public Quaternion rotation() {
@@ -153,7 +121,6 @@ public abstract class Model {
 
 	/**
 	 * Sets the model rotation.
-	 *
 	 * @param rotation The model rotation
 	 */
 	public void rotation(Quaternion rotation) {
@@ -163,7 +130,6 @@ public abstract class Model {
 
 	/**
 	 * Gets the model scale.
-	 *
 	 * @return The model scale
 	 */
 	public Vector3 scale() {
@@ -172,7 +138,6 @@ public abstract class Model {
 
 	/**
 	 * Sets the model scale.
-	 *
 	 * @param scale The model scale
 	 */
 	public void scale(Vector3 scale) {

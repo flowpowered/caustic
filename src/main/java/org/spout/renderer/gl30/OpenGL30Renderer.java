@@ -24,32 +24,6 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-/*
- * This file is part of ReactSandbox.
- *
- * Copyright (c) 2013 Spout LLC <http://www.spout.org/>
- * ReactSandbox is licensed under the Spout License Version 1.
- *
- * ReactSandbox is free software: you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * In addition, 180 days after any changes are published, you can use the
- * software, incorporating those changes, under the terms of the MIT license,
- * as described in the Spout License Version 1.
- *
- * ReactSandbox is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
- * more details.
- *
- * You should have received a copy of the GNU Lesser General Public License,
- * the MIT license and the Spout License Version 1 along with this program.
- * If not, see <http://www.gnu.org/licenses/> for the GNU Lesser General Public
- * License and see <http://spout.in/licensev1> for the full license, including
- * the MIT license.
- */
 package org.spout.renderer.gl30;
 
 import java.awt.Color;
@@ -68,14 +42,14 @@ import org.lwjgl.opengl.PixelFormat;
 import org.spout.math.imaginary.Quaternion;
 import org.spout.math.matrix.Matrix4;
 import org.spout.math.vector.Vector3;
-import org.spout.renderer.Model;
-import org.spout.renderer.RenderUtil;
+import org.spout.renderer.resource.Model;
+import org.spout.renderer.util.RenderUtil;
 import org.spout.renderer.gl20.OpenGL20Program;
 
 /**
  * This is a static renderer using the OpenGL 3.2 graphics API. To create a new render window, use
  * {@link #create(String, int, int, float)}. To add and remove models, use {@link
- * #addModel(org.spout.renderer.Model)} and {@link #removeModel(org.spout.renderer.Model)}. The
+ * #addModel(org.spout.renderer.resource.Model)} and {@link #removeModel(org.spout.renderer.resource.Model)}. The
  * camera position and rotation can be modified. The light diffuse intensity, specular intensity,
  * ambient intensity, position and attenuation can also be controlled. When done, use {@link
  * #destroy()} to destroy the render window.
@@ -112,14 +86,12 @@ public class OpenGL30Renderer {
 
 	/**
 	 * Creates the render window and basic resources. This excludes the models.
-	 *
 	 * @param title The title of the render window
 	 * @param windowWidth The width of the render window
 	 * @param windowHeight The height of the render window
 	 * @param fieldOfView The field of view in degrees. 75 is suggested
 	 */
-	public static void create(String title, int windowWidth, int windowHeight, float fieldOfView)
-			throws LWJGLException {
+	public static void create(String title, int windowWidth, int windowHeight, float fieldOfView) throws LWJGLException {
 		if (created) {
 			throw new IllegalStateException("Renderer has already been created.");
 		}
@@ -261,7 +233,6 @@ public class OpenGL30Renderer {
 
 	/**
 	 * Returns true if the render display has been created.
-	 *
 	 * @return True if the display and rendering resources have been creates, false if other wise.
 	 */
 	public static boolean isCreated() {
@@ -271,7 +242,6 @@ public class OpenGL30Renderer {
 	/**
 	 * Adds a model to the list. If a non-created model is added to the list, it will not be rendered
 	 * until it is created.
-	 *
 	 * @param model The model to add
 	 */
 	public static void addModel(Model model) {
@@ -290,7 +260,6 @@ public class OpenGL30Renderer {
 
 	/**
 	 * Removes a model from the list.
-	 *
 	 * @param model The model to remove
 	 */
 	public static void removeModel(Model model) {
@@ -305,7 +274,6 @@ public class OpenGL30Renderer {
 
 	/**
 	 * Gets the camera position.
-	 *
 	 * @return The camera position
 	 */
 	public static Vector3 cameraPosition() {
@@ -314,7 +282,6 @@ public class OpenGL30Renderer {
 
 	/**
 	 * Sets the camera position.
-	 *
 	 * @param position The camera position
 	 */
 	public static void cameraPosition(Vector3 position) {
@@ -324,7 +291,6 @@ public class OpenGL30Renderer {
 
 	/**
 	 * Gets the camera rotation.
-	 *
 	 * @return The camera rotation
 	 */
 	public static Quaternion cameraRotation() {
@@ -333,7 +299,6 @@ public class OpenGL30Renderer {
 
 	/**
 	 * Sets the camera rotation.
-	 *
 	 * @param rotation The camera rotation
 	 */
 	public static void cameraRotation(Quaternion rotation) {
@@ -343,7 +308,6 @@ public class OpenGL30Renderer {
 
 	/**
 	 * Gets the vector representing the right direction for the camera.
-	 *
 	 * @return The camera's right direction vector
 	 */
 	public static Vector3 cameraRight() {
@@ -352,7 +316,6 @@ public class OpenGL30Renderer {
 
 	/**
 	 * Gets the vector representing the up direction for the camera.
-	 *
 	 * @return The camera's up direction vector
 	 */
 	public static Vector3 cameraUp() {
@@ -361,7 +324,6 @@ public class OpenGL30Renderer {
 
 	/**
 	 * Gets the vector representing the forward direction for the camera.
-	 *
 	 * @return The camera's forward direction vector
 	 */
 	public static Vector3 cameraForward() {
@@ -370,7 +332,6 @@ public class OpenGL30Renderer {
 
 	/**
 	 * Gets the background color.
-	 *
 	 * @return The background color
 	 */
 	public static Color backgroundColor() {
@@ -379,7 +340,6 @@ public class OpenGL30Renderer {
 
 	/**
 	 * Sets the background color.
-	 *
 	 * @param color The background color
 	 */
 	public static void backgroundColor(Color color) {
@@ -388,7 +348,6 @@ public class OpenGL30Renderer {
 
 	/**
 	 * Gets the light position.
-	 *
 	 * @return The light position
 	 */
 	public static Vector3 lightPosition() {
@@ -397,7 +356,6 @@ public class OpenGL30Renderer {
 
 	/**
 	 * Sets the light position.
-	 *
 	 * @param position The light position
 	 */
 	public static void lightPosition(Vector3 position) {
@@ -406,7 +364,6 @@ public class OpenGL30Renderer {
 
 	/**
 	 * Sets the diffuse intensity.
-	 *
 	 * @param intensity The diffuse intensity
 	 */
 	public static void diffuseIntensity(float intensity) {
@@ -415,7 +372,6 @@ public class OpenGL30Renderer {
 
 	/**
 	 * Gets the diffuse intensity.
-	 *
 	 * @return The diffuse intensity
 	 */
 	public static float diffuseIntensity() {
@@ -424,7 +380,6 @@ public class OpenGL30Renderer {
 
 	/**
 	 * Sets the specular intensity.
-	 *
 	 * @param intensity specular The intensity
 	 */
 	public static void specularIntensity(float intensity) {
@@ -433,7 +388,6 @@ public class OpenGL30Renderer {
 
 	/**
 	 * Gets specular intensity.
-	 *
 	 * @return The specular intensity
 	 */
 	public static float specularIntensity() {
@@ -442,7 +396,6 @@ public class OpenGL30Renderer {
 
 	/**
 	 * Sets the ambient intensity.
-	 *
 	 * @param intensity The ambient intensity
 	 */
 	public static void ambientIntensity(float intensity) {
@@ -451,7 +404,6 @@ public class OpenGL30Renderer {
 
 	/**
 	 * Gets the ambient intensity.
-	 *
 	 * @return The ambient intensity
 	 */
 	public static float ambientIntensity() {
@@ -461,7 +413,6 @@ public class OpenGL30Renderer {
 	/**
 	 * Gets the light distance attenuation factor. In other terms, how much distance affects light
 	 * intensity. Larger values affect it more. 0.03 is the default value.
-	 *
 	 * @return The light distance attenuation factor
 	 */
 	public static float lightAttenuation() {
@@ -471,7 +422,6 @@ public class OpenGL30Renderer {
 	/**
 	 * Sets the light distance attenuation factor. In other terms, how much distance affects light
 	 * intensity. Larger values affect it more. 0.03 is the default value.
-	 *
 	 * @param attenuation The light distance attenuation factor
 	 */
 	public static void lightAttenuation(float attenuation) {

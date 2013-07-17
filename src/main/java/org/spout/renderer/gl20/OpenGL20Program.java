@@ -24,32 +24,6 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-/*
- * This file is part of ReactSandbox.
- *
- * Copyright (c) 2013 Spout LLC <http://www.spout.org/>
- * ReactSandbox is licensed under the Spout License Version 1.
- *
- * ReactSandbox is free software: you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * In addition, 180 days after any changes are published, you can use the
- * software, incorporating those changes, under the terms of the MIT license,
- * as described in the Spout License Version 1.
- *
- * ReactSandbox is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
- * more details.
- *
- * You should have received a copy of the GNU Lesser General Public License,
- * the MIT license and the Spout License Version 1 along with this program.
- * If not, see <http://www.gnu.org/licenses/> for the GNU Lesser General Public
- * License and see <http://spout.in/licensev1> for the full license, including
- * the MIT license.
- */
 package org.spout.renderer.gl20;
 
 import java.awt.Color;
@@ -67,7 +41,7 @@ import org.lwjgl.opengl.GL20;
 
 import org.spout.math.matrix.Matrix4;
 import org.spout.math.vector.Vector3;
-import org.spout.renderer.RenderUtil;
+import org.spout.renderer.util.RenderUtil;
 
 /**
  * Represents a program for OpenGL 2.0. A program is a composed of a vertex shader and a fragment
@@ -88,7 +62,6 @@ public class OpenGL20Program {
 	/**
 	 * Creates a new program in the OpenGL context from the input streams for the vertex and fragment
 	 * shaders.
-	 *
 	 * @param vertShader The vertex shader input stream
 	 * @param fragShader The fragment shader input stream
 	 */
@@ -141,7 +114,6 @@ public class OpenGL20Program {
 
 	/**
 	 * Gets the ID for this program as assigned by OpenGL.
-	 *
 	 * @return The ID
 	 */
 	public int getID() {
@@ -150,7 +122,6 @@ public class OpenGL20Program {
 
 	/**
 	 * Sets a uniform boolean in the shader to the desired value.
-	 *
 	 * @param name The name of the uniform to set
 	 * @param b The boolean value
 	 */
@@ -164,7 +135,6 @@ public class OpenGL20Program {
 
 	/**
 	 * Sets a uniform integer in the shader to the desired value.
-	 *
 	 * @param name The name of the uniform to set
 	 * @param i The integer value
 	 */
@@ -178,7 +148,6 @@ public class OpenGL20Program {
 
 	/**
 	 * Sets a uniform float in the shader to the desired value.
-	 *
 	 * @param name The name of the uniform to set
 	 * @param f The float value
 	 */
@@ -192,7 +161,6 @@ public class OpenGL20Program {
 
 	/**
 	 * Sets a uniform {@link org.spout.math.vector.Vector3} in the shader to the desired value.
-	 *
 	 * @param name The name of the uniform to set
 	 * @param v The vector value
 	 */
@@ -206,7 +174,6 @@ public class OpenGL20Program {
 
 	/**
 	 * Sets a uniform {@link org.spout.math.matrix.Matrix4} in the shader to the desired value.
-	 *
 	 * @param name The name of the uniform to set
 	 * @param m The matrix value
 	 */
@@ -223,7 +190,6 @@ public class OpenGL20Program {
 
 	/**
 	 * Sets a uniform {@link java.awt.Color} in the shader to the desired value.
-	 *
 	 * @param name The name of the uniform to set
 	 * @param c The color value
 	 */
@@ -239,7 +205,6 @@ public class OpenGL20Program {
 
 	/**
 	 * Returns an immutable set containing all of the uniform names for this program.
-	 *
 	 * @return A set of all the uniform names
 	 */
 	public Set<String> getUniformNames() {
