@@ -167,7 +167,7 @@ public class OpenGL30Renderer {
 		wireframes.clear();
 	}
 
-	private Matrix4 cameraMatrix() {
+	private Matrix4 getCameraMatrix() {
 		if (updateCameraMatrix) {
 			cameraRotationMatrix = Matrix4.createRotation(cameraRotation);
 			cameraMatrix = cameraRotationMatrix.mul(Matrix4.createTranslation(cameraPosition.negate()));
@@ -176,13 +176,13 @@ public class OpenGL30Renderer {
 		return cameraMatrix;
 	}
 
-	private void wireframeShadersData() {
-		wireframeShaders.setUniform("cameraMatrix", cameraMatrix());
+	private void sendWireframeShadersData() {
+		wireframeShaders.setUniform("cameraMatrix", getCameraMatrix());
 		wireframeShaders.setUniform("projectionMatrix", projectionMatrix);
 	}
 
-	private void solidShadersData() {
-		solidShaders.setUniform("cameraMatrix", cameraMatrix());
+	private void sendSolidShadersData() {
+		solidShaders.setUniform("cameraMatrix", getCameraMatrix());
 		solidShaders.setUniform("projectionMatrix", projectionMatrix);
 		solidShaders.setUniform("diffuseIntensity", diffuseIntensity);
 		solidShaders.setUniform("specularIntensity", specularIntensity);
@@ -191,37 +191,40 @@ public class OpenGL30Renderer {
 		solidShaders.setUniform("lightAttenuation", lightAttenuation);
 	}
 
-	private void wireframeShadersData(OpenGL30Wireframe wireframe) {
-		wireframeShaders.setUniform("modelMatrix", wireframe.matrix());
-		wireframeShaders.setUniform("modelColor", wireframe.color());
+	private void sendWireframeShadersData(OpenGL30Wireframe wireframe) {
+		wireframeShaders.setUniform("modelMatrix", wireframe.getMatrix());
+		wireframeShaders.setUniform("modelColor", wireframe.getColor());
 	}
 
-	private void solidShadersData(OpenGL30Solid solid) {
-		solidShaders.setUniform("modelMatrix", solid.matrix());
-		solidShaders.setUniform("modelColor", solid.color());
+	private void sendSolidShadersData(OpenGL30Solid solid) {
+		solidShaders.setUniform("modelMatrix", solid.getMatrix());
+		solidShaders.setUniform("modelColor", solid.getColor());
 	}
 
+	/**
+	 * Draws all the models that have been created to the screen.
+	 */
 	public void render() {
 		if (!created) {
 			throw new IllegalStateException("Display needs to be created first.");
 		}
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		GL20.glUseProgram(wireframeShaders.getID());
-		wireframeShadersData();
+		sendWireframeShadersData();
 		for (OpenGL30Wireframe wireframe : wireframes) {
 			if (!wireframe.isCreated()) {
 				continue;
 			}
-			wireframeShadersData(wireframe);
+			sendWireframeShadersData(wireframe);
 			wireframe.render();
 		}
 		GL20.glUseProgram(solidShaders.getID());
-		solidShadersData();
+		sendSolidShadersData();
 		for (OpenGL30Solid solid : solids) {
 			if (!solid.isCreated()) {
 				continue;
 			}
-			solidShadersData(solid);
+			sendSolidShadersData(solid);
 			solid.render();
 		}
 		GL20.glUseProgram(0);
@@ -279,7 +282,7 @@ public class OpenGL30Renderer {
 	 *
 	 * @return The camera position
 	 */
-	public Vector3 cameraPosition() {
+	public Vector3 getCameraPosition() {
 		return cameraPosition;
 	}
 
@@ -288,7 +291,7 @@ public class OpenGL30Renderer {
 	 *
 	 * @param position The camera position
 	 */
-	public void cameraPosition(Vector3 position) {
+	public void setCameraPosition(Vector3 position) {
 		cameraPosition = position;
 		updateCameraMatrix = true;
 	}
@@ -298,7 +301,7 @@ public class OpenGL30Renderer {
 	 *
 	 * @return The camera rotation
 	 */
-	public Quaternion cameraRotation() {
+	public Quaternion getCameraRotation() {
 		return cameraRotation;
 	}
 
@@ -307,7 +310,7 @@ public class OpenGL30Renderer {
 	 *
 	 * @param rotation The camera rotation
 	 */
-	public void cameraRotation(Quaternion rotation) {
+	public void setCameraRotation(Quaternion rotation) {
 		cameraRotation = rotation;
 		updateCameraMatrix = true;
 	}
@@ -317,7 +320,7 @@ public class OpenGL30Renderer {
 	 *
 	 * @return The camera's right direction vector
 	 */
-	public Vector3 cameraRight() {
+	public Vector3 getCameraRight() {
 		return toCamera(new Vector3(-1, 0, 0));
 	}
 
@@ -326,7 +329,7 @@ public class OpenGL30Renderer {
 	 *
 	 * @return The camera's up direction vector
 	 */
-	public Vector3 cameraUp() {
+	public Vector3 getCameraUp() {
 		return toCamera(new Vector3(0, 1, 0));
 	}
 
@@ -335,8 +338,16 @@ public class OpenGL30Renderer {
 	 *
 	 * @return The camera's forward direction vector
 	 */
-	public Vector3 cameraForward() {
+	public Vector3 getCameraForward() {
 		return toCamera(new Vector3(0, 0, -1));
+	}
+
+	private Vector3 toCamera(Vector3 v) {
+		final Matrix4 inverted = cameraRotationMatrix.invert();
+		if (inverted != null) {
+			return inverted.transform(v.toVector4(1)).toVector3();
+		}
+		return v;
 	}
 
 	/**
@@ -344,7 +355,7 @@ public class OpenGL30Renderer {
 	 *
 	 * @return The background color
 	 */
-	public Color backgroundColor() {
+	public Color getBackgroundColor() {
 		return backgroundColor;
 	}
 
@@ -353,7 +364,7 @@ public class OpenGL30Renderer {
 	 *
 	 * @param color The background color
 	 */
-	public void backgroundColor(Color color) {
+	public void setBackgroundColor(Color color) {
 		backgroundColor = color;
 	}
 
@@ -362,7 +373,7 @@ public class OpenGL30Renderer {
 	 *
 	 * @return The light position
 	 */
-	public Vector3 lightPosition() {
+	public Vector3 getLightPosition() {
 		return lightPosition;
 	}
 
@@ -371,7 +382,7 @@ public class OpenGL30Renderer {
 	 *
 	 * @param position The light position
 	 */
-	public void lightPosition(Vector3 position) {
+	public void setLightPosition(Vector3 position) {
 		lightPosition = position;
 	}
 
@@ -380,7 +391,7 @@ public class OpenGL30Renderer {
 	 *
 	 * @param intensity The diffuse intensity
 	 */
-	public void diffuseIntensity(float intensity) {
+	public void setDiffuseIntensity(float intensity) {
 		diffuseIntensity = intensity;
 	}
 
@@ -389,7 +400,7 @@ public class OpenGL30Renderer {
 	 *
 	 * @return The diffuse intensity
 	 */
-	public float diffuseIntensity() {
+	public float getDiffuseIntensity() {
 		return diffuseIntensity;
 	}
 
@@ -398,7 +409,7 @@ public class OpenGL30Renderer {
 	 *
 	 * @param intensity specular The intensity
 	 */
-	public void specularIntensity(float intensity) {
+	public void setSpecularIntensity(float intensity) {
 		specularIntensity = intensity;
 	}
 
@@ -407,7 +418,7 @@ public class OpenGL30Renderer {
 	 *
 	 * @return The specular intensity
 	 */
-	public float specularIntensity() {
+	public float getSpecularIntensity() {
 		return specularIntensity;
 	}
 
@@ -416,7 +427,7 @@ public class OpenGL30Renderer {
 	 *
 	 * @param intensity The ambient intensity
 	 */
-	public void ambientIntensity(float intensity) {
+	public void setAmbientIntensity(float intensity) {
 		ambientIntensity = intensity;
 	}
 
@@ -425,7 +436,7 @@ public class OpenGL30Renderer {
 	 *
 	 * @return The ambient intensity
 	 */
-	public float ambientIntensity() {
+	public float getAmbientIntensity() {
 		return ambientIntensity;
 	}
 
@@ -435,7 +446,7 @@ public class OpenGL30Renderer {
 	 *
 	 * @return The light distance attenuation factor
 	 */
-	public float lightAttenuation() {
+	public float getLightAttenuation() {
 		return lightAttenuation;
 	}
 
@@ -445,15 +456,7 @@ public class OpenGL30Renderer {
 	 *
 	 * @param attenuation The light distance attenuation factor
 	 */
-	public void lightAttenuation(float attenuation) {
+	public void setLightAttenuation(float attenuation) {
 		lightAttenuation = attenuation;
-	}
-
-	private Vector3 toCamera(Vector3 v) {
-		final Matrix4 inverted = cameraRotationMatrix.invert();
-		if (inverted != null) {
-			return inverted.transform(v.toVector4(1)).toVector3();
-		}
-		return v;
 	}
 }

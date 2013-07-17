@@ -71,7 +71,13 @@ public abstract class Model {
 		return created;
 	}
 
-	public Matrix4 matrix() {
+	/**
+	 * Returns the transformation matrix that represent the model's current scale, rotation and
+	 * position.
+	 *
+	 * @return The transformation matrix
+	 */
+	public Matrix4 getMatrix() {
 		if (updateMatrix) {
 			matrix = Matrix4.createScaling(scale.toVector4(1)).rotate(rotation).translate(position);
 			updateMatrix = false;
@@ -84,7 +90,7 @@ public abstract class Model {
 	 *
 	 * @return The model color
 	 */
-	public Color color() {
+	public Color getColor() {
 		return modelColor;
 	}
 
@@ -93,7 +99,7 @@ public abstract class Model {
 	 *
 	 * @param color The model color
 	 */
-	public void color(Color color) {
+	public void setColor(Color color) {
 		modelColor = color;
 	}
 
@@ -102,7 +108,7 @@ public abstract class Model {
 	 *
 	 * @return The model position
 	 */
-	public Vector3 position() {
+	public Vector3 getPosition() {
 		return position;
 	}
 
@@ -111,7 +117,7 @@ public abstract class Model {
 	 *
 	 * @param position The model position
 	 */
-	public void position(Vector3 position) {
+	public void setPosition(Vector3 position) {
 		this.position = position;
 		updateMatrix = true;
 	}
@@ -121,7 +127,7 @@ public abstract class Model {
 	 *
 	 * @return The model rotation
 	 */
-	public Quaternion rotation() {
+	public Quaternion getRotation() {
 		return rotation;
 	}
 
@@ -130,7 +136,7 @@ public abstract class Model {
 	 *
 	 * @param rotation The model rotation
 	 */
-	public void rotation(Quaternion rotation) {
+	public void setRotation(Quaternion rotation) {
 		this.rotation = rotation;
 		updateMatrix = true;
 	}
@@ -140,7 +146,7 @@ public abstract class Model {
 	 *
 	 * @return The model scale
 	 */
-	public Vector3 scale() {
+	public Vector3 getScale() {
 		return scale;
 	}
 
@@ -149,7 +155,7 @@ public abstract class Model {
 	 *
 	 * @param scale The model scale
 	 */
-	public void scale(Vector3 scale) {
+	public void setScale(Vector3 scale) {
 		this.scale = scale;
 		updateMatrix = true;
 	}

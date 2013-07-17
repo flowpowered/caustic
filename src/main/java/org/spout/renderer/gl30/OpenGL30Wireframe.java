@@ -41,7 +41,7 @@ import org.spout.renderer.util.RenderUtil;
 
 /**
  * Represents a model for OpenGL 3.2. It is made out of lines. After constructing a new model, use
- * {@link #positions()} to add position data and {@link #indices()} to specify the rendering
+ * {@link #getPositions()} to add position data and {@link #getIndices()} to specify the rendering
  * indices. Then use {@link #create()} to create model in the current OpenGL context. It can now be
  * added to the {@link OpenGL30Renderer}. Use {@link #destroy()} to free the model's OpenGL
  * resources. This doesn't delete the mesh. Use {@link #deleteMesh()} for that. Make sure you add
@@ -137,7 +137,7 @@ public class OpenGL30Wireframe extends Model {
 	 *
 	 * @return The indices list
 	 */
-	public TIntList indices() {
+	public TIntList getIndices() {
 		return indices;
 	}
 
@@ -147,7 +147,7 @@ public class OpenGL30Wireframe extends Model {
 	 *
 	 * @return The position list
 	 */
-	public TFloatList positions() {
+	public TFloatList getPositions() {
 		return positions;
 	}
 }
