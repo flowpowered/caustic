@@ -39,9 +39,8 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL32;
 import org.lwjgl.opengl.PixelFormat;
 
-import org.spout.math.imaginary.Quaternion;
-import org.spout.math.matrix.Matrix4;
 import org.spout.math.vector.Vector3;
+import org.spout.renderer.Camera;
 import org.spout.renderer.Model;
 import org.spout.renderer.util.RenderUtil;
 import org.spout.renderer.gl20.OpenGL20Program;
@@ -67,12 +66,7 @@ public class OpenGL30Renderer {
 	private final OpenGL20Program solidShaders = new OpenGL20Program();
 	private final OpenGL20Program wireframeShaders = new OpenGL20Program();
 	// Camera
-	private Matrix4 projectionMatrix = new Matrix4();
-	private Vector3 cameraPosition = new Vector3(0, 0, 0);
-	private Quaternion cameraRotation = new Quaternion();
-	private Matrix4 cameraRotationMatrix = new Matrix4();
-	private Matrix4 cameraMatrix = new Matrix4();
-	private boolean updateCameraMatrix = true;
+	private Camera camera;
 	// Lighting
 	private Vector3 lightPosition = new Vector3(0, 0, 0);
 	private float diffuseIntensity = 0.8f;
@@ -131,8 +125,7 @@ public class OpenGL30Renderer {
 	}
 
 	private void createProjection(float fieldOfView) {
-		final float aspectRatio = windowWidth / windowHeight;
-		projectionMatrix = Matrix4.createPerspective(fieldOfView, aspectRatio, 0.001f, 1000);
+		camera = Camera.createPerspective(fieldOfView, windowWidth, windowHeight, 0.001f, 100);
 	}
 
 	private void createShaders() {
@@ -167,23 +160,14 @@ public class OpenGL30Renderer {
 		wireframes.clear();
 	}
 
-	private Matrix4 getCameraMatrix() {
-		if (updateCameraMatrix) {
-			cameraRotationMatrix = Matrix4.createRotation(cameraRotation);
-			cameraMatrix = cameraRotationMatrix.mul(Matrix4.createTranslation(cameraPosition.negate()));
-			updateCameraMatrix = false;
-		}
-		return cameraMatrix;
-	}
-
 	private void sendWireframeShadersData() {
-		wireframeShaders.setUniform("cameraMatrix", getCameraMatrix());
-		wireframeShaders.setUniform("projectionMatrix", projectionMatrix);
+		wireframeShaders.setUniform("cameraMatrix", camera.getMatrix());
+		wireframeShaders.setUniform("projectionMatrix", camera.getProjectionMatrix());
 	}
 
 	private void sendSolidShadersData() {
-		solidShaders.setUniform("cameraMatrix", getCameraMatrix());
-		solidShaders.setUniform("projectionMatrix", projectionMatrix);
+		solidShaders.setUniform("cameraMatrix", camera.getMatrix());
+		solidShaders.setUniform("projectionMatrix", camera.getProjectionMatrix());
 		solidShaders.setUniform("diffuseIntensity", diffuseIntensity);
 		solidShaders.setUniform("specularIntensity", specularIntensity);
 		solidShaders.setUniform("ambientIntensity", ambientIntensity);
@@ -278,79 +262,6 @@ public class OpenGL30Renderer {
 	}
 
 	/**
-	 * Gets the camera position.
-	 *
-	 * @return The camera position
-	 */
-	public Vector3 getCameraPosition() {
-		return cameraPosition;
-	}
-
-	/**
-	 * Sets the camera position.
-	 *
-	 * @param position The camera position
-	 */
-	public void setCameraPosition(Vector3 position) {
-		cameraPosition = position;
-		updateCameraMatrix = true;
-	}
-
-	/**
-	 * Gets the camera rotation.
-	 *
-	 * @return The camera rotation
-	 */
-	public Quaternion getCameraRotation() {
-		return cameraRotation;
-	}
-
-	/**
-	 * Sets the camera rotation.
-	 *
-	 * @param rotation The camera rotation
-	 */
-	public void setCameraRotation(Quaternion rotation) {
-		cameraRotation = rotation;
-		updateCameraMatrix = true;
-	}
-
-	/**
-	 * Gets the vector representing the right direction for the camera.
-	 *
-	 * @return The camera's right direction vector
-	 */
-	public Vector3 getCameraRight() {
-		return toCamera(new Vector3(-1, 0, 0));
-	}
-
-	/**
-	 * Gets the vector representing the up direction for the camera.
-	 *
-	 * @return The camera's up direction vector
-	 */
-	public Vector3 getCameraUp() {
-		return toCamera(new Vector3(0, 1, 0));
-	}
-
-	/**
-	 * Gets the vector representing the forward direction for the camera.
-	 *
-	 * @return The camera's forward direction vector
-	 */
-	public Vector3 getCameraForward() {
-		return toCamera(new Vector3(0, 0, -1));
-	}
-
-	private Vector3 toCamera(Vector3 v) {
-		final Matrix4 inverted = cameraRotationMatrix.invert();
-		if (inverted != null) {
-			return inverted.transform(v.toVector4(1)).toVector3();
-		}
-		return v;
-	}
-
-	/**
 	 * Gets the background color.
 	 *
 	 * @return The background color
@@ -366,6 +277,15 @@ public class OpenGL30Renderer {
 	 */
 	public void setBackgroundColor(Color color) {
 		backgroundColor = color;
+	}
+
+	/**
+	 * Gets the renderer camera. Use this to move the view around.
+	 *
+	 * @return The camera
+	 */
+	public Camera getCamera() {
+		return camera;
 	}
 
 	/**
