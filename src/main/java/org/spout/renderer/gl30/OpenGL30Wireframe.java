@@ -26,10 +26,12 @@
  */
 package org.spout.renderer.gl30;
 
-import gnu.trove.list.TFloatList;
-import gnu.trove.list.TIntList;
-import gnu.trove.list.array.TFloatArrayList;
-import gnu.trove.list.array.TIntArrayList;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.nio.DoubleBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
@@ -37,27 +39,23 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
 import org.spout.renderer.Model;
+import org.spout.renderer.VertexData;
 import org.spout.renderer.util.RenderUtil;
 
-/**
- * Represents a model for OpenGL 3.2. It is made out of lines. After constructing a new model, use
- * {@link #getPositions()} to add position data and {@link #getIndices()} to specify the rendering
- * indices. Then use {@link #create()} to create model in the current OpenGL context. It can now be
- * added to the {@link OpenGL30Renderer}. Use {@link #destroy()} to free the model's OpenGL
- * resources. This doesn't delete the mesh. Use {@link #deleteMesh()} for that. Make sure you add
- * the mesh before creating the model.
- */
 public class OpenGL30Wireframe extends Model {
 	// Vertex info
 	private static final byte POSITION_COMPONENT_COUNT = 3;
 	// Vertex data
-	private final TFloatList positions = new TFloatArrayList();
-	private final TIntList indices = new TIntArrayList();
+	private final VertexData vertices = new VertexData();
 	private int renderingIndicesCount;
 	// OpenGL pointers
 	private int vertexArrayID = 0;
 	private int positionsBufferID = 0;
 	private int vertexIndexBufferID = 0;
+
+	public OpenGL30Wireframe() {
+		vertices.addFloatAttribute("positions", 3);
+	}
 
 	/**
 	 * Creates the wireframe from it's mesh. It can now be rendered.
@@ -69,13 +67,11 @@ public class OpenGL30Wireframe extends Model {
 		}
 		vertexIndexBufferID = GL15.glGenBuffers();
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vertexIndexBufferID);
-		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, RenderUtil.toBuffer(indices), GL15.GL_STATIC_DRAW);
+		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, vertices.getIndicesBuffer(), GL15.GL_STATIC_DRAW);
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
-		renderingIndicesCount = indices.size();
+		renderingIndicesCount = vertices.getIndicesCount();
 		positionsBufferID = GL15.glGenBuffers();
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, positionsBufferID);
-		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, RenderUtil.toBuffer(positions), GL15.GL_STATIC_DRAW);
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+		uploadBuffer(vertices.getAttributeBuffer("positions"), positionsBufferID);
 		vertexArrayID = GL30.glGenVertexArrays();
 		GL30.glBindVertexArray(vertexArrayID);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, positionsBufferID);
@@ -83,6 +79,23 @@ public class OpenGL30Wireframe extends Model {
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 		GL30.glBindVertexArray(0);
 		created = true;
+		RenderUtil.checkForOpenGLError();
+	}
+
+	private void uploadBuffer(Buffer buffer, int id) {
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, id);
+		if (buffer instanceof ByteBuffer) {
+			GL15.glBufferData(GL15.GL_ARRAY_BUFFER, (ByteBuffer) buffer, GL15.GL_STATIC_DRAW);
+		} else if (buffer instanceof ShortBuffer) {
+			GL15.glBufferData(GL15.GL_ARRAY_BUFFER, (ShortBuffer) buffer, GL15.GL_STATIC_DRAW);
+		} else if (buffer instanceof IntBuffer) {
+			GL15.glBufferData(GL15.GL_ARRAY_BUFFER, (IntBuffer) buffer, GL15.GL_STATIC_DRAW);
+		} else if (buffer instanceof FloatBuffer) {
+			GL15.glBufferData(GL15.GL_ARRAY_BUFFER, (FloatBuffer) buffer, GL15.GL_STATIC_DRAW);
+		} else if (buffer instanceof DoubleBuffer) {
+			GL15.glBufferData(GL15.GL_ARRAY_BUFFER, (DoubleBuffer) buffer, GL15.GL_STATIC_DRAW);
+		}
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 		RenderUtil.checkForOpenGLError();
 	}
 
@@ -94,7 +107,6 @@ public class OpenGL30Wireframe extends Model {
 		if (!created) {
 			return;
 		}
-		deleteMesh();
 		GL30.glBindVertexArray(vertexArrayID);
 		GL20.glDisableVertexAttribArray(0);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
@@ -123,31 +135,7 @@ public class OpenGL30Wireframe extends Model {
 		RenderUtil.checkForOpenGLError();
 	}
 
-	/**
-	 * Delete all the wireframe mesh generated so far.
-	 */
-	public void deleteMesh() {
-		positions.clear();
-		indices.clear();
-	}
-
-	/**
-	 * Returns the list of indices used by OpenGL to pick the vertices to draw the object with in the
-	 * correct order. Use it to add mesh data.
-	 *
-	 * @return The indices list
-	 */
-	public TIntList getIndices() {
-		return indices;
-	}
-
-	/**
-	 * Returns the list of vertex positions, which are the groups of three successive floats starting
-	 * at 0 (x1, y1, z1, x2, y2, z2, x3, ...). Use it to add mesh data.
-	 *
-	 * @return The position list
-	 */
-	public TFloatList getPositions() {
-		return positions;
+	public VertexData getVertexData() {
+		return vertices;
 	}
 }

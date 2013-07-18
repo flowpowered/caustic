@@ -26,10 +26,7 @@
  */
 package org.spout.renderer.gl30;
 
-import gnu.trove.list.TFloatList;
-import gnu.trove.list.TIntList;
-import gnu.trove.list.array.TFloatArrayList;
-import gnu.trove.list.array.TIntArrayList;
+import java.nio.ByteBuffer;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
@@ -37,33 +34,38 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
 import org.spout.renderer.Model;
+import org.spout.renderer.VertexData;
 import org.spout.renderer.util.RenderUtil;
 
 /**
  * Represents a model for OpenGL 3.2. It is made out of triangles. After constructing a new model,
- * use {@link #getPositions()} to add position data, {@link #getNormals()} to add normal data and {@link
- * #getIndices()} to specify the rendering indices. Then use {@link #create()} to create model in the
- * current OpenGL context. It can now be added to the {@link OpenGL30Renderer}. Use {@link
- * #destroy()} to free the model's OpenGL resources. This doesn't delete the mesh. Use {@link
- * #deleteMesh()} for that. Make sure you add the mesh before creating the model.
+ * use {@link #getVertexData()} to add data and specify the rendering indices. Then use {@link
+ * #create()} to create model in the current OpenGL context. It can now be added to the {@link
+ * OpenGL30Renderer}. Use {@link #destroy()} to free the model's OpenGL resources. This doesn't
+ * delete the mesh. Make sure you add the mesh before creating the model.
  */
 public class OpenGL30Solid extends Model {
 	// Vertex info
 	private static final byte POSITION_COMPONENT_COUNT = 3;
 	private static final byte NORMAL_COMPONENT_COUNT = 3;
 	// Vertex data
-	private final TFloatList positions = new TFloatArrayList();
-	private final TFloatList normals = new TFloatArrayList();
-	private final TIntList indices = new TIntArrayList();
+	private final VertexData vertices = new VertexData();
 	private int renderingIndicesCount;
 	// OpenGL pointers
 	private int vertexArrayID = 0;
 	private int positionsBufferID = 0;
 	private int normalsBufferID = 0;
 	private int vertexIndexBufferID = 0;
+	// Drawing mode
+	private DrawMode mode = DrawMode.TRIANGLES;
+
+	public OpenGL30Solid() {
+		vertices.addFloatAttribute("positions", 3);
+		vertices.addFloatAttribute("normals", 3);
+	}
 
 	/**
-	 * Creates the solid from it's mesh. It can now be rendered.
+	 * Creates the solid from its mesh. It can now be rendered.
 	 */
 	@Override
 	public void create() {
@@ -72,17 +74,13 @@ public class OpenGL30Solid extends Model {
 		}
 		vertexIndexBufferID = GL15.glGenBuffers();
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vertexIndexBufferID);
-		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, RenderUtil.toBuffer(indices), GL15.GL_STATIC_DRAW);
+		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, vertices.getIndicesBuffer(), GL15.GL_STATIC_DRAW);
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
-		renderingIndicesCount = indices.size();
+		renderingIndicesCount = vertices.getIndicesCount();
 		positionsBufferID = GL15.glGenBuffers();
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, positionsBufferID);
-		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, RenderUtil.toBuffer(positions), GL15.GL_STATIC_DRAW);
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+		uploadBuffer(vertices.getAttributeBuffer("positions"), positionsBufferID);
 		normalsBufferID = GL15.glGenBuffers();
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, normalsBufferID);
-		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, RenderUtil.toBuffer(normals), GL15.GL_STATIC_DRAW);
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+		uploadBuffer(vertices.getAttributeBuffer("normals"), normalsBufferID);
 		vertexArrayID = GL30.glGenVertexArrays();
 		GL30.glBindVertexArray(vertexArrayID);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, positionsBufferID);
@@ -95,6 +93,13 @@ public class OpenGL30Solid extends Model {
 		RenderUtil.checkForOpenGLError();
 	}
 
+	private void uploadBuffer(ByteBuffer buffer, int id) {
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, id);
+		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+		RenderUtil.checkForOpenGLError();
+	}
+
 	/**
 	 * Destroys the solid's resources. It can no longer be rendered.
 	 */
@@ -103,7 +108,6 @@ public class OpenGL30Solid extends Model {
 		if (!created) {
 			return;
 		}
-		deleteMesh();
 		GL30.glBindVertexArray(vertexArrayID);
 		GL20.glDisableVertexAttribArray(0);
 		GL20.glDisableVertexAttribArray(1);
@@ -128,7 +132,7 @@ public class OpenGL30Solid extends Model {
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vertexIndexBufferID);
-		GL11.glDrawElements(GL11.GL_TRIANGLES, renderingIndicesCount, GL11.GL_UNSIGNED_INT, 0);
+		GL11.glDrawElements(mode.getConstant(), renderingIndicesCount, GL11.GL_UNSIGNED_INT, 0);
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
 		GL20.glDisableVertexAttribArray(0);
 		GL20.glDisableVertexAttribArray(1);
@@ -137,41 +141,37 @@ public class OpenGL30Solid extends Model {
 	}
 
 	/**
-	 * Deletes all the mesh generated so far.
-	 */
-	public void deleteMesh() {
-		positions.clear();
-		normals.clear();
-		indices.clear();
-	}
-
-	/**
-	 * Returns the list of indices used by OpenGL to pick the vertices to draw the object with in the
-	 * correct order. Use it to add mesh data.
-	 *
-	 * @return The indices list
-	 */
-	public TIntList getIndices() {
-		return indices;
-	}
-
-	/**
 	 * Returns the list of vertex positions, which are the groups of three successive floats starting
 	 * at 0 (x1, y1, z1, x2, y2, z2, x3, ...). Use it to add mesh data.
-	 *
-	 * @return The position list
-	 */
-	public TFloatList getPositions() {
-		return positions;
-	}
-
-	/**
+	 * <p/>
 	 * Returns the list of vertex normals, which are the groups of three successive floats starting at
 	 * 0 (x1, y1, z1, x2, y2, z2, x3, ...). Use it to add mesh data.
 	 *
-	 * @return The normal list
+	 * @return The position list
 	 */
-	public TFloatList getNormals() {
-		return normals;
+	public VertexData getVertexData() {
+		return vertices;
+	}
+
+	public DrawMode getDrawMode() {
+		return mode;
+	}
+
+	public void setDrawMode(DrawMode mode) {
+		this.mode = mode;
+	}
+
+	public static enum DrawMode {
+		LINES(GL11.GL_LINES),
+		TRIANGLES(GL11.GL_TRIANGLES);
+		private final int constant;
+
+		private DrawMode(int constant) {
+			this.constant = constant;
+		}
+
+		private int getConstant() {
+			return constant;
+		}
 	}
 }

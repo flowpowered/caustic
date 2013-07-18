@@ -125,7 +125,7 @@ public class OpenGL30Renderer {
 	}
 
 	private void createProjection(float fieldOfView) {
-		camera = Camera.createPerspective(fieldOfView, windowWidth, windowHeight, 0.001f, 100);
+		camera = Camera.createPerspective(fieldOfView, windowWidth, windowHeight, 0.001f, 1000);
 	}
 
 	private void createShaders() {
