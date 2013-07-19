@@ -31,24 +31,28 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
-import org.spout.renderer.VertexData;
-import org.spout.renderer.VertexData.VertexAttribute;
+import org.spout.renderer.Model.DrawMode;
+import org.spout.renderer.VertexArray;
+import org.spout.renderer.data.VertexData.VertexAttribute;
 import org.spout.renderer.util.RenderUtil;
 
-public class OpenGL30VertexArray {
-	// State
-	private boolean created = false;
-	// ID
-	private int id = 0;
-	// Amount of indices to render
-	private int renderingIndicesCount = 0;
+/**
+ * Represents an OpenGL 3.0 vertex array. After constructing it, set the vertex data source with
+ * {@link #setVertexData(org.spout.renderer.data.VertexData)}. It can then be created in the OpenGL
+ * context with {@link #create()}. To dispose of it, use {@link #destroy()}.
+ */
+public class OpenGL30VertexArray extends VertexArray {
 	// Buffer IDs
 	private int indicesBufferID = 0;
 	private int[] attributeBufferIDs;
 
-	public void create(VertexData vertices) {
+	@Override
+	public void create() {
 		if (created) {
 			throw new IllegalStateException("Vertex array has already been created.");
+		}
+		if (vertexData == null) {
+			throw new IllegalStateException("Vertex data cannot be null");
 		}
 		// Generate and bind the vao
 		id = GL30.glGenVertexArrays();
@@ -56,16 +60,16 @@ public class OpenGL30VertexArray {
 		// Generate, bind and fill the indices vbo then unbind
 		indicesBufferID = GL15.glGenBuffers();
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesBufferID);
-		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, vertices.getIndicesBuffer(), GL15.GL_STATIC_DRAW);
+		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, vertexData.getIndicesBuffer(), GL15.GL_STATIC_DRAW);
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
 		// Save the count of indices to draw
-		renderingIndicesCount = vertices.getIndicesCount();
+		renderingIndicesCount = vertexData.getIndicesCount();
 		// create the map for attribute index to buffer ID
-		attributeBufferIDs = new int[vertices.getAttributeCount()];
+		attributeBufferIDs = new int[vertexData.getAttributeCount()];
 		// For each attribute, generate, bind and fill the vbo,
 		// then setup the attribute in the vao and save the buffer ID for the index
-		for (int i = 0; i <= vertices.getLastAttributeIndex(); i++) {
-			final VertexAttribute attribute = vertices.getAttribute(i);
+		for (int i = 0; i <= vertexData.getLastAttributeIndex(); i++) {
+			final VertexAttribute attribute = vertexData.getAttribute(i);
 			final int bufferID = GL15.glGenBuffers();
 			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, bufferID);
 			GL15.glBufferData(GL15.GL_ARRAY_BUFFER, attribute.getBuffer(), GL15.GL_STATIC_DRAW);
@@ -76,12 +80,13 @@ public class OpenGL30VertexArray {
 		// Unbind the vbo and vao
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 		GL30.glBindVertexArray(0);
+		// Update state
+		super.create();
 		// Check for errors
 		RenderUtil.checkForOpenGLError();
-		// Update state
-		created = true;
 	}
 
+	@Override
 	public void destroy() {
 		if (!created) {
 			throw new IllegalStateException("Vertex array has not been created yet.");
@@ -102,13 +107,18 @@ public class OpenGL30VertexArray {
 		GL30.glBindVertexArray(0);
 		GL30.glDeleteVertexArrays(id);
 		// Reset the data and state
-		id = 0;
-		renderingIndicesCount = 0;
-		created = false;
+		indicesBufferID = 0;
+		attributeBufferIDs = null;
+		super.destroy();
 		// Check for errors
 		RenderUtil.checkForOpenGLError();
 	}
 
+	/**
+	 * Draws the vertex data to the screen using the desired mode.
+	 *
+	 * @param mode The drawing mode
+	 */
 	public void render(DrawMode mode) {
 		// Bind the vao and enable all attributes
 		GL30.glBindVertexArray(id);
@@ -128,19 +138,5 @@ public class OpenGL30VertexArray {
 		GL30.glBindVertexArray(0);
 		// Check for errors
 		RenderUtil.checkForOpenGLError();
-	}
-
-	public static enum DrawMode {
-		LINES(GL11.GL_LINES),
-		TRIANGLES(GL11.GL_TRIANGLES);
-		private final int constant;
-
-		private DrawMode(int constant) {
-			this.constant = constant;
-		}
-
-		public int getGLConstant() {
-			return constant;
-		}
 	}
 }

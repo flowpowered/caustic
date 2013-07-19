@@ -39,7 +39,7 @@ import gnu.trove.list.TShortList;
 import org.junit.Assert;
 import org.junit.Test;
 
-import org.spout.renderer.VertexData;
+import org.spout.renderer.data.VertexData;
 
 public class VertexDataTest {
 	@Test
@@ -49,44 +49,44 @@ public class VertexDataTest {
 		TIntList indices = vertexData.getIndices();
 		Assert.assertNotNull(indices);
 		// Add attribute
-		int index;
-		index = vertexData.addByteAttribute("byte", 1);
-		Assert.assertEquals(0, index);
-		index = vertexData.addShortAttribute("short", 2);
-		Assert.assertEquals(1, index);
-		index = vertexData.addIntAttribute("int", 3);
-		Assert.assertEquals(2, index);
-		index = vertexData.addFloatAttribute("float", 4);
-		Assert.assertEquals(3, index);
-		index = vertexData.addDoubleAttribute("double", 5);
-		Assert.assertEquals(4, index);
-		// Get attribute
 		TByteList byteAttribute;
+		byteAttribute = vertexData.addByteAttribute("byte", 1);
+		Assert.assertNotNull(byteAttribute);
+		TShortList shortAttribute;
+		shortAttribute = vertexData.addShortAttribute("short", 2);
+		Assert.assertNotNull(shortAttribute);
+		TIntList intAttribute;
+		intAttribute = vertexData.addIntAttribute("int", 3);
+		Assert.assertNotNull(intAttribute);
+		TFloatList floatAttribute;
+		floatAttribute = vertexData.addFloatAttribute("float", 4);
+		Assert.assertNotNull(floatAttribute);
+		TDoubleList doubleAttribute;
+		doubleAttribute = vertexData.addDoubleAttribute("double", 5);
+		Assert.assertNotNull(doubleAttribute);
+		// Get attribute
 		byteAttribute = vertexData.getByteAttributeList(0);
 		Assert.assertNotNull(byteAttribute);
 		byteAttribute = vertexData.getByteAttributeList("byte");
 		Assert.assertNotNull(byteAttribute);
-		TShortList shortAttribute;
 		shortAttribute = vertexData.getShortAttributeList(1);
 		Assert.assertNotNull(shortAttribute);
 		shortAttribute = vertexData.getShortAttributeList("short");
 		Assert.assertNotNull(shortAttribute);
-		TIntList intAttribute;
 		intAttribute = vertexData.getIntAttributeList(2);
 		Assert.assertNotNull(intAttribute);
 		intAttribute = vertexData.getIntAttributeList("int");
 		Assert.assertNotNull(intAttribute);
-		TFloatList floatAttribute;
 		floatAttribute = vertexData.getFloatAttributeList(3);
 		Assert.assertNotNull(floatAttribute);
 		floatAttribute = vertexData.getFloatAttributeList("float");
 		Assert.assertNotNull(floatAttribute);
-		TDoubleList doubleAttribute;
 		doubleAttribute = vertexData.getDoubleAttributeList(4);
 		Assert.assertNotNull(doubleAttribute);
 		doubleAttribute = vertexData.getDoubleAttributeList("double");
 		Assert.assertNotNull(doubleAttribute);
 		// Get attribute index
+		int index;
 		index = vertexData.getAttributeIndex("byte");
 		Assert.assertEquals(0, index);
 		index = vertexData.getAttributeIndex("short");

@@ -28,48 +28,44 @@ package org.spout.renderer;
 
 import java.awt.Color;
 
+import org.lwjgl.opengl.GL11;
+
 import org.spout.math.imaginary.Quaternion;
 import org.spout.math.matrix.Matrix4;
 import org.spout.math.vector.Vector3;
+import org.spout.renderer.data.VertexData;
 
 /**
- * An abstract model for OpenGL 3.2. There are currently two possible implementations: solid and
- * wireframe. A solid model has a surface made up of smaller triangles. A wireframe is made out of
- * lines, and is only the outline of the shape. Each model has it's own position, rotation and
- * color. The {@link org.spout.renderer.gl30.OpenGL30Renderer} should always be created before the
- * models.
+ * Represents a model for OpenGL. Each model has it's own position, rotation and color. The {@link
+ * org.spout.renderer.Renderer} should always be created before the models.
  */
-public abstract class Model {
-	// State
-	protected boolean created = false;
-	// Properties
+public abstract class Model extends Creatable {
+	// Position and rotation properties
 	protected Vector3 position = new Vector3(0, 0, 0);
 	protected Vector3 scale = new Vector3(1, 1, 1);
 	protected Quaternion rotation = new Quaternion();
 	protected Matrix4 matrix = new Matrix4();
 	protected boolean updateMatrix = true;
+	// Material
 	protected Color modelColor = new Color(0.8f, 0.1f, 0.1f, 1);
+	// Vertex data
+	protected final VertexData vertices = new VertexData();
+	// Drawing mode
+	protected DrawMode mode = DrawMode.TRIANGLES;
 
-	/**
-	 * Creates the model. It can now be rendered.
-	 */
-	public abstract void create();
-
-	/**
-	 * Releases the model resources. It can not longer be rendered.
-	 */
-	public abstract void destroy();
-
-	protected abstract void render();
-
-	/**
-	 * Returns true if the display was created and is ready for rendering, false if otherwise.
-	 *
-	 * @return True if the model can be rendered, false if not
-	 */
-	public boolean isCreated() {
-		return created;
+	protected Model() {
 	}
+
+	@Override
+	public void destroy() {
+		vertices.clear();
+		super.destroy();
+	}
+
+	/**
+	 * Draws the model to the screen.
+	 */
+	protected abstract void render();
 
 	/**
 	 * Returns the transformation matrix that represent the model's current scale, rotation and
@@ -158,5 +154,61 @@ public abstract class Model {
 	public void setScale(Vector3 scale) {
 		this.scale = scale;
 		updateMatrix = true;
+	}
+
+	/**
+	 * Returns the of vertex data. Use it to add mesh data.
+	 *
+	 * @return The vertex data
+	 */
+	public VertexData getVertexData() {
+		return vertices;
+	}
+
+	/**
+	 * Deletes all the vertex data associated to the model.
+	 */
+	public void clearVertexData() {
+		vertices.clear();
+	}
+
+	/**
+	 * Returns the model's drawing mode.
+	 *
+	 * @return The drawing mode
+	 */
+	public DrawMode getDrawMode() {
+		return mode;
+	}
+
+	/**
+	 * Sets the model's drawing mode.
+	 *
+	 * @param mode The drawing mode to use
+	 */
+	public void setDrawMode(DrawMode mode) {
+		this.mode = mode;
+	}
+
+	/**
+	 * Represents the different drawing modes for the model
+	 */
+	public static enum DrawMode {
+		LINES(GL11.GL_LINES),
+		TRIANGLES(GL11.GL_TRIANGLES);
+		private final int glConstant;
+
+		private DrawMode(int constant) {
+			this.glConstant = constant;
+		}
+
+		/**
+		 * Returns the OpenGL constant associated to the drawing mode
+		 *
+		 * @return The OpenGL constant
+		 */
+		public int getGLConstant() {
+			return glConstant;
+		}
 	}
 }

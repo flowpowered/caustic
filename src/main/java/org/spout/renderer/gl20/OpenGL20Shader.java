@@ -28,79 +28,63 @@ package org.spout.renderer.gl20;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.OpenGLException;
 
+import org.spout.renderer.Shader;
 import org.spout.renderer.util.RenderUtil;
 
 /**
- * Represents a shader for OpenGL 2.1. After being constructed, the program needs to be created in
- * the OpenGL context with {@link #create(java.io.InputStream, int)}. This class is meant to be used
- * by the {@link OpenGL20Program} class.
+ * Represents a shader for OpenGL 2.1. After being constructed, use {@link
+ * #setSource(java.io.InputStream)} to set shader source and {@link #setType(org.spout.renderer.Shader.ShaderType)}
+ * to set the shader type. The shader then needs to be created in the OpenGL context with {@link
+ * #create()}. This class is meant to be used by the {@link OpenGL20Program} class.
  */
-public class OpenGL20Shader {
-	// State
-	private boolean created = false;
-	// ID
-	private int id;
-
-	/**
-	 * Creates a new shader in the OpenGL context from the input stream for the shaders.
-	 *
-	 * @param shaderResource The shader input stream
-	 * @param type The type of shader, either {@link GL20#GL_VERTEX_SHADER} or {@link
-	 * GL20#GL_FRAGMENT_SHADER}
-	 */
-	public void create(InputStream shaderResource, int type) {
+public class OpenGL20Shader extends Shader {
+	@Override
+	public void create() {
 		if (created) {
 			throw new IllegalStateException("Shader has already been created.");
 		}
-		final StringBuilder shaderSource = new StringBuilder();
+		if (shaderSource == null) {
+			throw new IllegalStateException("Shader source cannot be null");
+		}
+		if (shaderType == null) {
+			throw new IllegalStateException("Shader type cannot be null");
+		}
+		final StringBuilder source = new StringBuilder();
 		try {
-			final BufferedReader reader = new BufferedReader(new InputStreamReader(shaderResource));
+			final BufferedReader reader = new BufferedReader(new InputStreamReader(shaderSource));
 			String line;
 			while ((line = reader.readLine()) != null) {
-				shaderSource.append(line).append("\n");
+				source.append(line).append("\n");
 			}
 			reader.close();
-			shaderResource.close();
+			shaderSource.close();
 		} catch (IOException e) {
 			System.out.println("IO exception: " + e.getMessage());
 		}
-		final int id = GL20.glCreateShader(type);
-		GL20.glShaderSource(id, shaderSource);
+		final int id = GL20.glCreateShader(shaderType.getGLConstant());
+		GL20.glShaderSource(id, source);
 		GL20.glCompileShader(id);
 		if (GL20.glGetShaderi(id, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
 			throw new OpenGLException("OPEN GL ERROR: Could not compile shader\n" + GL20.glGetShaderInfoLog(id, 1000));
 		}
 		this.id = id;
-		created = true;
+		super.create();
 		RenderUtil.checkForOpenGLError();
 	}
 
-	/**
-	 * Destroys this shader by deleting the OpenGL shader.
-	 */
+	@Override
 	public void destroy() {
 		if (!created) {
 			throw new IllegalStateException("Shader has not been created yet.");
 		}
 		GL20.glDeleteShader(id);
-		id = 0;
-		created = false;
+		super.destroy();
 		RenderUtil.checkForOpenGLError();
-	}
-
-	/**
-	 * Gets the ID for this shader as assigned by OpenGL.
-	 *
-	 * @return The ID
-	 */
-	public int getID() {
-		return id;
 	}
 }

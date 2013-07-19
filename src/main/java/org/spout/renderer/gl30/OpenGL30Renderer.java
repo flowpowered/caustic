@@ -40,31 +40,24 @@ import org.lwjgl.opengl.GL32;
 import org.lwjgl.opengl.PixelFormat;
 
 import org.spout.math.vector.Vector3;
-import org.spout.renderer.Camera;
+import org.spout.renderer.Renderer;
 import org.spout.renderer.gl20.OpenGL20Program;
 import org.spout.renderer.util.RenderUtil;
 
 /**
- * This is a  renderer using the OpenGL 3.2 graphics API. To create a new render window, use {@link
- * #create(String, int, int, float)}. To add and remove models, use {@link
- * #addModel(OpenGL30Model)} and {@link #removeModel(OpenGL30Model)}.
- * The camera position and rotation can be modified. The light diffuse intensity, specular
- * intensity, ambient intensity, position and attenuation can also be controlled. When done, use
- * {@link #destroy()} to destroy the render window.
+ * This is a renderer using OpenGL 3.0. To create a new render window, start by creating a camera
+ * and setting it using {@link #setCamera(org.spout.renderer.Camera)}, then use {@link #create()} to
+ * create the OpenGL context. To add and remove models, use {@link #addModel(OpenGL30Model)} and
+ * {@link #removeModel(OpenGL30Model)}. The camera position and rotation can be modified by
+ * accessing it with {@link #getCamera()}. When done, use {@link #destroy()} to destroy the render
+ * window.
  */
-public class OpenGL30Renderer {
-	// States
-	private boolean created = false;
-	// Window size
-	private int windowWidth;
-	private int windowHeight;
+public class OpenGL30Renderer extends Renderer {
 	// Model data
 	private final List<OpenGL30Model> models = new ArrayList<>();
 	// Shaders
 	private final OpenGL20Program shaders = new OpenGL20Program();
-	// Camera
-	private Camera camera;
-	// Lighting
+	// Uniforms
 	private Vector3 lightPosition = new Vector3(0, 0, 0);
 	private float diffuseIntensity = 0.8f;
 	private float specularIntensity = 0.2f;
@@ -72,28 +65,20 @@ public class OpenGL30Renderer {
 	private Color backgroundColor = new Color(0.2f, 0.2f, 0.2f, 0);
 	private float lightAttenuation = 0.03f;
 
-	/**
-	 * Creates the render window and basic resources. This excludes the models.
-	 *
-	 * @param title The title of the render window
-	 * @param windowWidth The width of the render window
-	 * @param windowHeight The height of the render window
-	 * @param fieldOfView The field of view in degrees. 75 is suggested
-	 */
-	public void create(String title, int windowWidth, int windowHeight, float fieldOfView)
-			throws LWJGLException {
+	@Override
+	public void create() {
 		if (created) {
 			throw new IllegalStateException("Renderer has already been created.");
 		}
-		createDisplay(title, windowWidth, windowHeight);
-		createProjection(fieldOfView);
+		if (camera == null) {
+			throw new IllegalStateException("Camera cannot be null");
+		}
+		createDisplay();
 		createShaders();
-		created = true;
+		super.create();
 	}
 
-	/**
-	 * Destroys the render window and the models.
-	 */
+	@Override
 	public void destroy() {
 		if (!created) {
 			throw new IllegalStateException("Renderer has not been created yet.");
@@ -101,18 +86,21 @@ public class OpenGL30Renderer {
 		destroyModels();
 		destroyShaders();
 		destroyDisplay();
-		created = false;
+		camera = null;
+		super.destroy();
 	}
 
-	private void createDisplay(String title, int width, int height) throws LWJGLException {
-		windowWidth = width;
-		windowHeight = height;
+	private void createDisplay() {
 		final PixelFormat pixelFormat = new PixelFormat();
 		final ContextAttribs contextAttributes = new ContextAttribs(3, 2).withProfileCore(true);
-		Display.setDisplayMode(new DisplayMode(width, height));
-		Display.setTitle(title);
-		Display.create(pixelFormat, contextAttributes);
-		GL11.glViewport(0, 0, width, height);
+		try {
+			Display.setDisplayMode(new DisplayMode(windowWidth, windowHeight));
+			Display.create(pixelFormat, contextAttributes);
+		} catch (LWJGLException ex) {
+			throw new RuntimeException(ex);
+		}
+		Display.setTitle(windowTitle);
+		GL11.glViewport(0, 0, windowWidth, windowHeight);
 		GL11.glClearColor(backgroundColor.getRed() / 255f, backgroundColor.getGreen() / 255f,
 				backgroundColor.getBlue() / 255f, backgroundColor.getAlpha() / 255f);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
@@ -121,13 +109,10 @@ public class OpenGL30Renderer {
 		RenderUtil.checkForOpenGLError();
 	}
 
-	private void createProjection(float fieldOfView) {
-		camera = Camera.createPerspective(fieldOfView, windowWidth, windowHeight, 0.001f, 1000);
-	}
-
 	private void createShaders() {
-		shaders.create(OpenGL30Renderer.class.getResourceAsStream("/basic.vert"),
-				OpenGL30Renderer.class.getResourceAsStream("/basic.frag"));
+		shaders.setVertexShaderSource(OpenGL30Renderer.class.getResourceAsStream("/basic.vert"));
+		shaders.setFragmentShaderSource(OpenGL30Renderer.class.getResourceAsStream("/basic.frag"));
+		shaders.create();
 	}
 
 	private void destroyDisplay() {
@@ -139,7 +124,6 @@ public class OpenGL30Renderer {
 
 	private void destroyShaders() {
 		GL20.glUseProgram(0);
-		RenderUtil.checkForOpenGLError();
 		shaders.destroy();
 	}
 
@@ -189,15 +173,6 @@ public class OpenGL30Renderer {
 	}
 
 	/**
-	 * Returns true if the render display has been created.
-	 *
-	 * @return True if the display and rendering resources have been creates, false if other wise.
-	 */
-	public boolean isCreated() {
-		return created;
-	}
-
-	/**
 	 * Adds a model to the list. If a non-created model is added to the list, it will not be rendered
 	 * until it is created.
 	 *
@@ -234,15 +209,6 @@ public class OpenGL30Renderer {
 	 */
 	public void setBackgroundColor(Color color) {
 		backgroundColor = color;
-	}
-
-	/**
-	 * Gets the renderer camera. Use this to move the view around.
-	 *
-	 * @return The camera
-	 */
-	public Camera getCamera() {
-		return camera;
 	}
 
 	/**

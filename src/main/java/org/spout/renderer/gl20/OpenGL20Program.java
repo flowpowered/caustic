@@ -41,40 +41,46 @@ import org.lwjgl.opengl.GL20;
 
 import org.spout.math.matrix.Matrix4;
 import org.spout.math.vector.Vector3;
+import org.spout.renderer.Program;
+import org.spout.renderer.Shader.ShaderType;
 import org.spout.renderer.util.RenderUtil;
 
 /**
  * Represents a program for OpenGL 2.0. A program is a composed of a vertex shader and a fragment
- * shader. After being constructed, the program needs to be created in the OpenGL context with
- * {@link #create(java.io.InputStream, java.io.InputStream)}.
+ * shader. After being constructed, set the shader sources with {@link
+ * #setVertexShaderSource(java.io.InputStream)} and {@link #setFragmentShaderSource(java.io.InputStream)}.
+ * The program then needs to be created in the OpenGL context with {@link #create()}.
  */
-public class OpenGL20Program {
-	// State
-	private boolean created = false;
-	// ID
-	private int id;
+public class OpenGL20Program extends Program {
+	// Shader resources
+	private InputStream vertexShaderSource;
+	private InputStream fragmentShaderSource;
 	// Shaders
-	private final OpenGL20Shader vert = new OpenGL20Shader();
-	private final OpenGL20Shader frag = new OpenGL20Shader();
+	private final OpenGL20Shader vertexShader = new OpenGL20Shader();
+	private final OpenGL20Shader fragmentShader = new OpenGL20Shader();
 	// Map of the uniform name and IDs
 	private final TObjectIntMap<String> uniforms = new TObjectIntHashMap<>();
 
-	/**
-	 * Creates a new program in the OpenGL context from the input streams for the vertex and fragment
-	 * shaders.
-	 *
-	 * @param vertShader The vertex shader input stream
-	 * @param fragShader The fragment shader input stream
-	 */
-	public void create(InputStream vertShader, InputStream fragShader) {
+	@Override
+	public void create() {
 		if (created) {
 			throw new IllegalStateException("Program has already been created.");
 		}
-		vert.create(vertShader, GL20.GL_VERTEX_SHADER);
-		frag.create(fragShader, GL20.GL_FRAGMENT_SHADER);
+		if (vertexShaderSource == null) {
+			throw new IllegalStateException("Vertex shader source cannot be null");
+		}
+		if (fragmentShaderSource == null) {
+			throw new IllegalStateException("Fragment shader source cannot be null");
+		}
+		vertexShader.setSource(vertexShaderSource);
+		vertexShader.setType(ShaderType.VERTEX);
+		vertexShader.create();
+		fragmentShader.setSource(fragmentShaderSource);
+		fragmentShader.setType(ShaderType.FRAGMENT);
+		fragmentShader.create();
 		id = GL20.glCreateProgram();
-		GL20.glAttachShader(id, vert.getID());
-		GL20.glAttachShader(id, frag.getID());
+		GL20.glAttachShader(id, vertexShader.getID());
+		GL20.glAttachShader(id, fragmentShader.getID());
 		GL20.glLinkProgram(id);
 		GL20.glValidateProgram(id);
 		final int uniformCount = GL20.glGetProgrami(id, GL20.GL_ACTIVE_UNIFORMS);
@@ -91,35 +97,43 @@ public class OpenGL20Program {
 			final String name = new String(nameBytes).trim();
 			uniforms.put(name, GL20.glGetUniformLocation(id, name));
 		}
-		created = true;
+		super.create();
 		RenderUtil.checkForOpenGLError();
 	}
 
-	/**
-	 * Destroys this program by deleting the OpenGL shaders program.
-	 */
+	@Override
 	public void destroy() {
 		if (!created) {
 			throw new IllegalStateException("Program has not been created yet.");
 		}
-		GL20.glDetachShader(id, vert.getID());
-		GL20.glDetachShader(id, frag.getID());
-		vert.destroy();
-		frag.destroy();
+		GL20.glDetachShader(id, vertexShader.getID());
+		GL20.glDetachShader(id, fragmentShader.getID());
+		vertexShader.destroy();
+		fragmentShader.destroy();
 		GL20.glDeleteProgram(id);
-		id = 0;
+		vertexShaderSource = null;
+		fragmentShaderSource = null;
 		uniforms.clear();
-		created = false;
+		super.destroy();
 		RenderUtil.checkForOpenGLError();
 	}
 
 	/**
-	 * Gets the ID for this program as assigned by OpenGL.
+	 * Sets the vertex shader source input stream.
 	 *
-	 * @return The ID
+	 * @param source The input stream to use
 	 */
-	public int getID() {
-		return id;
+	public void setVertexShaderSource(InputStream source) {
+		vertexShaderSource = source;
+	}
+
+	/**
+	 * Sets the fragment shader source input stream.
+	 *
+	 * @param source The input stream to use
+	 */
+	public void setFragmentShaderSource(InputStream source) {
+		fragmentShaderSource = source;
 	}
 
 	/**

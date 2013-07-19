@@ -24,23 +24,37 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.util;
-
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.OpenGLException;
-import org.lwjgl.util.glu.GLU;
+package org.spout.renderer;
 
 /**
- * Utility methods for rendering
+ * Represents a resource that can be created and destroyed.
  */
-public class RenderUtil {
+public class Creatable {
+	protected boolean created = false;
+
+	protected Creatable() {
+	}
+
 	/**
-	 * Throws an {@link org.lwjgl.opengl.OpenGLException} if OpenGL reports an error.
+	 * Creates the resources. It can now be used.
 	 */
-	public static void checkForOpenGLError() {
-		final int errorValue = GL11.glGetError();
-		if (errorValue != GL11.GL_NO_ERROR) {
-			throw new OpenGLException("OPEN GL ERROR: " + GLU.gluErrorString(errorValue));
-		}
+	public void create() {
+		created = true;
+	}
+
+	/**
+	 * Releases the resource. It can not longer be used.
+	 */
+	public void destroy() {
+		created = false;
+	}
+
+	/**
+	 * Returns true if the resource was created and is ready for use, false if otherwise.
+	 *
+	 * @return Whether or not the resource has been created
+	 */
+	public boolean isCreated() {
+		return created;
 	}
 }

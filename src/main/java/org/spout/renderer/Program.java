@@ -24,23 +24,30 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.util;
-
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.OpenGLException;
-import org.lwjgl.util.glu.GLU;
+package org.spout.renderer;
 
 /**
- * Utility methods for rendering
+ * Represents a shader program for OpenGL. The {@link org.spout.renderer.Renderer} should always be
+ * created before the program.
  */
-public class RenderUtil {
+public class Program extends Creatable {
+	protected int id;
+
+	protected Program() {
+	}
+
+	@Override
+	public void destroy() {
+		id = 0;
+		super.destroy();
+	}
+
 	/**
-	 * Throws an {@link org.lwjgl.opengl.OpenGLException} if OpenGL reports an error.
+	 * Gets the ID for this program as assigned by OpenGL.
+	 *
+	 * @return The ID
 	 */
-	public static void checkForOpenGLError() {
-		final int errorValue = GL11.glGetError();
-		if (errorValue != GL11.GL_NO_ERROR) {
-			throw new OpenGLException("OPEN GL ERROR: " + GLU.gluErrorString(errorValue));
-		}
+	public int getID() {
+		return id;
 	}
 }

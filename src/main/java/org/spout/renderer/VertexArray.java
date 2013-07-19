@@ -24,23 +24,48 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.util;
+package org.spout.renderer;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.OpenGLException;
-import org.lwjgl.util.glu.GLU;
+import org.spout.renderer.data.VertexData;
 
 /**
- * Utility methods for rendering
+ * Represent a vertex array for OpenGL. The {@link org.spout.renderer.Renderer} should always be
+ * created before the vertex array. The vertex data source must be set with {@link
+ * #setVertexData(org.spout.renderer.data.VertexData)} before it can be created.
  */
-public class RenderUtil {
+public class VertexArray extends Creatable {
+	protected int id = 0;
+	// Amount of indices to render
+	protected int renderingIndicesCount = 0;
+	// Vertex attributes
+	protected VertexData vertexData;
+
+	protected VertexArray() {
+	}
+
+	@Override
+	public void destroy() {
+		id = 0;
+		renderingIndicesCount = 0;
+		vertexData = null;
+		super.destroy();
+	}
+
 	/**
-	 * Throws an {@link org.lwjgl.opengl.OpenGLException} if OpenGL reports an error.
+	 * Sets the vertex data source to use.
+	 *
+	 * @param vertexData The vertex data source
 	 */
-	public static void checkForOpenGLError() {
-		final int errorValue = GL11.glGetError();
-		if (errorValue != GL11.GL_NO_ERROR) {
-			throw new OpenGLException("OPEN GL ERROR: " + GLU.gluErrorString(errorValue));
-		}
+	public void setVertexData(VertexData vertexData) {
+		this.vertexData = vertexData;
+	}
+
+	/**
+	 * Gets the ID for this vertex array as assigned by OpenGL.
+	 *
+	 * @return The ID
+	 */
+	public int getID() {
+		return id;
 	}
 }

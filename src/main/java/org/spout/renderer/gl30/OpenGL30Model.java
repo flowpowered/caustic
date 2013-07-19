@@ -27,8 +27,6 @@
 package org.spout.renderer.gl30;
 
 import org.spout.renderer.Model;
-import org.spout.renderer.VertexData;
-import org.spout.renderer.gl30.OpenGL30VertexArray.DrawMode;
 
 /**
  * Represents a model for OpenGL 3.2. After constructing a new model, use {@link #getVertexData()}
@@ -38,72 +36,29 @@ import org.spout.renderer.gl30.OpenGL30VertexArray.DrawMode;
  * the mesh before creating the model.
  */
 public class OpenGL30Model extends Model {
-	// Vertex data
-	private final VertexData vertices = new VertexData();
 	private final OpenGL30VertexArray vertexArray = new OpenGL30VertexArray();
-	// Drawing mode
-	private DrawMode mode = DrawMode.TRIANGLES;
 
-	public OpenGL30Model() {
-		// TODO: remove these
-		vertices.addFloatAttribute("positions", 3);
-		vertices.addFloatAttribute("normals", 3);
-	}
-
-	/**
-	 * Creates the solid from its mesh. It can now be rendered.
-	 */
 	@Override
 	public void create() {
 		if (created) {
 			throw new IllegalStateException("Solid has already been created.");
 		}
-		vertexArray.create(vertices);
-		created = true;
+		vertexArray.setVertexData(vertices);
+		vertexArray.create();
+		super.create();
 	}
 
-	/**
-	 * Destroys the solid's resources. It can no longer be rendered.
-	 */
 	@Override
 	public void destroy() {
 		if (!created) {
 			return;
 		}
 		vertexArray.destroy();
-		created = false;
+		super.destroy();
 	}
 
-	/**
-	 * Displays the current solid with the proper rotation and position to the render window.
-	 */
 	@Override
 	protected void render() {
 		vertexArray.render(mode);
-	}
-
-	/**
-	 * Returns the list of vertex positions, which are the groups of three successive floats starting
-	 * at 0 (x1, y1, z1, x2, y2, z2, x3, ...). Use it to add mesh data.
-	 * <p/>
-	 * Returns the list of vertex normals, which are the groups of three successive floats starting at
-	 * 0 (x1, y1, z1, x2, y2, z2, x3, ...). Use it to add mesh data.
-	 *
-	 * @return The position list
-	 */
-	public VertexData getVertexData() {
-		return vertices;
-	}
-
-	public void clearVertexData() {
-		vertices.clear();
-	}
-
-	public DrawMode getDrawMode() {
-		return mode;
-	}
-
-	public void setDrawMode(DrawMode mode) {
-		this.mode = mode;
 	}
 }
