@@ -41,17 +41,16 @@ import org.lwjgl.opengl.PixelFormat;
 
 import org.spout.math.vector.Vector3;
 import org.spout.renderer.Camera;
-import org.spout.renderer.Model;
-import org.spout.renderer.util.RenderUtil;
 import org.spout.renderer.gl20.OpenGL20Program;
+import org.spout.renderer.util.RenderUtil;
 
 /**
  * This is a  renderer using the OpenGL 3.2 graphics API. To create a new render window, use {@link
  * #create(String, int, int, float)}. To add and remove models, use {@link
- * #addModel(org.spout.renderer.Model)} and {@link #removeModel(org.spout.renderer.Model)}. The
- * camera position and rotation can be modified. The light diffuse intensity, specular intensity,
- * ambient intensity, position and attenuation can also be controlled. When done, use {@link
- * #destroy()} to destroy the render window.
+ * #addModel(OpenGL30Model)} and {@link #removeModel(OpenGL30Model)}.
+ * The camera position and rotation can be modified. The light diffuse intensity, specular
+ * intensity, ambient intensity, position and attenuation can also be controlled. When done, use
+ * {@link #destroy()} to destroy the render window.
  */
 public class OpenGL30Renderer {
 	// States
@@ -60,11 +59,9 @@ public class OpenGL30Renderer {
 	private int windowWidth;
 	private int windowHeight;
 	// Model data
-	private final List<OpenGL30Solid> solids = new ArrayList<>();
-	private final List<OpenGL30Wireframe> wireframes = new ArrayList<>();
+	private final List<OpenGL30Model> models = new ArrayList<>();
 	// Shaders
-	private final OpenGL20Program solidShaders = new OpenGL20Program();
-	private final OpenGL20Program wireframeShaders = new OpenGL20Program();
+	private final OpenGL20Program shaders = new OpenGL20Program();
 	// Camera
 	private Camera camera;
 	// Lighting
@@ -129,10 +126,8 @@ public class OpenGL30Renderer {
 	}
 
 	private void createShaders() {
-		solidShaders.create(OpenGL30Renderer.class.getResourceAsStream("/solid.vert"),
-				OpenGL30Renderer.class.getResourceAsStream("/solid.frag"));
-		wireframeShaders.create(OpenGL30Renderer.class.getResourceAsStream("/wireframe.vert"),
-				OpenGL30Renderer.class.getResourceAsStream("/wireframe.frag"));
+		shaders.create(OpenGL30Renderer.class.getResourceAsStream("/basic.vert"),
+				OpenGL30Renderer.class.getResourceAsStream("/basic.frag"));
 	}
 
 	private void destroyDisplay() {
@@ -145,44 +140,29 @@ public class OpenGL30Renderer {
 	private void destroyShaders() {
 		GL20.glUseProgram(0);
 		RenderUtil.checkForOpenGLError();
-		solidShaders.destroy();
-		wireframeShaders.destroy();
+		shaders.destroy();
 	}
 
 	private void destroyModels() {
-		for (OpenGL30Solid solid : solids) {
+		for (OpenGL30Model solid : models) {
 			solid.destroy();
 		}
-		solids.clear();
-		for (OpenGL30Wireframe wireframe : wireframes) {
-			wireframe.destroy();
-		}
-		wireframes.clear();
+		models.clear();
 	}
 
-	private void sendWireframeShadersData() {
-		wireframeShaders.setUniform("cameraMatrix", camera.getMatrix());
-		wireframeShaders.setUniform("projectionMatrix", camera.getProjectionMatrix());
+	private void sendShaderData() {
+		shaders.setUniform("cameraMatrix", camera.getMatrix());
+		shaders.setUniform("projectionMatrix", camera.getProjectionMatrix());
+		shaders.setUniform("diffuseIntensity", diffuseIntensity);
+		shaders.setUniform("specularIntensity", specularIntensity);
+		shaders.setUniform("ambientIntensity", ambientIntensity);
+		shaders.setUniform("lightPosition", lightPosition);
+		shaders.setUniform("lightAttenuation", lightAttenuation);
 	}
 
-	private void sendSolidShadersData() {
-		solidShaders.setUniform("cameraMatrix", camera.getMatrix());
-		solidShaders.setUniform("projectionMatrix", camera.getProjectionMatrix());
-		solidShaders.setUniform("diffuseIntensity", diffuseIntensity);
-		solidShaders.setUniform("specularIntensity", specularIntensity);
-		solidShaders.setUniform("ambientIntensity", ambientIntensity);
-		solidShaders.setUniform("lightPosition", lightPosition);
-		solidShaders.setUniform("lightAttenuation", lightAttenuation);
-	}
-
-	private void sendWireframeShadersData(OpenGL30Wireframe wireframe) {
-		wireframeShaders.setUniform("modelMatrix", wireframe.getMatrix());
-		wireframeShaders.setUniform("modelColor", wireframe.getColor());
-	}
-
-	private void sendSolidShadersData(OpenGL30Solid solid) {
-		solidShaders.setUniform("modelMatrix", solid.getMatrix());
-		solidShaders.setUniform("modelColor", solid.getColor());
+	private void sendShaderData(OpenGL30Model solid) {
+		shaders.setUniform("modelMatrix", solid.getMatrix());
+		shaders.setUniform("modelColor", solid.getColor());
 	}
 
 	/**
@@ -193,22 +173,13 @@ public class OpenGL30Renderer {
 			throw new IllegalStateException("Display needs to be created first.");
 		}
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-		GL20.glUseProgram(wireframeShaders.getID());
-		sendWireframeShadersData();
-		for (OpenGL30Wireframe wireframe : wireframes) {
-			if (!wireframe.isCreated()) {
-				continue;
-			}
-			sendWireframeShadersData(wireframe);
-			wireframe.render();
-		}
-		GL20.glUseProgram(solidShaders.getID());
-		sendSolidShadersData();
-		for (OpenGL30Solid solid : solids) {
+		GL20.glUseProgram(shaders.getID());
+		sendShaderData();
+		for (OpenGL30Model solid : models) {
 			if (!solid.isCreated()) {
 				continue;
 			}
-			sendSolidShadersData(solid);
+			sendShaderData(solid);
 			solid.render();
 		}
 		GL20.glUseProgram(0);
@@ -232,17 +203,9 @@ public class OpenGL30Renderer {
 	 *
 	 * @param model The model to add
 	 */
-	public void addModel(Model model) {
-		if (model instanceof OpenGL30Solid) {
-			if (!solids.contains(model)) {
-				solids.add((OpenGL30Solid) model);
-			}
-		} else if (model instanceof OpenGL30Wireframe) {
-			if (!wireframes.contains(model)) {
-				wireframes.add((OpenGL30Wireframe) model);
-			}
-		} else {
-			throw new IllegalArgumentException("Unknown model type. Valid types: solid, wireframe");
+	public void addModel(OpenGL30Model model) {
+		if (!models.contains(model)) {
+			models.add(model);
 		}
 	}
 
@@ -251,14 +214,8 @@ public class OpenGL30Renderer {
 	 *
 	 * @param model The model to remove
 	 */
-	public void removeModel(Model model) {
-		if (model instanceof OpenGL30Solid) {
-			solids.remove(model);
-		} else if (model instanceof OpenGL30Wireframe) {
-			wireframes.remove(model);
-		} else {
-			throw new IllegalArgumentException("Unknown model type. Valid types: solid, wireframe");
-		}
+	public void removeModel(OpenGL30Model model) {
+		models.remove(model);
 	}
 
 	/**

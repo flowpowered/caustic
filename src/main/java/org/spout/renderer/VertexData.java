@@ -27,7 +27,6 @@
 package org.spout.renderer;
 
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 import java.util.Collections;
 import java.util.Set;
 
@@ -81,9 +80,11 @@ public class VertexData {
 		return indices.size();
 	}
 
-	public IntBuffer getIndicesBuffer() {
-		final IntBuffer buffer = BufferUtils.createIntBuffer(indices.size());
-		buffer.put(indices.toArray());
+	public ByteBuffer getIndicesBuffer() {
+		final ByteBuffer buffer = BufferUtils.createByteBuffer(indices.size() * 4);
+		for (int i = 0; i < indices.size(); i++) {
+			buffer.putInt(indices.get(i));
+		}
 		buffer.flip();
 		return buffer;
 	}
@@ -114,6 +115,13 @@ public class VertexData {
 		return index++;
 	}
 
+	public VertexAttribute getAttribute(int index) {
+		if (index >= this.index) {
+			throw new IllegalArgumentException("No attribute at index: " + index);
+		}
+		return attributes.get(index);
+	}
+
 	public int getAttributeIndex(String name) {
 		final int index = nameToIndex.get(name);
 		if (index == -1) {
@@ -127,11 +135,7 @@ public class VertexData {
 	}
 
 	public TByteList getByteAttributeList(int index) {
-		final Object attribute = getRawAttributeList(index);
-		if (!(attribute instanceof TByteList)) {
-			throw new IllegalArgumentException("Attribute at index '" + index + "' is not of \"byte\" type");
-		}
-		return (TByteList) attribute;
+		return getAttribute(index).getByteList();
 	}
 
 	public TShortList getShortAttributeList(String name) {
@@ -139,11 +143,7 @@ public class VertexData {
 	}
 
 	public TShortList getShortAttributeList(int index) {
-		final Object attribute = getRawAttributeList(index);
-		if (!(attribute instanceof TShortList)) {
-			throw new IllegalArgumentException("Attribute at index '" + index + "' is not of \"short\" type");
-		}
-		return (TShortList) attribute;
+		return getAttribute(index).getShortList();
 	}
 
 	public TIntList getIntAttributeList(String name) {
@@ -151,11 +151,7 @@ public class VertexData {
 	}
 
 	public TIntList getIntAttributeList(int index) {
-		final Object attribute = getRawAttributeList(index);
-		if (!(attribute instanceof TIntList)) {
-			throw new IllegalArgumentException("Attribute at index '" + index + "' is not of \"int\" type");
-		}
-		return (TIntList) attribute;
+		return getAttribute(index).getIntList();
 	}
 
 	public TFloatList getFloatAttributeList(String name) {
@@ -163,11 +159,7 @@ public class VertexData {
 	}
 
 	public TFloatList getFloatAttributeList(int index) {
-		final Object attribute = getRawAttributeList(index);
-		if (!(attribute instanceof TFloatList)) {
-			throw new IllegalArgumentException("Attribute at index '" + index + "' is not of \"float\" type");
-		}
-		return (TFloatList) attribute;
+		return getAttribute(index).getFloatList();
 	}
 
 	public TDoubleList getDoubleAttributeList(String name) {
@@ -175,15 +167,7 @@ public class VertexData {
 	}
 
 	public TDoubleList getDoubleAttributeList(int index) {
-		final Object attribute = getRawAttributeList(index);
-		if (!(attribute instanceof TDoubleList)) {
-			throw new IllegalArgumentException("Attribute at index '" + index + "' is not of \"double\" type");
-		}
-		return (TDoubleList) attribute;
-	}
-
-	private Object getRawAttributeList(int index) {
-		return getAttribute(index).getList();
+		return getAttribute(index).getDoubleList();
 	}
 
 	public boolean hasAttribute(String name) {
@@ -246,66 +230,17 @@ public class VertexData {
 	}
 
 	public ByteBuffer getAttributeBuffer(int index) {
-		final Object attribute = getRawAttributeList(index);
-		final ByteBuffer buffer;
-		if (attribute instanceof TByteList) {
-			final TByteList list = (TByteList) attribute;
-			buffer = BufferUtils.createByteBuffer(list.size());
-			buffer.put(list.toArray());
-		} else if (attribute instanceof TShortList) {
-			final TShortList list = (TShortList) attribute;
-			buffer = BufferUtils.createByteBuffer(list.size() * 2);
-			for (int i = 0; i < list.size(); i++) {
-				buffer.putShort(list.get(i));
-			}
-		} else if (attribute instanceof TIntList) {
-			final TIntList list = (TIntList) attribute;
-			buffer = BufferUtils.createByteBuffer(list.size() * 4);
-			for (int i = 0; i < list.size(); i++) {
-				buffer.putInt(list.get(i));
-			}
-		} else if (attribute instanceof TFloatList) {
-			final TFloatList list = (TFloatList) attribute;
-			buffer = BufferUtils.createByteBuffer(list.size() * 4);
-			for (int i = 0; i < list.size(); i++) {
-				buffer.putFloat(list.get(i));
-			}
-		} else if (attribute instanceof TDoubleList) {
-			final TDoubleList list = (TDoubleList) attribute;
-			buffer = BufferUtils.createByteBuffer(list.size() * 8);
-			for (int i = 0; i < list.size(); i++) {
-				buffer.putDouble(list.get(i));
-			}
-		} else {
-			throw new IllegalStateException("Unknown attribute data type");
-		}
-		return (ByteBuffer) buffer.flip();
+		return getAttribute(index).getBuffer();
 	}
 
 	public void clear() {
-		for (Object attribute : attributes.valueCollection()) {
-			if (attribute instanceof TByteList) {
-				((TByteList) attribute).clear();
-			} else if (attribute instanceof TShortList) {
-				((TShortList) attribute).clear();
-			} else if (attribute instanceof TIntList) {
-				((TIntList) attribute).clear();
-			} else if (attribute instanceof TFloatList) {
-				((TFloatList) attribute).clear();
-			} else if (attribute instanceof TDoubleList) {
-				((TDoubleList) attribute).clear();
-			}
+		indices.clear();
+		for (VertexAttribute attribute : attributes.valueCollection()) {
+			attribute.clear();
 		}
 	}
 
-	private VertexAttribute getAttribute(int index) {
-		if (index >= this.index) {
-			throw new IllegalArgumentException("No attribute at index: " + index);
-		}
-		return attributes.get(index);
-	}
-
-	private static class VertexAttribute {
+	public static class VertexAttribute {
 		private final String name;
 		private final Object list;
 		private final DataType type;
@@ -318,20 +253,101 @@ public class VertexData {
 			this.size = size;
 		}
 
-		private String getName() {
+		public String getName() {
 			return name;
 		}
 
-		private Object getList() {
-			return list;
+		public TByteList getByteList() {
+			if (!(list instanceof TByteList)) {
+				throw new IllegalArgumentException("Attribute at is not of \"byte\" type");
+			}
+			return (TByteList) list;
 		}
 
-		private DataType getType() {
+		public TShortList getShortList() {
+			if (!(list instanceof TShortList)) {
+				throw new IllegalArgumentException("Attribute is not of \"short\" type");
+			}
+			return (TShortList) list;
+		}
+
+		public TIntList getIntList() {
+			if (!(list instanceof TIntList)) {
+				throw new IllegalArgumentException("Attribute is not of \"int\" type");
+			}
+			return (TIntList) list;
+		}
+
+		public TFloatList getFloatList() {
+			if (!(list instanceof TFloatList)) {
+				throw new IllegalArgumentException("Attribute is not of \"float\" type");
+			}
+			return (TFloatList) list;
+		}
+
+		public TDoubleList getDoubleList() {
+			if (!(list instanceof TDoubleList)) {
+				throw new IllegalArgumentException("Attribute is not of \"double\" type");
+			}
+			return (TDoubleList) list;
+		}
+
+		public DataType getType() {
 			return type;
 		}
 
-		private int getSize() {
+		public int getSize() {
 			return size;
+		}
+
+		public ByteBuffer getBuffer() {
+			final ByteBuffer buffer;
+			if (list instanceof TByteList) {
+				final TByteList l = (TByteList) list;
+				buffer = BufferUtils.createByteBuffer(l.size());
+				buffer.put(l.toArray());
+			} else if (list instanceof TShortList) {
+				final TShortList l = (TShortList) list;
+				buffer = BufferUtils.createByteBuffer(l.size() * 2);
+				for (int i = 0; i < l.size(); i++) {
+					buffer.putShort(l.get(i));
+				}
+			} else if (list instanceof TIntList) {
+				final TIntList l = (TIntList) list;
+				buffer = BufferUtils.createByteBuffer(l.size() * 4);
+				for (int i = 0; i < l.size(); i++) {
+					buffer.putInt(l.get(i));
+				}
+			} else if (list instanceof TFloatList) {
+				final TFloatList l = (TFloatList) list;
+				buffer = BufferUtils.createByteBuffer(l.size() * 4);
+				for (int i = 0; i < l.size(); i++) {
+					buffer.putFloat(l.get(i));
+				}
+			} else if (list instanceof TDoubleList) {
+				final TDoubleList l = (TDoubleList) list;
+				buffer = BufferUtils.createByteBuffer(l.size() * 8);
+				for (int i = 0; i < l.size(); i++) {
+					buffer.putDouble(l.get(i));
+				}
+			} else {
+				throw new IllegalStateException("Unknown attribute data type");
+			}
+			return (ByteBuffer) buffer.flip();
+		}
+
+		public void clear() {
+			if (list instanceof TByteList) {
+				((TByteList) list).clear();
+			} else if (list instanceof TShortList) {
+				((TShortList) list).clear();
+			} else if (list instanceof TIntList) {
+				((TIntList) list).clear();
+			} else if (list instanceof TFloatList) {
+				((TFloatList) list).clear();
+			} else if (list instanceof TDoubleList) {
+				((TDoubleList) list).clear();
+			}
 		}
 
 		private static VertexAttribute createByteAttribute(String name, int size) {
