@@ -49,6 +49,28 @@ public abstract class Uniform {
 		return name;
 	}
 
+	public static class BooleanUniform extends Uniform {
+		private boolean value;
+
+		public BooleanUniform(String name, boolean value) {
+			super(name);
+			this.value = value;
+		}
+
+		@Override
+		public void upload(OpenGL20Program program) {
+			program.setUniform(name, value);
+		}
+
+		public boolean get() {
+			return value;
+		}
+
+		public void set(boolean value) {
+			this.value = value;
+		}
+	}
+
 	public static class IntUniform extends Uniform {
 		private int value;
 

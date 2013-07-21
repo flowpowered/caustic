@@ -56,13 +56,11 @@ public class OpenGL20Shader extends Shader {
 			throw new IllegalStateException("Shader type has not been set");
 		}
 		final StringBuilder source = new StringBuilder();
-		try {
-			final BufferedReader reader = new BufferedReader(new InputStreamReader(shaderSource));
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(shaderSource))) {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				source.append(line).append("\n");
 			}
-			reader.close();
 			shaderSource.close();
 		} catch (IOException e) {
 			System.out.println("IO exception: " + e.getMessage());
@@ -86,5 +84,9 @@ public class OpenGL20Shader extends Shader {
 		GL20.glDeleteShader(id);
 		super.destroy();
 		RenderUtil.checkForOpenGLError();
+	}
+
+	protected void attach(int programId) {
+		GL20.glAttachShader(programId, id);
 	}
 }

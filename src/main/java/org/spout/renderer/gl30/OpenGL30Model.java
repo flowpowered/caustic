@@ -26,6 +26,7 @@
  */
 package org.spout.renderer.gl30;
 
+import org.spout.renderer.Material;
 import org.spout.renderer.Model;
 import org.spout.renderer.gl20.OpenGL20Material;
 
@@ -45,6 +46,9 @@ public class OpenGL30Model extends Model {
 		if (created) {
 			throw new IllegalStateException("Model has already been created");
 		}
+		if (material == null) {
+			throw new IllegalStateException("Material has not been set");
+		}
 		vertexArray.setVertexData(vertices);
 		vertexArray.create();
 		super.create();
@@ -61,20 +65,22 @@ public class OpenGL30Model extends Model {
 
 	@Override
 	protected void render() {
-		if (material == null) {
-			throw new IllegalStateException("Material has not been set");
-		}
 		if (!material.isCreated()) {
 			throw new IllegalStateException("Material has not been created yet");
 		}
+		uniforms.getMatrix4("modelMatrix").set(getMatrix());
+		material.getProgram().upload(uniforms);
 		vertexArray.render(mode);
 	}
 
+	@Override
 	public OpenGL20Material getMaterial() {
 		return material;
 	}
 
-	public void setMaterial(OpenGL20Material material) {
-		this.material = material;
+	@Override
+	public void setMaterial(Material material) {
+		// TODO: OpenGL30Material
+		this.material = (OpenGL20Material) material;
 	}
 }

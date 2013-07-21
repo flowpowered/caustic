@@ -24,7 +24,7 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.gl30;
+package org.spout.renderer.gl20;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,26 +37,25 @@ import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL32;
 import org.lwjgl.opengl.PixelFormat;
 
 import org.spout.renderer.Model;
 import org.spout.renderer.Renderer;
 import org.spout.renderer.data.Uniform.Matrix4Uniform;
-import org.spout.renderer.gl20.OpenGL20Material;
 import org.spout.renderer.util.RenderUtil;
 
 /**
- * This is a renderer using OpenGL 3.0. To create a new render window, start by creating a camera
+ * This is a renderer using OpenGL 2.0. To create a new render window, start by creating a camera
  * and setting it using {@link #setCamera(org.spout.renderer.Camera)}, then use {@link #create()} to
- * create the OpenGL context. To add and remove models, use {@link #addModel(Model)} and {@link
- * #removeModel(Model)}. The camera position and rotation can be modified by accessing it with
- * {@link #getCamera()}. When done, use {@link #destroy()} to destroy the render window.
+ * create the OpenGL context. To add and remove models, use {@link #addModel(org.spout.renderer.Model)}
+ * and {@link #removeModel(org.spout.renderer.Model)}. The camera position and rotation can be
+ * modified by accessing it with {@link #getCamera()}. When done, use {@link #destroy()} to destroy
+ * the render window.
  */
-public class OpenGL30Renderer extends Renderer {
+public class OpenGL20Renderer extends Renderer {
 	// Models
-	private final Set<OpenGL30Model> models = new HashSet<>();
-	private final Map<OpenGL20Material, Set<OpenGL30Model>> modelsForMaterial = new HashMap<>();
+	private final Set<OpenGL20Model> models = new HashSet<>();
+	private final Map<OpenGL20Material, Set<OpenGL20Model>> modelsForMaterial = new HashMap<>();
 
 	@Override
 	public void create() {
@@ -67,7 +66,7 @@ public class OpenGL30Renderer extends Renderer {
 			throw new IllegalStateException("Camera has not been set");
 		}
 		final PixelFormat pixelFormat = new PixelFormat();
-		final ContextAttribs contextAttributes = new ContextAttribs(3, 2).withProfileCore(true);
+		final ContextAttribs contextAttributes = new ContextAttribs(2, 1);
 		try {
 			Display.setDisplayMode(new DisplayMode(windowWidth, windowHeight));
 			Display.create(pixelFormat, contextAttributes);
@@ -79,7 +78,6 @@ public class OpenGL30Renderer extends Renderer {
 		GL11.glClearColor(backgroundColor.getRed() / 255f, backgroundColor.getGreen() / 255f,
 				backgroundColor.getBlue() / 255f, backgroundColor.getAlpha() / 255f);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
-		GL11.glEnable(GL32.GL_DEPTH_CLAMP);
 		GL11.glDepthMask(true);
 		RenderUtil.checkForOpenGLError();
 		uniforms.add(new Matrix4Uniform("projectionMatrix", camera.getProjectionMatrix()));
@@ -91,7 +89,7 @@ public class OpenGL30Renderer extends Renderer {
 	public void destroy() {
 		checkCreated();
 		// Destroy models
-		for (OpenGL30Model model : models) {
+		for (OpenGL20Model model : models) {
 			model.destroy();
 		}
 		// Destroy materials
@@ -105,8 +103,8 @@ public class OpenGL30Renderer extends Renderer {
 		// Destroy display
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL11.glDepthMask(false);
-		RenderUtil.checkForOpenGLError();
 		// Display goes after else there's no context in which to check for an error
+		RenderUtil.checkForOpenGLError();
 		Display.destroy();
 		camera = null;
 		super.destroy();
@@ -121,18 +119,17 @@ public class OpenGL30Renderer extends Renderer {
 		uniforms.getMatrix4("cameraMatrix").set(camera.getMatrix());
 		uniforms.getMatrix4("projectionMatrix").set(camera.getProjectionMatrix());
 		// Render all models, by material
-		for (Entry<OpenGL20Material, Set<OpenGL30Model>> entry : modelsForMaterial.entrySet()) {
-			// Get the material and the model list
+		for (Entry<OpenGL20Material, Set<OpenGL20Model>> entry : modelsForMaterial.entrySet()) {
 			final OpenGL20Material material = entry.getKey();
-			final Set<OpenGL30Model> models = entry.getValue();
-			// Bind the material (binds the program)
+			final Set<OpenGL20Model> models = entry.getValue();
+			// Bind the material
 			material.bind();
 			// Upload the renderer uniforms
 			material.getProgram().upload(uniforms);
 			// Upload the material uniforms
 			material.uploadUniforms();
-			// Iterate the model list and render each one, skipping uncreated models
-			for (OpenGL30Model model : models) {
+			// Iterate the model list and render each one
+			for (OpenGL20Model model : models) {
 				if (model.isCreated()) {
 					model.render();
 				}
@@ -150,38 +147,38 @@ public class OpenGL30Renderer extends Renderer {
 	@Override
 	public void addModel(Model model) {
 		checkModelVersion(model);
-		final OpenGL30Model gl30Model = (OpenGL30Model) model;
-		models.add(gl30Model);
-		final OpenGL20Material material = gl30Model.getMaterial();
-		final Set<OpenGL30Model> modelSet = modelsForMaterial.get(material);
+		final OpenGL20Model gl20Model = (OpenGL20Model) model;
+		models.add(gl20Model);
+		final OpenGL20Material material = gl20Model.getMaterial();
+		final Set<OpenGL20Model> modelSet = modelsForMaterial.get(material);
 		if (modelSet == null) {
-			final Set<OpenGL30Model> set = new HashSet<>();
-			set.add(gl30Model);
+			final Set<OpenGL20Model> set = new HashSet<>();
+			set.add(gl20Model);
 			modelsForMaterial.put(material, set);
 			return;
 		}
-		modelSet.add(gl30Model);
+		modelSet.add(gl20Model);
 	}
 
 	@Override
 	public void removeModel(Model model) {
 		checkModelVersion(model);
-		final OpenGL30Model gl30Model = (OpenGL30Model) model;
-		models.remove(gl30Model);
-		final OpenGL20Material material = gl30Model.getMaterial();
-		final Set<OpenGL30Model> modelSet = modelsForMaterial.get(material);
+		final OpenGL20Model gl20Model = (OpenGL20Model) model;
+		models.remove(gl20Model);
+		final OpenGL20Material material = gl20Model.getMaterial();
+		final Set<OpenGL20Model> modelSet = modelsForMaterial.get(material);
 		if (modelSet == null) {
 			return;
 		}
-		modelSet.remove(gl30Model);
+		modelSet.remove(gl20Model);
 		if (modelSet.isEmpty()) {
 			modelsForMaterial.remove(material);
 		}
 	}
 
 	private void checkModelVersion(Model model) {
-		if (!(model instanceof OpenGL30Model)) {
-			throw new IllegalArgumentException("Version mismatch: expected OpenGL30Model, got "
+		if (!(model instanceof OpenGL20Model)) {
+			throw new IllegalArgumentException("Version mismatch: expected OpenGL20Model, got "
 					+ model.getClass().getSimpleName());
 		}
 	}

@@ -27,8 +27,10 @@
 package org.spout.renderer.data;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
+import org.spout.renderer.data.Uniform.BooleanUniform;
 import org.spout.renderer.data.Uniform.ColorUniform;
 import org.spout.renderer.data.Uniform.FloatUniform;
 import org.spout.renderer.data.Uniform.IntUniform;
@@ -38,9 +40,8 @@ import org.spout.renderer.data.Uniform.Matrix4Uniform;
 import org.spout.renderer.data.Uniform.Vector2Uniform;
 import org.spout.renderer.data.Uniform.Vector3Uniform;
 import org.spout.renderer.data.Uniform.Vector4Uniform;
-import org.spout.renderer.gl20.OpenGL20Program;
 
-public class UniformHolder {
+public class UniformHolder implements Iterable<Uniform> {
 	private final Map<String, Uniform> uniforms = new HashMap<>();
 
 	public void add(Uniform uniform) {
@@ -53,6 +54,14 @@ public class UniformHolder {
 
 	public Uniform get(String name) {
 		return uniforms.get(name);
+	}
+
+	public BooleanUniform getBoolean(String name) {
+		final Uniform uniform = uniforms.get(name);
+		if (!(uniform instanceof BooleanUniform)) {
+			return null;
+		}
+		return (BooleanUniform) uniform;
 	}
 
 	public IntUniform getInt(String name) {
@@ -139,12 +148,8 @@ public class UniformHolder {
 		uniforms.clear();
 	}
 
-	public void upload(OpenGL20Program program) {
-		if (!program.isCreated()) {
-			throw new IllegalArgumentException("Program hasn't been created yet");
-		}
-		for (Uniform uniform : uniforms.values()) {
-			uniform.upload(program);
-		}
+	@Override
+	public Iterator<Uniform> iterator() {
+		return uniforms.values().iterator();
 	}
 }

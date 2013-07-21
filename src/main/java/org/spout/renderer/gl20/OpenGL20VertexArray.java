@@ -24,12 +24,11 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.gl30;
+package org.spout.renderer.gl20;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
 
 import org.spout.renderer.Model.DrawMode;
 import org.spout.renderer.VertexArray;
@@ -37,26 +36,26 @@ import org.spout.renderer.data.VertexData.VertexAttribute;
 import org.spout.renderer.util.RenderUtil;
 
 /**
- * Represents an OpenGL 3.0 vertex array. After constructing it, set the vertex data source with
- * {@link #setVertexData(org.spout.renderer.data.VertexData)}. It can then be created in the OpenGL
- * context with {@link #create()}. To dispose of it, use {@link #destroy()}.
+ * Represents an OpenGL 2.0 vertex array. Since core OpenGL doesn't actually support vertex array
+ * objects until 3.0, this class doesn't use the that, but it does use the vertex array methods
+ * available to define the attributes, just not individually for an array. Thus, they have to be
+ * redefined on each render call. Basically, it's like if there was only one vao available. After
+ * constructing it, set the vertex data source with {@link #setVertexData(org.spout.renderer.data.VertexData)}.
+ * It can then be created in the OpenGL context with {@link #create()}. To dispose of it, use {@link
+ * #destroy()}.
  */
-public class OpenGL30VertexArray extends VertexArray {
-	// Buffer IDs
+public class OpenGL20VertexArray extends VertexArray {
 	private int indicesBufferID = 0;
 	private int[] attributeBufferIDs;
 
 	@Override
 	public void create() {
 		if (created) {
-			throw new IllegalStateException("Vertex array has already been created");
+			throw new IllegalStateException("VertexArray has already been created");
 		}
 		if (vertexData == null) {
 			throw new IllegalStateException("Vertex data has not been set");
 		}
-		// Generate and bind the vao
-		id = GL30.glGenVertexArrays();
-		GL30.glBindVertexArray(id);
 		// Generate, bind and fill the indices vbo then unbind
 		indicesBufferID = GL15.glGenBuffers();
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesBufferID);
@@ -67,19 +66,15 @@ public class OpenGL30VertexArray extends VertexArray {
 		// Create the map for attribute index to buffer ID
 		attributeBufferIDs = new int[vertexData.getAttributeCount()];
 		// For each attribute, generate, bind and fill the vbo,
-		// then setup the attribute in the vao and save the buffer ID for the index
+		// no vao setup here, this is done during the render call
 		for (int i = 0; i < vertexData.getAttributeCount(); i++) {
-			final VertexAttribute attribute = vertexData.getAttribute(i);
 			final int bufferID = GL15.glGenBuffers();
 			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, bufferID);
-			GL15.glBufferData(GL15.GL_ARRAY_BUFFER, attribute.getBuffer(), GL15.GL_STATIC_DRAW);
-			// TODO: proper support for integers (normalized or not) and doubles
-			GL20.glVertexAttribPointer(i, attribute.getSize(), attribute.getType().getGLConstant(), false, 0, 0);
+			GL15.glBufferData(GL15.GL_ARRAY_BUFFER, vertexData.getAttribute(i).getBuffer(), GL15.GL_STATIC_DRAW);
 			attributeBufferIDs[i] = bufferID;
 		}
-		// Unbind the vbo and vao
+		// Unbind the last vbo
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-		GL30.glBindVertexArray(0);
 		// Update state
 		super.create();
 		// Check for errors
@@ -91,19 +86,13 @@ public class OpenGL30VertexArray extends VertexArray {
 		checkCreated();
 		// Unbind any bound buffer
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-		// Unbind and delete the indices buffer
+		// Unbind and delete indices buffer
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
 		GL15.glDeleteBuffers(indicesBufferID);
-		// Bind the vao for deletion
-		GL30.glBindVertexArray(id);
-		// Disable each attribute and delete its buffer
-		for (int i = 0; i < attributeBufferIDs.length; i++) {
-			GL20.glDisableVertexAttribArray(i);
+		// Delete the attribute buffers
+		for (int i = 0; i < vertexData.getAttributeCount(); i++) {
 			GL15.glDeleteBuffers(attributeBufferIDs[i]);
 		}
-		// Unbind the vao and delete it
-		GL30.glBindVertexArray(0);
-		GL30.glDeleteVertexArrays(id);
 		// Reset the data and state
 		indicesBufferID = 0;
 		attributeBufferIDs = null;
@@ -112,29 +101,31 @@ public class OpenGL30VertexArray extends VertexArray {
 		RenderUtil.checkForOpenGLError();
 	}
 
-	/**
-	 * Draws the vertex data to the screen using the desired mode.
-	 *
-	 * @param mode The drawing mode
-	 */
 	public void render(DrawMode mode) {
 		checkCreated();
-		// Bind the vao and enable all attributes
-		GL30.glBindVertexArray(id);
-		for (int i = 0; i < attributeBufferIDs.length; i++) {
+		// Bind and enable the vertex attributes
+		for (int i = 0; i < vertexData.getAttributeCount(); i++) {
+			// Bind the buffer
+			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, attributeBufferIDs[i]);
+			// Define the attribute
+			final VertexAttribute attribute = vertexData.getAttribute(i);
+			// TODO: proper support for integers (normalized or not)
+			GL20.glVertexAttribPointer(i, attribute.getSize(), attribute.getType().getGLConstant(), false, 0, 0);
+			// Enable it
 			GL20.glEnableVertexAttribArray(i);
 		}
+		// Unbind the last buffer
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 		// Bind the indices buffer
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesBufferID);
 		// Draw all indices with the provided mode
 		GL11.glDrawElements(mode.getGLConstant(), renderingIndicesCount, GL11.GL_UNSIGNED_INT, 0);
 		// Unbind the indices buffer
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
-		// Disable all attributes and unbind the vao
-		for (int i = 0; i < attributeBufferIDs.length; i++) {
+		// Disable all attributes
+		for (int i = 0; i < vertexData.getAttributeCount(); i++) {
 			GL20.glDisableVertexAttribArray(i);
 		}
-		GL30.glBindVertexArray(0);
 		// Check for errors
 		RenderUtil.checkForOpenGLError();
 	}

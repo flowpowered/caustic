@@ -38,6 +38,8 @@ public abstract class Material extends Creatable {
 
 	public abstract void uploadUniforms();
 
+	public abstract Program getProgram();
+
 	public UniformHolder getUniforms() {
 		return uniforms;
 	}

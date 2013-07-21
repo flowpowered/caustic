@@ -48,12 +48,6 @@ public class OpenGL20Material extends Material {
 		super.destroy();
 	}
 
-	private void checkCreated() {
-		if (!created) {
-			throw new IllegalStateException("Material has not been created yet");
-		}
-	}
-
 	@Override
 	public void bind() {
 		checkCreated();
@@ -66,12 +60,13 @@ public class OpenGL20Material extends Material {
 		program.unbind();
 	}
 
-	public OpenGL20Program getProgram() {
-		return program;
+	@Override
+	public void uploadUniforms() {
+		program.upload(uniforms);
 	}
 
 	@Override
-	public void uploadUniforms() {
-		uniforms.upload(program);
+	public OpenGL20Program getProgram() {
+		return program;
 	}
 }

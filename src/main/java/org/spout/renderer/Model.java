@@ -34,7 +34,6 @@ import org.spout.math.vector.Vector3;
 import org.spout.renderer.data.Uniform.Matrix4Uniform;
 import org.spout.renderer.data.UniformHolder;
 import org.spout.renderer.data.VertexData;
-import org.spout.renderer.gl20.OpenGL20Program;
 
 /**
  * Represents a model for OpenGL. Each model has it's own position, rotation and color. The {@link
@@ -45,8 +44,8 @@ public abstract class Model extends Creatable {
 	protected Vector3 position = new Vector3(0, 0, 0);
 	protected Vector3 scale = new Vector3(1, 1, 1);
 	protected Quaternion rotation = new Quaternion();
-	protected Matrix4 matrix = new Matrix4();
-	protected boolean updateMatrix = true;
+	private Matrix4 matrix = new Matrix4();
+	private boolean updateMatrix = true;
 	// Model uniforms
 	protected final UniformHolder uniforms = new UniformHolder();
 	// Vertex data
@@ -71,6 +70,10 @@ public abstract class Model extends Creatable {
 	 * Draws the model to the screen.
 	 */
 	protected abstract void render();
+
+	public abstract Material getMaterial();
+
+	public abstract void setMaterial(Material material);
 
 	/**
 	 * Returns the transformation matrix that represent the model's current scale, rotation and
@@ -145,11 +148,6 @@ public abstract class Model extends Creatable {
 
 	public UniformHolder getUniforms() {
 		return uniforms;
-	}
-
-	public void uploadUniforms(OpenGL20Program program) {
-		uniforms.getMatrix4("modelMatrix").set(getMatrix());
-		uniforms.upload(program);
 	}
 
 	/**
