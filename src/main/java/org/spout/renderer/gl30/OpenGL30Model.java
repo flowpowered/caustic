@@ -27,6 +27,7 @@
 package org.spout.renderer.gl30;
 
 import org.spout.renderer.Model;
+import org.spout.renderer.gl20.OpenGL20Material;
 
 /**
  * Represents a model for OpenGL 3.2. After constructing a new model, use {@link #getVertexData()}
@@ -37,11 +38,12 @@ import org.spout.renderer.Model;
  */
 public class OpenGL30Model extends Model {
 	private final OpenGL30VertexArray vertexArray = new OpenGL30VertexArray();
+	private OpenGL20Material material;
 
 	@Override
 	public void create() {
 		if (created) {
-			throw new IllegalStateException("Solid has already been created.");
+			throw new IllegalStateException("Model has already been created");
 		}
 		vertexArray.setVertexData(vertices);
 		vertexArray.create();
@@ -51,7 +53,7 @@ public class OpenGL30Model extends Model {
 	@Override
 	public void destroy() {
 		if (!created) {
-			return;
+			throw new IllegalStateException("Model has not been created yet");
 		}
 		vertexArray.destroy();
 		super.destroy();
@@ -59,6 +61,20 @@ public class OpenGL30Model extends Model {
 
 	@Override
 	protected void render() {
+		if (material == null) {
+			throw new IllegalStateException("Material has not been set");
+		}
+		if (!material.isCreated()) {
+			throw new IllegalStateException("Material has not been created yet");
+		}
 		vertexArray.render(mode);
+	}
+
+	public OpenGL20Material getMaterial() {
+		return material;
+	}
+
+	public void setMaterial(OpenGL20Material material) {
+		this.material = material;
 	}
 }

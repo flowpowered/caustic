@@ -39,8 +39,12 @@ import gnu.trove.map.hash.TObjectIntHashMap;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL20;
 
+import org.spout.math.matrix.Matrix2;
+import org.spout.math.matrix.Matrix3;
 import org.spout.math.matrix.Matrix4;
+import org.spout.math.vector.Vector2;
 import org.spout.math.vector.Vector3;
+import org.spout.math.vector.Vector4;
 import org.spout.renderer.Program;
 import org.spout.renderer.Shader.ShaderType;
 import org.spout.renderer.util.RenderUtil;
@@ -52,30 +56,19 @@ import org.spout.renderer.util.RenderUtil;
  * The program then needs to be created in the OpenGL context with {@link #create()}.
  */
 public class OpenGL20Program extends Program {
-	// Shader resources
-	private InputStream vertexShaderSource;
-	private InputStream fragmentShaderSource;
 	// Shaders
 	private final OpenGL20Shader vertexShader = new OpenGL20Shader();
 	private final OpenGL20Shader fragmentShader = new OpenGL20Shader();
-	// Map of the uniform name and IDs
+	// Map of the uniform name to the ID
 	private final TObjectIntMap<String> uniforms = new TObjectIntHashMap<>();
 
 	@Override
 	public void create() {
 		if (created) {
-			throw new IllegalStateException("Program has already been created.");
+			throw new IllegalStateException("Program has already been created");
 		}
-		if (vertexShaderSource == null) {
-			throw new IllegalStateException("Vertex shader source cannot be null");
-		}
-		if (fragmentShaderSource == null) {
-			throw new IllegalStateException("Fragment shader source cannot be null");
-		}
-		vertexShader.setSource(vertexShaderSource);
 		vertexShader.setType(ShaderType.VERTEX);
 		vertexShader.create();
-		fragmentShader.setSource(fragmentShaderSource);
 		fragmentShader.setType(ShaderType.FRAGMENT);
 		fragmentShader.create();
 		id = GL20.glCreateProgram();
@@ -103,19 +96,33 @@ public class OpenGL20Program extends Program {
 
 	@Override
 	public void destroy() {
-		if (!created) {
-			throw new IllegalStateException("Program has not been created yet.");
-		}
+		checkCreated();
 		GL20.glDetachShader(id, vertexShader.getID());
 		GL20.glDetachShader(id, fragmentShader.getID());
 		vertexShader.destroy();
 		fragmentShader.destroy();
 		GL20.glDeleteProgram(id);
-		vertexShaderSource = null;
-		fragmentShaderSource = null;
 		uniforms.clear();
 		super.destroy();
 		RenderUtil.checkForOpenGLError();
+	}
+
+	private void checkCreated() {
+		if (!created) {
+			throw new IllegalStateException("Program has not been created yet");
+		}
+	}
+
+	@Override
+	public void bind() {
+		checkCreated();
+		GL20.glUseProgram(id);
+	}
+
+	@Override
+	public void unbind() {
+		checkCreated();
+		GL20.glUseProgram(0);
 	}
 
 	/**
@@ -124,7 +131,7 @@ public class OpenGL20Program extends Program {
 	 * @param source The input stream to use
 	 */
 	public void setVertexShaderSource(InputStream source) {
-		vertexShaderSource = source;
+		vertexShader.setSource(source);
 	}
 
 	/**
@@ -133,7 +140,7 @@ public class OpenGL20Program extends Program {
 	 * @param source The input stream to use
 	 */
 	public void setFragmentShaderSource(InputStream source) {
-		fragmentShaderSource = source;
+		fragmentShader.setSource(source);
 	}
 
 	/**
@@ -143,9 +150,8 @@ public class OpenGL20Program extends Program {
 	 * @param b The boolean value
 	 */
 	public void setUniform(String name, boolean b) {
-		if (!uniforms.containsKey(name)) {
-			throw new IllegalArgumentException("The uniform name could not be found in the program");
-		}
+		checkCreated();
+		checkContainsUniform(name);
 		GL20.glUniform1i(uniforms.get(name), b ? 1 : 0);
 		RenderUtil.checkForOpenGLError();
 	}
@@ -157,9 +163,8 @@ public class OpenGL20Program extends Program {
 	 * @param i The integer value
 	 */
 	public void setUniform(String name, int i) {
-		if (!uniforms.containsKey(name)) {
-			throw new IllegalArgumentException("The uniform name could not be found in the program");
-		}
+		checkCreated();
+		checkContainsUniform(name);
 		GL20.glUniform1i(uniforms.get(name), i);
 		RenderUtil.checkForOpenGLError();
 	}
@@ -171,9 +176,8 @@ public class OpenGL20Program extends Program {
 	 * @param f The float value
 	 */
 	public void setUniform(String name, float f) {
-		if (!uniforms.containsKey(name)) {
-			throw new IllegalArgumentException("The uniform name could not be found in the program");
-		}
+		checkCreated();
+		checkContainsUniform(name);
 		GL20.glUniform1f(uniforms.get(name), f);
 		RenderUtil.checkForOpenGLError();
 	}
@@ -184,11 +188,68 @@ public class OpenGL20Program extends Program {
 	 * @param name The name of the uniform to set
 	 * @param v The vector value
 	 */
+	public void setUniform(String name, Vector2 v) {
+		checkCreated();
+		checkContainsUniform(name);
+		GL20.glUniform2f(uniforms.get(name), v.getX(), v.getY());
+		RenderUtil.checkForOpenGLError();
+	}
+
+	/**
+	 * Sets a uniform {@link org.spout.math.vector.Vector3} in the shader to the desired value.
+	 *
+	 * @param name The name of the uniform to set
+	 * @param v The vector value
+	 */
 	public void setUniform(String name, Vector3 v) {
-		if (!uniforms.containsKey(name)) {
-			throw new IllegalArgumentException("The uniform name could not be found in the program");
-		}
+		checkCreated();
+		checkContainsUniform(name);
 		GL20.glUniform3f(uniforms.get(name), v.getX(), v.getY(), v.getZ());
+		RenderUtil.checkForOpenGLError();
+	}
+
+	/**
+	 * Sets a uniform {@link org.spout.math.vector.Vector3} in the shader to the desired value.
+	 *
+	 * @param name The name of the uniform to set
+	 * @param v The vector value
+	 */
+	public void setUniform(String name, Vector4 v) {
+		checkCreated();
+		checkContainsUniform(name);
+		GL20.glUniform4f(uniforms.get(name), v.getX(), v.getY(), v.getZ(), v.getW());
+		RenderUtil.checkForOpenGLError();
+	}
+
+	/**
+	 * Sets a uniform {@link org.spout.math.matrix.Matrix4} in the shader to the desired value.
+	 *
+	 * @param name The name of the uniform to set
+	 * @param m The matrix value
+	 */
+	public void setUniform(String name, Matrix2 m) {
+		checkCreated();
+		checkContainsUniform(name);
+		final FloatBuffer buffer = BufferUtils.createFloatBuffer(4);
+		buffer.put(m.toArray(true));
+		buffer.flip();
+		GL20.glUniformMatrix2(uniforms.get(name), false, buffer);
+		RenderUtil.checkForOpenGLError();
+	}
+
+	/**
+	 * Sets a uniform {@link org.spout.math.matrix.Matrix4} in the shader to the desired value.
+	 *
+	 * @param name The name of the uniform to set
+	 * @param m The matrix value
+	 */
+	public void setUniform(String name, Matrix3 m) {
+		checkCreated();
+		checkContainsUniform(name);
+		final FloatBuffer buffer = BufferUtils.createFloatBuffer(9);
+		buffer.put(m.toArray(true));
+		buffer.flip();
+		GL20.glUniformMatrix3(uniforms.get(name), false, buffer);
 		RenderUtil.checkForOpenGLError();
 	}
 
@@ -199,9 +260,8 @@ public class OpenGL20Program extends Program {
 	 * @param m The matrix value
 	 */
 	public void setUniform(String name, Matrix4 m) {
-		if (!uniforms.containsKey(name)) {
-			throw new IllegalArgumentException("The uniform name could not be found in the program");
-		}
+		checkCreated();
+		checkContainsUniform(name);
 		final FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
 		buffer.put(m.toArray(true));
 		buffer.flip();
@@ -216,13 +276,18 @@ public class OpenGL20Program extends Program {
 	 * @param c The color value
 	 */
 	public void setUniform(String name, Color c) {
-		if (!uniforms.containsKey(name)) {
-			throw new IllegalArgumentException("The uniform name could not be found in the program");
-		}
+		checkCreated();
+		checkContainsUniform(name);
 		GL20.glUniform4f(uniforms.get(name),
 				c.getRed() / 255f, c.getGreen() / 255f,
 				c.getBlue() / 255f, c.getAlpha() / 255f);
 		RenderUtil.checkForOpenGLError();
+	}
+
+	private void checkContainsUniform(String name) {
+		if (!uniforms.containsKey(name)) {
+			throw new IllegalArgumentException("The uniform \"" + name + "\" could not be found in the program");
+		}
 	}
 
 	/**

@@ -47,13 +47,13 @@ public class OpenGL20Shader extends Shader {
 	@Override
 	public void create() {
 		if (created) {
-			throw new IllegalStateException("Shader has already been created.");
+			throw new IllegalStateException("Shader has already been created");
 		}
 		if (shaderSource == null) {
-			throw new IllegalStateException("Shader source cannot be null");
+			throw new IllegalStateException("Shader source has not been set");
 		}
 		if (shaderType == null) {
-			throw new IllegalStateException("Shader type cannot be null");
+			throw new IllegalStateException("Shader type has not been set");
 		}
 		final StringBuilder source = new StringBuilder();
 		try {
@@ -81,7 +81,7 @@ public class OpenGL20Shader extends Shader {
 	@Override
 	public void destroy() {
 		if (!created) {
-			throw new IllegalStateException("Shader has not been created yet.");
+			throw new IllegalStateException("Shader has not been created yet");
 		}
 		GL20.glDeleteShader(id);
 		super.destroy();

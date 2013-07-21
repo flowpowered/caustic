@@ -27,20 +27,23 @@
 package org.spout.renderer.gl30;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL32;
 import org.lwjgl.opengl.PixelFormat;
 
-import org.spout.math.vector.Vector3;
 import org.spout.renderer.Renderer;
+import org.spout.renderer.data.Uniform.Matrix4Uniform;
+import org.spout.renderer.gl20.OpenGL20Material;
 import org.spout.renderer.gl20.OpenGL20Program;
 import org.spout.renderer.util.RenderUtil;
 
@@ -53,44 +56,20 @@ import org.spout.renderer.util.RenderUtil;
  * window.
  */
 public class OpenGL30Renderer extends Renderer {
-	// Model data
-	private final List<OpenGL30Model> models = new ArrayList<>();
-	// Shaders
-	private final OpenGL20Program shaders = new OpenGL20Program();
-	// Uniforms
-	private Vector3 lightPosition = new Vector3(0, 0, 0);
-	private float diffuseIntensity = 0.8f;
-	private float specularIntensity = 0.2f;
-	private float ambientIntensity = 0.3f;
+	// Models
+	private final Set<OpenGL30Model> models = new HashSet<>();
+	private final Map<OpenGL20Material, Set<OpenGL30Model>> modelsForMaterial = new HashMap<>();
+	// Properties
 	private Color backgroundColor = new Color(0.2f, 0.2f, 0.2f, 0);
-	private float lightAttenuation = 0.03f;
 
 	@Override
 	public void create() {
 		if (created) {
-			throw new IllegalStateException("Renderer has already been created.");
+			throw new IllegalStateException("Renderer has already been created");
 		}
 		if (camera == null) {
-			throw new IllegalStateException("Camera cannot be null");
+			throw new IllegalStateException("Camera cannot has not been set");
 		}
-		createDisplay();
-		createShaders();
-		super.create();
-	}
-
-	@Override
-	public void destroy() {
-		if (!created) {
-			throw new IllegalStateException("Renderer has not been created yet.");
-		}
-		destroyModels();
-		destroyShaders();
-		destroyDisplay();
-		camera = null;
-		super.destroy();
-	}
-
-	private void createDisplay() {
 		final PixelFormat pixelFormat = new PixelFormat();
 		final ContextAttribs contextAttributes = new ContextAttribs(3, 2).withProfileCore(true);
 		try {
@@ -107,66 +86,66 @@ public class OpenGL30Renderer extends Renderer {
 		GL11.glEnable(GL32.GL_DEPTH_CLAMP);
 		GL11.glDepthMask(true);
 		RenderUtil.checkForOpenGLError();
+		uniforms.add(new Matrix4Uniform("projectionMatrix", camera.getProjectionMatrix()));
+		uniforms.add(new Matrix4Uniform("cameraMatrix", camera.getMatrix()));
+		super.create();
 	}
 
-	private void createShaders() {
-		shaders.setVertexShaderSource(OpenGL30Renderer.class.getResourceAsStream("/basic.vert"));
-		shaders.setFragmentShaderSource(OpenGL30Renderer.class.getResourceAsStream("/basic.frag"));
-		shaders.create();
-	}
-
-	private void destroyDisplay() {
+	@Override
+	public void destroy() {
+		checkCreated();
+		// Destroy models
+		for (OpenGL30Model model : models) {
+			model.destroy();
+		}
+		// Destroy materials
+		for (OpenGL20Material material : modelsForMaterial.keySet()) {
+			material.destroy();
+		}
+		// Clear data
+		models.clear();
+		modelsForMaterial.clear();
+		uniforms.clear();
+		// Destroy display
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL11.glDepthMask(false);
 		RenderUtil.checkForOpenGLError();
+		// Display goes after else there's no context in which to check for an error
 		Display.destroy();
+		camera = null;
+		super.destroy();
 	}
 
-	private void destroyShaders() {
-		GL20.glUseProgram(0);
-		shaders.destroy();
-	}
-
-	private void destroyModels() {
-		for (OpenGL30Model solid : models) {
-			solid.destroy();
+	private void checkCreated() {
+		if (!created) {
+			throw new IllegalStateException("Renderer has not been created yet");
 		}
-		models.clear();
-	}
-
-	private void sendShaderData() {
-		shaders.setUniform("cameraMatrix", camera.getMatrix());
-		shaders.setUniform("projectionMatrix", camera.getProjectionMatrix());
-		shaders.setUniform("diffuseIntensity", diffuseIntensity);
-		shaders.setUniform("specularIntensity", specularIntensity);
-		shaders.setUniform("ambientIntensity", ambientIntensity);
-		shaders.setUniform("lightPosition", lightPosition);
-		shaders.setUniform("lightAttenuation", lightAttenuation);
-	}
-
-	private void sendShaderData(OpenGL30Model solid) {
-		shaders.setUniform("modelMatrix", solid.getMatrix());
-		shaders.setUniform("modelColor", solid.getColor());
 	}
 
 	/**
 	 * Draws all the models that have been created to the screen.
 	 */
 	public void render() {
-		if (!created) {
-			throw new IllegalStateException("Display needs to be created first.");
-		}
+		checkCreated();
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-		GL20.glUseProgram(shaders.getID());
-		sendShaderData();
-		for (OpenGL30Model solid : models) {
-			if (!solid.isCreated()) {
-				continue;
+		uniforms.getMatrix4("cameraMatrix").set(camera.getMatrix());
+		uniforms.getMatrix4("projectionMatrix").set(camera.getProjectionMatrix());
+		for (Entry<OpenGL20Material, Set<OpenGL30Model>> entry : modelsForMaterial.entrySet()) {
+			final OpenGL20Material material = entry.getKey();
+			final Set<OpenGL30Model> models = entry.getValue();
+			material.bind();
+			final OpenGL20Program program = material.getProgram();
+			uniforms.upload(program);
+			material.uploadUniforms();
+			for (OpenGL30Model model : models) {
+				if (!model.isCreated()) {
+					continue;
+				}
+				model.uploadUniforms(program);
+				model.render();
 			}
-			sendShaderData(solid);
-			solid.render();
+			material.unbind();
 		}
-		GL20.glUseProgram(0);
 		RenderUtil.checkForOpenGLError();
 		Display.sync(60);
 		Display.update();
@@ -179,9 +158,16 @@ public class OpenGL30Renderer extends Renderer {
 	 * @param model The model to add
 	 */
 	public void addModel(OpenGL30Model model) {
-		if (!models.contains(model)) {
-			models.add(model);
+		models.add(model);
+		final OpenGL20Material material = model.getMaterial();
+		final Set<OpenGL30Model> modelSet = modelsForMaterial.get(material);
+		if (modelSet == null) {
+			final Set<OpenGL30Model> set = new HashSet<>();
+			set.add(model);
+			modelsForMaterial.put(material, set);
+			return;
 		}
+		modelSet.add(model);
 	}
 
 	/**
@@ -191,6 +177,15 @@ public class OpenGL30Renderer extends Renderer {
 	 */
 	public void removeModel(OpenGL30Model model) {
 		models.remove(model);
+		final OpenGL20Material material = model.getMaterial();
+		final Set<OpenGL30Model> modelSet = modelsForMaterial.get(material);
+		if (modelSet == null) {
+			return;
+		}
+		modelSet.remove(model);
+		if (modelSet.isEmpty()) {
+			modelsForMaterial.remove(material);
+		}
 	}
 
 	/**
@@ -209,97 +204,5 @@ public class OpenGL30Renderer extends Renderer {
 	 */
 	public void setBackgroundColor(Color color) {
 		backgroundColor = color;
-	}
-
-	/**
-	 * Gets the light position.
-	 *
-	 * @return The light position
-	 */
-	public Vector3 getLightPosition() {
-		return lightPosition;
-	}
-
-	/**
-	 * Sets the light position.
-	 *
-	 * @param position The light position
-	 */
-	public void setLightPosition(Vector3 position) {
-		lightPosition = position;
-	}
-
-	/**
-	 * Sets the diffuse intensity.
-	 *
-	 * @param intensity The diffuse intensity
-	 */
-	public void setDiffuseIntensity(float intensity) {
-		diffuseIntensity = intensity;
-	}
-
-	/**
-	 * Gets the diffuse intensity.
-	 *
-	 * @return The diffuse intensity
-	 */
-	public float getDiffuseIntensity() {
-		return diffuseIntensity;
-	}
-
-	/**
-	 * Sets the specular intensity.
-	 *
-	 * @param intensity specular The intensity
-	 */
-	public void setSpecularIntensity(float intensity) {
-		specularIntensity = intensity;
-	}
-
-	/**
-	 * Gets specular intensity.
-	 *
-	 * @return The specular intensity
-	 */
-	public float getSpecularIntensity() {
-		return specularIntensity;
-	}
-
-	/**
-	 * Sets the ambient intensity.
-	 *
-	 * @param intensity The ambient intensity
-	 */
-	public void setAmbientIntensity(float intensity) {
-		ambientIntensity = intensity;
-	}
-
-	/**
-	 * Gets the ambient intensity.
-	 *
-	 * @return The ambient intensity
-	 */
-	public float getAmbientIntensity() {
-		return ambientIntensity;
-	}
-
-	/**
-	 * Gets the light distance attenuation factor. In other terms, how much distance affects light
-	 * intensity. Larger values affect it more. 0.03 is the default value.
-	 *
-	 * @return The light distance attenuation factor
-	 */
-	public float getLightAttenuation() {
-		return lightAttenuation;
-	}
-
-	/**
-	 * Sets the light distance attenuation factor. In other terms, how much distance affects light
-	 * intensity. Larger values affect it more. 0.03 is the default value.
-	 *
-	 * @param attenuation The light distance attenuation factor
-	 */
-	public void setLightAttenuation(float attenuation) {
-		lightAttenuation = attenuation;
 	}
 }

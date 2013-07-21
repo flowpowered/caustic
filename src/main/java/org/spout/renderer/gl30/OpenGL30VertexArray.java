@@ -49,10 +49,10 @@ public class OpenGL30VertexArray extends VertexArray {
 	@Override
 	public void create() {
 		if (created) {
-			throw new IllegalStateException("Vertex array has already been created.");
+			throw new IllegalStateException("Vertex array has already been created");
 		}
 		if (vertexData == null) {
-			throw new IllegalStateException("Vertex data cannot be null");
+			throw new IllegalStateException("Vertex data has not been set");
 		}
 		// Generate and bind the vao
 		id = GL30.glGenVertexArrays();
@@ -73,7 +73,7 @@ public class OpenGL30VertexArray extends VertexArray {
 			final int bufferID = GL15.glGenBuffers();
 			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, bufferID);
 			GL15.glBufferData(GL15.GL_ARRAY_BUFFER, attribute.getBuffer(), GL15.GL_STATIC_DRAW);
-			// TODO: proper support for integers (normalized or not) and double
+			// TODO: proper support for integers (normalized or not) and doubles
 			GL20.glVertexAttribPointer(i, attribute.getSize(), attribute.getType().getGLConstant(), false, 0, 0);
 			attributeBufferIDs[i] = bufferID;
 		}
@@ -88,9 +88,7 @@ public class OpenGL30VertexArray extends VertexArray {
 
 	@Override
 	public void destroy() {
-		if (!created) {
-			throw new IllegalStateException("Vertex array has not been created yet.");
-		}
+		checkCreated();
 		// Unbind any bound buffer
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 		// Unbind and delete the indices buffer
@@ -114,12 +112,19 @@ public class OpenGL30VertexArray extends VertexArray {
 		RenderUtil.checkForOpenGLError();
 	}
 
+	private void checkCreated() {
+		if (!created) {
+			throw new IllegalStateException("Vertex array has not been created yet");
+		}
+	}
+
 	/**
 	 * Draws the vertex data to the screen using the desired mode.
 	 *
 	 * @param mode The drawing mode
 	 */
 	public void render(DrawMode mode) {
+		checkCreated();
 		// Bind the vao and enable all attributes
 		GL30.glBindVertexArray(id);
 		for (int i = 0; i < attributeBufferIDs.length; i++) {

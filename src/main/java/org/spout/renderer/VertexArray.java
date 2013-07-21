@@ -33,15 +33,12 @@ import org.spout.renderer.data.VertexData;
  * created before the vertex array. The vertex data source must be set with {@link
  * #setVertexData(org.spout.renderer.data.VertexData)} before it can be created.
  */
-public class VertexArray extends Creatable {
+public abstract class VertexArray extends Creatable {
 	protected int id = 0;
 	// Amount of indices to render
 	protected int renderingIndicesCount = 0;
 	// Vertex attributes
 	protected VertexData vertexData;
-
-	protected VertexArray() {
-	}
 
 	@Override
 	public void destroy() {

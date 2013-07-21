@@ -26,14 +26,15 @@
  */
 package org.spout.renderer;
 
-import java.awt.Color;
-
 import org.lwjgl.opengl.GL11;
 
 import org.spout.math.imaginary.Quaternion;
 import org.spout.math.matrix.Matrix4;
 import org.spout.math.vector.Vector3;
+import org.spout.renderer.data.Uniform.Matrix4Uniform;
+import org.spout.renderer.data.UniformHolder;
 import org.spout.renderer.data.VertexData;
+import org.spout.renderer.gl20.OpenGL20Program;
 
 /**
  * Represents a model for OpenGL. Each model has it's own position, rotation and color. The {@link
@@ -46,19 +47,23 @@ public abstract class Model extends Creatable {
 	protected Quaternion rotation = new Quaternion();
 	protected Matrix4 matrix = new Matrix4();
 	protected boolean updateMatrix = true;
-	// Material
-	protected Color modelColor = new Color(0.8f, 0.1f, 0.1f, 1);
+	// Model uniforms
+	protected final UniformHolder uniforms = new UniformHolder();
 	// Vertex data
 	protected final VertexData vertices = new VertexData();
 	// Drawing mode
 	protected DrawMode mode = DrawMode.TRIANGLES;
 
-	protected Model() {
+	@Override
+	public void create() {
+		uniforms.add(new Matrix4Uniform("modelMatrix", getMatrix()));
+		super.create();
 	}
 
 	@Override
 	public void destroy() {
 		vertices.clear();
+		uniforms.clear();
 		super.destroy();
 	}
 
@@ -79,24 +84,6 @@ public abstract class Model extends Creatable {
 			updateMatrix = false;
 		}
 		return matrix;
-	}
-
-	/**
-	 * Gets the model color.
-	 *
-	 * @return The model color
-	 */
-	public Color getColor() {
-		return modelColor;
-	}
-
-	/**
-	 * Sets the model color.
-	 *
-	 * @param color The model color
-	 */
-	public void setColor(Color color) {
-		modelColor = color;
 	}
 
 	/**
@@ -154,6 +141,15 @@ public abstract class Model extends Creatable {
 	public void setScale(Vector3 scale) {
 		this.scale = scale;
 		updateMatrix = true;
+	}
+
+	public UniformHolder getUniforms() {
+		return uniforms;
+	}
+
+	public void uploadUniforms(OpenGL20Program program) {
+		uniforms.getMatrix4("modelMatrix").set(getMatrix());
+		uniforms.upload(program);
 	}
 
 	/**

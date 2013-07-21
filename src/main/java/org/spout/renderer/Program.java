@@ -30,17 +30,18 @@ package org.spout.renderer;
  * Represents a shader program for OpenGL. The {@link org.spout.renderer.Renderer} should always be
  * created before the program.
  */
-public class Program extends Creatable {
+public abstract class Program extends Creatable {
 	protected int id;
-
-	protected Program() {
-	}
 
 	@Override
 	public void destroy() {
 		id = 0;
 		super.destroy();
 	}
+
+	public abstract void bind();
+
+	public abstract void unbind();
 
 	/**
 	 * Gets the ID for this program as assigned by OpenGL.

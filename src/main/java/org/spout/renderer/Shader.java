@@ -30,19 +30,18 @@ import java.io.InputStream;
 
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL32;
+import org.lwjgl.opengl.GL40;
+import org.lwjgl.opengl.GL43;
 
 /**
  * Represents a shader for OpenGL. The {@link org.spout.renderer.Renderer} should always be created
  * before the shader. The shader source and type must be set with {@link
  * #setSource(java.io.InputStream)} and {@link #shaderType} respectively before it can be created.
  */
-public class Shader extends Creatable {
+public abstract class Shader extends Creatable {
 	protected int id;
 	protected InputStream shaderSource;
 	protected ShaderType shaderType;
-
-	protected Shader() {
-	}
 
 	@Override
 	public void destroy() {
@@ -85,7 +84,10 @@ public class Shader extends Creatable {
 	public static enum ShaderType {
 		VERTEX(GL20.GL_VERTEX_SHADER),
 		FRAGMENT(GL20.GL_FRAGMENT_SHADER),
-		GEOMETRY(GL32.GL_GEOMETRY_SHADER);
+		GEOMETRY(GL32.GL_GEOMETRY_SHADER),
+		TESS_CONTROL(GL40.GL_TESS_CONTROL_SHADER),
+		TESS_EVALUATION(GL40.GL_TESS_EVALUATION_SHADER),
+		COMPUTE(GL43.GL_COMPUTE_SHADER);
 		private int glConstant;
 
 		private ShaderType(int glConstant) {

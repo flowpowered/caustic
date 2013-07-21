@@ -26,20 +26,22 @@
  */
 package org.spout.renderer;
 
+import org.spout.renderer.data.UniformHolder;
+
 /**
  * Represents an OpenGL renderer. The renderer should never be created before setting the camera
  * using {@link #setCamera(Camera)}.
  */
-public class Renderer extends Creatable {
+public abstract class Renderer extends Creatable {
+	// Window title
 	protected String windowTitle = "Caustic renderer";
 	// Window size
 	protected int windowWidth = 640;
 	protected int windowHeight = 480;
 	// Camera
 	protected Camera camera;
-
-	protected Renderer() {
-	}
+	// Renderer uniforms
+	protected final UniformHolder uniforms = new UniformHolder();
 
 	/**
 	 * Returns the window title.
@@ -122,5 +124,9 @@ public class Renderer extends Creatable {
 	 */
 	public void setCamera(Camera camera) {
 		this.camera = camera;
+	}
+
+	public UniformHolder getUniforms() {
+		return uniforms;
 	}
 }

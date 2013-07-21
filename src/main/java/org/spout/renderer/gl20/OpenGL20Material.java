@@ -24,34 +24,54 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer;
+package org.spout.renderer.gl20;
 
-/**
- * Represents a resource that can be created and destroyed.
- */
-public abstract class Creatable {
-	protected boolean created = false;
+import org.spout.renderer.Material;
 
-	/**
-	 * Creates the resources. It can now be used.
-	 */
+public class OpenGL20Material extends Material {
+	private final OpenGL20Program program = new OpenGL20Program();
+
+	@Override
 	public void create() {
-		created = true;
+		if (created) {
+			throw new IllegalStateException("Material has already been created");
+		}
+		program.create();
+		super.create();
 	}
 
-	/**
-	 * Releases the resource. It can not longer be used.
-	 */
+	@Override
 	public void destroy() {
-		created = false;
+		checkCreated();
+		program.destroy();
+		uniforms.clear();
+		super.destroy();
 	}
 
-	/**
-	 * Returns true if the resource was created and is ready for use, false if otherwise.
-	 *
-	 * @return Whether or not the resource has been created
-	 */
-	public boolean isCreated() {
-		return created;
+	private void checkCreated() {
+		if (!created) {
+			throw new IllegalStateException("Material has not been created yet");
+		}
+	}
+
+	@Override
+	public void bind() {
+		checkCreated();
+		program.bind();
+	}
+
+	@Override
+	public void unbind() {
+		checkCreated();
+		program.unbind();
+	}
+
+	public OpenGL20Program getProgram() {
+		return program;
+	}
+
+	@Override
+	public void uploadUniforms() {
+		uniforms.upload(program);
 	}
 }

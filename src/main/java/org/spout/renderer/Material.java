@@ -26,32 +26,19 @@
  */
 package org.spout.renderer;
 
-/**
- * Represents a resource that can be created and destroyed.
- */
-public abstract class Creatable {
-	protected boolean created = false;
+import org.spout.renderer.data.UniformHolder;
 
-	/**
-	 * Creates the resources. It can now be used.
-	 */
-	public void create() {
-		created = true;
-	}
+public abstract class Material extends Creatable {
+	// Material uniforms
+	protected final UniformHolder uniforms = new UniformHolder();
 
-	/**
-	 * Releases the resource. It can not longer be used.
-	 */
-	public void destroy() {
-		created = false;
-	}
+	public abstract void bind();
 
-	/**
-	 * Returns true if the resource was created and is ready for use, false if otherwise.
-	 *
-	 * @return Whether or not the resource has been created
-	 */
-	public boolean isCreated() {
-		return created;
+	public abstract void unbind();
+
+	public abstract void uploadUniforms();
+
+	public UniformHolder getUniforms() {
+		return uniforms;
 	}
 }
