@@ -40,7 +40,7 @@ public class OpenGL30Model extends Model {
 
 	@Override
 	public void create() {
-		if (created) {
+		if (isCreated()) {
 			throw new IllegalStateException("Solid has already been created.");
 		}
 		vertexArray.setVertexData(vertices);
@@ -50,7 +50,7 @@ public class OpenGL30Model extends Model {
 
 	@Override
 	public void destroy() {
-		if (!created) {
+		if (!isCreated()) {
 			return;
 		}
 		vertexArray.destroy();

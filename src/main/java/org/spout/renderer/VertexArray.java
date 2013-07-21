@@ -34,7 +34,7 @@ import org.spout.renderer.data.VertexData;
  * #setVertexData(org.spout.renderer.data.VertexData)} before it can be created.
  */
 public class VertexArray extends Creatable {
-	protected int id = 0;
+	protected int id = -1;
 	// Amount of indices to render
 	protected int renderingIndicesCount = 0;
 	// Vertex attributes
@@ -45,7 +45,7 @@ public class VertexArray extends Creatable {
 
 	@Override
 	public void destroy() {
-		id = 0;
+		id = -1;
 		renderingIndicesCount = 0;
 		vertexData = null;
 		super.destroy();

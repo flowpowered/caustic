@@ -63,7 +63,7 @@ public class OpenGL20Program extends Program {
 
 	@Override
 	public void create() {
-		if (created) {
+		if (isCreated()) {
 			throw new IllegalStateException("Program has already been created.");
 		}
 		if (vertexShaderSource == null) {
@@ -103,7 +103,7 @@ public class OpenGL20Program extends Program {
 
 	@Override
 	public void destroy() {
-		if (!created) {
+		if (!isCreated()) {
 			throw new IllegalStateException("Program has not been created yet.");
 		}
 		GL20.glDetachShader(id, vertexShader.getID());
