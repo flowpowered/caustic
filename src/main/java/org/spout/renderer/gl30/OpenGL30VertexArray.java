@@ -43,12 +43,12 @@ import org.spout.renderer.util.RenderUtil;
  */
 public class OpenGL30VertexArray extends VertexArray {
 	// Buffer IDs
-	private int indicesBufferID = 0;
+	private int indicesBufferID = -1;
 	private int[] attributeBufferIDs;
 
 	@Override
 	public void create() {
-		if (created) {
+		if (isCreated()) {
 			throw new IllegalStateException("Vertex array has already been created.");
 		}
 		if (vertexData == null) {
@@ -88,7 +88,7 @@ public class OpenGL30VertexArray extends VertexArray {
 
 	@Override
 	public void destroy() {
-		if (!created) {
+		if (!isCreated()) {
 			throw new IllegalStateException("Vertex array has not been created yet.");
 		}
 		// Unbind any bound buffer
@@ -107,7 +107,7 @@ public class OpenGL30VertexArray extends VertexArray {
 		GL30.glBindVertexArray(0);
 		GL30.glDeleteVertexArrays(id);
 		// Reset the data and state
-		indicesBufferID = 0;
+		indicesBufferID = -1;
 		attributeBufferIDs = null;
 		super.destroy();
 		// Check for errors

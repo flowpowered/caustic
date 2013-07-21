@@ -31,14 +31,14 @@ package org.spout.renderer;
  * created before the program.
  */
 public class Program extends Creatable {
-	protected int id;
+	protected int id = -1;
 
 	protected Program() {
 	}
 
 	@Override
 	public void destroy() {
-		id = 0;
+		id = -1;
 		super.destroy();
 	}
 

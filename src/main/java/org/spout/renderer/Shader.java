@@ -37,7 +37,7 @@ import org.lwjgl.opengl.GL32;
  * #setSource(java.io.InputStream)} and {@link #shaderType} respectively before it can be created.
  */
 public class Shader extends Creatable {
-	protected int id;
+	protected int id = -1;
 	protected InputStream shaderSource;
 	protected ShaderType shaderType;
 
@@ -46,7 +46,7 @@ public class Shader extends Creatable {
 
 	@Override
 	public void destroy() {
-		id = 0;
+		id = -1;
 		shaderSource = null;
 		shaderType = null;
 		super.destroy();

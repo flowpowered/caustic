@@ -67,7 +67,7 @@ public class OpenGL30Renderer extends Renderer {
 
 	@Override
 	public void create() {
-		if (created) {
+		if (isCreated()) {
 			throw new IllegalStateException("Renderer has already been created.");
 		}
 		if (camera == null) {
@@ -80,7 +80,7 @@ public class OpenGL30Renderer extends Renderer {
 
 	@Override
 	public void destroy() {
-		if (!created) {
+		if (!isCreated()) {
 			throw new IllegalStateException("Renderer has not been created yet.");
 		}
 		destroyModels();
@@ -153,7 +153,7 @@ public class OpenGL30Renderer extends Renderer {
 	 * Draws all the models that have been created to the screen.
 	 */
 	public void render() {
-		if (!created) {
+		if (!isCreated()) {
 			throw new IllegalStateException("Display needs to be created first.");
 		}
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
