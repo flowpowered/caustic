@@ -61,7 +61,7 @@ public class OpenGL20Program extends Program {
 	// Shaders
 	private final OpenGL20Shader vertexShader = new OpenGL20Shader();
 	private final OpenGL20Shader fragmentShader = new OpenGL20Shader();
-	// Map of the uniform name to the ID
+	// Map of the uniform name to their location
 	private final TObjectIntMap<String> uniforms = new TObjectIntHashMap<>();
 
 	@Override
@@ -69,17 +69,27 @@ public class OpenGL20Program extends Program {
 		if (created) {
 			throw new IllegalStateException("Program has already been created");
 		}
+		//Create program
+		id = GL20.glCreateProgram();
+
+		//Create Vertex Shader
 		vertexShader.setType(ShaderType.VERTEX);
 		vertexShader.create();
+		vertexShader.attach(id);
+
+		//Create Fragment Shader
 		fragmentShader.setType(ShaderType.FRAGMENT);
 		fragmentShader.create();
-		id = GL20.glCreateProgram();
-		GL20.glAttachShader(id, vertexShader.getID());
-		GL20.glAttachShader(id, fragmentShader.getID());
+		fragmentShader.attach(id);
+
+		//Link program
 		GL20.glLinkProgram(id);
+		//Validate program
 		GL20.glValidateProgram(id);
+
+		//Load uniforms
 		final int uniformCount = GL20.glGetProgrami(id, GL20.GL_ACTIVE_UNIFORMS);
-		for (int i = 0; i < uniformCount; i++) {
+		for (int i = 0 ; i < uniformCount ; i++) {
 			final ByteBuffer nameBuffer = BufferUtils.createByteBuffer(256);
 			GL20.glGetActiveUniform(id, i,
 					BufferUtils.createIntBuffer(1),
@@ -99,20 +109,12 @@ public class OpenGL20Program extends Program {
 	@Override
 	public void destroy() {
 		checkCreated();
-		GL20.glDetachShader(id, vertexShader.getID());
-		GL20.glDetachShader(id, fragmentShader.getID());
 		vertexShader.destroy();
 		fragmentShader.destroy();
 		GL20.glDeleteProgram(id);
 		uniforms.clear();
 		super.destroy();
 		RenderUtil.checkForOpenGLError();
-	}
-
-	private void checkCreated() {
-		if (!created) {
-			throw new IllegalStateException("Program has not been created yet");
-		}
 	}
 
 	@Override
@@ -157,7 +159,7 @@ public class OpenGL20Program extends Program {
 	 * Sets a uniform boolean in the shader to the desired value.
 	 *
 	 * @param name The name of the uniform to set
-	 * @param b The boolean value
+	 * @param b    The boolean value
 	 */
 	public void setUniform(String name, boolean b) {
 		checkCreated();
@@ -170,7 +172,7 @@ public class OpenGL20Program extends Program {
 	 * Sets a uniform integer in the shader to the desired value.
 	 *
 	 * @param name The name of the uniform to set
-	 * @param i The integer value
+	 * @param i    The integer value
 	 */
 	public void setUniform(String name, int i) {
 		checkCreated();
@@ -183,7 +185,7 @@ public class OpenGL20Program extends Program {
 	 * Sets a uniform float in the shader to the desired value.
 	 *
 	 * @param name The name of the uniform to set
-	 * @param f The float value
+	 * @param f    The float value
 	 */
 	public void setUniform(String name, float f) {
 		checkCreated();
@@ -196,7 +198,7 @@ public class OpenGL20Program extends Program {
 	 * Sets a uniform {@link org.spout.math.vector.Vector3} in the shader to the desired value.
 	 *
 	 * @param name The name of the uniform to set
-	 * @param v The vector value
+	 * @param v    The vector value
 	 */
 	public void setUniform(String name, Vector2 v) {
 		checkCreated();
@@ -209,7 +211,7 @@ public class OpenGL20Program extends Program {
 	 * Sets a uniform {@link org.spout.math.vector.Vector3} in the shader to the desired value.
 	 *
 	 * @param name The name of the uniform to set
-	 * @param v The vector value
+	 * @param v    The vector value
 	 */
 	public void setUniform(String name, Vector3 v) {
 		checkCreated();
@@ -222,7 +224,7 @@ public class OpenGL20Program extends Program {
 	 * Sets a uniform {@link org.spout.math.vector.Vector3} in the shader to the desired value.
 	 *
 	 * @param name The name of the uniform to set
-	 * @param v The vector value
+	 * @param v    The vector value
 	 */
 	public void setUniform(String name, Vector4 v) {
 		checkCreated();
@@ -235,7 +237,7 @@ public class OpenGL20Program extends Program {
 	 * Sets a uniform {@link org.spout.math.matrix.Matrix4} in the shader to the desired value.
 	 *
 	 * @param name The name of the uniform to set
-	 * @param m The matrix value
+	 * @param m    The matrix value
 	 */
 	public void setUniform(String name, Matrix2 m) {
 		checkCreated();
@@ -251,7 +253,7 @@ public class OpenGL20Program extends Program {
 	 * Sets a uniform {@link org.spout.math.matrix.Matrix4} in the shader to the desired value.
 	 *
 	 * @param name The name of the uniform to set
-	 * @param m The matrix value
+	 * @param m    The matrix value
 	 */
 	public void setUniform(String name, Matrix3 m) {
 		checkCreated();
@@ -267,7 +269,7 @@ public class OpenGL20Program extends Program {
 	 * Sets a uniform {@link org.spout.math.matrix.Matrix4} in the shader to the desired value.
 	 *
 	 * @param name The name of the uniform to set
-	 * @param m The matrix value
+	 * @param m    The matrix value
 	 */
 	public void setUniform(String name, Matrix4 m) {
 		checkCreated();
@@ -283,14 +285,14 @@ public class OpenGL20Program extends Program {
 	 * Sets a uniform {@link java.awt.Color} in the shader to the desired value.
 	 *
 	 * @param name The name of the uniform to set
-	 * @param c The color value
+	 * @param c    The color value
 	 */
 	public void setUniform(String name, Color c) {
 		checkCreated();
 		checkContainsUniform(name);
 		GL20.glUniform4f(uniforms.get(name),
-				c.getRed() / 255f, c.getGreen() / 255f,
-				c.getBlue() / 255f, c.getAlpha() / 255f);
+					c.getRed() / 255f, c.getGreen() / 255f,
+					c.getBlue() / 255f, c.getAlpha() / 255f);
 		RenderUtil.checkForOpenGLError();
 	}
 
