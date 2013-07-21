@@ -47,6 +47,8 @@ import org.spout.math.vector.Vector3;
 import org.spout.math.vector.Vector4;
 import org.spout.renderer.Program;
 import org.spout.renderer.Shader.ShaderType;
+import org.spout.renderer.data.Uniform;
+import org.spout.renderer.data.UniformHolder;
 import org.spout.renderer.util.RenderUtil;
 
 /**
@@ -123,6 +125,14 @@ public class OpenGL20Program extends Program {
 	public void unbind() {
 		checkCreated();
 		GL20.glUseProgram(0);
+	}
+
+	@Override
+	public void upload(UniformHolder uniforms) {
+		checkCreated();
+		for (Uniform uniform : uniforms) {
+			uniform.upload(this);
+		}
 	}
 
 	/**

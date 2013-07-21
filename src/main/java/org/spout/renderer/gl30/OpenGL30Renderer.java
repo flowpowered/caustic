@@ -44,7 +44,6 @@ import org.lwjgl.opengl.PixelFormat;
 import org.spout.renderer.Renderer;
 import org.spout.renderer.data.Uniform.Matrix4Uniform;
 import org.spout.renderer.gl20.OpenGL20Material;
-import org.spout.renderer.gl20.OpenGL20Program;
 import org.spout.renderer.util.RenderUtil;
 
 /**
@@ -127,26 +126,35 @@ public class OpenGL30Renderer extends Renderer {
 	 */
 	public void render() {
 		checkCreated();
+		// Clear the last render
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+		// Update the constant renderer uniforms
 		uniforms.getMatrix4("cameraMatrix").set(camera.getMatrix());
 		uniforms.getMatrix4("projectionMatrix").set(camera.getProjectionMatrix());
+		// Render all models, by material
 		for (Entry<OpenGL20Material, Set<OpenGL30Model>> entry : modelsForMaterial.entrySet()) {
+			// Get the material and the model list
 			final OpenGL20Material material = entry.getKey();
 			final Set<OpenGL30Model> models = entry.getValue();
+			// Bind the material (binds the program)
 			material.bind();
-			final OpenGL20Program program = material.getProgram();
-			uniforms.upload(program);
+			// Upload the renderer uniforms
+			material.getProgram().upload(uniforms);
+			// Upload the material uniforms
 			material.uploadUniforms();
+			// Iterate the model list and render each one, skipping uncreated models
 			for (OpenGL30Model model : models) {
 				if (!model.isCreated()) {
 					continue;
 				}
-				model.uploadUniforms(program);
 				model.render();
 			}
+			// Unbind the material
 			material.unbind();
 		}
+		// Check for errors
 		RenderUtil.checkForOpenGLError();
+		// Update the display, 60 FPS
 		Display.sync(60);
 		Display.update();
 	}

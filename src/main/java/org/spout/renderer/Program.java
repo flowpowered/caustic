@@ -26,6 +26,8 @@
  */
 package org.spout.renderer;
 
+import org.spout.renderer.data.UniformHolder;
+
 /**
  * Represents a shader program for OpenGL. The {@link org.spout.renderer.Renderer} should always be
  * created before the program.
@@ -42,6 +44,8 @@ public abstract class Program extends Creatable {
 	public abstract void bind();
 
 	public abstract void unbind();
+
+	public abstract void upload(UniformHolder uniforms);
 
 	/**
 	 * Gets the ID for this program as assigned by OpenGL.
