@@ -34,13 +34,18 @@ import org.lwjgl.util.glu.GLU;
  * Utility methods for rendering
  */
 public class RenderUtil {
+
+	private static final boolean DEBUG = true;
+
 	/**
 	 * Throws an {@link org.lwjgl.opengl.OpenGLException} if OpenGL reports an error.
 	 */
 	public static void checkForOpenGLError() {
-		final int errorValue = GL11.glGetError();
-		if (errorValue != GL11.GL_NO_ERROR) {
-			throw new OpenGLException("OPEN GL ERROR: " + GLU.gluErrorString(errorValue));
+		if (DEBUG) {
+			final int errorValue = GL11.glGetError();
+			if (errorValue != GL11.GL_NO_ERROR) {
+				throw new OpenGLException("OPEN GL ERROR: " + GLU.gluErrorString(errorValue));
+			}
 		}
 	}
 }
