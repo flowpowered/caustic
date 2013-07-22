@@ -87,7 +87,7 @@ public class OpenGL20Texture extends Texture {
 		checkCreated();
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
 	}
-	
+
 	/**
 	 * Unbinds the texture from OpenGL
 	 */
