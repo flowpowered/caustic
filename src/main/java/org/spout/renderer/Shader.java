@@ -44,9 +44,15 @@ public abstract class Shader extends Creatable {
 	protected ShaderType shaderType;
 
 	@Override
+	public void create() {
+		// Release the shader input stream
+		shaderSource = null;
+		super.create();
+	}
+
+	@Override
 	public void destroy() {
 		id = 0;
-		shaderSource = null;
 		shaderType = null;
 		super.destroy();
 	}

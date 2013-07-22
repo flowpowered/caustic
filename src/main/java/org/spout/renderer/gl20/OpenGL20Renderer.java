@@ -26,32 +26,36 @@
  */
 package org.spout.renderer.gl20;
 
-import java.awt.Color;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.PixelFormat;
+
+import org.spout.renderer.Model;
 import org.spout.renderer.Renderer;
-import org.spout.renderer.data.Uniform;
+import org.spout.renderer.data.Uniform.Matrix4Uniform;
 import org.spout.renderer.util.RenderUtil;
 
 /**
- * @author thehutch
+ * This is a renderer using OpenGL 2.0. To create a new render window, start by creating a camera
+ * and setting it using {@link #setCamera(org.spout.renderer.Camera)}, then use {@link #create()} to
+ * create the OpenGL context. To add and remove models, use {@link #addModel(org.spout.renderer.Model)}
+ * and {@link #removeModel(org.spout.renderer.Model)}. The camera position and rotation can be
+ * modified by accessing it with {@link #getCamera()}. When done, use {@link #destroy()} to destroy
+ * the render window.
  */
 public class OpenGL20Renderer extends Renderer {
-	//Modesl
-
+	// Models
 	private final Set<OpenGL20Model> models = new HashSet<>();
 	private final Map<OpenGL20Material, Set<OpenGL20Model>> modelsForMaterial = new HashMap<>();
-	//Properties
-	private Color backgroundColor = new Color(0.2f, 0.2f, 0.2f, 0);
 
 	@Override
 	public void create() {
@@ -63,7 +67,6 @@ public class OpenGL20Renderer extends Renderer {
 		}
 		final PixelFormat pixelFormat = new PixelFormat();
 		final ContextAttribs contextAttributes = new ContextAttribs(2, 1);
-
 		try {
 			Display.setDisplayMode(new DisplayMode(windowWidth, windowHeight));
 			Display.create(pixelFormat, contextAttributes);
@@ -73,128 +76,110 @@ public class OpenGL20Renderer extends Renderer {
 		Display.setTitle(windowTitle);
 		GL11.glViewport(0, 0, windowWidth, windowHeight);
 		GL11.glClearColor(backgroundColor.getRed() / 255f, backgroundColor.getGreen() / 255f,
-						  backgroundColor.getBlue() / 255f, backgroundColor.getAlpha() / 255f);
-		//GL11.glEnable(GL11.GL_DEPTH_TEST);
-		//GL11.glDepthMask(true);
+				backgroundColor.getBlue() / 255f, backgroundColor.getAlpha() / 255f);
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		GL11.glDepthMask(true);
 		RenderUtil.checkForOpenGLError();
-
-		uniforms.add(new Uniform.Matrix4Uniform("projectionMatrix", camera.getProjectionMatrix()));
-		uniforms.add(new Uniform.Matrix4Uniform("inverseMatrix", camera.getMatrix().invert()));
-		uniforms.add(new Uniform.Matrix4Uniform("cameraMatrix", camera.getMatrix()));
+		uniforms.add(new Matrix4Uniform("projectionMatrix", camera.getProjectionMatrix()));
+		uniforms.add(new Matrix4Uniform("cameraMatrix", camera.getMatrix()));
 		super.create();
 	}
 
 	@Override
 	public void destroy() {
 		checkCreated();
-		//Destroy models
+		// Destroy models
 		for (OpenGL20Model model : models) {
 			model.destroy();
 		}
-		//Destroy materials
+		// Destroy materials
 		for (OpenGL20Material material : modelsForMaterial.keySet()) {
 			material.destroy();
 		}
+		// Clear data
 		models.clear();
 		modelsForMaterial.clear();
 		uniforms.clear();
-
+		// Destroy display
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL11.glDepthMask(false);
+		// Display goes after else there's no context in which to check for an error
 		RenderUtil.checkForOpenGLError();
-
 		Display.destroy();
 		camera = null;
 		super.destroy();
 	}
 
+	@Override
 	public void render() {
 		checkCreated();
-
+		// Clear the last render
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-
+		// Update the constant renderer uniforms
 		uniforms.getMatrix4("cameraMatrix").set(camera.getMatrix());
-		uniforms.getMatrix4("inverseMatrix").set(camera.getMatrix().invert());
 		uniforms.getMatrix4("projectionMatrix").set(camera.getProjectionMatrix());
-
+		// Render all models, by material
 		for (Entry<OpenGL20Material, Set<OpenGL20Model>> entry : modelsForMaterial.entrySet()) {
 			final OpenGL20Material material = entry.getKey();
 			final Set<OpenGL20Model> models = entry.getValue();
-			//Bind the material
+			// Bind the material
 			material.bind();
-			//Upload the renderer uniforms
+			// Upload the renderer uniforms
 			material.getProgram().upload(uniforms);
-			//Upload the material uniforms
+			// Upload the material uniforms
 			material.uploadUniforms();
-			//Iterate the model list and render each one
+			// Iterate the model list and render each one
 			for (OpenGL20Model model : models) {
 				if (model.isCreated()) {
 					model.render();
 				}
 			}
-			//Unbind the material
+			// Unbind the material
 			material.unbind();
 		}
-		//Check for errors
+		// Check for errors
 		RenderUtil.checkForOpenGLError();
-		//Update the display, 60 FPS
+		// Update the display, 60 FPS
 		Display.sync(60);
 		Display.update();
 	}
 
-	/**
-	 * Adds a model to the list. If a non-created model is added to the list, it will not be
-	 * rendered
-	 * until it is created.
-	 *
-	 * @param model The model to add
-	 */
-	public void addModel(OpenGL20Model model) {
-		models.add(model);
-		final OpenGL20Material material = model.getMaterial();
+	@Override
+	public void addModel(Model model) {
+		checkModelVersion(model);
+		final OpenGL20Model gl20Model = (OpenGL20Model) model;
+		models.add(gl20Model);
+		final OpenGL20Material material = gl20Model.getMaterial();
 		final Set<OpenGL20Model> modelSet = modelsForMaterial.get(material);
 		if (modelSet == null) {
 			final Set<OpenGL20Model> set = new HashSet<>();
-			set.add(model);
+			set.add(gl20Model);
 			modelsForMaterial.put(material, set);
 			return;
 		}
-		modelSet.add(model);
+		modelSet.add(gl20Model);
 	}
 
-	/**
-	 * Removes a model from the list.
-	 *
-	 * @param model The model to remove
-	 */
-	public void removeModel(OpenGL20Model model) {
-		models.remove(model);
-		final OpenGL20Material material = model.getMaterial();
+	@Override
+	public void removeModel(Model model) {
+		checkModelVersion(model);
+		final OpenGL20Model gl20Model = (OpenGL20Model) model;
+		models.remove(gl20Model);
+		final OpenGL20Material material = gl20Model.getMaterial();
 		final Set<OpenGL20Model> modelSet = modelsForMaterial.get(material);
 		if (modelSet == null) {
 			return;
 		}
-		modelSet.remove(model);
+		modelSet.remove(gl20Model);
 		if (modelSet.isEmpty()) {
 			modelsForMaterial.remove(material);
 		}
 	}
 
-	/**
-	 * Gets the background color.
-	 *
-	 * @return The background color
-	 */
-	public Color getBackgroundColor() {
-		return backgroundColor;
-	}
-
-	/**
-	 * Sets the background color.
-	 *
-	 * @param color The background color
-	 */
-	public void setBackgroundColor(Color color) {
-		backgroundColor = color;
+	private void checkModelVersion(Model model) {
+		if (!(model instanceof OpenGL20Model)) {
+			throw new IllegalArgumentException("Version mismatch: expected OpenGL20Model, got "
+					+ model.getClass().getSimpleName());
+		}
 	}
 }

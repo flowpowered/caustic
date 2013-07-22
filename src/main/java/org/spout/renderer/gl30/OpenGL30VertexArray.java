@@ -64,7 +64,7 @@ public class OpenGL30VertexArray extends VertexArray {
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
 		// Save the count of indices to draw
 		renderingIndicesCount = vertexData.getIndicesCount();
-		// create the map for attribute index to buffer ID
+		// Create the map for attribute index to buffer ID
 		attributeBufferIDs = new int[vertexData.getAttributeCount()];
 		// For each attribute, generate, bind and fill the vbo,
 		// then setup the attribute in the vao and save the buffer ID for the index

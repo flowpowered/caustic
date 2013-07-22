@@ -26,13 +26,10 @@
  */
 package org.spout.renderer.gl20;
 
+import org.spout.renderer.Material;
 import org.spout.renderer.Model;
 
-/**
- * @author thehutch
- */
 public class OpenGL20Model extends Model {
-
 	private final OpenGL20VertexArray vertexArray = new OpenGL20VertexArray();
 	private OpenGL20Material material;
 
@@ -66,11 +63,17 @@ public class OpenGL20Model extends Model {
 		vertexArray.render(mode);
 	}
 
+	@Override
 	public OpenGL20Material getMaterial() {
 		return material;
 	}
 
-	public void setMaterial(OpenGL20Material material) {
-		this.material = material;
+	@Override
+	public void setMaterial(Material material) {
+		if (!(material instanceof OpenGL20Material)) {
+			throw new IllegalArgumentException("Version mismatch: expected OpenGL20Material, got "
+					+ material.getClass().getSimpleName());
+		}
+		this.material = (OpenGL20Material) material;
 	}
 }

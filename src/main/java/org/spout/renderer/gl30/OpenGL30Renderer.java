@@ -26,7 +26,6 @@
  */
 package org.spout.renderer.gl30;
 
-import java.awt.Color;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -41,6 +40,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL32;
 import org.lwjgl.opengl.PixelFormat;
 
+import org.spout.renderer.Model;
 import org.spout.renderer.Renderer;
 import org.spout.renderer.data.Uniform.Matrix4Uniform;
 import org.spout.renderer.gl20.OpenGL20Material;
@@ -49,17 +49,14 @@ import org.spout.renderer.util.RenderUtil;
 /**
  * This is a renderer using OpenGL 3.0. To create a new render window, start by creating a camera
  * and setting it using {@link #setCamera(org.spout.renderer.Camera)}, then use {@link #create()} to
- * create the OpenGL context. To add and remove models, use {@link #addModel(OpenGL30Model)} and
- * {@link #removeModel(OpenGL30Model)}. The camera position and rotation can be modified by
- * accessing it with {@link #getCamera()}. When done, use {@link #destroy()} to destroy the render
- * window.
+ * create the OpenGL context. To add and remove models, use {@link #addModel(Model)} and {@link
+ * #removeModel(Model)}. The camera position and rotation can be modified by accessing it with
+ * {@link #getCamera()}. When done, use {@link #destroy()} to destroy the render window.
  */
 public class OpenGL30Renderer extends Renderer {
 	// Models
 	private final Set<OpenGL30Model> models = new HashSet<>();
 	private final Map<OpenGL20Material, Set<OpenGL30Model>> modelsForMaterial = new HashMap<>();
-	// Properties
-	private Color backgroundColor = new Color(0.2f, 0.2f, 0.2f, 0);
 
 	@Override
 	public void create() {
@@ -115,9 +112,7 @@ public class OpenGL30Renderer extends Renderer {
 		super.destroy();
 	}
 
-	/**
-	 * Draws all the models that have been created to the screen.
-	 */
+	@Override
 	public void render() {
 		checkCreated();
 		// Clear the last render
@@ -152,58 +147,42 @@ public class OpenGL30Renderer extends Renderer {
 		Display.update();
 	}
 
-	/**
-	 * Adds a model to the list. If a non-created model is added to the list, it will not be rendered
-	 * until it is created.
-	 *
-	 * @param model The model to add
-	 */
-	public void addModel(OpenGL30Model model) {
-		models.add(model);
-		final OpenGL20Material material = model.getMaterial();
+	@Override
+	public void addModel(Model model) {
+		checkModelVersion(model);
+		final OpenGL30Model gl30Model = (OpenGL30Model) model;
+		models.add(gl30Model);
+		final OpenGL20Material material = gl30Model.getMaterial();
 		final Set<OpenGL30Model> modelSet = modelsForMaterial.get(material);
 		if (modelSet == null) {
 			final Set<OpenGL30Model> set = new HashSet<>();
-			set.add(model);
+			set.add(gl30Model);
 			modelsForMaterial.put(material, set);
 			return;
 		}
-		modelSet.add(model);
+		modelSet.add(gl30Model);
 	}
 
-	/**
-	 * Removes a model from the list.
-	 *
-	 * @param model The model to remove
-	 */
-	public void removeModel(OpenGL30Model model) {
-		models.remove(model);
-		final OpenGL20Material material = model.getMaterial();
+	@Override
+	public void removeModel(Model model) {
+		checkModelVersion(model);
+		final OpenGL30Model gl30Model = (OpenGL30Model) model;
+		models.remove(gl30Model);
+		final OpenGL20Material material = gl30Model.getMaterial();
 		final Set<OpenGL30Model> modelSet = modelsForMaterial.get(material);
 		if (modelSet == null) {
 			return;
 		}
-		modelSet.remove(model);
+		modelSet.remove(gl30Model);
 		if (modelSet.isEmpty()) {
 			modelsForMaterial.remove(material);
 		}
 	}
 
-	/**
-	 * Gets the background color.
-	 *
-	 * @return The background color
-	 */
-	public Color getBackgroundColor() {
-		return backgroundColor;
-	}
-
-	/**
-	 * Sets the background color.
-	 *
-	 * @param color The background color
-	 */
-	public void setBackgroundColor(Color color) {
-		backgroundColor = color;
+	private void checkModelVersion(Model model) {
+		if (!(model instanceof OpenGL30Model)) {
+			throw new IllegalArgumentException("Version mismatch: expected OpenGL30Model, got "
+					+ model.getClass().getSimpleName());
+		}
 	}
 }
