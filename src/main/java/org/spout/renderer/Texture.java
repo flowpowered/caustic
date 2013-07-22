@@ -26,6 +26,7 @@
  */
 package org.spout.renderer;
 
+import java.io.InputStream;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
@@ -33,13 +34,14 @@ import org.lwjgl.opengl.GL12;
  * Represents a texture for OpenGL. The textures image, dimension, wrapping and filters
  * must be set respectively before it can be created.
  */
-public class Texture extends Creatable {
+public abstract class Texture extends Creatable {
 
 	protected int id = 0;
 	protected int[] image;
 	protected int width, height;
 	protected TextureWrap wrapT, wrapS;
 	protected TextureFilter minFilter, magFilter;
+	protected InputStream textureSource;
 
 	@Override
 	public void create() {
@@ -109,6 +111,14 @@ public class Texture extends Creatable {
 		this.magFilter = magFilter;
 	}
 
+	public InputStream getTextureSource() {
+		return textureSource;
+	}
+
+	public void setTextureSource(InputStream textureSource) {
+		this.textureSource = textureSource;
+	}
+
 	public enum TextureWrap {
 
 		REPEAT(GL11.GL_REPEAT),
@@ -139,4 +149,5 @@ public class Texture extends Creatable {
 			return filter;
 		}
 	}
+
 }
