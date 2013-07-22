@@ -71,6 +71,10 @@ public abstract class Model extends Creatable {
 	 */
 	protected abstract void render();
 
+	public abstract Material getMaterial();
+
+	public abstract void setMaterial(Material material);
+
 	/**
 	 * Returns the transformation matrix that represent the model's current scale, rotation and
 	 * position.

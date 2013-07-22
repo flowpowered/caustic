@@ -26,6 +26,8 @@
  */
 package org.spout.renderer;
 
+import java.awt.Color;
+
 import org.spout.renderer.data.UniformHolder;
 
 /**
@@ -38,10 +40,34 @@ public abstract class Renderer extends Creatable {
 	// Window size
 	protected int windowWidth = 640;
 	protected int windowHeight = 480;
+	// Properties
+	protected Color backgroundColor = new Color(0.2f, 0.2f, 0.2f, 0);
 	// Camera
 	protected Camera camera;
+	//Render mode
+	protected RenderMode renderMode;
 	// Renderer uniforms
 	protected final UniformHolder uniforms = new UniformHolder();
+
+	/**
+	 * Draws all the models that have been created to the screen.
+	 */
+	public abstract void render();
+
+	/**
+	 * Adds a model to the list. If a non-created model is added to the list, it will not be rendered
+	 * until it is created.
+	 *
+	 * @param model The model to add
+	 */
+	public abstract void addModel(Model model);
+
+	/**
+	 * Removes a model from the list.
+	 *
+	 * @param model The model to remove
+	 */
+	public abstract void removeModel(Model model);
 
 	/**
 	 * Returns the window title.
@@ -109,6 +135,24 @@ public abstract class Renderer extends Creatable {
 	}
 
 	/**
+	 * Gets the background color.
+	 *
+	 * @return The background color
+	 */
+	public Color getBackgroundColor() {
+		return backgroundColor;
+	}
+
+	/**
+	 * Sets the background color.
+	 *
+	 * @param color The background color
+	 */
+	public void setBackgroundColor(Color color) {
+		backgroundColor = color;
+	}
+
+	/**
 	 * Gets the renderer camera. Use this to move the view around.
 	 *
 	 * @return The camera
@@ -126,7 +170,30 @@ public abstract class Renderer extends Creatable {
 		this.camera = camera;
 	}
 
+	/**
+	 * Gets the render mode of this renderer
+	 *
+	 * @return The render mode
+	 */
+	public RenderMode getRenderMode() {
+		return renderMode;
+	}
+
+	/**
+	 * Sets the render mode
+	 *
+	 * @param renderMode The render mode
+	 */
+	public void setRenderMode(RenderMode renderMode) {
+		this.renderMode = renderMode;
+	}
+
 	public UniformHolder getUniforms() {
 		return uniforms;
+	}
+
+	public enum RenderMode {
+		GL20,
+		GL30;
 	}
 }

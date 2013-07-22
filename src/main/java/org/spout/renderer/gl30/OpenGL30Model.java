@@ -26,6 +26,7 @@
  */
 package org.spout.renderer.gl30;
 
+import org.spout.renderer.Material;
 import org.spout.renderer.Model;
 import org.spout.renderer.gl20.OpenGL20Material;
 
@@ -72,11 +73,14 @@ public class OpenGL30Model extends Model {
 		vertexArray.render(mode);
 	}
 
+	@Override
 	public OpenGL20Material getMaterial() {
 		return material;
 	}
 
-	public void setMaterial(OpenGL20Material material) {
-		this.material = material;
+	@Override
+	public void setMaterial(Material material) {
+		// TODO: OpenGL30Material
+		this.material = (OpenGL20Material) material;
 	}
 }

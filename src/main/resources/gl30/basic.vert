@@ -14,7 +14,8 @@ uniform mat4 projectionMatrix;
 void main() {
     modelPosition = vec3(modelMatrix * vec4(position, 1));
     modelNormal = mat3(modelMatrix) * normal;
-    viewDirection = normalize(vec3(inverse(cameraMatrix) * vec4(0, 0, 0, 1)) - modelPosition);
+    vec3 cameraPosition = -cameraMatrix[3].xyz * mat3(cameraMatrix);
+    viewDirection = normalize(cameraPosition - modelPosition);
 
     if (dot(modelNormal, viewDirection) < 0) {
         modelNormal = -modelNormal;

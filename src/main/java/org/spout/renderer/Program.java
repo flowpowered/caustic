@@ -26,6 +26,14 @@
  */
 package org.spout.renderer;
 
+import java.io.InputStream;
+import java.util.EnumMap;
+import java.util.Map;
+
+import gnu.trove.map.TObjectIntMap;
+import gnu.trove.map.hash.TObjectIntHashMap;
+
+import org.spout.renderer.Shader.ShaderType;
 import org.spout.renderer.data.UniformHolder;
 
 /**
@@ -34,6 +42,17 @@ import org.spout.renderer.data.UniformHolder;
  */
 public abstract class Program extends Creatable {
 	protected int id;
+	// Shader sources
+	protected Map<ShaderType, InputStream> shaderSources;
+	// Map of the attribute names to their vao index (optional for GL30 as they can be defined in the shader instead)
+	protected TObjectIntMap<String> attributeLayouts;
+
+	@Override
+	public void create() {
+		shaderSources = null;
+		attributeLayouts = null;
+		super.create();
+	}
 
 	@Override
 	public void destroy() {
@@ -54,5 +73,47 @@ public abstract class Program extends Creatable {
 	 */
 	public int getID() {
 		return id;
+	}
+
+	public void addShaderSource(ShaderType type, InputStream source) {
+		if (shaderSources == null) {
+			shaderSources = new EnumMap<>(ShaderType.class);
+		}
+		shaderSources.put(type, source);
+	}
+
+	public boolean hasShaderSource(ShaderType type) {
+		return shaderSources != null && shaderSources.containsKey(type);
+	}
+
+	public InputStream getShaderSource(ShaderType type) {
+		return shaderSources != null ? shaderSources.get(type) : null;
+	}
+
+	public void removeShaderSource(ShaderType type) {
+		if (shaderSources != null) {
+			shaderSources.remove(type);
+		}
+	}
+
+	public void addAttributeLayout(String name, int index) {
+		if (attributeLayouts == null) {
+			attributeLayouts = new TObjectIntHashMap<>();
+		}
+		attributeLayouts.put(name, index);
+	}
+
+	public boolean hasAttributeLayout(String name) {
+		return attributeLayouts != null && attributeLayouts.containsKey(name);
+	}
+
+	public int getAttributeLayout(String name) {
+		return attributeLayouts != null ? attributeLayouts.get(name) : -1;
+	}
+
+	public void removeAttributeLayout(String name) {
+		if (attributeLayouts != null) {
+			attributeLayouts.remove(name);
+		}
 	}
 }

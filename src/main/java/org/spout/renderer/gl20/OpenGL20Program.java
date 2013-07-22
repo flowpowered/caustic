@@ -27,12 +27,13 @@
 package org.spout.renderer.gl20;
 
 import java.awt.Color;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.Collections;
 import java.util.Set;
 
+import gnu.trove.impl.Constants;
+import gnu.trove.iterator.TObjectIntIterator;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 
@@ -54,30 +55,57 @@ import org.spout.renderer.util.RenderUtil;
 /**
  * Represents a program for OpenGL 2.0. A program is a composed of a vertex shader and a fragment
  * shader. After being constructed, set the shader sources with {@link
- * #setVertexShaderSource(java.io.InputStream)} and {@link #setFragmentShaderSource(java.io.InputStream)}.
- * The program then needs to be created in the OpenGL context with {@link #create()}.
+ * #addShaderSource(org.spout.renderer.Shader.ShaderType, java.io.InputStream)}, for the {@link
+ * ShaderType#VERTEX} and {@link ShaderType#FRAGMENT} types. The program then needs to be created in
+ * the OpenGL context with {@link #create()}.
  */
 public class OpenGL20Program extends Program {
 	// Shaders
 	private final OpenGL20Shader vertexShader = new OpenGL20Shader();
 	private final OpenGL20Shader fragmentShader = new OpenGL20Shader();
-	// Map of the uniform name to the ID
-	private final TObjectIntMap<String> uniforms = new TObjectIntHashMap<>();
+	// Map of the uniform name to their location
+	private final TObjectIntMap<String> uniforms = new TObjectIntHashMap<>(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, -1);
 
 	@Override
 	public void create() {
 		if (created) {
 			throw new IllegalStateException("Program has already been created");
 		}
-		vertexShader.setType(ShaderType.VERTEX);
-		vertexShader.create();
-		fragmentShader.setType(ShaderType.FRAGMENT);
-		fragmentShader.create();
+		if (shaderSources == null || shaderSources.isEmpty()) {
+			throw new IllegalStateException("No sources set for shaders");
+		}
+		if (!shaderSources.containsKey(ShaderType.VERTEX)) {
+			throw new IllegalStateException("No source set for vertex shader");
+		}
+		if (!shaderSources.containsKey(ShaderType.FRAGMENT)) {
+			throw new IllegalStateException("No source set for fragment shader");
+		}
+		// Create program
 		id = GL20.glCreateProgram();
-		GL20.glAttachShader(id, vertexShader.getID());
-		GL20.glAttachShader(id, fragmentShader.getID());
+		// Create the vertex Shader
+		vertexShader.setType(ShaderType.VERTEX);
+		vertexShader.setSource(shaderSources.get(ShaderType.VERTEX));
+		vertexShader.create();
+		vertexShader.attach(id);
+		// Create the fragment Shader
+		fragmentShader.setType(ShaderType.FRAGMENT);
+		fragmentShader.setSource(shaderSources.get(ShaderType.FRAGMENT));
+		fragmentShader.create();
+		fragmentShader.attach(id);
+		// If the attribute layout has been setup, apply it
+		if (attributeLayouts != null && !attributeLayouts.isEmpty()) {
+			final TObjectIntIterator<String> iterator = attributeLayouts.iterator();
+			while (iterator.hasNext()) {
+				iterator.advance();
+				// Bind the index to the name
+				GL20.glBindAttribLocation(id, iterator.value(), iterator.key());
+			}
+		}
+		// Link program
 		GL20.glLinkProgram(id);
+		// Validate program
 		GL20.glValidateProgram(id);
+		// Load uniforms
 		final int uniformCount = GL20.glGetProgrami(id, GL20.GL_ACTIVE_UNIFORMS);
 		for (int i = 0; i < uniformCount; i++) {
 			final ByteBuffer nameBuffer = BufferUtils.createByteBuffer(256);
@@ -99,20 +127,12 @@ public class OpenGL20Program extends Program {
 	@Override
 	public void destroy() {
 		checkCreated();
-		GL20.glDetachShader(id, vertexShader.getID());
-		GL20.glDetachShader(id, fragmentShader.getID());
 		vertexShader.destroy();
 		fragmentShader.destroy();
 		GL20.glDeleteProgram(id);
 		uniforms.clear();
 		super.destroy();
 		RenderUtil.checkForOpenGLError();
-	}
-
-	private void checkCreated() {
-		if (!created) {
-			throw new IllegalStateException("Program has not been created yet");
-		}
 	}
 
 	@Override
@@ -133,24 +153,6 @@ public class OpenGL20Program extends Program {
 		for (Uniform uniform : uniforms) {
 			uniform.upload(this);
 		}
-	}
-
-	/**
-	 * Sets the vertex shader source input stream.
-	 *
-	 * @param source The input stream to use
-	 */
-	public void setVertexShaderSource(InputStream source) {
-		vertexShader.setSource(source);
-	}
-
-	/**
-	 * Sets the fragment shader source input stream.
-	 *
-	 * @param source The input stream to use
-	 */
-	public void setFragmentShaderSource(InputStream source) {
-		fragmentShader.setSource(source);
 	}
 
 	/**
