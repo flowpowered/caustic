@@ -9,7 +9,7 @@ import org.lwjgl.opengl.GL11;
 import org.spout.renderer.Texture;
 
 /**
- * @author thehutch
+ * Represents a texture for OpenGL20.
  */
 public class OpenGL20Texture extends Texture {
 
