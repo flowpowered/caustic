@@ -88,7 +88,7 @@ public abstract class Shader extends Creatable {
 		TESS_CONTROL(GL40.GL_TESS_CONTROL_SHADER),
 		TESS_EVALUATION(GL40.GL_TESS_EVALUATION_SHADER),
 		COMPUTE(GL43.GL_COMPUTE_SHADER);
-		private int glConstant;
+		private final int glConstant;
 
 		private ShaderType(int glConstant) {
 			this.glConstant = glConstant;
