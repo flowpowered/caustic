@@ -134,9 +134,6 @@ public class VertexDataTest {
 		// Get attribute count
 		int count = vertexData.getAttributeCount();
 		Assert.assertEquals(5, count);
-		// Get last attribute index
-		index = vertexData.getLastAttributeIndex();
-		Assert.assertEquals(4, index);
 		// Get attribute names
 		Set<String> names = vertexData.getAttributeNames();
 		Assert.assertEquals(new HashSet<>(Arrays.asList("byte", "short", "int", "float", "double")), names);

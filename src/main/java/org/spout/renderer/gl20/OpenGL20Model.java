@@ -24,40 +24,53 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer;
+package org.spout.renderer.gl20;
+
+import org.spout.renderer.Model;
 
 /**
- * Represents a resource that can be created and destroyed.
+ * @author thehutch
  */
-public abstract class Creatable {
-	protected boolean created = false;
+public class OpenGL20Model extends Model {
 
-	/**
-	 * Creates the resources. It can now be used.
-	 */
+	private final OpenGL20VertexArray vertexArray = new OpenGL20VertexArray();
+	private OpenGL20Material material;
+
+	@Override
 	public void create() {
-		created = true;
-	}
-
-	/**
-	 * Releases the resource. It can not longer be used.
-	 */
-	public void destroy() {
-		created = false;
-	}
-
-	/**
-	 * Returns true if the resource was created and is ready for use, false if otherwise.
-	 *
-	 * @return Whether or not the resource has been created
-	 */
-	public boolean isCreated() {
-		return created;
-	}
-
-	protected void checkCreated() {
-		if (!isCreated()) {
-			throw new IllegalStateException("Resource has not been created yet");
+		if (created) {
+			throw new IllegalStateException("Model has already been created");
 		}
+		if (material == null) {
+			throw new IllegalStateException("Material has not been set");
+		}
+		vertexArray.setVertexData(vertices);
+		vertexArray.create();
+		super.create();
+	}
+
+	@Override
+	public void destroy() {
+		checkCreated();
+		vertexArray.destroy();
+		super.destroy();
+	}
+
+	@Override
+	protected void render() {
+		if (!material.isCreated()) {
+			throw new IllegalStateException("Material has not been created yet");
+		}
+		uniforms.getMatrix4("modelMatrix").set(getMatrix());
+		material.getProgram().upload(uniforms);
+		vertexArray.render(mode);
+	}
+
+	public OpenGL20Material getMaterial() {
+		return material;
+	}
+
+	public void setMaterial(OpenGL20Material material) {
+		this.material = material;
 	}
 }

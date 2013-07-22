@@ -40,6 +40,8 @@ public abstract class Renderer extends Creatable {
 	protected int windowHeight = 480;
 	// Camera
 	protected Camera camera;
+	//Render mode
+	protected RenderMode renderMode;
 	// Renderer uniforms
 	protected final UniformHolder uniforms = new UniformHolder();
 
@@ -126,7 +128,30 @@ public abstract class Renderer extends Creatable {
 		this.camera = camera;
 	}
 
+	/**
+	 * Gets the render mode of this renderer
+	 *
+	 * @return The render mode
+	 */
+	public RenderMode getRenderMode() {
+		return renderMode;
+	}
+
+	/**
+	 * Sets the render mode
+	 *
+	 * @param renderMode The render mode
+	 */
+	public void setRenderMode(RenderMode renderMode) {
+		this.renderMode = renderMode;
+	}
+
 	public UniformHolder getUniforms() {
 		return uniforms;
+	}
+
+	public enum RenderMode {
+		GL20,
+		GL30;
 	}
 }

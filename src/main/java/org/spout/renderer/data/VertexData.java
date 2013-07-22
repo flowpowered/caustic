@@ -461,15 +461,6 @@ public class VertexData {
 	}
 
 	/**
-	 * Returns the last valid attribute index.
-	 *
-	 * @return The last valid attribute index
-	 */
-	public int getLastAttributeIndex() {
-		return index - 1;
-	}
-
-	/**
 	 * Returns an unmodifiable set of all the attribute names.
 	 *
 	 * @return A set of all the attribute names

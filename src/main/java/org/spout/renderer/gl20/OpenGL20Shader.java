@@ -39,11 +39,13 @@ import org.spout.renderer.util.RenderUtil;
 
 /**
  * Represents a shader for OpenGL 2.1. After being constructed, use {@link
- * #setSource(java.io.InputStream)} to set shader source and {@link #setType(org.spout.renderer.Shader.ShaderType)}
+ * #setSource(java.io.InputStream)} to set shader source and
+ * {@link #setType(org.spout.renderer.Shader.ShaderType)}
  * to set the shader type. The shader then needs to be created in the OpenGL context with {@link
  * #create()}. This class is meant to be used by the {@link OpenGL20Program} class.
  */
 public class OpenGL20Shader extends Shader {
+
 	@Override
 	public void create() {
 		if (created) {
@@ -56,13 +58,11 @@ public class OpenGL20Shader extends Shader {
 			throw new IllegalStateException("Shader type has not been set");
 		}
 		final StringBuilder source = new StringBuilder();
-		try {
-			final BufferedReader reader = new BufferedReader(new InputStreamReader(shaderSource));
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(shaderSource))) {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				source.append(line).append("\n");
 			}
-			reader.close();
 			shaderSource.close();
 		} catch (IOException e) {
 			System.out.println("IO exception: " + e.getMessage());
@@ -70,11 +70,14 @@ public class OpenGL20Shader extends Shader {
 		final int id = GL20.glCreateShader(shaderType.getGLConstant());
 		GL20.glShaderSource(id, source);
 		GL20.glCompileShader(id);
+
 		if (GL20.glGetShaderi(id, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
 			throw new OpenGLException("OPEN GL ERROR: Could not compile shader\n" + GL20.glGetShaderInfoLog(id, 1000));
 		}
 		this.id = id;
+
 		super.create();
+
 		RenderUtil.checkForOpenGLError();
 	}
 
@@ -86,5 +89,9 @@ public class OpenGL20Shader extends Shader {
 		GL20.glDeleteShader(id);
 		super.destroy();
 		RenderUtil.checkForOpenGLError();
+	}
+
+	protected void attach(int programId) {
+		GL20.glAttachShader(programId, id);
 	}
 }
