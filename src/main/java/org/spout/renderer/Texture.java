@@ -76,11 +76,7 @@ public abstract class Texture extends Creatable {
 		this.image = newImage;
 	}
 
-	/**
-	 * Gets the image width
-	 *
-	 * @return image width
-	 */
+
 	public int getWidth() {
 		return width;
 	}
@@ -132,7 +128,7 @@ public abstract class Texture extends Creatable {
 
 	/**
 	 * Gets the texture's min filter
-	 * 
+	 *
 	 * @return The min filter
 	 */
 	public TextureFilter getMinFilter() {
