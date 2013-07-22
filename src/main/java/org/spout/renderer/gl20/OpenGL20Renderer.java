@@ -79,7 +79,8 @@ public class OpenGL20Renderer extends Renderer {
 		RenderUtil.checkForOpenGLError();
 
 		uniforms.add(new Uniform.Matrix4Uniform("projectionMatrix", camera.getProjectionMatrix()));
-		uniforms.add(new Uniform.Matrix4Uniform("cameraMatrix", camera.getProjectionMatrix()));
+		uniforms.add(new Uniform.Matrix4Uniform("inverseMatrix", camera.getMatrix().invert()));
+		uniforms.add(new Uniform.Matrix4Uniform("cameraMatrix", camera.getMatrix()));
 		super.create();
 	}
 
@@ -113,6 +114,7 @@ public class OpenGL20Renderer extends Renderer {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
 		uniforms.getMatrix4("cameraMatrix").set(camera.getMatrix());
+		uniforms.getMatrix4("inverseMatrix").set(camera.getMatrix().invert());
 		uniforms.getMatrix4("projectionMatrix").set(camera.getProjectionMatrix());
 
 		for (Entry<OpenGL20Material, Set<OpenGL20Model>> entry : modelsForMaterial.entrySet()) {

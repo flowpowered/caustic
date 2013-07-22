@@ -43,7 +43,7 @@ import org.spout.renderer.util.RenderUtil;
 public class OpenGL20VertexArray extends VertexArray {
 
 	private int indicesBufferID = 0;
-	private int[] attributeBufferIDs;
+	//private int[] attributeBufferIDs;
 
 	@Override
 	public void create() {
@@ -56,7 +56,6 @@ public class OpenGL20VertexArray extends VertexArray {
 
 		//Create and bind buffer
 		id = GL15.glGenBuffers();
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, id);
 
 		indicesBufferID = GL15.glGenBuffers();
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesBufferID);
@@ -64,7 +63,7 @@ public class OpenGL20VertexArray extends VertexArray {
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
 
 		renderingIndicesCount = vertexData.getIndicesCount();
-		attributeBufferIDs = new int[vertexData.getAttributeCount()];
+		//attributeBufferIDs = new int[vertexData.getAttributeCount()];
 
 		for (int i = 0 ; i < vertexData.getAttributeCount() ; i++) {
 			final VertexData.VertexAttribute attribute = vertexData.getAttribute(i);
@@ -72,7 +71,7 @@ public class OpenGL20VertexArray extends VertexArray {
 			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, bufferID);
 			GL15.glBufferData(GL15.GL_ARRAY_BUFFER, attribute.getBuffer(), GL15.GL_STATIC_DRAW);
 			GL20.glVertexAttribPointer(i, attribute.getSize(), attribute.getType().getGLConstant(), false, 0, 0);
-			attributeBufferIDs[i] = bufferID;
+			//attributeBufferIDs[i] = bufferID;
 		}
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 		super.create();
@@ -108,42 +107,23 @@ public class OpenGL20VertexArray extends VertexArray {
 	public void render(DrawMode mode) {
 		checkCreated();
 
-		for (int x = 0 ; x < attributeBufferIDs.length ; x++) {
-			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, attributeBufferIDs[x]);
-			for (int i = 0 ; i < vertexData.getAttributeCount() ; i++) {
-				GL20.glEnableVertexAttribArray(i);
-			}
-			//Bind the indices buffer
-			GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesBufferID);
-			//Draw all indices with the provided mode
-			GL11.glDrawElements(mode.getGLConstant(), renderingIndicesCount, GL11.GL_UNSIGNED_INT, 0);
-			//Unbind the indices buffer
-			GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
-			//Disable all attributes
-			for (int i = 0 ; i < vertexData.getAttributeCount() ; i++) {
-				GL20.glDisableVertexAttribArray(i);
-			}
-			RenderUtil.checkForOpenGLError();
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, id);
+		for (int i = 0 ; i < vertexData.getAttributeCount() ; i++) {
+			GL20.glEnableVertexAttribArray(i);
 		}
+		//Bind the indices buffer
+		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesBufferID);
+		//Draw all indices with the provided mode
+		GL11.glDrawElements(mode.getGLConstant(), renderingIndicesCount, GL11.GL_UNSIGNED_INT, 0);
+		//Unbind the indices buffer
+		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
+		//Disable all attributes
+		for (int i = 0 ; i < vertexData.getAttributeCount() ; i++) {
+			GL20.glDisableVertexAttribArray(i);
+		}
+		//Unbind the vertex buffer
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-
-		/*GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, id);
-		 for (int i = 0 ; i < vertexData.getAttributeCount() ; i++) {
-		 GL20.glEnableVertexAttribArray(i);
-		 }
-		 //Bind the indices buffer
-		 GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesBufferID);
-		 //Draw all indices with the provided mode
-		 GL11.glDrawElements(mode.getGLConstant(), renderingIndicesCount, GL11.GL_UNSIGNED_INT, 0);
-		 //Unbind the indices buffer
-		 GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
-		 //Disable all attributes
-		 for (int i = 0 ; i < vertexData.getAttributeCount() ; i++) {
-		 GL20.glDisableVertexAttribArray(i);
-		 }
-		 //Unbind the vertex buffer
-		 GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-		 //Check for errors
-		 RenderUtil.checkForOpenGLError();*/
+		//Check for errors
+		RenderUtil.checkForOpenGLError();
 	}
 }
