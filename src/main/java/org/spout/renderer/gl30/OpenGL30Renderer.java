@@ -42,7 +42,6 @@ import org.lwjgl.opengl.PixelFormat;
 
 import org.spout.renderer.Model;
 import org.spout.renderer.Renderer;
-import org.spout.renderer.data.Uniform.Matrix4Uniform;
 import org.spout.renderer.gl20.OpenGL20Material;
 import org.spout.renderer.util.RenderUtil;
 
@@ -66,18 +65,21 @@ public class OpenGL30Renderer extends Renderer {
 		if (camera == null) {
 			throw new IllegalStateException("Camera has not been set");
 		}
-		final PixelFormat pixelFormat = new PixelFormat();
-		final ContextAttribs contextAttributes = new ContextAttribs(3, 2).withProfileCore(true);
+		// Attempt to create the display
 		try {
 			Display.setDisplayMode(new DisplayMode(windowWidth, windowHeight));
-			Display.create(pixelFormat, contextAttributes);
+			Display.create(new PixelFormat(), new ContextAttribs(3, 2).withProfileCore(true));
 		} catch (LWJGLException ex) {
 			throw new RuntimeException(ex);
 		}
+		// Set the title
 		Display.setTitle(windowTitle);
+		// Set the view port to the window
 		GL11.glViewport(0, 0, windowWidth, windowHeight);
+		// Set the clear color, which will be the color of empty screen area
 		GL11.glClearColor(backgroundColor.getRed() / 255f, backgroundColor.getGreen() / 255f,
 						  backgroundColor.getBlue() / 255f, backgroundColor.getAlpha() / 255f);
+		// Enable dept testing to properly display depth
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glEnable(GL32.GL_DEPTH_CLAMP);
 		if (isCullingEnabled()) {
@@ -85,10 +87,10 @@ public class OpenGL30Renderer extends Renderer {
 			GL11.glEnable(GL11.GL_CULL_FACE);
 			GL11.glCullFace(GL11.GL_BACK);
 		}
+		// Enable the depth mask
 		GL11.glDepthMask(true);
 		RenderUtil.checkForOpenGLError();
-		uniforms.add(new Matrix4Uniform("projectionMatrix", camera.getProjectionMatrix()));
-		uniforms.add(new Matrix4Uniform("cameraMatrix", camera.getMatrix()));
+		// Update the state
 		super.create();
 	}
 
@@ -110,10 +112,9 @@ public class OpenGL30Renderer extends Renderer {
 		// Destroy display
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL11.glDepthMask(false);
-		RenderUtil.checkForOpenGLError();
 		// Display goes after else there's no context in which to check for an error
+		RenderUtil.checkForOpenGLError();
 		Display.destroy();
-		camera = null;
 		super.destroy();
 	}
 

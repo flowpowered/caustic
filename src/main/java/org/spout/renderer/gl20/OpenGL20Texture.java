@@ -85,17 +85,17 @@ public class OpenGL20Texture extends Texture {
 		// Set pixel storage mode
 		GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
 		// Upload the texture to the GPU
-		if (minFilter.isMipMap() || magFilter.isMipMap()) {
+		if (minFilter.needsMipMaps() || magFilter.needsMipMaps()) {
 			// Build mipmaps if using mip mapped filters
 			GLU.gluBuild2DMipmaps(GL11.GL_TEXTURE_2D, GL11.GL_RGBA8, width, height, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
 		} else {
 			// Else just make it a normal texture
 			GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA8, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
 		}
-		// Set the vertical and horizontal texture wrap
+		// Set the vertical and horizontal texture wraps (in the texture parameters)
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, wrapT.getGLConstant());
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, wrapS.getGLConstant());
-		// Set the min and max texture filter
+		// Set the min and max texture filters (in the texture parameters)
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, minFilter.getGLConstant());
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, magFilter.getGLConstant());
 		// Unbind the texture

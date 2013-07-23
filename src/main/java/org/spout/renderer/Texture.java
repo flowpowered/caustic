@@ -46,8 +46,14 @@ public abstract class Texture extends Creatable {
 	protected FilterMode magFilter = FilterMode.NEAREST;
 	protected InputStream source;
 
+	/**
+	 * Binds the texture to the OpenGL context.
+	 */
 	public abstract void bind();
 
+	/**
+	 * Unbinds the texture from the OpenGL context.
+	 */
 	public abstract void unbind();
 
 	/**
@@ -81,7 +87,7 @@ public abstract class Texture extends Creatable {
 	}
 
 	/**
-	 * Gets the horizontal texture wrap
+	 * Gets the horizontal texture wrap.
 	 *
 	 * @return Horizontal texture wrap
 	 */
@@ -90,7 +96,7 @@ public abstract class Texture extends Creatable {
 	}
 
 	/**
-	 * Sets the horizontal texture wrap
+	 * Sets the horizontal texture wrap.
 	 *
 	 * @param wrapS Horizontal texture wrap
 	 */
@@ -99,7 +105,7 @@ public abstract class Texture extends Creatable {
 	}
 
 	/**
-	 * Gets the vertical texture wrap
+	 * Gets the vertical texture wrap.
 	 *
 	 * @return Vertical texture wrap
 	 */
@@ -108,7 +114,7 @@ public abstract class Texture extends Creatable {
 	}
 
 	/**
-	 * Sets the vertical texture wrap
+	 * Sets the vertical texture wrap.
 	 *
 	 * @param wrapT Vertical texture wrap
 	 */
@@ -117,7 +123,7 @@ public abstract class Texture extends Creatable {
 	}
 
 	/**
-	 * Gets the texture's min filter
+	 * Gets the texture's min filter.
 	 *
 	 * @return The min filter
 	 */
@@ -126,7 +132,7 @@ public abstract class Texture extends Creatable {
 	}
 
 	/**
-	 * Sets the texture's min filter
+	 * Sets the texture's min filter.
 	 *
 	 * @param minFilter The min filter
 	 */
@@ -135,7 +141,7 @@ public abstract class Texture extends Creatable {
 	}
 
 	/**
-	 * Gets the texture's mag filter
+	 * Gets the texture's mag filter.
 	 *
 	 * @return The mag filter
 	 */
@@ -144,16 +150,19 @@ public abstract class Texture extends Creatable {
 	}
 
 	/**
-	 * Sets the texture's mag filter
+	 * Sets the texture's mag filter. Filters that require mipmaps generation cannot be used here.
 	 *
 	 * @param magFilter The mag filter
 	 */
 	public void setMagFilter(FilterMode magFilter) {
+		if (magFilter.needsMipMaps()) {
+			throw new IllegalArgumentException("Mimpmap filters cannot be used for texture magnification");
+		}
 		this.magFilter = magFilter;
 	}
 
 	/**
-	 * Sets the input stream source of the texture
+	 * Sets the input stream source of the texture.
 	 *
 	 * @param source The input stream of the texture
 	 */
@@ -161,6 +170,9 @@ public abstract class Texture extends Creatable {
 		this.source = source;
 	}
 
+	/**
+	 * An enum for the texture wrapping modes.
+	 */
 	public static enum WrapMode {
 		CLAMP_TO_EDGE(GL12.GL_CLAMP_TO_EDGE),
 		CLAMP_TO_BORDER(GL13.GL_CLAMP_TO_BORDER),
@@ -182,6 +194,9 @@ public abstract class Texture extends Creatable {
 		}
 	}
 
+	/**
+	 * An enum for the texture filtering modes.
+	 */
 	public static enum FilterMode {
 		LINEAR(GL11.GL_LINEAR),
 		NEAREST(GL11.GL_NEAREST),
@@ -204,7 +219,12 @@ public abstract class Texture extends Creatable {
 			return glConstant;
 		}
 
-		public boolean isMipMap() {
+		/**
+		 * Returns true if the filtering mode required generation of mipmaps.
+		 *
+		 * @return Whether or not mipmaps are required
+		 */
+		public boolean needsMipMaps() {
 			return this == NEAREST_MIPMAP_NEAREST || this == LINEAR_MIPMAP_NEAREST
 					|| this == NEAREST_MIPMAP_LINEAR || this == LINEAR_MIPMAP_LINEAR;
 		}

@@ -37,9 +37,19 @@ import org.spout.renderer.gl30.OpenGL30Model;
 import org.spout.renderer.gl30.OpenGL30Renderer;
 import org.spout.renderer.gl30.OpenGL30VertexArray;
 
+/**
+ * An enum of the supported OpenGL versions. Use this class to generate rendering objects compatible
+ * with the version.
+ */
 public enum GLVersion {
-	GL20, GL30;
+	GL20,
+	GL30;
 
+	/**
+	 * Creates a new renderer for the version.
+	 *
+	 * @return A new renderer
+	 */
 	public Renderer createRenderer() {
 		switch (this) {
 			case GL20:
@@ -51,6 +61,11 @@ public enum GLVersion {
 		}
 	}
 
+	/**
+	 * Creates a new model for the version.
+	 *
+	 * @return A new model
+	 */
 	public Model createModel() {
 		switch (this) {
 			case GL20:
@@ -62,6 +77,11 @@ public enum GLVersion {
 		}
 	}
 
+	/**
+	 * Creates a new vertex array for the version.
+	 *
+	 * @return A new vertex array
+	 */
 	public VertexArray createVertexArray() {
 		switch (this) {
 			case GL20:
@@ -73,6 +93,11 @@ public enum GLVersion {
 		}
 	}
 
+	/**
+	 * Creates a new material for the version.
+	 *
+	 * @return A new material
+	 */
 	public Material createMaterial() {
 		switch (this) {
 			case GL20:
@@ -83,6 +108,11 @@ public enum GLVersion {
 		}
 	}
 
+	/**
+	 * Creates a new program for the version.
+	 *
+	 * @return A new program
+	 */
 	public Program createProgram() {
 		switch (this) {
 			case GL20:
@@ -93,6 +123,11 @@ public enum GLVersion {
 		}
 	}
 
+	/**
+	 * Creates a new shader for the version.
+	 *
+	 * @return A new shader
+	 */
 	public Shader createShader() {
 		switch (this) {
 			case GL20:
@@ -103,6 +138,11 @@ public enum GLVersion {
 		}
 	}
 
+	/**
+	 * Creates a new texture for the version.
+	 *
+	 * @return A new texture
+	 */
 	public Texture createTexture() {
 		switch (this) {
 			case GL20:

@@ -32,6 +32,11 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 import org.spout.renderer.Material;
 import org.spout.renderer.Texture;
 
+/**
+ * Represents a material for OpenGL 2.0 models. The material holds the shader program, the texture
+ * for each unit, and uniforms. When rendering, material uniforms are uploaded after the renderer
+ * ones, but before the model ones.
+ */
 public class OpenGL20Material extends Material {
 	private final OpenGL20Program program = new OpenGL20Program();
 	// Textures by unit

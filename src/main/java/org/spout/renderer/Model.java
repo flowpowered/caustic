@@ -36,7 +36,7 @@ import org.spout.renderer.data.UniformHolder;
 import org.spout.renderer.data.VertexData;
 
 /**
- * Represents a model for OpenGL. Each model has it's own position, rotation and color. The {@link
+ * Represents a model for OpenGL. Each model has it's own position and rotation. The {@link
  * org.spout.renderer.Renderer} should always be created before the models.
  */
 public abstract class Model extends Creatable {
@@ -71,8 +71,18 @@ public abstract class Model extends Creatable {
 	 */
 	protected abstract void render();
 
+	/**
+	 * Returns the model's material.
+	 *
+	 * @return The material
+	 */
 	public abstract Material getMaterial();
 
+	/**
+	 * Sets the model's material.
+	 *
+	 * @param material The material
+	 */
 	public abstract void setMaterial(Material material);
 
 	/**

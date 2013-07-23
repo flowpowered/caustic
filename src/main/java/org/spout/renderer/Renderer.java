@@ -28,6 +28,7 @@ package org.spout.renderer;
 
 import java.awt.Color;
 
+import org.spout.renderer.data.Uniform.Matrix4Uniform;
 import org.spout.renderer.data.UniformHolder;
 
 /**
@@ -48,6 +49,22 @@ public abstract class Renderer extends Creatable {
 	protected boolean cullingEnabled;
 	// Renderer uniforms
 	protected final UniformHolder uniforms = new UniformHolder();
+
+	@Override
+	public void create() {
+		// Add the constant renderer uniforms
+		uniforms.add(new Matrix4Uniform("projectionMatrix", camera.getProjectionMatrix()));
+		uniforms.add(new Matrix4Uniform("cameraMatrix", camera.getMatrix()));
+		// Update the state
+		super.create();
+	}
+
+	@Override
+	public void destroy() {
+		camera = null;
+		// Update the state
+		super.destroy();
+	}
 
 	/**
 	 * Draws all the models that have been created to the screen.
@@ -191,7 +208,7 @@ public abstract class Renderer extends Creatable {
 	/**
 	 * Returns the Uniforms for this renderer
 	 *
-	 * @return The renderer's uniforms
+	 * @return The renderer uniforms
 	 */
 	public UniformHolder getUniforms() {
 		return uniforms;

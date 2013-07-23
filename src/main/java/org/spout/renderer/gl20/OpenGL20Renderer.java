@@ -41,14 +41,12 @@ import org.lwjgl.opengl.PixelFormat;
 
 import org.spout.renderer.Model;
 import org.spout.renderer.Renderer;
-import org.spout.renderer.data.Uniform.Matrix4Uniform;
 import org.spout.renderer.util.RenderUtil;
 
 /**
  * This is a renderer using OpenGL 2.0. To create a new render window, start by creating a camera
  * and setting it using {@link #setCamera(org.spout.renderer.Camera)}, then use {@link #create()} to
- * create the OpenGL context. To add and remove models, use
- * {@link #addModel(org.spout.renderer.Model)}
+ * create the OpenGL context. To add and remove models, use {@link #addModel(org.spout.renderer.Model)}
  * and {@link #removeModel(org.spout.renderer.Model)}. The camera position and rotation can be
  * modified by accessing it with {@link #getCamera()}. When done, use {@link #destroy()} to destroy
  * the render window.
@@ -66,28 +64,32 @@ public class OpenGL20Renderer extends Renderer {
 		if (camera == null) {
 			throw new IllegalStateException("Camera has not been set");
 		}
-		final PixelFormat pixelFormat = new PixelFormat();
-		final ContextAttribs contextAttributes = new ContextAttribs(2, 1);
+		// Attempt to create the display
 		try {
 			Display.setDisplayMode(new DisplayMode(windowWidth, windowHeight));
-			Display.create(pixelFormat, contextAttributes);
+			Display.create(new PixelFormat(), new ContextAttribs(2, 1));
 		} catch (LWJGLException ex) {
 			throw new RuntimeException(ex);
 		}
+		// Set the title
 		Display.setTitle(windowTitle);
+		// Set the view port to the window
 		GL11.glViewport(0, 0, windowWidth, windowHeight);
+		// Set the clear color, which will be the color of empty screen area
 		GL11.glClearColor(backgroundColor.getRed() / 255f, backgroundColor.getGreen() / 255f,
-						  backgroundColor.getBlue() / 255f, backgroundColor.getAlpha() / 255f);
+				backgroundColor.getBlue() / 255f, backgroundColor.getAlpha() / 255f);
+		// Enable dept testing to properly display depth
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		if (isCullingEnabled()) {
-			//Enable culling of the back face
+			// Enable culling of the back face
 			GL11.glEnable(GL11.GL_CULL_FACE);
 			GL11.glCullFace(GL11.GL_BACK);
 		}
+		// Enable the depth mask
 		GL11.glDepthMask(true);
+		// Check for errors
 		RenderUtil.checkForOpenGLError();
-		uniforms.add(new Matrix4Uniform("projectionMatrix", camera.getProjectionMatrix()));
-		uniforms.add(new Matrix4Uniform("cameraMatrix", camera.getMatrix()));
+		// Update the state
 		super.create();
 	}
 
@@ -112,7 +114,6 @@ public class OpenGL20Renderer extends Renderer {
 		// Display goes after else there's no context in which to check for an error
 		RenderUtil.checkForOpenGLError();
 		Display.destroy();
-		camera = null;
 		super.destroy();
 	}
 

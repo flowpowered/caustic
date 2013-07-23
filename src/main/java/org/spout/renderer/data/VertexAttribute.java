@@ -42,6 +42,10 @@ import gnu.trove.list.array.TShortArrayList;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
+/**
+ * Represents a vertex attribute. It has a name, a data type, a size (the number of components) and
+ * data.
+ */
 public abstract class VertexAttribute {
 	protected final String name;
 	protected final DataType type;
@@ -53,29 +57,66 @@ public abstract class VertexAttribute {
 		this.size = size;
 	}
 
+	/**
+	 * Returns the name of the attribute.
+	 *
+	 * @return The name
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/**
+	 * Returns the data type of the attribute.
+	 *
+	 * @return The data type
+	 */
 	public DataType getType() {
 		return type;
 	}
 
+	/**
+	 * Return the size of the attribute.
+	 *
+	 * @return The size
+	 */
 	public int getSize() {
 		return size;
 	}
 
+	/**
+	 * Returns a new byte buffer filled and ready to read, containing a copy of the attribute data.
+	 *
+	 * @return The buffer
+	 */
 	public abstract ByteBuffer getBuffer();
 
+	/**
+	 * Clears all of the attribute data.
+	 */
 	public abstract void clear();
 
+	/**
+	 * Represents a vertex attribute of the byte type.
+	 */
 	public static class ByteVertexAttribute extends VertexAttribute {
 		private final TByteList data = new TByteArrayList();
 
+		/**
+		 * Constructs a new byte attribute from the name and the size (component count).
+		 *
+		 * @param name The name
+		 * @param size The size
+		 */
 		public ByteVertexAttribute(String name, int size) {
 			super(name, DataType.BYTE, size);
 		}
 
+		/**
+		 * Returns the data list for this attribute.
+		 *
+		 * @return The data
+		 */
 		public TByteList getData() {
 			return data;
 		}
@@ -94,13 +135,27 @@ public abstract class VertexAttribute {
 		}
 	}
 
+	/**
+	 * Represents a vertex attribute of the short type.
+	 */
 	public static class ShortVertexAttribute extends VertexAttribute {
 		private final TShortList data = new TShortArrayList();
 
+		/**
+		 * Constructs a new short attribute from the name and the size (component count).
+		 *
+		 * @param name The name
+		 * @param size The size
+		 */
 		public ShortVertexAttribute(String name, int size) {
 			super(name, DataType.SHORT, size);
 		}
 
+		/**
+		 * Returns the data list for this attribute.
+		 *
+		 * @return The data
+		 */
 		public TShortList getData() {
 			return data;
 		}
@@ -121,13 +176,27 @@ public abstract class VertexAttribute {
 		}
 	}
 
+	/**
+	 * Represents a vertex attribute of the int type.
+	 */
 	public static class IntVertexAttribute extends VertexAttribute {
 		private final TIntList data = new TIntArrayList();
 
+		/**
+		 * Constructs a new int attribute from the name and the size (component count).
+		 *
+		 * @param name The name
+		 * @param size The size
+		 */
 		public IntVertexAttribute(String name, int size) {
 			super(name, DataType.INT, size);
 		}
 
+		/**
+		 * Returns the data list for this attribute.
+		 *
+		 * @return The data
+		 */
 		public TIntList getData() {
 			return data;
 		}
@@ -148,13 +217,27 @@ public abstract class VertexAttribute {
 		}
 	}
 
+	/**
+	 * Represents a vertex attribute of the float type.
+	 */
 	public static class FloatVertexAttribute extends VertexAttribute {
 		private final TFloatList data = new TFloatArrayList();
 
+		/**
+		 * Constructs a new float attribute from the name and the size (component count).
+		 *
+		 * @param name The name
+		 * @param size The size
+		 */
 		public FloatVertexAttribute(String name, int size) {
 			super(name, DataType.FLOAT, size);
 		}
 
+		/**
+		 * Returns the data list for this attribute.
+		 *
+		 * @return The data
+		 */
 		public TFloatList getData() {
 			return data;
 		}
@@ -175,13 +258,27 @@ public abstract class VertexAttribute {
 		}
 	}
 
+	/**
+	 * Represents a vertex attribute of the double type.
+	 */
 	public static class DoubleVertexAttribute extends VertexAttribute {
 		private final TDoubleList data = new TDoubleArrayList();
 
+		/**
+		 * Constructs a new double attribute from the name and the size (component count).
+		 *
+		 * @param name The name
+		 * @param size The size
+		 */
 		public DoubleVertexAttribute(String name, int size) {
 			super(name, DataType.DOUBLE, size);
 		}
 
+		/**
+		 * Returns the data list for this attribute.
+		 *
+		 * @return The data
+		 */
 		public TDoubleList getData() {
 			return data;
 		}

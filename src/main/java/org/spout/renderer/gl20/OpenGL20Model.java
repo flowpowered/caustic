@@ -29,6 +29,14 @@ package org.spout.renderer.gl20;
 import org.spout.renderer.Material;
 import org.spout.renderer.Model;
 
+/**
+ * Represents a model for OpenGL 2.0. After constructing a new model, use {@link #getVertexData()}
+ * to add data and specify the rendering indices. Next, specify the material with {@link
+ * #setMaterial(org.spout.renderer.Material)}. Then use {@link #create()} to create model in the
+ * current OpenGL context. It can now be added to the {@link org.spout.renderer.gl30.OpenGL30Renderer}.
+ * Use {@link #destroy()} to free the model's OpenGL resources. This doesn't delete the mesh. Make
+ * sure you add the mesh before creating the model.
+ */
 public class OpenGL20Model extends Model {
 	private final OpenGL20VertexArray vertexArray = new OpenGL20VertexArray();
 	private OpenGL20Material material;

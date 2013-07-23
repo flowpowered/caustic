@@ -28,26 +28,73 @@ package org.spout.renderer;
 
 import org.spout.renderer.data.UniformHolder;
 
+/**
+ * Represents a rendering material. Materials are assigned to models. Models can share a material.
+ * The material provides the shader program to use when rendering the models, the texture for each
+ * unit (if any) and a set of uniforms that will be constant for all models using the material.
+ */
 public abstract class Material extends Creatable {
 	// Material uniforms
 	protected final UniformHolder uniforms = new UniformHolder();
 
+	/**
+	 * Binds the material to the OpenGL context.
+	 */
 	public abstract void bind();
 
+	/**
+	 * Unbinds the material from the OpenGL context.
+	 */
 	public abstract void unbind();
 
+	/**
+	 * Uploads the material's uniforms to its program.
+	 */
 	public abstract void uploadUniforms();
 
+	/**
+	 * Returns the material's program.
+	 *
+	 * @return The program
+	 */
 	public abstract Program getProgram();
 
+	/**
+	 * Adds a texture to the material. If a texture is a already present in the same unit as this one,
+	 * it will be replaced.
+	 *
+	 * @param texture The texture to add
+	 */
 	public abstract void addTexture(Texture texture);
 
+	/**
+	 * Returns true if a texture is present in the unit.
+	 *
+	 * @param unit The unit to check
+	 * @return Whether or not a texture is present
+	 */
 	public abstract boolean hasTexture(int unit);
 
+	/**
+	 * Returns the texture in the unit, or null if none is present.
+	 *
+	 * @param unit The unit to check
+	 * @return The texture
+	 */
 	public abstract Texture getTexture(int unit);
 
+	/**
+	 * Removed the texture in the unit, if present.
+	 *
+	 * @param unit The unit to remove the texture from
+	 */
 	public abstract void removeTexture(int unit);
 
+	/**
+	 * Returns the uniform holder for this material.
+	 *
+	 * @return The uniforms
+	 */
 	public UniformHolder getUniforms() {
 		return uniforms;
 	}

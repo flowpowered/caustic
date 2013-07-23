@@ -31,8 +31,9 @@ import org.spout.renderer.Model;
 import org.spout.renderer.gl20.OpenGL20Material;
 
 /**
- * Represents a model for OpenGL 3.2. After constructing a new model, use {@link #getVertexData()}
- * to add data and specify the rendering indices. Then use {@link #create()} to create model in the
+ * Represents a model for OpenGL 3.0. After constructing a new model, use {@link #getVertexData()}
+ * to add data and specify the rendering indices. Next, specify the material with {@link
+ * #setMaterial(org.spout.renderer.Material)}. Then use {@link #create()} to create model in the
  * current OpenGL context. It can now be added to the {@link OpenGL30Renderer}. Use {@link
  * #destroy()} to free the model's OpenGL resources. This doesn't delete the mesh. Make sure you add
  * the mesh before creating the model.
