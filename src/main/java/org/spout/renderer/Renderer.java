@@ -44,6 +44,8 @@ public abstract class Renderer extends Creatable {
 	protected Color backgroundColor = new Color(0.2f, 0.2f, 0.2f, 0);
 	// Camera
 	protected Camera camera;
+	//Culling enabled
+	protected boolean cullingEnabled;
 	// Renderer uniforms
 	protected final UniformHolder uniforms = new UniformHolder();
 
@@ -166,6 +168,24 @@ public abstract class Renderer extends Creatable {
 	 */
 	public void setCamera(Camera camera) {
 		this.camera = camera;
+	}
+
+	/**
+	 * If the back face of the shape should be culled
+	 *
+	 * @return If culling is enabled
+	 */
+	public boolean isCullingEnabled() {
+		return cullingEnabled;
+	}
+
+	/**
+	 * Sets if culling is enabled or not
+	 *
+	 * @param cullingEnabled If it is enabled
+	 */
+	public void setCullingEnabled(boolean cullingEnabled) {
+		this.cullingEnabled = cullingEnabled;
 	}
 
 	/**

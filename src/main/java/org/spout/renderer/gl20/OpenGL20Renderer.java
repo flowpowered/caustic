@@ -47,7 +47,8 @@ import org.spout.renderer.util.RenderUtil;
 /**
  * This is a renderer using OpenGL 2.0. To create a new render window, start by creating a camera
  * and setting it using {@link #setCamera(org.spout.renderer.Camera)}, then use {@link #create()} to
- * create the OpenGL context. To add and remove models, use {@link #addModel(org.spout.renderer.Model)}
+ * create the OpenGL context. To add and remove models, use
+ * {@link #addModel(org.spout.renderer.Model)}
  * and {@link #removeModel(org.spout.renderer.Model)}. The camera position and rotation can be
  * modified by accessing it with {@link #getCamera()}. When done, use {@link #destroy()} to destroy
  * the render window.
@@ -76,11 +77,13 @@ public class OpenGL20Renderer extends Renderer {
 		Display.setTitle(windowTitle);
 		GL11.glViewport(0, 0, windowWidth, windowHeight);
 		GL11.glClearColor(backgroundColor.getRed() / 255f, backgroundColor.getGreen() / 255f,
-				backgroundColor.getBlue() / 255f, backgroundColor.getAlpha() / 255f);
+						  backgroundColor.getBlue() / 255f, backgroundColor.getAlpha() / 255f);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
-		//Enable culling of the back face
-		GL11.glEnable(GL11.GL_CULL_FACE);
-		GL11.glCullFace(GL11.GL_BACK);
+		if (isCullingEnabled()) {
+			//Enable culling of the back face
+			GL11.glEnable(GL11.GL_CULL_FACE);
+			GL11.glCullFace(GL11.GL_BACK);
+		}
 		GL11.glDepthMask(true);
 		RenderUtil.checkForOpenGLError();
 		uniforms.add(new Matrix4Uniform("projectionMatrix", camera.getProjectionMatrix()));
