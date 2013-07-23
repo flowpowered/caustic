@@ -80,6 +80,9 @@ public class OpenGL30Renderer extends Renderer {
 				backgroundColor.getBlue() / 255f, backgroundColor.getAlpha() / 255f);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glEnable(GL32.GL_DEPTH_CLAMP);
+		//Enable culling of the back face
+		GL11.glEnable(GL11.GL_CULL_FACE);
+		GL11.glCullFace(GL11.GL_BACK);
 		GL11.glDepthMask(true);
 		RenderUtil.checkForOpenGLError();
 		uniforms.add(new Matrix4Uniform("projectionMatrix", camera.getProjectionMatrix()));
