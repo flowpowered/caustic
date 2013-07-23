@@ -33,7 +33,7 @@ import org.lwjgl.opengl.GL30;
 
 import org.spout.renderer.Model.DrawMode;
 import org.spout.renderer.VertexArray;
-import org.spout.renderer.data.VertexData.VertexAttribute;
+import org.spout.renderer.data.VertexAttribute;
 import org.spout.renderer.util.RenderUtil;
 
 /**

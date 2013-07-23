@@ -37,18 +37,20 @@ import gnu.trove.list.TDoubleList;
 import gnu.trove.list.TFloatList;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.TShortList;
-import gnu.trove.list.array.TByteArrayList;
-import gnu.trove.list.array.TDoubleArrayList;
-import gnu.trove.list.array.TFloatArrayList;
 import gnu.trove.list.array.TIntArrayList;
-import gnu.trove.list.array.TShortArrayList;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL11;
+
+import org.spout.renderer.data.VertexAttribute.ByteVertexAttribute;
+import org.spout.renderer.data.VertexAttribute.DataType;
+import org.spout.renderer.data.VertexAttribute.DoubleVertexAttribute;
+import org.spout.renderer.data.VertexAttribute.FloatVertexAttribute;
+import org.spout.renderer.data.VertexAttribute.IntVertexAttribute;
+import org.spout.renderer.data.VertexAttribute.ShortVertexAttribute;
 
 /**
  * Represents a vertex data. A vertex is a collection of attributes, most often attached to a point
@@ -106,75 +108,80 @@ public class VertexData {
 
 	/**
 	 * Adds an attribute of the byte type. The attribute size defines the number of components. The
-	 * index for the new attribute will be {@link #getLastAttributeIndex()} + 1.
+	 * index for the new attribute will be {@link #getAttributeCount()}.
 	 *
 	 * @param name The name of the attribute
 	 * @param size The size in components
 	 * @return The storage list for the attribute data
 	 */
 	public TByteList addByteAttribute(String name, int size) {
-		final VertexAttribute attribute = VertexAttribute.createByteAttribute(name, size);
-		addRawAttribute(attribute);
-		return attribute.getByteList();
+		final ByteVertexAttribute attribute = new ByteVertexAttribute(name, size);
+		addAttribute(attribute);
+		return attribute.getData();
 	}
 
 	/**
 	 * Adds an attribute of the short type. The attribute size defines the number of components. The
-	 * index for the new attribute will be {@link #getLastAttributeIndex()} + 1.
+	 * index for the new attribute will be {@link #getAttributeCount()}.
 	 *
 	 * @param name The name of the attribute
 	 * @param size The size in components
 	 * @return The storage list for the attribute data
 	 */
 	public TShortList addShortAttribute(String name, int size) {
-		final VertexAttribute attribute = VertexAttribute.createShortAttribute(name, size);
-		addRawAttribute(attribute);
-		return attribute.getShortList();
+		final ShortVertexAttribute attribute = new ShortVertexAttribute(name, size);
+		addAttribute(attribute);
+		return attribute.getData();
 	}
 
 	/**
 	 * Adds an attribute of the int type. The attribute size defines the number of components. The
-	 * index for the new attribute will be {@link #getLastAttributeIndex()} + 1.
+	 * index for the new attribute will be {@link #getAttributeCount()}.
 	 *
 	 * @param name The name of the attribute
 	 * @param size The size in components
 	 * @return The storage list for the attribute data
 	 */
 	public TIntList addIntAttribute(String name, int size) {
-		final VertexAttribute attribute = VertexAttribute.createIntAttribute(name, size);
-		addRawAttribute(attribute);
-		return attribute.getIntList();
+		final IntVertexAttribute attribute = new IntVertexAttribute(name, size);
+		addAttribute(attribute);
+		return attribute.getData();
 	}
 
 	/**
 	 * Adds an attribute of the float type. The attribute size defines the number of components. The
-	 * index for the new attribute will be {@link #getLastAttributeIndex()} + 1.
+	 * index for the new attribute will be {@link #getAttributeCount()}.
 	 *
 	 * @param name The name of the attribute
 	 * @param size The size in components
 	 * @return The storage list for the attribute data
 	 */
 	public TFloatList addFloatAttribute(String name, int size) {
-		final VertexAttribute attribute = VertexAttribute.createFloatAttribute(name, size);
-		addRawAttribute(attribute);
-		return attribute.getFloatList();
+		final FloatVertexAttribute attribute = new FloatVertexAttribute(name, size);
+		addAttribute(attribute);
+		return attribute.getData();
 	}
 
 	/**
 	 * Adds an attribute of the double type. The attribute size defines the number of components. The
-	 * index for the new attribute will be {@link #getLastAttributeIndex()} + 1.
+	 * index for the new attribute will be {@link #getAttributeCount()}.
 	 *
 	 * @param name The name of the attribute
 	 * @param size The size in components
 	 * @return The storage list for the attribute data
 	 */
 	public TDoubleList addDoubleAttribute(String name, int size) {
-		final VertexAttribute attribute = VertexAttribute.createDoubleAttribute(name, size);
-		addRawAttribute(attribute);
-		return attribute.getDoubleList();
+		final DoubleVertexAttribute attribute = new DoubleVertexAttribute(name, size);
+		addAttribute(attribute);
+		return attribute.getData();
 	}
 
-	private void addRawAttribute(VertexAttribute attribute) {
+	/**
+	 * Adds an attribute.
+	 *
+	 * @param attribute The attribute to add
+	 */
+	public void addAttribute(VertexAttribute attribute) {
 		attributes.put(index, attribute);
 		nameToIndex.put(attribute.getName(), index++);
 	}
@@ -211,29 +218,27 @@ public class VertexData {
 	}
 
 	/**
-	 * Returns the byte list associated to the name, or null if none can be found.
+	 * Returns the byte attribute associated to the name, or null if none can be found.
 	 *
 	 * @param name The name to lookup
-	 * @return The byte list
-	 * @throws IllegalStateException If the found attribute is not of byte type
+	 * @return The byte attribute
 	 */
-	public TByteList getByteAttributeList(String name) {
-		return getByteAttributeList(getAttributeIndex(name));
+	public ByteVertexAttribute getByteAttribute(String name) {
+		return getByteAttribute(getAttributeIndex(name));
 	}
 
 	/**
-	 * Returns the byte list at the index, or null if none can be found.
+	 * Returns the byte attribute at the index, or null if none can be found.
 	 *
 	 * @param index The index to lookup
-	 * @return The byte list
-	 * @throws IllegalStateException If the found attribute is not of byte type
+	 * @return The byte attribute
 	 */
-	public TByteList getByteAttributeList(int index) {
+	public ByteVertexAttribute getByteAttribute(int index) {
 		final VertexAttribute attribute = getAttribute(index);
-		if (attribute == null) {
+		if (!(attribute instanceof ByteVertexAttribute)) {
 			return null;
 		}
-		return attribute.getByteList();
+		return (ByteVertexAttribute) attribute;
 	}
 
 	/**
@@ -241,103 +246,95 @@ public class VertexData {
 	 *
 	 * @param name The name to lookup
 	 * @return The short list
-	 * @throws IllegalStateException If the found attribute is not of short type
 	 */
-	public TShortList getShortAttributeList(String name) {
-		return getShortAttributeList(getAttributeIndex(name));
+	public ShortVertexAttribute getShortAttribute(String name) {
+		return getShortAttribute(getAttributeIndex(name));
 	}
 
 	/**
-	 * Returns the short list at the index, or null if none can be found.
+	 * Returns the short attribute at the index, or null if none can be found.
 	 *
 	 * @param index The index to lookup
-	 * @return The short list
-	 * @throws IllegalStateException If the found attribute is not of short type
+	 * @return The short attribute
 	 */
-	public TShortList getShortAttributeList(int index) {
+	public ShortVertexAttribute getShortAttribute(int index) {
 		final VertexAttribute attribute = getAttribute(index);
-		if (attribute == null) {
+		if (!(attribute instanceof ShortVertexAttribute)) {
 			return null;
 		}
-		return attribute.getShortList();
+		return (ShortVertexAttribute) attribute;
 	}
 
 	/**
-	 * Returns the int list associated to the name, or null if none can be found.
+	 * Returns the int attribute associated to the name, or null if none can be found.
 	 *
 	 * @param name The name to lookup
-	 * @return The int list
-	 * @throws IllegalStateException If the found attribute is not of int type
+	 * @return The int attribute
 	 */
-	public TIntList getIntAttributeList(String name) {
-		return getIntAttributeList(getAttributeIndex(name));
+	public IntVertexAttribute getIntAttribute(String name) {
+		return getIntAttribute(getAttributeIndex(name));
 	}
 
 	/**
-	 * Returns the int list at the index, or null if none can be found.
+	 * Returns the int attribute at the index, or null if none can be found.
 	 *
 	 * @param index The index to lookup
-	 * @return The int list
-	 * @throws IllegalStateException If the found attribute is not of int type
+	 * @return The int attribute
 	 */
-	public TIntList getIntAttributeList(int index) {
+	public IntVertexAttribute getIntAttribute(int index) {
 		final VertexAttribute attribute = getAttribute(index);
-		if (attribute == null) {
+		if (!(attribute instanceof IntVertexAttribute)) {
 			return null;
 		}
-		return attribute.getIntList();
+		return (IntVertexAttribute) attribute;
 	}
 
 	/**
-	 * Returns the float list associated to the name, or null if none can be found.
+	 * Returns the float attribute associated to the name, or null if none can be found.
 	 *
 	 * @param name The name to lookup
-	 * @return The float list
-	 * @throws IllegalStateException If the found attribute is not of float type
+	 * @return The float attribute
 	 */
-	public TFloatList getFloatAttributeList(String name) {
-		return getFloatAttributeList(getAttributeIndex(name));
+	public FloatVertexAttribute getFloatAttribute(String name) {
+		return getFloatAttribute(getAttributeIndex(name));
 	}
 
 	/**
-	 * Returns the float list at the index, or null if none can be found.
+	 * Returns the float attribute at the index, or null if none can be found.
 	 *
 	 * @param index The index to lookup
-	 * @return The float list
-	 * @throws IllegalStateException If the found attribute is not of float type
+	 * @return The float attribute
 	 */
-	public TFloatList getFloatAttributeList(int index) {
+	public FloatVertexAttribute getFloatAttribute(int index) {
 		final VertexAttribute attribute = getAttribute(index);
-		if (attribute == null) {
+		if (!(attribute instanceof FloatVertexAttribute)) {
 			return null;
 		}
-		return attribute.getFloatList();
+		return (FloatVertexAttribute) attribute;
 	}
 
 	/**
-	 * Returns the double list associated to the name, or null if none can be found.
+	 * Returns the double attribute associated to the name, or null if none can be found.
 	 *
 	 * @param name The name to lookup
-	 * @return The double list
-	 * @throws IllegalStateException If the found attribute is not of double type
+	 * @return The double attribute
 	 */
-	public TDoubleList getDoubleAttributeList(String name) {
-		return getDoubleAttributeList(getAttributeIndex(name));
+	public DoubleVertexAttribute getDoubleAttribute(String name) {
+		return getDoubleAttribute(getAttributeIndex(name));
 	}
 
 	/**
-	 * Returns the double list at the index, or null if none can be found.
+	 * Returns the double attribute at the index, or null if none can be found.
 	 *
 	 * @param index The index to lookup
-	 * @return The double list
-	 * @throws IllegalStateException If the found attribute is not of double type
+	 * @return The double attribute
 	 */
-	public TDoubleList getDoubleAttributeList(int index) {
+	public DoubleVertexAttribute getDoubleAttribute(int index) {
 		final VertexAttribute attribute = getAttribute(index);
-		if (attribute == null) {
+		if (!(attribute instanceof DoubleVertexAttribute)) {
 			return null;
 		}
-		return attribute.getDoubleList();
+		return (DoubleVertexAttribute) attribute;
 	}
 
 	/**
@@ -502,235 +499,6 @@ public class VertexData {
 		indices.clear();
 		for (VertexAttribute attribute : attributes.valueCollection()) {
 			attribute.clear();
-		}
-	}
-
-	/**
-	 * Represents a vertex attribute. This is a data list associated to a name, a data type, and a
-	 * component count (size).
-	 */
-	public static class VertexAttribute {
-		private final String name;
-		private final Object list;
-		private final DataType type;
-		private final int size;
-
-		private VertexAttribute(String name, Object list, DataType type, int size) {
-			this.name = name;
-			this.list = list;
-			this.type = type;
-			this.size = size;
-		}
-
-		/**
-		 * Returns the name of the attribute.
-		 *
-		 * @return The name
-		 */
-		public String getName() {
-			return name;
-		}
-
-		/**
-		 * Returns the data list as a byte list. This will fail if the data type isn't {@link
-		 * DataType#BYTE}.
-		 *
-		 * @return The byte list
-		 * @throws IllegalStateException If the data type isn't {@link DataType#BYTE}.
-		 */
-		public TByteList getByteList() {
-			if (!(list instanceof TByteList)) {
-				throw new IllegalStateException("Attribute at is not of \"byte\" type");
-			}
-			return (TByteList) list;
-		}
-
-		/**
-		 * Returns the data list as a short list. This will fail if the data type isn't {@link
-		 * DataType#SHORT}.
-		 *
-		 * @return The short list
-		 * @throws IllegalStateException If the data type isn't {@link DataType#SHORT}.
-		 */
-		public TShortList getShortList() {
-			if (!(list instanceof TShortList)) {
-				throw new IllegalStateException("Attribute is not of \"short\" type");
-			}
-			return (TShortList) list;
-		}
-
-		/**
-		 * Returns the data list as a int list. This will fail if the data type isn't {@link
-		 * DataType#INT}.
-		 *
-		 * @return The int list
-		 * @throws IllegalStateException If the data type isn't {@link DataType#INT}.
-		 */
-		public TIntList getIntList() {
-			if (!(list instanceof TIntList)) {
-				throw new IllegalStateException("Attribute is not of \"int\" type");
-			}
-			return (TIntList) list;
-		}
-
-		/**
-		 * Returns the data list as a float list. This will fail if the data type isn't {@link
-		 * DataType#FLOAT}.
-		 *
-		 * @return The float list
-		 * @throws IllegalStateException If the data type isn't {@link DataType#FLOAT}.
-		 */
-		public TFloatList getFloatList() {
-			if (!(list instanceof TFloatList)) {
-				throw new IllegalStateException("Attribute is not of \"float\" type");
-			}
-			return (TFloatList) list;
-		}
-
-		/**
-		 * Returns the data list as a double list. This will fail if the data type isn't {@link
-		 * DataType#DOUBLE}.
-		 *
-		 * @return The double list
-		 * @throws IllegalStateException If the data type isn't {@link DataType#DOUBLE}.
-		 */
-		public TDoubleList getDoubleList() {
-			if (!(list instanceof TDoubleList)) {
-				throw new IllegalStateException("Attribute is not of \"double\" type");
-			}
-			return (TDoubleList) list;
-		}
-
-		/**
-		 * Returns the data type of this attribute.
-		 *
-		 * @return The data type
-		 */
-		public DataType getType() {
-			return type;
-		}
-
-		/**
-		 * Returns the size (component count) of this attribute.
-		 *
-		 * @return The size
-		 */
-		public int getSize() {
-			return size;
-		}
-
-		/**
-		 * Returns a byte buffer of the attribute data, filled, and ready for reading.
-		 *
-		 * @return A filled and flipped byte buffer of the attribute data
-		 */
-		public ByteBuffer getBuffer() {
-			final ByteBuffer buffer;
-			if (list instanceof TByteList) {
-				final TByteList l = (TByteList) list;
-				buffer = BufferUtils.createByteBuffer(l.size() * DataType.BYTE.getByteSize());
-				buffer.put(l.toArray());
-			} else if (list instanceof TShortList) {
-				final TShortList l = (TShortList) list;
-				buffer = BufferUtils.createByteBuffer(l.size() * DataType.SHORT.getByteSize());
-				for (int i = 0; i < l.size(); i++) {
-					buffer.putShort(l.get(i));
-				}
-			} else if (list instanceof TIntList) {
-				final TIntList l = (TIntList) list;
-				buffer = BufferUtils.createByteBuffer(l.size() * DataType.INT.getByteSize());
-				for (int i = 0; i < l.size(); i++) {
-					buffer.putInt(l.get(i));
-				}
-			} else if (list instanceof TFloatList) {
-				final TFloatList l = (TFloatList) list;
-				buffer = BufferUtils.createByteBuffer(l.size() * DataType.FLOAT.getByteSize());
-				for (int i = 0; i < l.size(); i++) {
-					buffer.putFloat(l.get(i));
-				}
-			} else if (list instanceof TDoubleList) {
-				final TDoubleList l = (TDoubleList) list;
-				buffer = BufferUtils.createByteBuffer(l.size() * DataType.DOUBLE.getByteSize());
-				for (int i = 0; i < l.size(); i++) {
-					buffer.putDouble(l.get(i));
-				}
-			} else {
-				throw new IllegalStateException("Unknown attribute data type");
-			}
-			return (ByteBuffer) buffer.flip();
-		}
-
-		/**
-		 * Clears all of the attribute data.
-		 */
-		public void clear() {
-			if (list instanceof TByteList) {
-				((TByteList) list).clear();
-			} else if (list instanceof TShortList) {
-				((TShortList) list).clear();
-			} else if (list instanceof TIntList) {
-				((TIntList) list).clear();
-			} else if (list instanceof TFloatList) {
-				((TFloatList) list).clear();
-			} else if (list instanceof TDoubleList) {
-				((TDoubleList) list).clear();
-			}
-		}
-
-		private static VertexAttribute createByteAttribute(String name, int size) {
-			return new VertexAttribute(name, new TByteArrayList(), DataType.BYTE, size);
-		}
-
-		private static VertexAttribute createShortAttribute(String name, int size) {
-			return new VertexAttribute(name, new TShortArrayList(), DataType.SHORT, size);
-		}
-
-		private static VertexAttribute createIntAttribute(String name, int size) {
-			return new VertexAttribute(name, new TIntArrayList(), DataType.INT, size);
-		}
-
-		private static VertexAttribute createFloatAttribute(String name, int size) {
-			return new VertexAttribute(name, new TFloatArrayList(), DataType.FLOAT, size);
-		}
-
-		private static VertexAttribute createDoubleAttribute(String name, int size) {
-			return new VertexAttribute(name, new TDoubleArrayList(), DataType.DOUBLE, size);
-		}
-	}
-
-	/**
-	 * Represents an attribute data type.
-	 */
-	public static enum DataType {
-		BYTE(GL11.GL_BYTE, 1),
-		SHORT(GL11.GL_SHORT, 2),
-		INT(GL11.GL_INT, 4),
-		FLOAT(GL11.GL_FLOAT, 4),
-		DOUBLE(GL11.GL_DOUBLE, 8);
-		private final int glConstant;
-		private final int byteSize;
-
-		private DataType(int glConstant, int byteSize) {
-			this.glConstant = glConstant;
-			this.byteSize = byteSize;
-		}
-
-		/**
-		 * Returns the OpenGL constant for the data type.
-		 *
-		 * @return The OpenGL constant
-		 */
-		public int getGLConstant() {
-			return glConstant;
-		}
-
-		/**
-		 * Returns the size in bytes of the data type.
-		 *
-		 * @return The size in bytes
-		 */
-		public int getByteSize() {
-			return byteSize;
 		}
 	}
 }
