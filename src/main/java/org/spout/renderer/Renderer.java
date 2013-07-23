@@ -44,8 +44,8 @@ public abstract class Renderer extends Creatable {
 	protected Color backgroundColor = new Color(0.2f, 0.2f, 0.2f, 0);
 	// Camera
 	protected Camera camera;
-	//Render mode
-	protected RenderMode renderMode;
+	//Culling enabled
+	protected boolean cullingEnabled;
 	// Renderer uniforms
 	protected final UniformHolder uniforms = new UniformHolder();
 
@@ -171,29 +171,29 @@ public abstract class Renderer extends Creatable {
 	}
 
 	/**
-	 * Gets the render mode of this renderer
+	 * If the back face of the shape should be culled
 	 *
-	 * @return The render mode
+	 * @return If culling is enabled
 	 */
-	public RenderMode getRenderMode() {
-		return renderMode;
+	public boolean isCullingEnabled() {
+		return cullingEnabled;
 	}
 
 	/**
-	 * Sets the render mode
+	 * Sets if culling is enabled or not
 	 *
-	 * @param renderMode The render mode
+	 * @param cullingEnabled If it is enabled
 	 */
-	public void setRenderMode(RenderMode renderMode) {
-		this.renderMode = renderMode;
+	public void setCullingEnabled(boolean cullingEnabled) {
+		this.cullingEnabled = cullingEnabled;
 	}
 
+	/**
+	 * Returns the Uniforms for this renderer
+	 *
+	 * @return The renderer's uniforms
+	 */
 	public UniformHolder getUniforms() {
 		return uniforms;
-	}
-
-	public enum RenderMode {
-		GL20,
-		GL30;
 	}
 }
