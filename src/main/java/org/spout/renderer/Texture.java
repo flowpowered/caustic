@@ -27,61 +27,57 @@
 package org.spout.renderer;
 
 import java.io.InputStream;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL14;
 
 /**
- * Represents a texture for OpenGL. The textures image, dimension, wrapping and filters
- * must be set respectively before it can be created.
+ * Represents a texture for OpenGL. The textures image, dimension, wrapping and filters must be set
+ * respectively before it can be created.
  */
 public abstract class Texture extends Creatable {
-
 	protected int id = 0;
-	protected int[] image;
-	protected int width, height;
-	protected TextureWrap wrapT, wrapS;
-	protected TextureFilter minFilter, magFilter;
-	protected InputStream textureSource;
+	protected int unit = GL13.GL_TEXTURE0;
+	protected WrapMode wrapT = WrapMode.REPEAT;
+	protected WrapMode wrapS = WrapMode.REPEAT;
+	protected FilterMode minFilter = FilterMode.LINEAR;
+	protected FilterMode magFilter = FilterMode.NEAREST;
+	protected InputStream source;
+
+	public abstract void bind();
+
+	public abstract void unbind();
 
 	/**
-	 * Returns the image stored as an int[], this array is immutable
+	 * Gets the ID for this texture as assigned by OpenGL.
 	 *
-	 * @return Immutable image
+	 * @return The ID
 	 */
-	public int[] getImage() {
-		int[] copy = new int[image.length];
-		System.arraycopy(image, 0, copy, 0, image.length);
-		return copy;
+	public int getID() {
+		return id;
 	}
 
 	/**
-	 * Sets the image. The new image is a copy of the one
-	 * given.
+	 * Returns the texture unit, a number between 0 and 31.
 	 *
-	 * @param image The image data
+	 * @return The texture unit
 	 */
-	public void setImage(int[] image) {
-		int[] newImage = new int[image.length];
-		System.arraycopy(image, 0, newImage, 0, image.length);
-		this.image = newImage;
-	}
-	
-	/**
-	 * Get the image width
-	 *
-	 * @return image width
-	 */
-	public int getWidth() {
-		return width;
+	public int getUnit() {
+		return unit - GL13.GL_TEXTURE0;
 	}
 
 	/**
-	 * Gets the image height
+	 * Sets the texture unit. Must be a number between 0 and 31.
 	 *
-	 * @return image height
+	 * @param unit The texture unit to set
 	 */
-	public int getHeight() {
-		return height;
+	public void setUnit(int unit) {
+		if (unit < 0 || unit > 31) {
+			throw new IllegalArgumentException("Texture unit must be between 0 and 31, got: " + unit);
+		}
+		this.unit = GL13.GL_TEXTURE0 + unit;
 	}
 
 	/**
@@ -89,7 +85,7 @@ public abstract class Texture extends Creatable {
 	 *
 	 * @return Horizontal texture wrap
 	 */
-	public TextureWrap getWrapS() {
+	public WrapMode getWrapS() {
 		return wrapS;
 	}
 
@@ -98,7 +94,7 @@ public abstract class Texture extends Creatable {
 	 *
 	 * @param wrapS Horizontal texture wrap
 	 */
-	public void setWrapS(TextureWrap wrapS) {
+	public void setWrapS(WrapMode wrapS) {
 		this.wrapS = wrapS;
 	}
 
@@ -107,16 +103,16 @@ public abstract class Texture extends Creatable {
 	 *
 	 * @return Vertical texture wrap
 	 */
-	public TextureWrap getWrapT() {
+	public WrapMode getWrapT() {
 		return wrapT;
 	}
 
 	/**
 	 * Sets the vertical texture wrap
 	 *
-	 * @param wrapS Vertical texture wrap
+	 * @param wrapT Vertical texture wrap
 	 */
-	public void setWrapT(TextureWrap wrapT) {
+	public void setWrapT(WrapMode wrapT) {
 		this.wrapT = wrapT;
 	}
 
@@ -125,7 +121,7 @@ public abstract class Texture extends Creatable {
 	 *
 	 * @return The min filter
 	 */
-	public TextureFilter getMinFilter() {
+	public FilterMode getMinFilter() {
 		return minFilter;
 	}
 
@@ -134,7 +130,7 @@ public abstract class Texture extends Creatable {
 	 *
 	 * @param minFilter The min filter
 	 */
-	public void setMinFilter(TextureFilter minFilter) {
+	public void setMinFilter(FilterMode minFilter) {
 		this.minFilter = minFilter;
 	}
 
@@ -143,46 +139,37 @@ public abstract class Texture extends Creatable {
 	 *
 	 * @return The mag filter
 	 */
-	public TextureFilter getMagFilter() {
+	public FilterMode getMagFilter() {
 		return magFilter;
 	}
 
 	/**
 	 * Sets the texture's mag filter
 	 *
-	 * @param mmagFilter The mag filter
+	 * @param magFilter The mag filter
 	 */
-	public void setMagFilter(TextureFilter magFilter) {
+	public void setMagFilter(FilterMode magFilter) {
 		this.magFilter = magFilter;
-	}
-
-	/**
-	 * Gets the textures input stream
-	 *
-	 * @return The input stream of the texture
-	 */
-	public InputStream getTextureSource() {
-		return textureSource;
 	}
 
 	/**
 	 * Sets the input stream source of the texture
 	 *
-	 * @param textureSource The input stream of the texture
+	 * @param source The input stream of the texture
 	 */
-	public void setTextureSource(InputStream textureSource) {
-		this.textureSource = textureSource;
+	public void setSource(InputStream source) {
+		this.source = source;
 	}
 
-	public enum TextureWrap {
+	public static enum WrapMode {
+		CLAMP_TO_EDGE(GL12.GL_CLAMP_TO_EDGE),
+		CLAMP_TO_BORDER(GL13.GL_CLAMP_TO_BORDER),
+		MIRRORED_REPEAT(GL14.GL_MIRRORED_REPEAT),
+		REPEAT(GL11.GL_REPEAT);
+		private final int glConstant;
 
-		REPEAT(GL11.GL_REPEAT),
-		CLAMP(GL11.GL_CLAMP),
-		CLAMP_TO_EDGE(GL12.GL_CLAMP_TO_EDGE);
-		private final int wrap;
-
-		TextureWrap(int wrap) {
-			this.wrap = wrap;
+		private WrapMode(int glConstant) {
+			this.glConstant = glConstant;
 		}
 
 		/**
@@ -190,19 +177,22 @@ public abstract class Texture extends Creatable {
 		 *
 		 * @return The OpenGL Constant
 		 */
-		public int getWrap() {
-			return wrap;
+		public int getGLConstant() {
+			return glConstant;
 		}
 	}
 
-	public enum TextureFilter {
-
+	public static enum FilterMode {
 		LINEAR(GL11.GL_LINEAR),
-		NEAREST(GL11.GL_NEAREST);
-		private final int filter;
+		NEAREST(GL11.GL_NEAREST),
+		NEAREST_MIPMAP_NEAREST(GL11.GL_NEAREST_MIPMAP_NEAREST),
+		LINEAR_MIPMAP_NEAREST(GL11.GL_LINEAR_MIPMAP_NEAREST),
+		NEAREST_MIPMAP_LINEAR(GL11.GL_NEAREST_MIPMAP_LINEAR),
+		LINEAR_MIPMAP_LINEAR(GL11.GL_LINEAR_MIPMAP_LINEAR);
+		private final int glConstant;
 
-		TextureFilter(int filter) {
-			this.filter = filter;
+		private FilterMode(int glConstant) {
+			this.glConstant = glConstant;
 		}
 
 		/**
@@ -210,8 +200,13 @@ public abstract class Texture extends Creatable {
 		 *
 		 * @return The OpenGL Constant
 		 */
-		public int getFilter() {
-			return filter;
+		public int getGLConstant() {
+			return glConstant;
+		}
+
+		public boolean isMipMap() {
+			return this == NEAREST_MIPMAP_NEAREST || this == LINEAR_MIPMAP_NEAREST
+					|| this == NEAREST_MIPMAP_LINEAR || this == LINEAR_MIPMAP_LINEAR;
 		}
 	}
 }

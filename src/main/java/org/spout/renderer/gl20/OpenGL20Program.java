@@ -86,12 +86,12 @@ public class OpenGL20Program extends Program {
 		vertexShader.setType(ShaderType.VERTEX);
 		vertexShader.setSource(shaderSources.get(ShaderType.VERTEX));
 		vertexShader.create();
-		vertexShader.attach(id);
+		GL20.glAttachShader(id, vertexShader.getID());
 		// Create the fragment Shader
 		fragmentShader.setType(ShaderType.FRAGMENT);
 		fragmentShader.setSource(shaderSources.get(ShaderType.FRAGMENT));
 		fragmentShader.create();
-		fragmentShader.attach(id);
+		GL20.glAttachShader(id, fragmentShader.getID());
 		// If the attribute layout has been setup, apply it
 		if (attributeLayouts != null && !attributeLayouts.isEmpty()) {
 			final TObjectIntIterator<String> iterator = attributeLayouts.iterator();

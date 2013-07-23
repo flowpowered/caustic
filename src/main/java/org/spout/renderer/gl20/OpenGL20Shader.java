@@ -62,8 +62,8 @@ public class OpenGL20Shader extends Shader {
 				source.append(line).append("\n");
 			}
 			shaderSource.close();
-		} catch (IOException e) {
-			System.out.println("IO exception: " + e.getMessage());
+		} catch (IOException ex) {
+			throw new IllegalStateException("Unreadable shader source", ex);
 		}
 		final int id = GL20.glCreateShader(shaderType.getGLConstant());
 		GL20.glShaderSource(id, source);
@@ -84,9 +84,5 @@ public class OpenGL20Shader extends Shader {
 		GL20.glDeleteShader(id);
 		super.destroy();
 		RenderUtil.checkForOpenGLError();
-	}
-
-	protected void attach(int programId) {
-		GL20.glAttachShader(programId, id);
 	}
 }

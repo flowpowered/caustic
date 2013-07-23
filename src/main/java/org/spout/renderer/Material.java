@@ -40,6 +40,14 @@ public abstract class Material extends Creatable {
 
 	public abstract Program getProgram();
 
+	public abstract void addTexture(Texture texture);
+
+	public abstract boolean hasTexture(int unit);
+
+	public abstract Texture getTexture(int unit);
+
+	public abstract void removeTexture(int unit);
+
 	public UniformHolder getUniforms() {
 		return uniforms;
 	}

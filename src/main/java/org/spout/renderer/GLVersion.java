@@ -31,6 +31,7 @@ import org.spout.renderer.gl20.OpenGL20Model;
 import org.spout.renderer.gl20.OpenGL20Program;
 import org.spout.renderer.gl20.OpenGL20Renderer;
 import org.spout.renderer.gl20.OpenGL20Shader;
+import org.spout.renderer.gl20.OpenGL20Texture;
 import org.spout.renderer.gl20.OpenGL20VertexArray;
 import org.spout.renderer.gl30.OpenGL30Model;
 import org.spout.renderer.gl30.OpenGL30Renderer;
@@ -97,6 +98,16 @@ public enum GLVersion {
 			case GL20:
 			case GL30:
 				return new OpenGL20Shader();
+			default:
+				return null;
+		}
+	}
+
+	public Texture createTexture() {
+		switch (this) {
+			case GL20:
+			case GL30:
+				return new OpenGL20Texture();
 			default:
 				return null;
 		}

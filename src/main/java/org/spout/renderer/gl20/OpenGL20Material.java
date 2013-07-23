@@ -26,10 +26,16 @@
  */
 package org.spout.renderer.gl20;
 
+import gnu.trove.map.TIntObjectMap;
+import gnu.trove.map.hash.TIntObjectHashMap;
+
 import org.spout.renderer.Material;
+import org.spout.renderer.Texture;
 
 public class OpenGL20Material extends Material {
 	private final OpenGL20Program program = new OpenGL20Program();
+	// Textures by unit
+	protected TIntObjectMap<OpenGL20Texture> textures;
 
 	@Override
 	public void create() {
@@ -44,6 +50,13 @@ public class OpenGL20Material extends Material {
 	public void destroy() {
 		checkCreated();
 		program.destroy();
+		if (textures != null) {
+			for (OpenGL20Texture texture : textures.valueCollection()) {
+				if (texture.isCreated()) {
+					texture.destroy();
+				}
+			}
+		}
 		uniforms.clear();
 		super.destroy();
 	}
@@ -52,12 +65,26 @@ public class OpenGL20Material extends Material {
 	public void bind() {
 		checkCreated();
 		program.bind();
+		if (textures != null) {
+			for (OpenGL20Texture texture : textures.valueCollection()) {
+				if (texture.isCreated()) {
+					texture.bind();
+				}
+			}
+		}
 	}
 
 	@Override
 	public void unbind() {
 		checkCreated();
 		program.unbind();
+		if (textures != null) {
+			for (OpenGL20Texture texture : textures.valueCollection()) {
+				if (texture.isCreated()) {
+					texture.unbind();
+				}
+			}
+		}
 	}
 
 	@Override
@@ -68,5 +95,39 @@ public class OpenGL20Material extends Material {
 	@Override
 	public OpenGL20Program getProgram() {
 		return program;
+	}
+
+	@Override
+	public void addTexture(Texture texture) {
+		checkTextureVersion(texture);
+		if (textures == null) {
+			textures = new TIntObjectHashMap<>();
+		}
+		final OpenGL20Texture gl20Texture = (OpenGL20Texture) texture;
+		textures.put(gl20Texture.getUnit(), gl20Texture);
+	}
+
+	@Override
+	public boolean hasTexture(int unit) {
+		return textures != null && textures.containsKey(unit);
+	}
+
+	@Override
+	public OpenGL20Texture getTexture(int unit) {
+		return textures != null ? textures.get(unit) : null;
+	}
+
+	@Override
+	public void removeTexture(int unit) {
+		if (textures != null) {
+			textures.remove(unit);
+		}
+	}
+
+	private void checkTextureVersion(Texture model) {
+		if (!(model instanceof OpenGL20Texture)) {
+			throw new IllegalArgumentException("Version mismatch: expected OpenGL20Texture, got "
+					+ model.getClass().getSimpleName());
+		}
 	}
 }
