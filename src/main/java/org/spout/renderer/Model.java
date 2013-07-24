@@ -50,8 +50,10 @@ public abstract class Model extends Creatable {
 	protected final UniformHolder uniforms = new UniformHolder();
 	// Vertex data
 	protected final VertexData vertices = new VertexData();
+	// Special camera
+	private Camera camera;
 	// Drawing mode
-	protected DrawMode mode = DrawMode.TRIANGLES;
+	protected DrawingMode drawingMode = DrawingMode.TRIANGLES;
 
 	@Override
 	public void create() {
@@ -177,12 +179,42 @@ public abstract class Model extends Creatable {
 	}
 
 	/**
+	 * Returns the camera for the model, or null if no specific camera has been assigned, and the
+	 * material or renderer camera should be used.
+	 *
+	 * @return The camera
+	 */
+	public Camera getCamera() {
+		return camera;
+	}
+
+	/**
+	 * Sets the camera for the model. This is an optional operation. If not set, the material camera
+	 * will be used. If this one too isn't set, the renderer camera is used, which should always be
+	 * present.
+	 *
+	 * @param camera The camera for the model
+	 */
+	public void setCamera(Camera camera) {
+		this.camera = camera;
+	}
+
+	/**
+	 * Returns true if a camera has been associated to the model.
+	 *
+	 * @return Whether or not a camera has been associated
+	 */
+	public boolean hasCamera() {
+		return camera != null;
+	}
+
+	/**
 	 * Returns the model's drawing mode.
 	 *
 	 * @return The drawing mode
 	 */
-	public DrawMode getDrawMode() {
-		return mode;
+	public DrawingMode getDrawingMode() {
+		return drawingMode;
 	}
 
 	/**
@@ -190,19 +222,19 @@ public abstract class Model extends Creatable {
 	 *
 	 * @param mode The drawing mode to use
 	 */
-	public void setDrawMode(DrawMode mode) {
-		this.mode = mode;
+	public void setDrawingMode(DrawingMode mode) {
+		this.drawingMode = mode;
 	}
 
 	/**
 	 * Represents the different drawing modes for the model
 	 */
-	public static enum DrawMode {
+	public static enum DrawingMode {
 		LINES(GL11.GL_LINES),
 		TRIANGLES(GL11.GL_TRIANGLES);
 		private final int glConstant;
 
-		private DrawMode(int constant) {
+		private DrawingMode(int constant) {
 			this.glConstant = constant;
 		}
 

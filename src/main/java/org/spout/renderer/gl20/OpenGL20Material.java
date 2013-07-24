@@ -93,11 +93,6 @@ public class OpenGL20Material extends Material {
 	}
 
 	@Override
-	public void uploadUniforms() {
-		program.upload(uniforms);
-	}
-
-	@Override
 	public OpenGL20Program getProgram() {
 		return program;
 	}

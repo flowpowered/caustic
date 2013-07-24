@@ -30,7 +30,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 
-import org.spout.renderer.Model.DrawMode;
+import org.spout.renderer.Model.DrawingMode;
 import org.spout.renderer.VertexArray;
 import org.spout.renderer.data.VertexAttribute;
 import org.spout.renderer.util.RenderUtil;
@@ -101,7 +101,7 @@ public class OpenGL20VertexArray extends VertexArray {
 		RenderUtil.checkForOpenGLError();
 	}
 
-	public void render(DrawMode mode) {
+	public void render(DrawingMode mode) {
 		checkCreated();
 		// Bind and enable the vertex attributes
 		for (int i = 0; i < vertexData.getAttributeCount(); i++) {

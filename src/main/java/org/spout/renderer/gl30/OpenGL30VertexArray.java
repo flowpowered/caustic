@@ -31,7 +31,7 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
-import org.spout.renderer.Model.DrawMode;
+import org.spout.renderer.Model.DrawingMode;
 import org.spout.renderer.VertexArray;
 import org.spout.renderer.data.VertexAttribute;
 import org.spout.renderer.util.RenderUtil;
@@ -117,7 +117,7 @@ public class OpenGL30VertexArray extends VertexArray {
 	 *
 	 * @param mode The drawing mode
 	 */
-	public void render(DrawMode mode) {
+	public void render(DrawingMode mode) {
 		checkCreated();
 		// Bind the vao and enable all attributes
 		GL30.glBindVertexArray(id);

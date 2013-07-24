@@ -170,7 +170,7 @@ public abstract class Renderer extends Creatable {
 	}
 
 	/**
-	 * Gets the renderer camera. Use this to move the view around.
+	 * Gets the renderer camera.
 	 *
 	 * @return The camera
 	 */
@@ -179,7 +179,8 @@ public abstract class Renderer extends Creatable {
 	}
 
 	/**
-	 * Sets the camera.
+	 * Sets the camera. This camera is used if the model's material has not camera. It's the default
+	 * camera.
 	 *
 	 * @param camera The camera
 	 */

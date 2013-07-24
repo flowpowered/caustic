@@ -34,24 +34,29 @@ import org.spout.math.vector.Vector3;
  * Represents a camera with a projection, position and rotation, for rendering purposes.
  */
 public class Camera {
-	private Matrix4 projectionMatrix = new Matrix4();
+	private Matrix4 projection = new Matrix4();
 	private Vector3 position = new Vector3(0, 0, 0);
 	private Quaternion rotation = new Quaternion();
 	private Matrix4 rotationMatrixInverse = new Matrix4();
 	private Matrix4 matrix = new Matrix4();
 	private boolean updateMatrix = true;
 
-	private Camera(Matrix4 projectionMatrix) {
-		this.projectionMatrix = projectionMatrix;
+	/**
+	 * Creates a new camera from the supplied projection matrix.
+	 *
+	 * @param projection The projection matrix
+	 */
+	public Camera(Matrix4 projection) {
+		this.projection = projection;
 	}
 
 	/**
-	 * Returns the projection matrix.
+	 * Returns the perspective projection matrix.
 	 *
-	 * @return The projection matrix
+	 * @return The perspective projection matrix
 	 */
 	public Matrix4 getProjectionMatrix() {
-		return projectionMatrix;
+		return projection;
 	}
 
 	/**
@@ -142,7 +147,7 @@ public class Camera {
 	}
 
 	/**
-	 * Creates a new perspective camera.
+	 * Creates a new camera with a standard perspective projection matrix.
 	 *
 	 * @param fieldOfView The field of view, in degrees
 	 * @param windowWidth The window width
@@ -160,31 +165,20 @@ public class Camera {
 	}
 
 	/**
-	 * Creates a new orthographic camera.
+	 * Creates a new camera with a standard orthographic projection matrix.
 	 *
-	 * @param right The right
-	 * @param left The left
-	 * @param top The top plane
-	 * @param bottom The bottom plane
-	 * @param near The near plane, cannot be 0
-	 * @param far The far plane
+	 * @param right the right most plane
+	 * @param left the left most plane
+	 * @param top the top plane
+	 * @param bottom the bottom plane
+	 * @param near the near plane
+	 * @param far the far plane
 	 * @return The camera
 	 */
-	public static Camera createOrthographic(float right, float left, float top, float bottom,
-											float near, float far) {
+	public static Camera createOrthographic(float right, float left, float top, float bottom, float near, float far) {
 		if (near == 0) {
 			throw new IllegalArgumentException("Near cannot be zero");
 		}
 		return new Camera(Matrix4.createOrthographic(right, left, top, bottom, near, far));
-	}
-
-	/**
-	 * Creates a new camera from the supplied project matrix.
-	 *
-	 * @param projection The projection matrix
-	 * @return The camera
-	 */
-	public static Camera createProjection(Matrix4 projection) {
-		return new Camera(projection);
 	}
 }

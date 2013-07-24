@@ -36,6 +36,8 @@ import org.spout.renderer.data.UniformHolder;
 public abstract class Material extends Creatable {
 	// Material uniforms
 	protected final UniformHolder uniforms = new UniformHolder();
+	// Special camera
+	private Camera camera;
 
 	/**
 	 * Binds the material to the OpenGL context.
@@ -46,11 +48,6 @@ public abstract class Material extends Creatable {
 	 * Unbinds the material from the OpenGL context.
 	 */
 	public abstract void unbind();
-
-	/**
-	 * Uploads the material's uniforms to its program.
-	 */
-	public abstract void uploadUniforms();
 
 	/**
 	 * Returns the material's program.
@@ -89,6 +86,36 @@ public abstract class Material extends Creatable {
 	 * @param unit The unit to remove the texture from
 	 */
 	public abstract void removeTexture(int unit);
+
+	/**
+	 * Returns the camera for the material, or null if no specific camera has been assigned, and the
+	 * renderer camera should be used.
+	 *
+	 * @return The camera
+	 */
+	public Camera getCamera() {
+		return camera;
+	}
+
+	/**
+	 * Sets the camera for the material. This is an optional operation. If not set, the renderer camera
+	 * is used, which should always be present. If a model using this material has a camera, the
+	 * model's camera will be used.
+	 *
+	 * @param camera The camera for the model
+	 */
+	public void setCamera(Camera camera) {
+		this.camera = camera;
+	}
+
+	/**
+	 * Returns true if a camera has been associated to the material.
+	 *
+	 * @return Whether or not a camera has been associated
+	 */
+	public boolean hasCamera() {
+		return camera != null;
+	}
 
 	/**
 	 * Returns the uniform holder for this material.
