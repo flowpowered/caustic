@@ -46,7 +46,7 @@ import org.lwjgl.opengl.GL11;
  * Represents a vertex attribute. It has a name, a data type, a size (the number of components) and
  * data.
  */
-public abstract class VertexAttribute {
+public abstract class VertexAttribute implements Cloneable {
 	protected final String name;
 	protected final DataType type;
 	protected final int size;
@@ -96,6 +96,9 @@ public abstract class VertexAttribute {
 	 */
 	public abstract void clear();
 
+	@Override
+	public abstract VertexAttribute clone();
+
 	/**
 	 * Represents a vertex attribute of the byte type.
 	 */
@@ -132,6 +135,13 @@ public abstract class VertexAttribute {
 		@Override
 		public void clear() {
 			data.clear();
+		}
+
+		@Override
+		public ByteVertexAttribute clone() {
+			final ByteVertexAttribute clone = new ByteVertexAttribute(name, size);
+			clone.getData().addAll(data);
+			return clone;
 		}
 	}
 
@@ -174,6 +184,13 @@ public abstract class VertexAttribute {
 		public void clear() {
 			data.clear();
 		}
+
+		@Override
+		public ShortVertexAttribute clone() {
+			final ShortVertexAttribute clone = new ShortVertexAttribute(name, size);
+			clone.getData().addAll(data);
+			return clone;
+		}
 	}
 
 	/**
@@ -214,6 +231,13 @@ public abstract class VertexAttribute {
 		@Override
 		public void clear() {
 			data.clear();
+		}
+
+		@Override
+		public IntVertexAttribute clone() {
+			final IntVertexAttribute clone = new IntVertexAttribute(name, size);
+			clone.getData().addAll(data);
+			return clone;
 		}
 	}
 
@@ -256,6 +280,13 @@ public abstract class VertexAttribute {
 		public void clear() {
 			data.clear();
 		}
+
+		@Override
+		public FloatVertexAttribute clone() {
+			final FloatVertexAttribute clone = new FloatVertexAttribute(name, size);
+			clone.getData().addAll(data);
+			return clone;
+		}
 	}
 
 	/**
@@ -296,6 +327,13 @@ public abstract class VertexAttribute {
 		@Override
 		public void clear() {
 			data.clear();
+		}
+
+		@Override
+		public DoubleVertexAttribute clone() {
+			final DoubleVertexAttribute clone = new DoubleVertexAttribute(name, size);
+			clone.getData().addAll(data);
+			return clone;
 		}
 	}
 

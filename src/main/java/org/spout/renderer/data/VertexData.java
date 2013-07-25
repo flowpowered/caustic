@@ -32,6 +32,7 @@ import java.util.Set;
 
 import gnu.trove.function.TIntFunction;
 import gnu.trove.impl.Constants;
+import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.list.TByteList;
 import gnu.trove.list.TDoubleList;
 import gnu.trove.list.TFloatList;
@@ -497,8 +498,26 @@ public class VertexData {
 	 */
 	public void clear() {
 		indices.clear();
-		for (VertexAttribute attribute : attributes.valueCollection()) {
-			attribute.clear();
+		attributes.clear();
+		nameToIndex.clear();
+		index = 0;
+	}
+
+	/**
+	 * Replaces the contents of this vertex data by the provided one. This is a deep copy. The vertex
+	 * attribute are each individually cloned.
+	 *
+	 * @param data The data to copy.
+	 */
+	public void copy(VertexData data) {
+		clear();
+		indices.addAll(data.indices);
+		final TIntObjectIterator<VertexAttribute> iterator = data.attributes.iterator();
+		while (iterator.hasNext()) {
+			iterator.advance();
+			attributes.put(iterator.key(), iterator.value().clone());
 		}
+		nameToIndex.putAll(data.nameToIndex);
+		index = data.index;
 	}
 }

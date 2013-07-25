@@ -26,9 +26,7 @@
  */
 package org.spout.renderer.gl20;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.util.Scanner;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
@@ -57,13 +55,12 @@ public class OpenGL20Shader extends Shader {
 		}
 		// Attempt to read the source and place it into a string builder
 		final StringBuilder source = new StringBuilder();
-		try (BufferedReader reader = new BufferedReader(new InputStreamReader(shaderSource))) {
-			String line;
-			while ((line = reader.readLine()) != null) {
-				source.append(line).append("\n");
+		try (Scanner reader = new Scanner(shaderSource)) {
+			while (reader.hasNextLine()) {
+				source.append(reader.nextLine()).append('\n');
 			}
 			shaderSource.close();
-		} catch (IOException ex) {
+		} catch (Exception ex) {
 			throw new IllegalStateException("Unreadable shader source", ex);
 		}
 		// Create a shader for the type
