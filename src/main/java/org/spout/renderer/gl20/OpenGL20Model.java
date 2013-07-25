@@ -63,9 +63,7 @@ public class OpenGL20Model extends Model {
 
 	@Override
 	protected void render() {
-		if (!material.isCreated()) {
-			throw new IllegalStateException("Material has not been created yet");
-		}
+		checkCreated();
 		uniforms.getMatrix4("modelMatrix").set(getMatrix());
 		vertexArray.render(drawingMode);
 	}

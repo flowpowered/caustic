@@ -148,6 +148,14 @@ public class OpenGL20Program extends Program {
 	}
 
 	@Override
+	public void bindTexture(int unit) {
+		if (textureLayouts == null || !textureLayouts.containsKey(unit)) {
+			throw new IllegalArgumentException("No texture layout has been set for the unit: " + unit);
+		}
+		setUniform(textureLayouts.get(unit), unit);
+	}
+
+	@Override
 	public void upload(UniformHolder uniforms) {
 		checkCreated();
 		for (Uniform uniform : uniforms) {

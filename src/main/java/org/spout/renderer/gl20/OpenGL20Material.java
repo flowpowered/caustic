@@ -74,6 +74,7 @@ public class OpenGL20Material extends Material {
 			for (OpenGL20Texture texture : textures.valueCollection()) {
 				if (texture.isCreated()) {
 					texture.bind();
+					program.bindTexture(texture.getUnit());
 				}
 			}
 		}

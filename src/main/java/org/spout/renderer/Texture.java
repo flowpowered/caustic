@@ -32,6 +32,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL14;
+import org.lwjgl.opengl.GL30;
 
 /**
  * Represents a texture for OpenGL. The textures image, dimension, wrapping and filters must be set
@@ -40,6 +41,7 @@ import org.lwjgl.opengl.GL14;
 public abstract class Texture extends Creatable {
 	protected int id = 0;
 	protected int unit = GL13.GL_TEXTURE0;
+	protected TextureFormat format = TextureFormat.RGB;
 	protected WrapMode wrapT = WrapMode.REPEAT;
 	protected WrapMode wrapS = WrapMode.REPEAT;
 	protected FilterMode minFilter = FilterMode.LINEAR;
@@ -75,15 +77,30 @@ public abstract class Texture extends Creatable {
 	}
 
 	/**
-	 * Sets the texture unit. Must be a number between 0 and 31.
+	 * Sets the texture unit.
 	 *
 	 * @param unit The texture unit to set
 	 */
 	public void setUnit(int unit) {
-		if (unit < 0 || unit > 31) {
-			throw new IllegalArgumentException("Texture unit must be between 0 and 31, got: " + unit);
-		}
 		this.unit = GL13.GL_TEXTURE0 + unit;
+	}
+
+	/**
+	 * Returns the texture's format.
+	 *
+	 * @return The texture format
+	 */
+	public TextureFormat getFormat() {
+		return format;
+	}
+
+	/**
+	 * Sets the texture's format.
+	 *
+	 * @param format The format to set
+	 */
+	public void setFormat(TextureFormat format) {
+		this.format = format;
 	}
 
 	/**
@@ -168,6 +185,74 @@ public abstract class Texture extends Creatable {
 	 */
 	public void setSource(InputStream source) {
 		this.source = source;
+	}
+
+	/**
+	 * Represents the pixel format for the texture. Only the specified components will be loaded.
+	 */
+	public static enum TextureFormat {
+		RED(GL11.GL_RED, true, false, false, false),
+		RG(GL30.GL_RG, true, true, false, false),
+		RGB(GL11.GL_RGB, true, true, true, false),
+		RGBA(GL11.GL_RGBA, true, true, true, true);
+		private final int glConstant;
+		private final boolean hasRed;
+		private final boolean hasGreen;
+		private final boolean hasBlue;
+		private final boolean hasAlpha;
+
+		private TextureFormat(int glConstant, boolean hasRed, boolean hasGreen, boolean hasBlue, boolean hasAlpha) {
+			this.glConstant = glConstant;
+			this.hasRed = hasRed;
+			this.hasGreen = hasGreen;
+			this.hasBlue = hasBlue;
+			this.hasAlpha = hasAlpha;
+		}
+
+		/**
+		 * Gets the OpenGL constant for this texture wrap
+		 *
+		 * @return The OpenGL Constant
+		 */
+		public int getGLConstant() {
+			return glConstant;
+		}
+
+		/**
+		 * Returns true if this format has a red color component.
+		 *
+		 * @return True if a red color component is present
+		 */
+		public boolean hasRed() {
+			return hasRed;
+		}
+
+		/**
+		 * Returns true if this format has a green color component.
+		 *
+		 * @return True if a green color component is present
+		 */
+		public boolean hasGreen() {
+			return hasGreen;
+		}
+
+		/**
+		 * Returns true if this format has a blue color component.
+		 *
+		 * @return True if a blue color component is present
+		 */
+		public boolean hasBlue() {
+			return hasBlue;
+		}
+
+		/**
+		 * Returns true if this format has a alpha color component.
+		 *
+		 * @return True if a alpha color component is present
+		 */
+		public boolean hasAlpha() {
+			return hasAlpha;
+		}
 	}
 
 	/**

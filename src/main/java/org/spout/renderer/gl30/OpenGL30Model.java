@@ -57,18 +57,14 @@ public class OpenGL30Model extends Model {
 
 	@Override
 	public void destroy() {
-		if (!created) {
-			throw new IllegalStateException("Model has not been created yet");
-		}
+		checkCreated();
 		vertexArray.destroy();
 		super.destroy();
 	}
 
 	@Override
 	protected void render() {
-		if (!material.isCreated()) {
-			throw new IllegalStateException("Material has not been created yet");
-		}
+		checkCreated();
 		uniforms.getMatrix4("modelMatrix").set(getMatrix());
 		vertexArray.render(drawingMode);
 	}

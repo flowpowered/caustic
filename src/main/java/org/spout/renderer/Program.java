@@ -30,7 +30,9 @@ import java.io.InputStream;
 import java.util.EnumMap;
 import java.util.Map;
 
+import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.TObjectIntMap;
+import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 
 import org.spout.renderer.Shader.ShaderType;
@@ -43,8 +45,9 @@ import org.spout.renderer.data.UniformHolder;
  * GL20, it is strongly recommended to set the attribute layout in the program, which must be done
  * before creation. The layout allows for association between the attribute index in the vertex data
  * and the name in the shaders. For GL30, it is recommended to do so in the shaders instead, using
- * the "layout" keyword. Failing to do so might result in partial, wrong or missing rendering, and affects
- * models using multiple attributes.
+ * the "layout" keyword. Failing to do so might result in partial, wrong or missing rendering, and
+ * affects models using multiple attributes. The texture layout should also be setup. This one can
+ * be done after creation, but is necessary for assigning texture units to sampler uniforms.
  */
 public abstract class Program extends Creatable {
 	protected int id;
@@ -52,6 +55,8 @@ public abstract class Program extends Creatable {
 	protected Map<ShaderType, InputStream> shaderSources;
 	// Map of the attribute names to their vao index (optional for GL30 as they can be defined in the shader instead)
 	protected TObjectIntMap<String> attributeLayouts;
+	// Map of the texture units to their names. Only necessary if textures are used
+	protected TIntObjectMap<String> textureLayouts;
 
 	@Override
 	public void create() {
@@ -62,6 +67,7 @@ public abstract class Program extends Creatable {
 
 	@Override
 	public void destroy() {
+		textureLayouts = null;
 		id = 0;
 		super.destroy();
 	}
@@ -75,6 +81,15 @@ public abstract class Program extends Creatable {
 	 * Unbinds this program from the OpenGL context.
 	 */
 	public abstract void unbind();
+
+	/**
+	 * Binds the texture unit to the shader uniform. The binding is done according to the texture
+	 * layout, which must be set in the program for the textures that will be used before any binding
+	 * can be done.
+	 *
+	 * @param unit The unit to bind
+	 */
+	public abstract void bindTexture(int unit);
 
 	/**
 	 * Uploads the uniforms to this program.
@@ -133,6 +148,9 @@ public abstract class Program extends Creatable {
 	public void removeShaderSource(ShaderType type) {
 		if (shaderSources != null) {
 			shaderSources.remove(type);
+			if (shaderSources.isEmpty()) {
+				shaderSources = null;
+			}
 		}
 	}
 
@@ -175,6 +193,54 @@ public abstract class Program extends Creatable {
 	public void removeAttributeLayout(String name) {
 		if (attributeLayouts != null) {
 			attributeLayouts.remove(name);
+			if (attributeLayouts.isEmpty()) {
+				attributeLayouts = null;
+			}
+		}
+	}
+
+	/**
+	 * Sets the unit of the texture to the provided name, in the program.
+	 *
+	 * @param name The name of the texture
+	 * @param unit The unit for the texture
+	 */
+	public void addTextureLayout(String name, int unit) {
+		if (textureLayouts == null) {
+			textureLayouts = new TIntObjectHashMap<>();
+		}
+		textureLayouts.put(unit, name);
+	}
+
+	/**
+	 * Returns true if a texture at the provided unit has been set to a name.
+	 *
+	 * @param unit The unit to lookup
+	 * @return Whether or not the layout is set for the texture
+	 */
+	public boolean hasTextureLayout(int unit) {
+		return textureLayouts != null && textureLayouts.containsKey(unit);
+	}
+
+	/**
+	 * Returns the name for the texture at the provided unit.
+	 *
+	 * @param unit The unit to lookup
+	 * @return The name
+	 */
+	public String getTextureLayout(int unit) {
+		return textureLayouts != null ? textureLayouts.get(unit) : null;
+	}
+
+	/**
+	 * Removes the layout for the texture at the provided unit.
+	 */
+	public void removeTextureLayout(int unit) {
+		if (textureLayouts != null) {
+			textureLayouts.remove(unit);
+			if (textureLayouts.isEmpty()) {
+				textureLayouts = null;
+			}
 		}
 	}
 }

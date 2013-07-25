@@ -28,7 +28,6 @@ package org.spout.renderer.gl20;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import org.lwjgl.BufferUtils;
@@ -59,22 +58,30 @@ public class OpenGL20Texture extends Texture {
 		try {
 			bufferedImage = ImageIO.read(source);
 			source.close();
-		} catch (IOException ex) {
+		} catch (Exception ex) {
 			throw new IllegalStateException("Unreadable texture image", ex);
 		}
 		final int width = bufferedImage.getWidth();
 		final int height = bufferedImage.getHeight();
 		int[] pixels = new int[width * height];
 		bufferedImage.getRGB(0, 0, width, height, pixels, 0, width);
-		// Place the data in a buffer
+		// Place the data in a buffer, only adding the needed components
 		final ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * 4);
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				final int pixel = pixels[x + y * width];
-				buffer.put((byte) (pixel >> 16 & 0xff));
-				buffer.put((byte) (pixel >> 8 & 0xff));
-				buffer.put((byte) (pixel & 0xff));
-				buffer.put((byte) (pixel >> 24 & 0xff));
+				if (format.hasRed()) {
+					buffer.put((byte) (pixel >> 16 & 0xff));
+				}
+				if (format.hasGreen()) {
+					buffer.put((byte) (pixel >> 8 & 0xff));
+				}
+				if (format.hasBlue()) {
+					buffer.put((byte) (pixel & 0xff));
+				}
+				if (format.hasAlpha()) {
+					buffer.put((byte) (pixel >> 24 & 0xff));
+				}
 			}
 		}
 		buffer.flip();
@@ -87,10 +94,10 @@ public class OpenGL20Texture extends Texture {
 		// Upload the texture to the GPU
 		if (minFilter.needsMipMaps() || magFilter.needsMipMaps()) {
 			// Build mipmaps if using mip mapped filters
-			GLU.gluBuild2DMipmaps(GL11.GL_TEXTURE_2D, GL11.GL_RGBA8, width, height, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
+			GLU.gluBuild2DMipmaps(GL11.GL_TEXTURE_2D, format.getGLConstant(), width, height, format.getGLConstant(), GL11.GL_UNSIGNED_BYTE, buffer);
 		} else {
 			// Else just make it a normal texture
-			GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA8, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
+			GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, format.getGLConstant(), width, height, 0, format.getGLConstant(), GL11.GL_UNSIGNED_BYTE, buffer);
 		}
 		// Set the vertical and horizontal texture wraps (in the texture parameters)
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, wrapT.getGLConstant());
