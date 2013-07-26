@@ -67,8 +67,8 @@ public class OpenGL20Texture extends Texture {
 		bufferedImage.getRGB(0, 0, width, height, pixels, 0, width);
 		// Place the data in a buffer, only adding the needed components
 		final ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * 4);
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
+		for (int y = height - 1; y >= 0; y--) {
+			for (int x = 0; x < width; x++) {
 				final int pixel = pixels[x + y * width];
 				if (format.hasRed()) {
 					buffer.put((byte) (pixel >> 16 & 0xff));
