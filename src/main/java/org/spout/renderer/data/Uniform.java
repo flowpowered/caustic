@@ -34,7 +34,7 @@ import org.spout.math.matrix.Matrix4;
 import org.spout.math.vector.Vector2;
 import org.spout.math.vector.Vector3;
 import org.spout.math.vector.Vector4;
-import org.spout.renderer.gl20.OpenGL20Program;
+import org.spout.renderer.Program;
 
 /**
  * Represents a shader uniform, which has a name and a value.
@@ -51,7 +51,7 @@ public abstract class Uniform {
 	 *
 	 * @param program The program to upload to
 	 */
-	public abstract void upload(OpenGL20Program program);
+	public abstract void upload(Program program);
 
 	/**
 	 * Returns the name of the uniform.
@@ -80,7 +80,7 @@ public abstract class Uniform {
 		}
 
 		@Override
-		public void upload(OpenGL20Program program) {
+		public void upload(Program program) {
 			program.setUniform(name, value);
 		}
 
@@ -121,7 +121,7 @@ public abstract class Uniform {
 		}
 
 		@Override
-		public void upload(OpenGL20Program program) {
+		public void upload(Program program) {
 			program.setUniform(name, value);
 		}
 
@@ -162,7 +162,7 @@ public abstract class Uniform {
 		}
 
 		@Override
-		public void upload(OpenGL20Program program) {
+		public void upload(Program program) {
 			program.setUniform(name, value);
 		}
 
@@ -203,7 +203,7 @@ public abstract class Uniform {
 		}
 
 		@Override
-		public void upload(OpenGL20Program program) {
+		public void upload(Program program) {
 			program.setUniform(name, value);
 		}
 
@@ -244,7 +244,7 @@ public abstract class Uniform {
 		}
 
 		@Override
-		public void upload(OpenGL20Program program) {
+		public void upload(Program program) {
 			program.setUniform(name, value);
 		}
 
@@ -285,7 +285,7 @@ public abstract class Uniform {
 		}
 
 		@Override
-		public void upload(OpenGL20Program program) {
+		public void upload(Program program) {
 			program.setUniform(name, value);
 		}
 
@@ -326,7 +326,7 @@ public abstract class Uniform {
 		}
 
 		@Override
-		public void upload(OpenGL20Program program) {
+		public void upload(Program program) {
 			program.setUniform(name, value);
 		}
 
@@ -367,7 +367,7 @@ public abstract class Uniform {
 		}
 
 		@Override
-		public void upload(OpenGL20Program program) {
+		public void upload(Program program) {
 			program.setUniform(name, value);
 		}
 
@@ -408,7 +408,7 @@ public abstract class Uniform {
 		}
 
 		@Override
-		public void upload(OpenGL20Program program) {
+		public void upload(Program program) {
 			program.setUniform(name, value);
 		}
 
@@ -449,7 +449,7 @@ public abstract class Uniform {
 		}
 
 		@Override
-		public void upload(OpenGL20Program program) {
+		public void upload(Program program) {
 			program.setUniform(name, value);
 		}
 

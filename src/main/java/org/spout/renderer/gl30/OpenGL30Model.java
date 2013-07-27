@@ -40,7 +40,7 @@ import org.spout.renderer.gl20.OpenGL20Material;
  */
 public class OpenGL30Model extends Model {
 	private final OpenGL30VertexArray vertexArray = new OpenGL30VertexArray();
-	private OpenGL20Material material;
+	private OpenGL30Material material;
 
 	@Override
 	public void create() {
@@ -70,13 +70,16 @@ public class OpenGL30Model extends Model {
 	}
 
 	@Override
-	public OpenGL20Material getMaterial() {
+	public OpenGL30Material getMaterial() {
 		return material;
 	}
 
 	@Override
 	public void setMaterial(Material material) {
-		// TODO: OpenGL30Material
-		this.material = (OpenGL20Material) material;
+		if (!(material instanceof OpenGL30Material)) {
+			throw new IllegalArgumentException("Version mismatch: expected OpenGL30Material, got "
+					+ material.getClass().getSimpleName());
+		}
+		this.material = (OpenGL30Material) material;
 	}
 }

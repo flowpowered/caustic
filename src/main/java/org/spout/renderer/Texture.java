@@ -36,7 +36,7 @@ import org.lwjgl.opengl.GL30;
 
 /**
  * Represents a texture for OpenGL. The textures image, dimension, wrapping and filters must be set
- * respectively before it can be created.
+ * before it can be created.
  */
 public abstract class Texture extends Creatable {
 	protected int id = 0;

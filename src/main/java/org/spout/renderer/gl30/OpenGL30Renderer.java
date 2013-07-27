@@ -122,8 +122,8 @@ public class OpenGL30Renderer extends Renderer {
 		// Render all the models
 		for (OpenGL30Model model : models) {
 			if (model.isCreated()) {
-				final OpenGL20Material material = model.getMaterial();
-				final OpenGL20Program program = material.getProgram();
+				final OpenGL30Material material = model.getMaterial();
+				final OpenGL30Program program = material.getProgram();
 				// Get the camera, checking in order of priority
 				final Camera camera;
 				if (model.hasCamera()) {

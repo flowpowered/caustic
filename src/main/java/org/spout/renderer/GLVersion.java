@@ -33,8 +33,11 @@ import org.spout.renderer.gl20.OpenGL20Renderer;
 import org.spout.renderer.gl20.OpenGL20Shader;
 import org.spout.renderer.gl20.OpenGL20Texture;
 import org.spout.renderer.gl20.OpenGL20VertexArray;
+import org.spout.renderer.gl30.OpenGL30Material;
 import org.spout.renderer.gl30.OpenGL30Model;
+import org.spout.renderer.gl30.OpenGL30Program;
 import org.spout.renderer.gl30.OpenGL30Renderer;
+import org.spout.renderer.gl30.OpenGL30Texture;
 import org.spout.renderer.gl30.OpenGL30VertexArray;
 
 /**
@@ -101,8 +104,9 @@ public enum GLVersion {
 	public Material createMaterial() {
 		switch (this) {
 			case GL20:
-			case GL30:
 				return new OpenGL20Material();
+			case GL30:
+				return new OpenGL30Material();
 			default:
 				return null;
 		}
@@ -116,8 +120,9 @@ public enum GLVersion {
 	public Program createProgram() {
 		switch (this) {
 			case GL20:
-			case GL30:
 				return new OpenGL20Program();
+			case GL30:
+				return new OpenGL30Program();
 			default:
 				return null;
 		}
@@ -146,8 +151,9 @@ public enum GLVersion {
 	public Texture createTexture() {
 		switch (this) {
 			case GL20:
-			case GL30:
 				return new OpenGL20Texture();
+			case GL30:
+				return new OpenGL30Texture();
 			default:
 				return null;
 		}

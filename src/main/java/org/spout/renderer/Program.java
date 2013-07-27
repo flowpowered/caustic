@@ -26,6 +26,7 @@
  */
 package org.spout.renderer;
 
+import java.awt.Color;
 import java.io.InputStream;
 import java.util.EnumMap;
 import java.util.Map;
@@ -35,6 +36,12 @@ import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 
+import org.spout.math.matrix.Matrix2;
+import org.spout.math.matrix.Matrix3;
+import org.spout.math.matrix.Matrix4;
+import org.spout.math.vector.Vector2;
+import org.spout.math.vector.Vector3;
+import org.spout.math.vector.Vector4;
 import org.spout.renderer.Shader.ShaderType;
 import org.spout.renderer.data.UniformHolder;
 
@@ -97,6 +104,86 @@ public abstract class Program extends Creatable {
 	 * @param uniforms The uniforms to upload
 	 */
 	public abstract void upload(UniformHolder uniforms);
+
+	/**
+	 * Sets a uniform boolean in the shader to the desired value.
+	 *
+	 * @param name The name of the uniform to set
+	 * @param b The boolean value
+	 */
+	public abstract void setUniform(String name, boolean b);
+
+	/**
+	 * Sets a uniform integer in the shader to the desired value.
+	 *
+	 * @param name The name of the uniform to set
+	 * @param i The integer value
+	 */
+	public abstract void setUniform(String name, int i);
+
+	/**
+	 * Sets a uniform float in the shader to the desired value.
+	 *
+	 * @param name The name of the uniform to set
+	 * @param f The float value
+	 */
+	public abstract void setUniform(String name, float f);
+
+	/**
+	 * Sets a uniform {@link org.spout.math.vector.Vector3} in the shader to the desired value.
+	 *
+	 * @param name The name of the uniform to set
+	 * @param v The vector value
+	 */
+	public abstract void setUniform(String name, Vector2 v);
+
+	/**
+	 * Sets a uniform {@link org.spout.math.vector.Vector3} in the shader to the desired value.
+	 *
+	 * @param name The name of the uniform to set
+	 * @param v The vector value
+	 */
+	public abstract void setUniform(String name, Vector3 v);
+
+	/**
+	 * Sets a uniform {@link org.spout.math.vector.Vector3} in the shader to the desired value.
+	 *
+	 * @param name The name of the uniform to set
+	 * @param v The vector value
+	 */
+	public abstract void setUniform(String name, Vector4 v);
+
+	/**
+	 * Sets a uniform {@link org.spout.math.matrix.Matrix4} in the shader to the desired value.
+	 *
+	 * @param name The name of the uniform to set
+	 * @param m The matrix value
+	 */
+	public abstract void setUniform(String name, Matrix2 m);
+
+	/**
+	 * Sets a uniform {@link org.spout.math.matrix.Matrix4} in the shader to the desired value.
+	 *
+	 * @param name The name of the uniform to set
+	 * @param m The matrix value
+	 */
+	public abstract void setUniform(String name, Matrix3 m);
+
+	/**
+	 * Sets a uniform {@link org.spout.math.matrix.Matrix4} in the shader to the desired value.
+	 *
+	 * @param name The name of the uniform to set
+	 * @param m The matrix value
+	 */
+	public abstract void setUniform(String name, Matrix4 m);
+
+	/**
+	 * Sets a uniform {@link java.awt.Color} in the shader to the desired value.
+	 *
+	 * @param name The name of the uniform to set
+	 * @param c The color value
+	 */
+	public abstract void setUniform(String name, Color c);
 
 	/**
 	 * Gets the ID for this program as assigned by OpenGL.

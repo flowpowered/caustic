@@ -39,7 +39,8 @@ import org.spout.renderer.Texture;
 import org.spout.renderer.util.RenderUtil;
 
 /**
- * Represents a texture for OpenGL20.
+ * Represents a texture for OpenGL 2.0. The textures image, dimension, wrapping and filters must be
+ * set before it can be created. This texture offers mipmap support using GLU.
  */
 public class OpenGL20Texture extends Texture {
 	@Override
@@ -92,13 +93,7 @@ public class OpenGL20Texture extends Texture {
 		// Set pixel storage mode
 		GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
 		// Upload the texture to the GPU
-		if (minFilter.needsMipMaps() || magFilter.needsMipMaps()) {
-			// Build mipmaps if using mip mapped filters
-			GLU.gluBuild2DMipmaps(GL11.GL_TEXTURE_2D, format.getGLConstant(), width, height, format.getGLConstant(), GL11.GL_UNSIGNED_BYTE, buffer);
-		} else {
-			// Else just make it a normal texture
-			GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, format.getGLConstant(), width, height, 0, format.getGLConstant(), GL11.GL_UNSIGNED_BYTE, buffer);
-		}
+		uploadTexture(buffer, width, height);
 		// Set the vertical and horizontal texture wraps (in the texture parameters)
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, wrapT.getGLConstant());
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, wrapS.getGLConstant());
@@ -112,6 +107,24 @@ public class OpenGL20Texture extends Texture {
 		super.create();
 		// Check for errors
 		RenderUtil.checkForOpenGLError();
+	}
+
+	/**
+	 * Uploads a texture to the graphics card. This method has been separated from the create method
+	 * for GL30 integrated mipmap support.
+	 *
+	 * @param buffer The buffer containing the image data
+	 * @param width The width of the image
+	 * @param height The height of the image
+	 */
+	protected void uploadTexture(ByteBuffer buffer, int width, int height) {
+		if (minFilter.needsMipMaps()) {
+			// Build mipmaps if using mip mapped filters
+			GLU.gluBuild2DMipmaps(GL11.GL_TEXTURE_2D, format.getGLConstant(), width, height, format.getGLConstant(), GL11.GL_UNSIGNED_BYTE, buffer);
+		} else {
+			// Else just make it a normal texture
+			GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, format.getGLConstant(), width, height, 0, format.getGLConstant(), GL11.GL_UNSIGNED_BYTE, buffer);
+		}
 	}
 
 	@Override

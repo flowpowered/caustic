@@ -163,12 +163,9 @@ public class OpenGL20Program extends Program {
 		}
 	}
 
-	/**
-	 * Sets a uniform boolean in the shader to the desired value.
-	 *
-	 * @param name The name of the uniform to set
-	 * @param b The boolean value
-	 */
+	// TODO: support int and boolean vectors
+
+	@Override
 	public void setUniform(String name, boolean b) {
 		checkCreated();
 		checkContainsUniform(name);
@@ -176,12 +173,7 @@ public class OpenGL20Program extends Program {
 		RenderUtil.checkForOpenGLError();
 	}
 
-	/**
-	 * Sets a uniform integer in the shader to the desired value.
-	 *
-	 * @param name The name of the uniform to set
-	 * @param i The integer value
-	 */
+	@Override
 	public void setUniform(String name, int i) {
 		checkCreated();
 		checkContainsUniform(name);
@@ -189,12 +181,7 @@ public class OpenGL20Program extends Program {
 		RenderUtil.checkForOpenGLError();
 	}
 
-	/**
-	 * Sets a uniform float in the shader to the desired value.
-	 *
-	 * @param name The name of the uniform to set
-	 * @param f The float value
-	 */
+	@Override
 	public void setUniform(String name, float f) {
 		checkCreated();
 		checkContainsUniform(name);
@@ -202,12 +189,7 @@ public class OpenGL20Program extends Program {
 		RenderUtil.checkForOpenGLError();
 	}
 
-	/**
-	 * Sets a uniform {@link org.spout.math.vector.Vector3} in the shader to the desired value.
-	 *
-	 * @param name The name of the uniform to set
-	 * @param v The vector value
-	 */
+	@Override
 	public void setUniform(String name, Vector2 v) {
 		checkCreated();
 		checkContainsUniform(name);
@@ -215,12 +197,7 @@ public class OpenGL20Program extends Program {
 		RenderUtil.checkForOpenGLError();
 	}
 
-	/**
-	 * Sets a uniform {@link org.spout.math.vector.Vector3} in the shader to the desired value.
-	 *
-	 * @param name The name of the uniform to set
-	 * @param v The vector value
-	 */
+	@Override
 	public void setUniform(String name, Vector3 v) {
 		checkCreated();
 		checkContainsUniform(name);
@@ -228,12 +205,7 @@ public class OpenGL20Program extends Program {
 		RenderUtil.checkForOpenGLError();
 	}
 
-	/**
-	 * Sets a uniform {@link org.spout.math.vector.Vector3} in the shader to the desired value.
-	 *
-	 * @param name The name of the uniform to set
-	 * @param v The vector value
-	 */
+	@Override
 	public void setUniform(String name, Vector4 v) {
 		checkCreated();
 		checkContainsUniform(name);
@@ -241,12 +213,7 @@ public class OpenGL20Program extends Program {
 		RenderUtil.checkForOpenGLError();
 	}
 
-	/**
-	 * Sets a uniform {@link org.spout.math.matrix.Matrix4} in the shader to the desired value.
-	 *
-	 * @param name The name of the uniform to set
-	 * @param m The matrix value
-	 */
+	@Override
 	public void setUniform(String name, Matrix2 m) {
 		checkCreated();
 		checkContainsUniform(name);
@@ -257,12 +224,7 @@ public class OpenGL20Program extends Program {
 		RenderUtil.checkForOpenGLError();
 	}
 
-	/**
-	 * Sets a uniform {@link org.spout.math.matrix.Matrix4} in the shader to the desired value.
-	 *
-	 * @param name The name of the uniform to set
-	 * @param m The matrix value
-	 */
+	@Override
 	public void setUniform(String name, Matrix3 m) {
 		checkCreated();
 		checkContainsUniform(name);
@@ -273,12 +235,7 @@ public class OpenGL20Program extends Program {
 		RenderUtil.checkForOpenGLError();
 	}
 
-	/**
-	 * Sets a uniform {@link org.spout.math.matrix.Matrix4} in the shader to the desired value.
-	 *
-	 * @param name The name of the uniform to set
-	 * @param m The matrix value
-	 */
+	@Override
 	public void setUniform(String name, Matrix4 m) {
 		checkCreated();
 		checkContainsUniform(name);
@@ -289,12 +246,7 @@ public class OpenGL20Program extends Program {
 		RenderUtil.checkForOpenGLError();
 	}
 
-	/**
-	 * Sets a uniform {@link java.awt.Color} in the shader to the desired value.
-	 *
-	 * @param name The name of the uniform to set
-	 * @param c The color value
-	 */
+	@Override
 	public void setUniform(String name, Color c) {
 		checkCreated();
 		checkContainsUniform(name);
