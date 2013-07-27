@@ -30,14 +30,9 @@ import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.Set;
 
-import gnu.trove.function.TIntFunction;
 import gnu.trove.impl.Constants;
 import gnu.trove.iterator.TIntObjectIterator;
-import gnu.trove.list.TByteList;
-import gnu.trove.list.TDoubleList;
-import gnu.trove.list.TFloatList;
 import gnu.trove.list.TIntList;
-import gnu.trove.list.TShortList;
 import gnu.trove.list.array.TIntArrayList;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.TObjectIntMap;
@@ -59,20 +54,12 @@ import org.spout.renderer.data.VertexAttribute.ShortVertexAttribute;
  * represent a list of vertices.
  */
 public class VertexData {
-	private static final TIntFunction DECREMENT = new TIntFunction() {
-		@Override
-		public int execute(int value) {
-			return value - 1;
-		}
-	};
 	// Rendering indices
 	private final TIntList indices = new TIntArrayList();
 	// Attributes by index
 	private final TIntObjectMap<VertexAttribute> attributes = new TIntObjectHashMap<>();
 	// Index from name lookup
 	private final TObjectIntMap<String> nameToIndex = new TObjectIntHashMap<>(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, -1);
-	// Next available attribute index
-	private int index;
 
 	/**
 	 * Returns the list of indices used by OpenGL to pick the vertices to draw the object with in the
@@ -108,83 +95,13 @@ public class VertexData {
 	}
 
 	/**
-	 * Adds an attribute of the byte type. The attribute size defines the number of components. The
-	 * index for the new attribute will be {@link #getAttributeCount()}.
-	 *
-	 * @param name The name of the attribute
-	 * @param size The size in components
-	 * @return The storage list for the attribute data
-	 */
-	public TByteList addByteAttribute(String name, int size) {
-		final ByteVertexAttribute attribute = new ByteVertexAttribute(name, size);
-		addAttribute(attribute);
-		return attribute.getData();
-	}
-
-	/**
-	 * Adds an attribute of the short type. The attribute size defines the number of components. The
-	 * index for the new attribute will be {@link #getAttributeCount()}.
-	 *
-	 * @param name The name of the attribute
-	 * @param size The size in components
-	 * @return The storage list for the attribute data
-	 */
-	public TShortList addShortAttribute(String name, int size) {
-		final ShortVertexAttribute attribute = new ShortVertexAttribute(name, size);
-		addAttribute(attribute);
-		return attribute.getData();
-	}
-
-	/**
-	 * Adds an attribute of the int type. The attribute size defines the number of components. The
-	 * index for the new attribute will be {@link #getAttributeCount()}.
-	 *
-	 * @param name The name of the attribute
-	 * @param size The size in components
-	 * @return The storage list for the attribute data
-	 */
-	public TIntList addIntAttribute(String name, int size) {
-		final IntVertexAttribute attribute = new IntVertexAttribute(name, size);
-		addAttribute(attribute);
-		return attribute.getData();
-	}
-
-	/**
-	 * Adds an attribute of the float type. The attribute size defines the number of components. The
-	 * index for the new attribute will be {@link #getAttributeCount()}.
-	 *
-	 * @param name The name of the attribute
-	 * @param size The size in components
-	 * @return The storage list for the attribute data
-	 */
-	public TFloatList addFloatAttribute(String name, int size) {
-		final FloatVertexAttribute attribute = new FloatVertexAttribute(name, size);
-		addAttribute(attribute);
-		return attribute.getData();
-	}
-
-	/**
-	 * Adds an attribute of the double type. The attribute size defines the number of components. The
-	 * index for the new attribute will be {@link #getAttributeCount()}.
-	 *
-	 * @param name The name of the attribute
-	 * @param size The size in components
-	 * @return The storage list for the attribute data
-	 */
-	public TDoubleList addDoubleAttribute(String name, int size) {
-		final DoubleVertexAttribute attribute = new DoubleVertexAttribute(name, size);
-		addAttribute(attribute);
-		return attribute.getData();
-	}
-
-	/**
 	 * Adds an attribute.
 	 *
 	 * @param attribute The attribute to add
 	 */
-	public void addAttribute(VertexAttribute attribute) {
+	public void addAttribute(int index, VertexAttribute attribute) {
 		attributes.put(index, attribute);
-		nameToIndex.put(attribute.getName(), index++);
+		nameToIndex.put(attribute.getName(), index);
 	}
 
 	/**
@@ -374,16 +291,8 @@ public class VertexData {
 	 * @param index The index of the attribute to remove
 	 */
 	public void removeAttribute(int index) {
-		if (hasAttribute(index)) {
-			nameToIndex.remove(getAttributeName(index));
-			attributes.remove(index);
-			VertexAttribute attribute = attributes.remove(this.index - 1);
-			for (int i = this.index - 2; i >= index; i--) {
-				attribute = attributes.put(i, attribute);
-			}
-			nameToIndex.transformValues(DECREMENT);
-			this.index--;
-		}
+		attributes.remove(index);
+		nameToIndex.remove(getAttributeName(index));
 	}
 
 	/**
@@ -455,7 +364,7 @@ public class VertexData {
 	 * @return The number of attributes
 	 */
 	public int getAttributeCount() {
-		return index;
+		return attributes.size();
 	}
 
 	/**
@@ -500,7 +409,6 @@ public class VertexData {
 		indices.clear();
 		attributes.clear();
 		nameToIndex.clear();
-		index = 0;
 	}
 
 	/**
@@ -518,6 +426,5 @@ public class VertexData {
 			attributes.put(iterator.key(), iterator.value().clone());
 		}
 		nameToIndex.putAll(data.nameToIndex);
-		index = data.index;
 	}
 }

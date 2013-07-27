@@ -30,11 +30,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import gnu.trove.list.TByteList;
-import gnu.trove.list.TDoubleList;
-import gnu.trove.list.TFloatList;
 import gnu.trove.list.TIntList;
-import gnu.trove.list.TShortList;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -54,21 +50,11 @@ public class VertexDataTest {
 		TIntList indices = vertexData.getIndices();
 		Assert.assertNotNull(indices);
 		// Add attribute
-		TByteList byteData;
-		byteData = vertexData.addByteAttribute("byte", 1);
-		Assert.assertNotNull(byteData);
-		TShortList shortData;
-		shortData = vertexData.addShortAttribute("short", 2);
-		Assert.assertNotNull(shortData);
-		TIntList intData;
-		intData = vertexData.addIntAttribute("int", 3);
-		Assert.assertNotNull(intData);
-		TFloatList floatData;
-		floatData = vertexData.addFloatAttribute("float", 4);
-		Assert.assertNotNull(floatData);
-		TDoubleList doubleData;
-		doubleData = vertexData.addDoubleAttribute("double", 5);
-		Assert.assertNotNull(doubleData);
+		vertexData.addAttribute(0, new ByteVertexAttribute("byte", 1));
+		vertexData.addAttribute(1, new ShortVertexAttribute("short", 2));
+		vertexData.addAttribute(2, new IntVertexAttribute("int", 3));
+		vertexData.addAttribute(3, new FloatVertexAttribute("float", 4));
+		vertexData.addAttribute(4, new DoubleVertexAttribute("double", 5));
 		// Get attribute
 		ByteVertexAttribute byteAttribute;
 		byteAttribute = vertexData.getByteAttribute(0);

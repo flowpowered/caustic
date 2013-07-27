@@ -34,6 +34,7 @@ import org.lwjgl.opengl.GL30;
 import org.spout.renderer.Model.DrawingMode;
 import org.spout.renderer.VertexArray;
 import org.spout.renderer.data.VertexAttribute;
+import org.spout.renderer.data.VertexAttribute.UploadMode;
 import org.spout.renderer.util.RenderUtil;
 
 /**
@@ -73,8 +74,14 @@ public class OpenGL30VertexArray extends VertexArray {
 			final int bufferID = GL15.glGenBuffers();
 			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, bufferID);
 			GL15.glBufferData(GL15.GL_ARRAY_BUFFER, attribute.getBuffer(), GL15.GL_STATIC_DRAW);
-			// TODO: proper support for integers (normalized or not) and doubles
-			GL20.glVertexAttribPointer(i, attribute.getSize(), attribute.getType().getGLConstant(), false, 0, 0);
+			// Three ways to interpret integer data
+			if (attribute.getType().isInteger() && attribute.getUploadMode() == UploadMode.KEEP_INT) {
+				// Directly as an int
+				GL30.glVertexAttribIPointer(i, attribute.getSize(), attribute.getType().getGLConstant(), 0, 0);
+			} else {
+				// Or as a float, normalized or not
+				GL20.glVertexAttribPointer(i, attribute.getSize(), attribute.getType().getGLConstant(), attribute.getUploadMode().normalize(), 0, 0);
+			}
 			attributeBufferIDs[i] = bufferID;
 		}
 		// Unbind the vbo and vao

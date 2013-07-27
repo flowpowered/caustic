@@ -34,6 +34,7 @@ import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TFloatArrayList;
 import gnu.trove.list.array.TIntArrayList;
 
+import org.spout.renderer.data.VertexAttribute.FloatVertexAttribute;
 import org.spout.renderer.data.VertexData;
 
 /**
@@ -58,8 +59,8 @@ public class ObjFileLoader {
 	 * @return The vertex data, filed with the loaded vertices
 	 * @throws MalformedObjFileException If any errors occur during loading
 	 */
-	public static VertexData loadObjFile(InputStream stream) throws MalformedObjFileException {
-		return loadObjFile(null, stream);
+	public static VertexData load(InputStream stream) throws MalformedObjFileException {
+		return load(null, stream);
 	}
 
 	/**
@@ -73,7 +74,7 @@ public class ObjFileLoader {
 	 * @return The vertex data, filed with the loaded vertices
 	 * @throws MalformedObjFileException If any errors occur during loading
 	 */
-	public static VertexData loadObjFile(VertexData destination, InputStream stream) throws MalformedObjFileException {
+	public static VertexData load(VertexData destination, InputStream stream) throws MalformedObjFileException {
 		if (destination == null) {
 			destination = new VertexData();
 		}
@@ -110,38 +111,44 @@ public class ObjFileLoader {
 				}
 			}
 			line = null;
-			final TFloatList positions = destination.addFloatAttribute("positions", positionSize);
-			final TFloatList normals;
+			final FloatVertexAttribute positionAttribute = new FloatVertexAttribute("positions", positionSize);
+			destination.addAttribute(0, positionAttribute);
+			final TFloatList positions = positionAttribute.getData();
 			final TFloatList textureCoords;
-			if (!normalIndices.isEmpty() && !normalComponents.isEmpty()) {
-				normals = destination.addFloatAttribute("normals", normalSize);
-				normals.fill(0, positionComponents.size() / positionSize * normalSize, 0);
-			} else {
-				normals = null;
-			}
+			final TFloatList normals;
 			if (!textureCoordIndices.isEmpty() && !textureCoordComponents.isEmpty()) {
-				textureCoords = destination.addFloatAttribute("textureCoords", textureCoordSize);
+				final FloatVertexAttribute textureCoordsAttribute = new FloatVertexAttribute("textureCoords", textureCoordSize);
+				destination.addAttribute(2, textureCoordsAttribute);
+				textureCoords = textureCoordsAttribute.getData();
 				textureCoords.fill(0, positionComponents.size() / positionSize * textureCoordSize, 0);
 			} else {
 				textureCoords = null;
 			}
+			if (!normalIndices.isEmpty() && !normalComponents.isEmpty()) {
+				final FloatVertexAttribute normalAttribute = new FloatVertexAttribute("normals", normalSize);
+				destination.addAttribute(1, normalAttribute);
+				normals = normalAttribute.getData();
+				normals.fill(0, positionComponents.size() / positionSize * normalSize, 0);
+			} else {
+				normals = null;
+			}
 			destination.getIndices().addAll(positionIndices);
 			positions.addAll(positionComponents);
-			if (normals != null) {
-				for (int i = 0; i < normalIndices.size(); i++) {
-					final int normalIndex = normalIndices.get(i) * normalSize;
-					final int positionIndex = positionIndices.get(i) * normalSize;
-					for (int ii = 0; ii < normalSize; ii++) {
-						normals.set(positionIndex + ii, normalComponents.get(normalIndex + ii));
-					}
-				}
-			}
 			if (textureCoords != null) {
 				for (int i = 0; i < textureCoordIndices.size(); i++) {
 					final int textureCoordIndex = textureCoordIndices.get(i) * textureCoordSize;
 					final int positionIndex = positionIndices.get(i) * textureCoordSize;
 					for (int ii = 0; ii < textureCoordSize; ii++) {
 						textureCoords.set(positionIndex + ii, textureCoordComponents.get(textureCoordIndex + ii));
+					}
+				}
+			}
+			if (normals != null) {
+				for (int i = 0; i < normalIndices.size(); i++) {
+					final int normalIndex = normalIndices.get(i) * normalSize;
+					final int positionIndex = positionIndices.get(i) * normalSize;
+					for (int ii = 0; ii < normalSize; ii++) {
+						normals.set(positionIndex + ii, normalComponents.get(normalIndex + ii));
 					}
 				}
 			}

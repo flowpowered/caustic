@@ -50,11 +50,13 @@ public abstract class VertexAttribute implements Cloneable {
 	protected final String name;
 	protected final DataType type;
 	protected final int size;
+	protected final UploadMode uploadMode;
 
-	protected VertexAttribute(String name, DataType type, int size) {
+	protected VertexAttribute(String name, DataType type, int size, UploadMode uploadMode) {
 		this.name = name;
 		this.type = type;
 		this.size = size;
+		this.uploadMode = uploadMode;
 	}
 
 	/**
@@ -85,6 +87,15 @@ public abstract class VertexAttribute implements Cloneable {
 	}
 
 	/**
+	 * Returns the upload mode for this attribute.
+	 *
+	 * @return The upload mode
+	 */
+	public UploadMode getUploadMode() {
+		return uploadMode;
+	}
+
+	/**
 	 * Returns a new byte buffer filled and ready to read, containing a copy of the attribute data.
 	 *
 	 * @return The buffer
@@ -106,13 +117,25 @@ public abstract class VertexAttribute implements Cloneable {
 		private final TByteList data = new TByteArrayList();
 
 		/**
-		 * Constructs a new byte attribute from the name and the size (component count).
+		 * Constructs a new byte attribute from the name and the size (component count). For
+		 * compatibility, the default upload mode is {@link UploadMode#TO_FLOAT}.
 		 *
 		 * @param name The name
 		 * @param size The size
 		 */
 		public ByteVertexAttribute(String name, int size) {
-			super(name, DataType.BYTE, size);
+			this(name, size, UploadMode.TO_FLOAT);
+		}
+
+		/**
+		 * Constructs a new byte attribute from the name and the size (component count) and upload mode.
+		 *
+		 * @param name The name
+		 * @param size The size
+		 * @param uploadMode The upload mode
+		 */
+		public ByteVertexAttribute(String name, int size, UploadMode uploadMode) {
+			super(name, DataType.BYTE, size, uploadMode);
 		}
 
 		/**
@@ -152,13 +175,25 @@ public abstract class VertexAttribute implements Cloneable {
 		private final TShortList data = new TShortArrayList();
 
 		/**
-		 * Constructs a new short attribute from the name and the size (component count).
+		 * Constructs a new short attribute from the name and the size (component count). For
+		 * compatibility, the default upload mode is {@link UploadMode#TO_FLOAT}.
 		 *
 		 * @param name The name
 		 * @param size The size
 		 */
 		public ShortVertexAttribute(String name, int size) {
-			super(name, DataType.SHORT, size);
+			this(name, size, UploadMode.TO_FLOAT);
+		}
+
+		/**
+		 * Constructs a new short attribute from the name and the size (component count) and upload mode.
+		 *
+		 * @param name The name
+		 * @param size The size
+		 * @param uploadMode The upload mode
+		 */
+		public ShortVertexAttribute(String name, int size, UploadMode uploadMode) {
+			super(name, DataType.SHORT, size, uploadMode);
 		}
 
 		/**
@@ -200,13 +235,25 @@ public abstract class VertexAttribute implements Cloneable {
 		private final TIntList data = new TIntArrayList();
 
 		/**
-		 * Constructs a new int attribute from the name and the size (component count).
+		 * Constructs a new int attribute from the name and the size (component count). For compatibility,
+		 * the default upload mode is {@link UploadMode#TO_FLOAT}.
 		 *
 		 * @param name The name
 		 * @param size The size
 		 */
 		public IntVertexAttribute(String name, int size) {
-			super(name, DataType.INT, size);
+			this(name, size, UploadMode.TO_FLOAT);
+		}
+
+		/**
+		 * Constructs a new int attribute from the name and the size (component count) and upload mode.
+		 *
+		 * @param name The name
+		 * @param size The size
+		 * @param uploadMode The upload mode
+		 */
+		public IntVertexAttribute(String name, int size, UploadMode uploadMode) {
+			super(name, DataType.INT, size, uploadMode);
 		}
 
 		/**
@@ -254,7 +301,7 @@ public abstract class VertexAttribute implements Cloneable {
 		 * @param size The size
 		 */
 		public FloatVertexAttribute(String name, int size) {
-			super(name, DataType.FLOAT, size);
+			super(name, DataType.FLOAT, size, UploadMode.TO_FLOAT);
 		}
 
 		/**
@@ -302,7 +349,7 @@ public abstract class VertexAttribute implements Cloneable {
 		 * @param size The size
 		 */
 		public DoubleVertexAttribute(String name, int size) {
-			super(name, DataType.DOUBLE, size);
+			super(name, DataType.DOUBLE, size, UploadMode.TO_FLOAT);
 		}
 
 		/**
@@ -341,17 +388,19 @@ public abstract class VertexAttribute implements Cloneable {
 	 * Represents an attribute data type.
 	 */
 	public static enum DataType {
-		BYTE(GL11.GL_BYTE, 1),
-		SHORT(GL11.GL_SHORT, 2),
-		INT(GL11.GL_INT, 4),
-		FLOAT(GL11.GL_FLOAT, 4),
-		DOUBLE(GL11.GL_DOUBLE, 8);
+		BYTE(GL11.GL_BYTE, 1, true),
+		SHORT(GL11.GL_SHORT, 2, true),
+		INT(GL11.GL_INT, 4, true),
+		FLOAT(GL11.GL_FLOAT, 4, false),
+		DOUBLE(GL11.GL_DOUBLE, 8, false);
 		private final int glConstant;
 		private final int byteSize;
+		private final boolean integer;
 
-		private DataType(int glConstant, int byteSize) {
+		private DataType(int glConstant, int byteSize, boolean integer) {
 			this.glConstant = glConstant;
 			this.byteSize = byteSize;
+			this.integer = integer;
 		}
 
 		/**
@@ -370,6 +419,35 @@ public abstract class VertexAttribute implements Cloneable {
 		 */
 		public int getByteSize() {
 			return byteSize;
+		}
+
+		/**
+		 * Returns true if the data type is an integer number ({@link DataType#BYTE}, {@link
+		 * DataType#SHORT} or {@link DataType#INT}).
+		 *
+		 * @return Whether or not the data type is an integer
+		 */
+		public boolean isInteger() {
+			return integer;
+		}
+	}
+
+	/**
+	 * The uploading mode. When uploading attribute data to OpenGL, integer data can be either
+	 * converted to float or not (the later is only possible with version 3.0+). When converting to
+	 * float, the data can be normalized or not. By default, {@link UploadMode#TO_FLOAT} is used as it
+	 * provides the best compatibility.
+	 */
+	public static enum UploadMode {
+		TO_FLOAT,
+		/**
+		 * Only supported in OpenGL 3.0.
+		 */
+		TO_FLOAT_NORMALIZE,
+		KEEP_INT;
+
+		public boolean normalize() {
+			return this == TO_FLOAT_NORMALIZE;
 		}
 	}
 }
