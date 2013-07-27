@@ -26,6 +26,10 @@
  */
 package org.spout.renderer;
 
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL32;
+import org.lwjgl.opengl.GL40;
+
 import org.spout.renderer.data.VertexData;
 
 /**
@@ -39,6 +43,8 @@ public abstract class VertexArray extends Creatable {
 	protected int renderingIndicesCount = 0;
 	// Vertex attributes
 	protected VertexData vertexData;
+	// Drawing mode
+	protected DrawingMode drawingMode = DrawingMode.TRIANGLES;
 
 	@Override
 	public void destroy() {
@@ -47,6 +53,11 @@ public abstract class VertexArray extends Creatable {
 		vertexData = null;
 		super.destroy();
 	}
+
+	/**
+	 * Draws the vertex data to the screen.
+	 */
+	public abstract void draw();
 
 	/**
 	 * Sets the vertex data source to use.
@@ -64,5 +75,55 @@ public abstract class VertexArray extends Creatable {
 	 */
 	public int getID() {
 		return id;
+	}
+
+	/**
+	 * Returns the model's drawing mode.
+	 *
+	 * @return The drawing mode
+	 */
+	public DrawingMode getDrawingMode() {
+		return drawingMode;
+	}
+
+	/**
+	 * Sets the model's drawing mode.
+	 *
+	 * @param mode The drawing mode to use
+	 */
+	public void setDrawingMode(DrawingMode mode) {
+		this.drawingMode = mode;
+	}
+
+	/**
+	 * Represents the different drawing modes for the model
+	 */
+	public static enum DrawingMode {
+		POINTS(GL11.GL_POINTS),
+		LINE_STRIP(GL11.GL_LINE_STRIP),
+		LINE_LOOP(GL11.GL_LINE_LOOP),
+		LINES(GL11.GL_LINES),
+		LINE_STRIP_ADJACENCY(GL32.GL_LINE_STRIP_ADJACENCY),
+		LINES_ADJACENCY(GL32.GL_LINES_ADJACENCY),
+		TRIANGLES_STRIP(GL11.GL_TRIANGLE_STRIP),
+		TRIANGLE_FAN(GL11.GL_TRIANGLE_FAN),
+		TRIANGLES(GL11.GL_TRIANGLES),
+		TRIANGLE_STRIP_ADJACENCY(GL32.GL_TRIANGLE_STRIP_ADJACENCY),
+		TRIANGLES_ADJACENCY(GL32.GL_TRIANGLES_ADJACENCY),
+		PATCHES(GL40.GL_PATCHES);
+		private final int glConstant;
+
+		private DrawingMode(int constant) {
+			this.glConstant = constant;
+		}
+
+		/**
+		 * Returns the OpenGL constant associated to the drawing mode
+		 *
+		 * @return The OpenGL constant
+		 */
+		public int getGLConstant() {
+			return glConstant;
+		}
 	}
 }

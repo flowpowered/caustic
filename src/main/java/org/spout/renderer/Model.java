@@ -26,11 +26,10 @@
  */
 package org.spout.renderer;
 
-import org.lwjgl.opengl.GL11;
-
 import org.spout.math.imaginary.Quaternion;
 import org.spout.math.matrix.Matrix4;
 import org.spout.math.vector.Vector3;
+import org.spout.renderer.VertexArray.DrawingMode;
 import org.spout.renderer.data.Uniform.Matrix4Uniform;
 import org.spout.renderer.data.UniformHolder;
 import org.spout.renderer.data.VertexData;
@@ -52,8 +51,6 @@ public abstract class Model extends Creatable {
 	protected final VertexData vertices = new VertexData();
 	// Special camera
 	private Camera camera;
-	// Drawing mode
-	protected DrawingMode drawingMode = DrawingMode.TRIANGLES;
 
 	@Override
 	public void create() {
@@ -72,6 +69,20 @@ public abstract class Model extends Creatable {
 	 * Draws the model to the screen.
 	 */
 	protected abstract void render();
+
+	/**
+	 * Returns the model's drawing mode.
+	 *
+	 * @return The drawing mode
+	 */
+	public abstract DrawingMode getDrawingMode();
+
+	/**
+	 * Sets the model's drawing mode.
+	 *
+	 * @param mode The drawing mode to use
+	 */
+	public abstract void setDrawingMode(DrawingMode mode);
 
 	/**
 	 * Returns the model's material.
@@ -206,45 +217,5 @@ public abstract class Model extends Creatable {
 	 */
 	public boolean hasCamera() {
 		return camera != null;
-	}
-
-	/**
-	 * Returns the model's drawing mode.
-	 *
-	 * @return The drawing mode
-	 */
-	public DrawingMode getDrawingMode() {
-		return drawingMode;
-	}
-
-	/**
-	 * Sets the model's drawing mode.
-	 *
-	 * @param mode The drawing mode to use
-	 */
-	public void setDrawingMode(DrawingMode mode) {
-		this.drawingMode = mode;
-	}
-
-	/**
-	 * Represents the different drawing modes for the model
-	 */
-	public static enum DrawingMode {
-		LINES(GL11.GL_LINES),
-		TRIANGLES(GL11.GL_TRIANGLES);
-		private final int glConstant;
-
-		private DrawingMode(int constant) {
-			this.glConstant = constant;
-		}
-
-		/**
-		 * Returns the OpenGL constant associated to the drawing mode
-		 *
-		 * @return The OpenGL constant
-		 */
-		public int getGLConstant() {
-			return glConstant;
-		}
 	}
 }

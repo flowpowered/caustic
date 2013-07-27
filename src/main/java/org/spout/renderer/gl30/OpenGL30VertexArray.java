@@ -31,7 +31,6 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
-import org.spout.renderer.Model.DrawingMode;
 import org.spout.renderer.VertexArray;
 import org.spout.renderer.data.VertexAttribute;
 import org.spout.renderer.data.VertexAttribute.UploadMode;
@@ -119,12 +118,8 @@ public class OpenGL30VertexArray extends VertexArray {
 		RenderUtil.checkForOpenGLError();
 	}
 
-	/**
-	 * Draws the vertex data to the screen using the desired mode.
-	 *
-	 * @param mode The drawing mode
-	 */
-	public void render(DrawingMode mode) {
+	@Override
+	public void draw() {
 		checkCreated();
 		// Bind the vao and enable all attributes
 		GL30.glBindVertexArray(id);
@@ -134,7 +129,7 @@ public class OpenGL30VertexArray extends VertexArray {
 		// Bind the indices buffer
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesBufferID);
 		// Draw all indices with the provided mode
-		GL11.glDrawElements(mode.getGLConstant(), renderingIndicesCount, GL11.GL_UNSIGNED_INT, 0);
+		GL11.glDrawElements(drawingMode.getGLConstant(), renderingIndicesCount, GL11.GL_UNSIGNED_INT, 0);
 		// Unbind the indices buffer
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
 		// Disable all attributes and unbind the vao

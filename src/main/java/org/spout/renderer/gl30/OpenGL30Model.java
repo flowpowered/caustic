@@ -28,7 +28,7 @@ package org.spout.renderer.gl30;
 
 import org.spout.renderer.Material;
 import org.spout.renderer.Model;
-import org.spout.renderer.gl20.OpenGL20Material;
+import org.spout.renderer.VertexArray.DrawingMode;
 
 /**
  * Represents a model for OpenGL 3.0. After constructing a new model, use {@link #getVertexData()}
@@ -66,7 +66,7 @@ public class OpenGL30Model extends Model {
 	protected void render() {
 		checkCreated();
 		uniforms.getMatrix4("modelMatrix").set(getMatrix());
-		vertexArray.render(drawingMode);
+		vertexArray.draw();
 	}
 
 	@Override
@@ -81,5 +81,15 @@ public class OpenGL30Model extends Model {
 					+ material.getClass().getSimpleName());
 		}
 		this.material = (OpenGL30Material) material;
+	}
+
+	@Override
+	public DrawingMode getDrawingMode() {
+		return vertexArray.getDrawingMode();
+	}
+
+	@Override
+	public void setDrawingMode(DrawingMode mode) {
+		vertexArray.setDrawingMode(mode);
 	}
 }
