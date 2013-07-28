@@ -73,8 +73,7 @@ public class OpenGL20Renderer extends Renderer {
 		// Set the view port to the window
 		GL11.glViewport(0, 0, windowWidth, windowHeight);
 		// Set the clear color, which will be the color of empty screen area
-		GL11.glClearColor(backgroundColor.getRed() / 255f, backgroundColor.getGreen() / 255f,
-				backgroundColor.getBlue() / 255f, backgroundColor.getAlpha() / 255f);
+		GL11.glClearColor(backgroundColor.getRed() / 255f, backgroundColor.getGreen() / 255f, backgroundColor.getBlue() / 255f, backgroundColor.getAlpha() / 255f);
 		// Enable dept testing to properly display depth
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		if (isCullingEnabled()) {
@@ -171,8 +170,7 @@ public class OpenGL20Renderer extends Renderer {
 
 	private void checkModelVersion(Model model) {
 		if (!(model instanceof OpenGL20Model)) {
-			throw new IllegalArgumentException("Version mismatch: expected OpenGL20Model, got "
-					+ model.getClass().getSimpleName());
+			throw new IllegalArgumentException("Version mismatch: expected OpenGL20Model, got " + model.getClass().getSimpleName());
 		}
 	}
 }

@@ -34,7 +34,9 @@ import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TFloatArrayList;
 import gnu.trove.list.array.TIntArrayList;
 
-import org.spout.renderer.data.VertexAttribute.FloatVertexAttribute;
+import org.spout.renderer.data.VertexAttribute;
+import org.spout.renderer.data.VertexAttribute.DataType;
+import org.spout.renderer.data.VertexAttribute.UploadMode;
 import org.spout.renderer.data.VertexData;
 
 /**
@@ -111,29 +113,37 @@ public class ObjFileLoader {
 				}
 			}
 			line = null;
-			final FloatVertexAttribute positionAttribute = new FloatVertexAttribute("positions", positionSize);
+			final TFloatList positions = new TFloatArrayList();
+			final VertexAttribute positionAttribute = new VertexAttribute("positions", DataType.FLOAT, positionSize, UploadMode.TO_FLOAT);
 			destination.addAttribute(0, positionAttribute);
-			final TFloatList positions = positionAttribute.getData();
 			final TFloatList textureCoords;
 			final TFloatList normals;
+
+			final VertexAttribute textureCoordsAttribute;
+			final VertexAttribute normalAttribute;
+
 			if (!textureCoordIndices.isEmpty() && !textureCoordComponents.isEmpty()) {
-				final FloatVertexAttribute textureCoordsAttribute = new FloatVertexAttribute("textureCoords", textureCoordSize);
+				textureCoordsAttribute = new VertexAttribute("textureCoords", DataType.FLOAT, textureCoordSize, UploadMode.TO_FLOAT);
 				destination.addAttribute(2, textureCoordsAttribute);
-				textureCoords = textureCoordsAttribute.getData();
+				textureCoords = new TFloatArrayList();
 				textureCoords.fill(0, positionComponents.size() / positionSize * textureCoordSize, 0);
 			} else {
 				textureCoords = null;
+				textureCoordsAttribute = null;
 			}
 			if (!normalIndices.isEmpty() && !normalComponents.isEmpty()) {
-				final FloatVertexAttribute normalAttribute = new FloatVertexAttribute("normals", normalSize);
+				normalAttribute = new VertexAttribute("normals", DataType.FLOAT, normalSize, UploadMode.TO_FLOAT);
 				destination.addAttribute(1, normalAttribute);
-				normals = normalAttribute.getData();
+				normals = new TFloatArrayList();
 				normals.fill(0, positionComponents.size() / positionSize * normalSize, 0);
 			} else {
 				normals = null;
+				normalAttribute = null;
 			}
 			destination.getIndices().addAll(positionIndices);
 			positions.addAll(positionComponents);
+			positionAttribute.put(positions);
+
 			if (textureCoords != null) {
 				for (int i = 0; i < textureCoordIndices.size(); i++) {
 					final int textureCoordIndex = textureCoordIndices.get(i) * textureCoordSize;
@@ -142,6 +152,7 @@ public class ObjFileLoader {
 						textureCoords.set(positionIndex + ii, textureCoordComponents.get(textureCoordIndex + ii));
 					}
 				}
+				textureCoordsAttribute.put(textureCoords);
 			}
 			if (normals != null) {
 				for (int i = 0; i < normalIndices.size(); i++) {
@@ -151,6 +162,7 @@ public class ObjFileLoader {
 						normals.set(positionIndex + ii, normalComponents.get(normalIndex + ii));
 					}
 				}
+				normalAttribute.put(normals);
 			}
 		} catch (Exception ex) {
 			throw new MalformedObjFileException(line, ex);

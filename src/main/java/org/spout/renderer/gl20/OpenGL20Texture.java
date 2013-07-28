@@ -31,10 +31,13 @@ import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.ContextCapabilities;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GLContext;
 import org.lwjgl.util.glu.GLU;
 
+import org.spout.math.GenericMath;
 import org.spout.renderer.Texture;
 import org.spout.renderer.util.RenderUtil;
 
@@ -64,6 +67,12 @@ public class OpenGL20Texture extends Texture {
 		}
 		final int width = bufferedImage.getWidth();
 		final int height = bufferedImage.getHeight();
+		// Get the context capabilities for the graphics hardware
+		ContextCapabilities contextCaps = GLContext.getCapabilities();
+		if (!contextCaps.GL_ARB_texture_non_power_of_two && (!GenericMath.isPowerOfTwo(width) || !GenericMath.isPowerOfTwo(height))) {
+			// TODO: resize instead of throwing an exception.
+			throw new UnsupportedOperationException("Non-power-of-two textures are not supported by this graphics hardware.");
+		}
 		int[] pixels = new int[width * height];
 		bufferedImage.getRGB(0, 0, width, height, pixels, 0, width);
 		// Place the data in a buffer, only adding the needed components
