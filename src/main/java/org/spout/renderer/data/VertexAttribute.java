@@ -28,6 +28,10 @@ package org.spout.renderer.data;
 
 import java.nio.ByteBuffer;
 
+import gnu.trove.iterator.TDoubleIterator;
+import gnu.trove.iterator.TFloatIterator;
+import gnu.trove.iterator.TIntIterator;
+import gnu.trove.iterator.TShortIterator;
 import gnu.trove.list.TByteList;
 import gnu.trove.list.TDoubleList;
 import gnu.trove.list.TFloatList;
@@ -46,13 +50,15 @@ import org.lwjgl.opengl.GL11;
  * Represents a vertex attribute. It has a name, a data type, a size (the number of components) and
  * data.
  */
-public abstract class VertexAttribute implements Cloneable {
+public class VertexAttribute implements Cloneable {
 	protected final String name;
 	protected final DataType type;
 	protected final int size;
 	protected final UploadMode uploadMode;
 
-	protected VertexAttribute(String name, DataType type, int size, UploadMode uploadMode) {
+	private ByteBuffer buffer;
+
+	public VertexAttribute(String name, DataType type, int size, UploadMode uploadMode) {
 		this.name = name;
 		this.type = type;
 		this.size = size;
@@ -96,301 +102,123 @@ public abstract class VertexAttribute implements Cloneable {
 	}
 
 	/**
-	 * Returns a new byte buffer filled and ready to read, containing a copy of the attribute data.
+	 * Returns a new byte buffer filled and ready to read, containing the attribute data.
+	 * This method will {@link java.nio.ByteBuffer#flip()} the buffer before returning it.
 	 *
 	 * @return The buffer
 	 */
-	public abstract ByteBuffer getBuffer();
+	public ByteBuffer getBuffer() {
+		if (buffer == null) {
+			throw new IllegalStateException("ByteBuffer must have data before it is ready for use.");
+		}
+		buffer.flip();
+		return buffer;
+	}
 
 	/**
-	 * Clears all of the attribute data.
+	 * Clears all of the buffer data.
 	 */
-	public abstract void clear();
+	public void clear() {
+		if (buffer != null) {
+			buffer.clear();
+		}
+	}
+	/**
+	 * Replaces the current buffer data with a copy of the given {@link ByteBuffer}
+	 * This method arbitrarily creates data for the ByteBuffer regardless of the data type of the vertex attribute.
+	 *
+	 * @param buffer to put
+	 */
+	public void put(ByteBuffer buffer) {
+		this.buffer = BufferUtils.createByteBuffer(buffer.capacity());
+		this.buffer.put(buffer);
+	}
+
+	/**
+	 * Replaces the current buffer data with the list of bytes in the give {@link TByteList}
+	 * This method arbitrarily creates data for the ByteBuffer regardless of the data type of the vertex attribute.
+	 *
+	 * @param list to put
+	 */
+	public void put(TByteList list) {
+		this.buffer = BufferUtils.createByteBuffer(list.size());
+		this.buffer.put(list.toArray());
+	}
+
+	/**
+	 * Replaces the current buffer data with the list of bytes in the give {@link TShortList}
+	 * This method arbitrarily creates data for the ByteBuffer regardless of the data type of the vertex attribute.
+	 *
+	 * @param list to put
+	 */
+	public void put(TShortList list) {
+		this.buffer = BufferUtils.createByteBuffer(list.size() * DataType.SHORT.byteSize);
+		TShortIterator iterator = list.iterator();
+		while (iterator.hasNext()) {
+			buffer.putShort(iterator.next());
+		}
+	}
+
+	/**
+	 * Replaces the current buffer data with the list of bytes in the give {@link TIntList}
+	 * This method arbitrarily creates data for the ByteBuffer regardless of the data type of the vertex attribute.
+	 *
+	 * @param list to put
+	 */
+	public void put(TIntList list) {
+		this.buffer = BufferUtils.createByteBuffer(list.size() * DataType.INT.byteSize);
+		TIntIterator iterator = list.iterator();
+		while (iterator.hasNext()) {
+			buffer.putInt(iterator.next());
+		}
+	}
+
+	/**
+	 * Replaces the current buffer data with the list of bytes in the give {@link TFloatList}
+	 * This method arbitrarily creates data for the ByteBuffer regardless of the data type of the vertex attribute.
+	 *
+	 * @param list to put
+	 */
+	public void put(TFloatList list) {
+		this.buffer = BufferUtils.createByteBuffer(list.size() * DataType.FLOAT.byteSize);
+		TFloatIterator iterator = list.iterator();
+		while (iterator.hasNext()) {
+			buffer.putFloat(iterator.next());
+		}
+	}
+
+	/**
+	 * Replaces the current buffer data with the list of bytes in the give {@link TDoubleList}
+	 * This method arbitrarily creates data for the ByteBuffer regardless of the data type of the vertex attribute.
+	 *
+	 * @param list to put
+	 */
+	public void put(TDoubleList list) {
+		this.buffer = BufferUtils.createByteBuffer(list.size() * DataType.DOUBLE.byteSize);
+		TDoubleIterator iterator = list.iterator();
+		while (iterator.hasNext()) {
+			buffer.putDouble(iterator.next());
+		}
+	}
 
 	@Override
-	public abstract VertexAttribute clone();
-
-	/**
-	 * Represents a vertex attribute of the byte type.
-	 */
-	public static class ByteVertexAttribute extends VertexAttribute {
-		private final TByteList data = new TByteArrayList();
-
-		/**
-		 * Constructs a new byte attribute from the name and the size (component count). For
-		 * compatibility, the default upload mode is {@link UploadMode#TO_FLOAT}.
-		 *
-		 * @param name The name
-		 * @param size The size
-		 */
-		public ByteVertexAttribute(String name, int size) {
-			this(name, size, UploadMode.TO_FLOAT);
-		}
-
-		/**
-		 * Constructs a new byte attribute from the name and the size (component count) and upload mode.
-		 *
-		 * @param name The name
-		 * @param size The size
-		 * @param uploadMode The upload mode
-		 */
-		public ByteVertexAttribute(String name, int size, UploadMode uploadMode) {
-			super(name, DataType.BYTE, size, uploadMode);
-		}
-
-		/**
-		 * Returns the data list for this attribute.
-		 *
-		 * @return The data
-		 */
-		public TByteList getData() {
-			return data;
-		}
-
-		@Override
-		public ByteBuffer getBuffer() {
-			final ByteBuffer buffer = BufferUtils.createByteBuffer(data.size() * DataType.BYTE.getByteSize());
-			buffer.put(data.toArray());
-			buffer.flip();
-			return buffer;
-		}
-
-		@Override
-		public void clear() {
-			data.clear();
-		}
-
-		@Override
-		public ByteVertexAttribute clone() {
-			final ByteVertexAttribute clone = new ByteVertexAttribute(name, size);
-			clone.getData().addAll(data);
-			return clone;
-		}
+	public VertexAttribute clone() {
+		VertexAttribute clone = new VertexAttribute(name, type, size, uploadMode);
+		clone.put(this.buffer);
+		return clone;
 	}
 
-	/**
-	 * Represents a vertex attribute of the short type.
-	 */
-	public static class ShortVertexAttribute extends VertexAttribute {
-		private final TShortList data = new TShortArrayList();
-
-		/**
-		 * Constructs a new short attribute from the name and the size (component count). For
-		 * compatibility, the default upload mode is {@link UploadMode#TO_FLOAT}.
-		 *
-		 * @param name The name
-		 * @param size The size
-		 */
-		public ShortVertexAttribute(String name, int size) {
-			this(name, size, UploadMode.TO_FLOAT);
-		}
-
-		/**
-		 * Constructs a new short attribute from the name and the size (component count) and upload mode.
-		 *
-		 * @param name The name
-		 * @param size The size
-		 * @param uploadMode The upload mode
-		 */
-		public ShortVertexAttribute(String name, int size, UploadMode uploadMode) {
-			super(name, DataType.SHORT, size, uploadMode);
-		}
-
-		/**
-		 * Returns the data list for this attribute.
-		 *
-		 * @return The data
-		 */
-		public TShortList getData() {
-			return data;
-		}
-
-		@Override
-		public ByteBuffer getBuffer() {
-			final ByteBuffer buffer = BufferUtils.createByteBuffer(data.size() * DataType.SHORT.getByteSize());
-			for (int i = 0; i < data.size(); i++) {
-				buffer.putShort(data.get(i));
-			}
-			buffer.flip();
-			return buffer;
-		}
-
-		@Override
-		public void clear() {
-			data.clear();
-		}
-
-		@Override
-		public ShortVertexAttribute clone() {
-			final ShortVertexAttribute clone = new ShortVertexAttribute(name, size);
-			clone.getData().addAll(data);
-			return clone;
-		}
-	}
-
-	/**
-	 * Represents a vertex attribute of the int type.
-	 */
-	public static class IntVertexAttribute extends VertexAttribute {
-		private final TIntList data = new TIntArrayList();
-
-		/**
-		 * Constructs a new int attribute from the name and the size (component count). For compatibility,
-		 * the default upload mode is {@link UploadMode#TO_FLOAT}.
-		 *
-		 * @param name The name
-		 * @param size The size
-		 */
-		public IntVertexAttribute(String name, int size) {
-			this(name, size, UploadMode.TO_FLOAT);
-		}
-
-		/**
-		 * Constructs a new int attribute from the name and the size (component count) and upload mode.
-		 *
-		 * @param name The name
-		 * @param size The size
-		 * @param uploadMode The upload mode
-		 */
-		public IntVertexAttribute(String name, int size, UploadMode uploadMode) {
-			super(name, DataType.INT, size, uploadMode);
-		}
-
-		/**
-		 * Returns the data list for this attribute.
-		 *
-		 * @return The data
-		 */
-		public TIntList getData() {
-			return data;
-		}
-
-		@Override
-		public ByteBuffer getBuffer() {
-			final ByteBuffer buffer = BufferUtils.createByteBuffer(data.size() * DataType.INT.getByteSize());
-			for (int i = 0; i < data.size(); i++) {
-				buffer.putInt(data.get(i));
-			}
-			buffer.flip();
-			return buffer;
-		}
-
-		@Override
-		public void clear() {
-			data.clear();
-		}
-
-		@Override
-		public IntVertexAttribute clone() {
-			final IntVertexAttribute clone = new IntVertexAttribute(name, size);
-			clone.getData().addAll(data);
-			return clone;
-		}
-	}
-
-	/**
-	 * Represents a vertex attribute of the float type.
-	 */
-	public static class FloatVertexAttribute extends VertexAttribute {
-		private final TFloatList data = new TFloatArrayList();
-
-		/**
-		 * Constructs a new float attribute from the name and the size (component count).
-		 *
-		 * @param name The name
-		 * @param size The size
-		 */
-		public FloatVertexAttribute(String name, int size) {
-			super(name, DataType.FLOAT, size, UploadMode.TO_FLOAT);
-		}
-
-		/**
-		 * Returns the data list for this attribute.
-		 *
-		 * @return The data
-		 */
-		public TFloatList getData() {
-			return data;
-		}
-
-		@Override
-		public ByteBuffer getBuffer() {
-			final ByteBuffer buffer = BufferUtils.createByteBuffer(data.size() * DataType.FLOAT.getByteSize());
-			for (int i = 0; i < data.size(); i++) {
-				buffer.putFloat(data.get(i));
-			}
-			buffer.flip();
-			return buffer;
-		}
-
-		@Override
-		public void clear() {
-			data.clear();
-		}
-
-		@Override
-		public FloatVertexAttribute clone() {
-			final FloatVertexAttribute clone = new FloatVertexAttribute(name, size);
-			clone.getData().addAll(data);
-			return clone;
-		}
-	}
-
-	/**
-	 * Represents a vertex attribute of the double type.
-	 */
-	public static class DoubleVertexAttribute extends VertexAttribute {
-		private final TDoubleList data = new TDoubleArrayList();
-
-		/**
-		 * Constructs a new double attribute from the name and the size (component count).
-		 *
-		 * @param name The name
-		 * @param size The size
-		 */
-		public DoubleVertexAttribute(String name, int size) {
-			super(name, DataType.DOUBLE, size, UploadMode.TO_FLOAT);
-		}
-
-		/**
-		 * Returns the data list for this attribute.
-		 *
-		 * @return The data
-		 */
-		public TDoubleList getData() {
-			return data;
-		}
-
-		@Override
-		public ByteBuffer getBuffer() {
-			final ByteBuffer buffer = BufferUtils.createByteBuffer(data.size() * DataType.DOUBLE.getByteSize());
-			for (int i = 0; i < data.size(); i++) {
-				buffer.putDouble(data.get(i));
-			}
-			buffer.flip();
-			return buffer;
-		}
-
-		@Override
-		public void clear() {
-			data.clear();
-		}
-
-		@Override
-		public DoubleVertexAttribute clone() {
-			final DoubleVertexAttribute clone = new DoubleVertexAttribute(name, size);
-			clone.getData().addAll(data);
-			return clone;
-		}
-	}
 
 	/**
 	 * Represents an attribute data type.
 	 */
 	public static enum DataType {
 		BYTE(GL11.GL_BYTE, 1, true),
+		UNSIGNED_BYTE(GL11.GL_UNSIGNED_BYTE, 1, true),
 		SHORT(GL11.GL_SHORT, 2, true),
+		UNSIGNED_SHORT(GL11.GL_UNSIGNED_SHORT, 2, true),
 		INT(GL11.GL_INT, 4, true),
+		UNISGNED_INT(GL11.GL_UNSIGNED_INT, 4, true),
 		FLOAT(GL11.GL_FLOAT, 4, false),
 		DOUBLE(GL11.GL_DOUBLE, 8, false);
 		private final int glConstant;
@@ -440,10 +268,10 @@ public abstract class VertexAttribute implements Cloneable {
 	 */
 	public static enum UploadMode {
 		TO_FLOAT,
+		TO_FLOAT_NORMALIZE,
 		/**
 		 * Only supported in OpenGL 3.0.
 		 */
-		TO_FLOAT_NORMALIZE,
 		KEEP_INT;
 
 		public boolean normalize() {
