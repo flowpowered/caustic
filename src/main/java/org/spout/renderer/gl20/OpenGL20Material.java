@@ -127,8 +127,7 @@ public class OpenGL20Material extends Material {
 
 	private void checkTextureVersion(Texture model) {
 		if (!(model instanceof OpenGL20Texture)) {
-			throw new IllegalArgumentException("Version mismatch: expected OpenGL20Texture, got "
-					+ model.getClass().getSimpleName());
+			throw new IllegalArgumentException("Version mismatch: expected OpenGL20Texture, got " + model.getClass().getSimpleName());
 		}
 	}
 }

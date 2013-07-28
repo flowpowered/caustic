@@ -41,12 +41,7 @@ import gnu.trove.map.hash.TObjectIntHashMap;
 
 import org.lwjgl.BufferUtils;
 
-import org.spout.renderer.data.VertexAttribute.ByteVertexAttribute;
 import org.spout.renderer.data.VertexAttribute.DataType;
-import org.spout.renderer.data.VertexAttribute.DoubleVertexAttribute;
-import org.spout.renderer.data.VertexAttribute.FloatVertexAttribute;
-import org.spout.renderer.data.VertexAttribute.IntVertexAttribute;
-import org.spout.renderer.data.VertexAttribute.ShortVertexAttribute;
 
 /**
  * Represents a vertex data. A vertex is a collection of attributes, most often attached to a point
@@ -133,126 +128,6 @@ public class VertexData {
 	 */
 	public int getAttributeIndex(String name) {
 		return nameToIndex.get(name);
-	}
-
-	/**
-	 * Returns the byte attribute associated to the name, or null if none can be found.
-	 *
-	 * @param name The name to lookup
-	 * @return The byte attribute
-	 */
-	public ByteVertexAttribute getByteAttribute(String name) {
-		return getByteAttribute(getAttributeIndex(name));
-	}
-
-	/**
-	 * Returns the byte attribute at the index, or null if none can be found.
-	 *
-	 * @param index The index to lookup
-	 * @return The byte attribute
-	 */
-	public ByteVertexAttribute getByteAttribute(int index) {
-		final VertexAttribute attribute = getAttribute(index);
-		if (!(attribute instanceof ByteVertexAttribute)) {
-			return null;
-		}
-		return (ByteVertexAttribute) attribute;
-	}
-
-	/**
-	 * Returns the short list associated to the name, or null if none can be found.
-	 *
-	 * @param name The name to lookup
-	 * @return The short list
-	 */
-	public ShortVertexAttribute getShortAttribute(String name) {
-		return getShortAttribute(getAttributeIndex(name));
-	}
-
-	/**
-	 * Returns the short attribute at the index, or null if none can be found.
-	 *
-	 * @param index The index to lookup
-	 * @return The short attribute
-	 */
-	public ShortVertexAttribute getShortAttribute(int index) {
-		final VertexAttribute attribute = getAttribute(index);
-		if (!(attribute instanceof ShortVertexAttribute)) {
-			return null;
-		}
-		return (ShortVertexAttribute) attribute;
-	}
-
-	/**
-	 * Returns the int attribute associated to the name, or null if none can be found.
-	 *
-	 * @param name The name to lookup
-	 * @return The int attribute
-	 */
-	public IntVertexAttribute getIntAttribute(String name) {
-		return getIntAttribute(getAttributeIndex(name));
-	}
-
-	/**
-	 * Returns the int attribute at the index, or null if none can be found.
-	 *
-	 * @param index The index to lookup
-	 * @return The int attribute
-	 */
-	public IntVertexAttribute getIntAttribute(int index) {
-		final VertexAttribute attribute = getAttribute(index);
-		if (!(attribute instanceof IntVertexAttribute)) {
-			return null;
-		}
-		return (IntVertexAttribute) attribute;
-	}
-
-	/**
-	 * Returns the float attribute associated to the name, or null if none can be found.
-	 *
-	 * @param name The name to lookup
-	 * @return The float attribute
-	 */
-	public FloatVertexAttribute getFloatAttribute(String name) {
-		return getFloatAttribute(getAttributeIndex(name));
-	}
-
-	/**
-	 * Returns the float attribute at the index, or null if none can be found.
-	 *
-	 * @param index The index to lookup
-	 * @return The float attribute
-	 */
-	public FloatVertexAttribute getFloatAttribute(int index) {
-		final VertexAttribute attribute = getAttribute(index);
-		if (!(attribute instanceof FloatVertexAttribute)) {
-			return null;
-		}
-		return (FloatVertexAttribute) attribute;
-	}
-
-	/**
-	 * Returns the double attribute associated to the name, or null if none can be found.
-	 *
-	 * @param name The name to lookup
-	 * @return The double attribute
-	 */
-	public DoubleVertexAttribute getDoubleAttribute(String name) {
-		return getDoubleAttribute(getAttributeIndex(name));
-	}
-
-	/**
-	 * Returns the double attribute at the index, or null if none can be found.
-	 *
-	 * @param index The index to lookup
-	 * @return The double attribute
-	 */
-	public DoubleVertexAttribute getDoubleAttribute(int index) {
-		final VertexAttribute attribute = getAttribute(index);
-		if (!(attribute instanceof DoubleVertexAttribute)) {
-			return null;
-		}
-		return (DoubleVertexAttribute) attribute;
 	}
 
 	/**

@@ -109,11 +109,7 @@ public class OpenGL20Program extends Program {
 		final int uniformCount = GL20.glGetProgrami(id, GL20.GL_ACTIVE_UNIFORMS);
 		for (int i = 0; i < uniformCount; i++) {
 			final ByteBuffer nameBuffer = BufferUtils.createByteBuffer(256);
-			GL20.glGetActiveUniform(id, i,
-					BufferUtils.createIntBuffer(1),
-					BufferUtils.createIntBuffer(1),
-					BufferUtils.createIntBuffer(1),
-					nameBuffer);
+			GL20.glGetActiveUniform(id, i, BufferUtils.createIntBuffer(1), BufferUtils.createIntBuffer(1), BufferUtils.createIntBuffer(1), nameBuffer);
 			nameBuffer.rewind();
 			final byte[] nameBytes = new byte[256];
 			nameBuffer.get(nameBytes);
@@ -250,9 +246,7 @@ public class OpenGL20Program extends Program {
 	public void setUniform(String name, Color c) {
 		checkCreated();
 		checkContainsUniform(name);
-		GL20.glUniform4f(uniforms.get(name),
-				c.getRed() / 255f, c.getGreen() / 255f,
-				c.getBlue() / 255f, c.getAlpha() / 255f);
+		GL20.glUniform4f(uniforms.get(name), c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, c.getAlpha() / 255f);
 		RenderUtil.checkForOpenGLError();
 	}
 

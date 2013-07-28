@@ -77,8 +77,7 @@ public class OpenGL20Model extends Model {
 	@Override
 	public void setMaterial(Material material) {
 		if (!(material instanceof OpenGL20Material)) {
-			throw new IllegalArgumentException("Version mismatch: expected OpenGL20Material, got "
-					+ material.getClass().getSimpleName());
+			throw new IllegalArgumentException("Version mismatch: expected OpenGL20Material, got " + material.getClass().getSimpleName());
 		}
 		this.material = (OpenGL20Material) material;
 	}
