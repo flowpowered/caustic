@@ -440,10 +440,10 @@ public abstract class VertexAttribute implements Cloneable {
 	 */
 	public static enum UploadMode {
 		TO_FLOAT,
-		/**
-		 * Only supported in OpenGL 3.0.
-		 */
 		TO_FLOAT_NORMALIZE,
+		/**
+		 * Only supported in OpenGL 3.0 and after.
+		 */
 		KEEP_INT;
 
 		public boolean normalize() {

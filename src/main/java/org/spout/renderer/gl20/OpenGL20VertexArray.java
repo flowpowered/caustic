@@ -109,7 +109,7 @@ public class OpenGL20VertexArray extends VertexArray {
 			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, attributeBufferIDs[i]);
 			// Define the attribute
 			final VertexAttribute attribute = vertexData.getAttribute(i);
-			GL20.glVertexAttribPointer(i, attribute.getSize(), attribute.getType().getGLConstant(), false, 0, 0);
+			GL20.glVertexAttribPointer(i, attribute.getSize(), attribute.getType().getGLConstant(), attribute.getUploadMode().normalize(), 0, 0);
 			// Enable it
 			GL20.glEnableVertexAttribArray(i);
 		}
