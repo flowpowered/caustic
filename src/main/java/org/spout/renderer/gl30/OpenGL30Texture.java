@@ -31,6 +31,7 @@ import java.nio.ByteBuffer;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 
+import org.spout.renderer.GLVersion;
 import org.spout.renderer.gl20.OpenGL20Texture;
 
 /**
@@ -46,5 +47,10 @@ public class OpenGL30Texture extends OpenGL20Texture {
 		if (minFilter.needsMipMaps()) {
 			GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
 		}
+	}
+
+	@Override
+	public GLVersion getGLVersion() {
+		return GLVersion.GL30;
 	}
 }

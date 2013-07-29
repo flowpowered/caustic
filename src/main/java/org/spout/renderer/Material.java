@@ -33,7 +33,7 @@ import org.spout.renderer.data.UniformHolder;
  * The material provides the shader program to use when rendering the models, the texture for each
  * unit (if any) and a set of uniforms that will be constant for all models using the material.
  */
-public abstract class Material extends Creatable {
+public abstract class Material extends Creatable implements GLVersioned {
 	// Material uniforms
 	protected final UniformHolder uniforms = new UniformHolder();
 	// Special camera
@@ -43,6 +43,11 @@ public abstract class Material extends Creatable {
 	 * Binds the material to the OpenGL context.
 	 */
 	public abstract void bind();
+
+	/**
+	 * Uploads the material's uniforms to its program.
+	 */
+	public abstract void uploadUniforms();
 
 	/**
 	 * Unbinds the material from the OpenGL context.

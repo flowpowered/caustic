@@ -81,7 +81,7 @@ public class VertexData {
 	 * @return A buffer of the indices
 	 */
 	public ByteBuffer getIndicesBuffer() {
-		final ByteBuffer buffer = BufferUtils.createByteBuffer(indices.size() * 4);
+		final ByteBuffer buffer = BufferUtils.createByteBuffer(indices.size() * DataType.INT.getByteSize());
 		for (int i = 0; i < indices.size(); i++) {
 			buffer.putInt(indices.get(i));
 		}

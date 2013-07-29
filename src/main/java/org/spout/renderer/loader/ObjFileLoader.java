@@ -36,7 +36,6 @@ import gnu.trove.list.array.TIntArrayList;
 
 import org.spout.renderer.data.VertexAttribute;
 import org.spout.renderer.data.VertexAttribute.DataType;
-import org.spout.renderer.data.VertexAttribute.UploadMode;
 import org.spout.renderer.data.VertexData;
 
 /**
@@ -113,17 +112,14 @@ public class ObjFileLoader {
 				}
 			}
 			line = null;
-			final TFloatList positions = new TFloatArrayList();
-			final VertexAttribute positionAttribute = new VertexAttribute("positions", DataType.FLOAT, positionSize, UploadMode.TO_FLOAT);
+			final VertexAttribute positionAttribute = new VertexAttribute("positions", DataType.FLOAT, positionSize);
 			destination.addAttribute(0, positionAttribute);
 			final TFloatList textureCoords;
 			final TFloatList normals;
-
 			final VertexAttribute textureCoordsAttribute;
 			final VertexAttribute normalAttribute;
-
 			if (!textureCoordIndices.isEmpty() && !textureCoordComponents.isEmpty()) {
-				textureCoordsAttribute = new VertexAttribute("textureCoords", DataType.FLOAT, textureCoordSize, UploadMode.TO_FLOAT);
+				textureCoordsAttribute = new VertexAttribute("textureCoords", DataType.FLOAT, textureCoordSize);
 				destination.addAttribute(2, textureCoordsAttribute);
 				textureCoords = new TFloatArrayList();
 				textureCoords.fill(0, positionComponents.size() / positionSize * textureCoordSize, 0);
@@ -132,7 +128,7 @@ public class ObjFileLoader {
 				textureCoordsAttribute = null;
 			}
 			if (!normalIndices.isEmpty() && !normalComponents.isEmpty()) {
-				normalAttribute = new VertexAttribute("normals", DataType.FLOAT, normalSize, UploadMode.TO_FLOAT);
+				normalAttribute = new VertexAttribute("normals", DataType.FLOAT, normalSize);
 				destination.addAttribute(1, normalAttribute);
 				normals = new TFloatArrayList();
 				normals.fill(0, positionComponents.size() / positionSize * normalSize, 0);
@@ -141,9 +137,7 @@ public class ObjFileLoader {
 				normalAttribute = null;
 			}
 			destination.getIndices().addAll(positionIndices);
-			positions.addAll(positionComponents);
-			positionAttribute.put(positions);
-
+			positionAttribute.put(positionComponents);
 			if (textureCoords != null) {
 				for (int i = 0; i < textureCoordIndices.size(); i++) {
 					final int textureCoordIndex = textureCoordIndices.get(i) * textureCoordSize;

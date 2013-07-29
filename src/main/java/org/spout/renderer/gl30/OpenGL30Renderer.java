@@ -38,10 +38,11 @@ import org.lwjgl.opengl.GL32;
 import org.lwjgl.opengl.PixelFormat;
 
 import org.spout.renderer.Camera;
+import org.spout.renderer.GLVersion;
+import org.spout.renderer.Material;
 import org.spout.renderer.Model;
+import org.spout.renderer.Program;
 import org.spout.renderer.Renderer;
-import org.spout.renderer.gl20.OpenGL20Material;
-import org.spout.renderer.gl20.OpenGL20Program;
 import org.spout.renderer.util.RenderUtil;
 
 /**
@@ -53,7 +54,7 @@ import org.spout.renderer.util.RenderUtil;
  */
 public class OpenGL30Renderer extends Renderer {
 	// Models
-	private final Set<OpenGL30Model> models = new HashSet<>();
+	private final Set<Model> models = new HashSet<>();
 
 	@Override
 	public void create() {
@@ -80,7 +81,7 @@ public class OpenGL30Renderer extends Renderer {
 		// Enable dept testing to properly display depth
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glEnable(GL32.GL_DEPTH_CLAMP);
-		if (isCullingEnabled()) {
+		if (cullingEnabled) {
 			//Enable culling of the back face
 			GL11.glEnable(GL11.GL_CULL_FACE);
 			GL11.glCullFace(GL11.GL_BACK);
@@ -96,9 +97,12 @@ public class OpenGL30Renderer extends Renderer {
 	public void destroy() {
 		checkCreated();
 		// Destroy models
-		for (OpenGL30Model model : models) {
-			model.destroy();
-			if (model.getMaterial().isCreated()) {
+		for (Model model : models) {
+			if (model.isCreated()) {
+				model.destroy();
+			}
+			final Material material = model.getMaterial();
+			if (material != null && material.isCreated()) {
 				model.getMaterial().destroy();
 			}
 		}
@@ -115,15 +119,19 @@ public class OpenGL30Renderer extends Renderer {
 	}
 
 	@Override
+	public void uploadUniforms(Program program) {
+		program.upload(uniforms);
+	}
+
+	@Override
 	public void render() {
 		checkCreated();
 		// Clear the last render
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		// Render all the models
-		for (OpenGL30Model model : models) {
+		for (Model model : models) {
 			if (model.isCreated()) {
-				final OpenGL30Material material = model.getMaterial();
-				final OpenGL30Program program = material.getProgram();
+				final Material material = model.getMaterial();
 				// Get the camera, checking in order of priority
 				final Camera camera;
 				if (model.hasCamera()) {
@@ -133,17 +141,17 @@ public class OpenGL30Renderer extends Renderer {
 				} else {
 					camera = this.camera;
 				}
-				// Upload the camera
-				uniforms.getMatrix4("cameraMatrix").set(camera.getMatrix());
+				// Update the camera uniforms
 				uniforms.getMatrix4("projectionMatrix").set(camera.getProjectionMatrix());
+				uniforms.getMatrix4("cameraMatrix").set(camera.getMatrix());
 				// Bind the material
 				material.bind();
 				// Upload the renderer uniforms
-				program.upload(uniforms);
+				uploadUniforms(material.getProgram());
 				// Upload the material uniforms
-				program.upload(material.getUniforms());
+				material.uploadUniforms();
 				// Upload the model uniforms
-				program.upload(model.getUniforms());
+				model.uploadUniforms();
 				// Render the model
 				model.render();
 				// Unbind the material
@@ -152,29 +160,24 @@ public class OpenGL30Renderer extends Renderer {
 		}
 		// Check for errors
 		RenderUtil.checkForOpenGLError();
-		// Update the display, 60 FPS
-		Display.sync(60);
+		// Update the display
 		Display.update();
 	}
 
 	@Override
 	public void addModel(Model model) {
-		checkModelVersion(model);
-		final OpenGL30Model gl30Model = (OpenGL30Model) model;
-		models.add(gl30Model);
+		RenderUtil.checkVersions(this, model);
+		models.add(model);
 	}
 
 	@Override
 	public void removeModel(Model model) {
-		checkModelVersion(model);
-		final OpenGL30Model gl30Model = (OpenGL30Model) model;
-		models.remove(gl30Model);
+		RenderUtil.checkVersions(this, model);
+		models.remove(model);
 	}
 
-	private void checkModelVersion(Model model) {
-		if (!(model instanceof OpenGL30Model)) {
-			throw new IllegalArgumentException("Version mismatch: expected OpenGL30Model, got "
-					+ model.getClass().getSimpleName());
-		}
+	@Override
+	public GLVersion getGLVersion() {
+		return GLVersion.GL30;
 	}
 }

@@ -46,6 +46,7 @@ import org.spout.math.matrix.Matrix4;
 import org.spout.math.vector.Vector2;
 import org.spout.math.vector.Vector3;
 import org.spout.math.vector.Vector4;
+import org.spout.renderer.GLVersion;
 import org.spout.renderer.Program;
 import org.spout.renderer.Shader.ShaderType;
 import org.spout.renderer.data.Uniform;
@@ -263,5 +264,10 @@ public class OpenGL20Program extends Program {
 	 */
 	public Set<String> getUniformNames() {
 		return Collections.unmodifiableSet(uniforms.keySet());
+	}
+
+	@Override
+	public GLVersion getGLVersion() {
+		return GLVersion.GL20;
 	}
 }

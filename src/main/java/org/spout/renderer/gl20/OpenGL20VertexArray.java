@@ -30,8 +30,10 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 
+import org.spout.renderer.GLVersion;
 import org.spout.renderer.VertexArray;
 import org.spout.renderer.data.VertexAttribute;
+import org.spout.renderer.data.VertexAttribute.DataType;
 import org.spout.renderer.util.RenderUtil;
 
 /**
@@ -44,9 +46,6 @@ import org.spout.renderer.util.RenderUtil;
  * #destroy()}.
  */
 public class OpenGL20VertexArray extends VertexArray {
-	private int indicesBufferID = 0;
-	private int[] attributeBufferIDs;
-
 	@Override
 	public void create() {
 		if (created) {
@@ -61,7 +60,8 @@ public class OpenGL20VertexArray extends VertexArray {
 		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, vertexData.getIndicesBuffer(), GL15.GL_STATIC_DRAW);
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
 		// Save the count of indices to draw
-		renderingIndicesCount = vertexData.getIndicesCount();
+		indicesCountCache = vertexData.getIndicesCount();
+		resetIndicesCountAndOffset();
 		// Create the map for attribute index to buffer ID
 		attributeBufferIDs = new int[vertexData.getAttributeCount()];
 		// For each attribute, generate, bind and fill the vbo,
@@ -118,7 +118,7 @@ public class OpenGL20VertexArray extends VertexArray {
 		// Bind the indices buffer
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesBufferID);
 		// Draw all indices with the provided mode
-		GL11.glDrawElements(drawingMode.getGLConstant(), renderingIndicesCount, GL11.GL_UNSIGNED_INT, 0);
+		GL11.glDrawElements(drawingMode.getGLConstant(), indicesCount, GL11.GL_UNSIGNED_INT, indicesOffset * DataType.INT.getByteSize());
 		// Unbind the indices buffer
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
 		// Disable all attributes
@@ -127,5 +127,10 @@ public class OpenGL20VertexArray extends VertexArray {
 		}
 		// Check for errors
 		RenderUtil.checkForOpenGLError();
+	}
+
+	@Override
+	public GLVersion getGLVersion() {
+		return GLVersion.GL20;
 	}
 }

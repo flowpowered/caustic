@@ -38,7 +38,7 @@ import org.lwjgl.opengl.GL43;
  * before the shader. The shader source and type must be set with {@link
  * #setSource(java.io.InputStream)} and {@link #shaderType} respectively before it can be created.
  */
-public abstract class Shader extends Creatable {
+public abstract class Shader extends Creatable implements GLVersioned {
 	protected int id;
 	protected InputStream shaderSource;
 	protected ShaderType shaderType;

@@ -29,8 +29,10 @@ package org.spout.renderer.gl30;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
+import org.spout.renderer.GLVersion;
 import org.spout.renderer.Material;
 import org.spout.renderer.Texture;
+import org.spout.renderer.util.RenderUtil;
 
 /**
  * Represents a material for OpenGL 3.0 models. The material holds the shader program, the texture
@@ -67,6 +69,11 @@ public class OpenGL30Material extends Material {
 	}
 
 	@Override
+	public void uploadUniforms() {
+		program.upload(uniforms);
+	}
+
+	@Override
 	public void bind() {
 		checkCreated();
 		program.bind();
@@ -100,7 +107,7 @@ public class OpenGL30Material extends Material {
 
 	@Override
 	public void addTexture(Texture texture) {
-		checkTextureVersion(texture);
+		RenderUtil.checkVersions(this, texture);
 		if (textures == null) {
 			textures = new TIntObjectHashMap<>();
 		}
@@ -125,10 +132,8 @@ public class OpenGL30Material extends Material {
 		}
 	}
 
-	private void checkTextureVersion(Texture model) {
-		if (!(model instanceof OpenGL30Texture)) {
-			throw new IllegalArgumentException("Version mismatch: expected OpenGL30Texture, got "
-					+ model.getClass().getSimpleName());
-		}
+	@Override
+	public GLVersion getGLVersion() {
+		return GLVersion.GL30;
 	}
 }

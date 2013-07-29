@@ -26,6 +26,8 @@
  */
 package org.spout.renderer;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.InputStream;
 
 import org.lwjgl.opengl.GL11;
@@ -38,7 +40,7 @@ import org.lwjgl.opengl.GL30;
  * Represents a texture for OpenGL. The textures image, dimension, wrapping and filters must be set
  * before it can be created.
  */
-public abstract class Texture extends Creatable {
+public abstract class Texture extends Creatable implements GLVersioned {
 	protected int id = 0;
 	protected int unit = GL13.GL_TEXTURE0;
 	protected TextureFormat format = TextureFormat.RGB;
@@ -46,7 +48,13 @@ public abstract class Texture extends Creatable {
 	protected WrapMode wrapS = WrapMode.REPEAT;
 	protected FilterMode minFilter = FilterMode.LINEAR;
 	protected FilterMode magFilter = FilterMode.NEAREST;
-	protected InputStream source;
+	protected BufferedImage image;
+
+	@Override
+	public void create() {
+		image = null;
+		super.create();
+	}
 
 	/**
 	 * Binds the texture to the OpenGL context.
@@ -86,30 +94,12 @@ public abstract class Texture extends Creatable {
 	}
 
 	/**
-	 * Returns the texture's format.
-	 *
-	 * @return The texture format
-	 */
-	public TextureFormat getFormat() {
-		return format;
-	}
-
-	/**
 	 * Sets the texture's format.
 	 *
 	 * @param format The format to set
 	 */
 	public void setFormat(TextureFormat format) {
 		this.format = format;
-	}
-
-	/**
-	 * Gets the horizontal texture wrap.
-	 *
-	 * @return Horizontal texture wrap
-	 */
-	public WrapMode getWrapS() {
-		return wrapS;
 	}
 
 	/**
@@ -122,15 +112,6 @@ public abstract class Texture extends Creatable {
 	}
 
 	/**
-	 * Gets the vertical texture wrap.
-	 *
-	 * @return Vertical texture wrap
-	 */
-	public WrapMode getWrapT() {
-		return wrapT;
-	}
-
-	/**
 	 * Sets the vertical texture wrap.
 	 *
 	 * @param wrapT Vertical texture wrap
@@ -140,30 +121,12 @@ public abstract class Texture extends Creatable {
 	}
 
 	/**
-	 * Gets the texture's min filter.
-	 *
-	 * @return The min filter
-	 */
-	public FilterMode getMinFilter() {
-		return minFilter;
-	}
-
-	/**
 	 * Sets the texture's min filter.
 	 *
 	 * @param minFilter The min filter
 	 */
 	public void setMinFilter(FilterMode minFilter) {
 		this.minFilter = minFilter;
-	}
-
-	/**
-	 * Gets the texture's mag filter.
-	 *
-	 * @return The mag filter
-	 */
-	public FilterMode getMagFilter() {
-		return magFilter;
 	}
 
 	/**
@@ -179,12 +142,26 @@ public abstract class Texture extends Creatable {
 	}
 
 	/**
-	 * Sets the input stream source of the texture.
+	 * Sets the texture's image.
 	 *
-	 * @param source The input stream of the texture
+	 * @param image The image
 	 */
-	public void setSource(InputStream source) {
-		this.source = source;
+	public void setImage(BufferedImage image) {
+		this.image = image;
+	}
+
+	/**
+	 * Sets the texture's image from a source input stream
+	 *
+	 * @param source The input stream of the image texture
+	 */
+	public void setImage(InputStream source) {
+		try {
+			setImage(ImageIO.read(source));
+			source.close();
+		} catch (Exception ex) {
+			throw new IllegalStateException("Unreadable texture image", ex);
+		}
 	}
 
 	/**

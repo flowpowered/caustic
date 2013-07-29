@@ -26,8 +26,6 @@
  */
 package org.spout.renderer.gl20;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 
 import org.lwjgl.BufferUtils;
@@ -38,6 +36,7 @@ import org.lwjgl.opengl.GLContext;
 import org.lwjgl.util.glu.GLU;
 
 import org.spout.math.GenericMath;
+import org.spout.renderer.GLVersion;
 import org.spout.renderer.Texture;
 import org.spout.renderer.util.RenderUtil;
 
@@ -48,8 +47,8 @@ import org.spout.renderer.util.RenderUtil;
 public class OpenGL20Texture extends Texture {
 	@Override
 	public void create() {
-		if (source == null) {
-			throw new IllegalStateException("Texture source has not been set.");
+		if (image == null) {
+			throw new IllegalStateException("Texture image has not been set.");
 		}
 		if (minFilter == null || magFilter == null) {
 			throw new IllegalStateException("Texture filters have not been set.");
@@ -57,24 +56,16 @@ public class OpenGL20Texture extends Texture {
 		if (wrapT == null || wrapS == null) {
 			throw new IllegalStateException("Texture wraps have not been set.");
 		}
-		// Obtain the image raw int data
-		final BufferedImage bufferedImage;
-		try {
-			bufferedImage = ImageIO.read(source);
-			source.close();
-		} catch (Exception ex) {
-			throw new IllegalStateException("Unreadable texture image", ex);
-		}
-		final int width = bufferedImage.getWidth();
-		final int height = bufferedImage.getHeight();
+		final int width = image.getWidth();
+		final int height = image.getHeight();
 		// Get the context capabilities for the graphics hardware
-		ContextCapabilities contextCaps = GLContext.getCapabilities();
+		final ContextCapabilities contextCaps = GLContext.getCapabilities();
 		if (!contextCaps.GL_ARB_texture_non_power_of_two && (!GenericMath.isPowerOfTwo(width) || !GenericMath.isPowerOfTwo(height))) {
-			// TODO: resize instead of throwing an exception.
-			throw new UnsupportedOperationException("Non-power-of-two textures are not supported by this graphics hardware.");
+			// TODO: Resize images. Also, this only really matters for mipmaps
 		}
-		int[] pixels = new int[width * height];
-		bufferedImage.getRGB(0, 0, width, height, pixels, 0, width);
+		// Obtain the image raw int data
+		final int[] pixels = new int[width * height];
+		image.getRGB(0, 0, width, height, pixels, 0, width);
 		// Place the data in a buffer, only adding the needed components
 		final ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * 4);
 		for (int y = height - 1; y >= 0; y--) {
@@ -111,8 +102,7 @@ public class OpenGL20Texture extends Texture {
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, magFilter.getGLConstant());
 		// Unbind the texture
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-		// Release texture input stream
-		source = null;
+		// Update the state
 		super.create();
 		// Check for errors
 		RenderUtil.checkForOpenGLError();
@@ -172,5 +162,10 @@ public class OpenGL20Texture extends Texture {
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 		// Check for errors
 		RenderUtil.checkForOpenGLError();
+	}
+
+	@Override
+	public GLVersion getGLVersion() {
+		return GLVersion.GL20;
 	}
 }

@@ -32,6 +32,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.OpenGLException;
 
+import org.spout.renderer.GLVersion;
 import org.spout.renderer.Shader;
 import org.spout.renderer.util.RenderUtil;
 
@@ -89,5 +90,10 @@ public class OpenGL20Shader extends Shader {
 		super.destroy();
 		// Check for errors
 		RenderUtil.checkForOpenGLError();
+	}
+
+	@Override
+	public GLVersion getGLVersion() {
+		return GLVersion.GL20;
 	}
 }

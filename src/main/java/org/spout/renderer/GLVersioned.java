@@ -24,43 +24,16 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.util;
-
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.OpenGLException;
-import org.lwjgl.util.glu.GLU;
-
-import org.spout.renderer.GLVersioned;
+package org.spout.renderer;
 
 /**
- * Utility methods for rendering.
+ * Represents an object that has an OpenGL version associated to it.
  */
-public class RenderUtil {
-	private static final boolean DEBUG = true;
-
+public interface GLVersioned {
 	/**
-	 * Throws an {@link org.lwjgl.opengl.OpenGLException} if OpenGL reports an error.
-	 */
-	public static void checkForOpenGLError() {
-		if (DEBUG) {
-			final int errorValue = GL11.glGetError();
-			if (errorValue != GL11.GL_NO_ERROR) {
-				throw new OpenGLException("OPEN GL ERROR: " + GLU.gluErrorString(errorValue));
-			}
-		}
-	}
-
-	/**
-	 * Checks if two OpenGL versioned object have the same version. Throws an exception is that's not
-	 * the case.
+	 * Returns the OpenGL version associated to this object.
 	 *
-	 * @param required The required version
-	 * @param object The object to check the version of
-	 * @throws IllegalStateException If the object versions to not match
+	 * @return The OpenGL version
 	 */
-	public static void checkVersions(GLVersioned required, GLVersioned object) {
-		if (required.getGLVersion() != object.getGLVersion()) {
-			throw new IllegalStateException("Version mismatch: expected " + required.getGLVersion() + ", got " + object.getGLVersion());
-		}
-	}
+	public GLVersion getGLVersion();
 }

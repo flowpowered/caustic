@@ -56,7 +56,7 @@ import org.spout.renderer.data.UniformHolder;
  * affects models using multiple attributes. The texture layout should also be setup. This one can
  * be done after creation, but is necessary for assigning texture units to sampler uniforms.
  */
-public abstract class Program extends Creatable {
+public abstract class Program extends Creatable implements GLVersioned {
 	protected int id;
 	// Shader sources
 	protected Map<ShaderType, InputStream> shaderSources;
@@ -208,26 +208,6 @@ public abstract class Program extends Creatable {
 	}
 
 	/**
-	 * Returns true if a shader source is present for the type.
-	 *
-	 * @param type The type to check
-	 * @return Whether or not a shader source is present
-	 */
-	public boolean hasShaderSource(ShaderType type) {
-		return shaderSources != null && shaderSources.containsKey(type);
-	}
-
-	/**
-	 * Returns the shader source for the type, or null if none has been set.
-	 *
-	 * @param type The to lookup
-	 * @return The shader source
-	 */
-	public InputStream getShaderSource(ShaderType type) {
-		return shaderSources != null ? shaderSources.get(type) : null;
-	}
-
-	/**
 	 * Removes the shader source associated to the type, if present.
 	 *
 	 * @param type The type to remove
@@ -255,26 +235,6 @@ public abstract class Program extends Creatable {
 	}
 
 	/**
-	 * Returns true if an attribute of the provided name has been set to an index.
-	 *
-	 * @param name The name to lookup
-	 * @return Whether or not the layout is set for the attribute
-	 */
-	public boolean hasAttributeLayout(String name) {
-		return attributeLayouts != null && attributeLayouts.containsKey(name);
-	}
-
-	/**
-	 * Returns the index for the attribute of the provided name.
-	 *
-	 * @param name The name to lookup
-	 * @return The index
-	 */
-	public int getAttributeLayout(String name) {
-		return attributeLayouts != null ? attributeLayouts.get(name) : -1;
-	}
-
-	/**
 	 * Removes the index for the attribute of the provided name.
 	 */
 	public void removeAttributeLayout(String name) {
@@ -297,26 +257,6 @@ public abstract class Program extends Creatable {
 			textureLayouts = new TIntObjectHashMap<>();
 		}
 		textureLayouts.put(unit, name);
-	}
-
-	/**
-	 * Returns true if a texture at the provided unit has been set to a name.
-	 *
-	 * @param unit The unit to lookup
-	 * @return Whether or not the layout is set for the texture
-	 */
-	public boolean hasTextureLayout(int unit) {
-		return textureLayouts != null && textureLayouts.containsKey(unit);
-	}
-
-	/**
-	 * Returns the name for the texture at the provided unit.
-	 *
-	 * @param unit The unit to lookup
-	 * @return The name
-	 */
-	public String getTextureLayout(int unit) {
-		return textureLayouts != null ? textureLayouts.get(unit) : null;
 	}
 
 	/**

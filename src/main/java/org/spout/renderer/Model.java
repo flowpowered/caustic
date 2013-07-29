@@ -29,7 +29,6 @@ package org.spout.renderer;
 import org.spout.math.imaginary.Quaternion;
 import org.spout.math.matrix.Matrix4;
 import org.spout.math.vector.Vector3;
-import org.spout.renderer.VertexArray.DrawingMode;
 import org.spout.renderer.data.Uniform.Matrix4Uniform;
 import org.spout.renderer.data.UniformHolder;
 import org.spout.renderer.data.VertexData;
@@ -38,7 +37,7 @@ import org.spout.renderer.data.VertexData;
  * Represents a model for OpenGL. Each model has it's own position and rotation. The {@link
  * org.spout.renderer.Renderer} should always be created before the models.
  */
-public abstract class Model extends Creatable {
+public abstract class Model extends Creatable implements GLVersioned {
 	// Position and rotation properties
 	protected Vector3 position = new Vector3(0, 0, 0);
 	protected Vector3 scale = new Vector3(1, 1, 1);
@@ -66,23 +65,17 @@ public abstract class Model extends Creatable {
 	}
 
 	/**
+	 * Uploads the model's uniforms to its material's program.
+	 */
+	public void uploadUniforms() {
+		checkCreated();
+		uniforms.getMatrix4("modelMatrix").set(getMatrix());
+	}
+
+	/**
 	 * Draws the model to the screen.
 	 */
-	protected abstract void render();
-
-	/**
-	 * Returns the model's drawing mode.
-	 *
-	 * @return The drawing mode
-	 */
-	public abstract DrawingMode getDrawingMode();
-
-	/**
-	 * Sets the model's drawing mode.
-	 *
-	 * @param mode The drawing mode to use
-	 */
-	public abstract void setDrawingMode(DrawingMode mode);
+	public abstract void render();
 
 	/**
 	 * Returns the model's material.
@@ -97,6 +90,13 @@ public abstract class Model extends Creatable {
 	 * @param material The material
 	 */
 	public abstract void setMaterial(Material material);
+
+	/**
+	 * Returns the model's vertex array.
+	 *
+	 * @return The vertex array
+	 */
+	public abstract VertexArray getVertexArray();
 
 	/**
 	 * Returns the transformation matrix that represent the model's current scale, rotation and

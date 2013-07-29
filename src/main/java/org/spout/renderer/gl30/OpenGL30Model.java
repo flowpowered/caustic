@@ -26,9 +26,10 @@
  */
 package org.spout.renderer.gl30;
 
+import org.spout.renderer.GLVersion;
 import org.spout.renderer.Material;
 import org.spout.renderer.Model;
-import org.spout.renderer.VertexArray.DrawingMode;
+import org.spout.renderer.util.RenderUtil;
 
 /**
  * Represents a model for OpenGL 3.0. After constructing a new model, use {@link #getVertexData()}
@@ -63,9 +64,14 @@ public class OpenGL30Model extends Model {
 	}
 
 	@Override
-	protected void render() {
+	public void uploadUniforms() {
+		super.uploadUniforms();
+		material.getProgram().upload(uniforms);
+	}
+
+	@Override
+	public void render() {
 		checkCreated();
-		uniforms.getMatrix4("modelMatrix").set(getMatrix());
 		vertexArray.draw();
 	}
 
@@ -75,21 +81,18 @@ public class OpenGL30Model extends Model {
 	}
 
 	@Override
+	public OpenGL30VertexArray getVertexArray() {
+		return vertexArray;
+	}
+
+	@Override
 	public void setMaterial(Material material) {
-		if (!(material instanceof OpenGL30Material)) {
-			throw new IllegalArgumentException("Version mismatch: expected OpenGL30Material, got "
-					+ material.getClass().getSimpleName());
-		}
+		RenderUtil.checkVersions(this, material);
 		this.material = (OpenGL30Material) material;
 	}
 
 	@Override
-	public DrawingMode getDrawingMode() {
-		return vertexArray.getDrawingMode();
-	}
-
-	@Override
-	public void setDrawingMode(DrawingMode mode) {
-		vertexArray.setDrawingMode(mode);
+	public GLVersion getGLVersion() {
+		return GLVersion.GL30;
 	}
 }

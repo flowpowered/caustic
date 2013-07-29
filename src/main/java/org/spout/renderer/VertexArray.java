@@ -37,10 +37,16 @@ import org.spout.renderer.data.VertexData;
  * created before the vertex array. The vertex data source must be set with {@link
  * #setVertexData(org.spout.renderer.data.VertexData)} before it can be created.
  */
-public abstract class VertexArray extends Creatable {
+public abstract class VertexArray extends Creatable implements GLVersioned {
 	protected int id = 0;
+	// Buffers IDs
+	protected int indicesBufferID = 0;
+	protected int[] attributeBufferIDs;
 	// Amount of indices to render
-	protected int renderingIndicesCount = 0;
+	protected int indicesCountCache;
+	protected int indicesCount = 0;
+	// First and last index to render
+	protected int indicesOffset = 0;
 	// Vertex attributes
 	protected VertexData vertexData;
 	// Drawing mode
@@ -49,7 +55,8 @@ public abstract class VertexArray extends Creatable {
 	@Override
 	public void destroy() {
 		id = 0;
-		renderingIndicesCount = 0;
+		indicesCountCache = 0;
+		resetIndicesCountAndOffset();
 		vertexData = null;
 		super.destroy();
 	}
@@ -78,21 +85,38 @@ public abstract class VertexArray extends Creatable {
 	}
 
 	/**
-	 * Returns the model's drawing mode.
-	 *
-	 * @return The drawing mode
-	 */
-	public DrawingMode getDrawingMode() {
-		return drawingMode;
-	}
-
-	/**
 	 * Sets the model's drawing mode.
 	 *
 	 * @param mode The drawing mode to use
 	 */
 	public void setDrawingMode(DrawingMode mode) {
 		this.drawingMode = mode;
+	}
+
+	/**
+	 * Sets the number of indices to render during each draw call.
+	 *
+	 * @param count The number of indices
+	 */
+	public void setIndicesCount(int count) {
+		this.indicesCount = count;
+	}
+
+	/**
+	 * Sets the offset in the indices buffer to start at when rendering.
+	 *
+	 * @param offset The offset in the indices buffer
+	 */
+	public void setIndicesOffset(int offset) {
+		this.indicesOffset = offset;
+	}
+
+	/**
+	 * Resets the indices count to the full count and the offset to zero.
+	 */
+	public void resetIndicesCountAndOffset() {
+		indicesCount = indicesCountCache;
+		indicesOffset = 0;
 	}
 
 	/**

@@ -35,7 +35,7 @@ import org.spout.renderer.data.UniformHolder;
  * Represents an OpenGL renderer. The renderer should never be created before setting the camera
  * using {@link #setCamera(Camera)}.
  */
-public abstract class Renderer extends Creatable {
+public abstract class Renderer extends Creatable implements GLVersioned {
 	// Window title
 	protected String windowTitle = "Caustic renderer";
 	// Window size
@@ -65,6 +65,13 @@ public abstract class Renderer extends Creatable {
 		// Update the state
 		super.destroy();
 	}
+
+	/**
+	 * Uploads the renderer uniforms to the desired program.
+	 *
+	 * @param program The program to upload to
+	 */
+	public abstract void uploadUniforms(Program program);
 
 	/**
 	 * Draws all the models that have been created to the screen.
@@ -152,15 +159,6 @@ public abstract class Renderer extends Creatable {
 	}
 
 	/**
-	 * Gets the background color.
-	 *
-	 * @return The background color
-	 */
-	public Color getBackgroundColor() {
-		return backgroundColor;
-	}
-
-	/**
 	 * Sets the background color.
 	 *
 	 * @param color The background color
@@ -186,15 +184,6 @@ public abstract class Renderer extends Creatable {
 	 */
 	public void setCamera(Camera camera) {
 		this.camera = camera;
-	}
-
-	/**
-	 * If the back face of the shape should be culled
-	 *
-	 * @return If culling is enabled
-	 */
-	public boolean isCullingEnabled() {
-		return cullingEnabled;
 	}
 
 	/**
