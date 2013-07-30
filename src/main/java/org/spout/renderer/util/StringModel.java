@@ -77,6 +77,7 @@ import org.spout.renderer.data.VertexData;
  * are only uploaded once; the renderer uses the indices for the desired glyph.
  */
 public class StringModel extends Model {
+	private static final int GLYPH_PADDING = 6;
 	private static final int GLYPH_INDEX_COUNT = 6;
 	private GLVersion glVersion;
 	private char[] glyphs;
@@ -276,21 +277,23 @@ public class StringModel extends Model {
 			| \|
 			0--2
 	 	*/
-		float px = 0;
+		float x = 0;
 		int index = 0;
 		int i = 0;
-		final float glyphHeight = textureHeight / textureWidth;
+		final float paddedTextureWidth = textureWidth + glyphs.length * GLYPH_PADDING * 2;
+		final float glyphHeight = textureHeight / paddedTextureWidth;
 		for (char glyph : glyphs) {
-			final float glyphWidth = glyphWidths.get(glyph) / textureWidth;
+			final int glyphWidth = glyphWidths.get(glyph);
+			final float paddedGlyphWidth = (glyphWidth + GLYPH_PADDING * 2) / paddedTextureWidth;
 			add(positions, 0, 0, 0, glyphHeight);
-			add(textureCoords, px, 0, px, 1);
-			px += glyphWidth;
-			add(positions, glyphWidth, 0, glyphWidth, glyphHeight);
-			add(textureCoords, px, 0, px, 1);
+			add(textureCoords, x, 0, x, 1);
+			x += paddedGlyphWidth;
+			add(positions, paddedGlyphWidth, 0, paddedGlyphWidth, glyphHeight);
+			add(textureCoords, x, 0, x, 1);
 			add(indices, index, index + 2, index + 1, index + 2, index + 3, index + 1);
 			index += 4;
 			glyphIndexes.put(glyph, i);
-			glyphOffsets.put(glyph, glyphWidth);
+			glyphOffsets.put(glyph, glyphWidth / textureWidth);
 			i += 6;
 		}
 		positionAttribute.put(positions);
@@ -299,7 +302,7 @@ public class StringModel extends Model {
 
 	private static void generateTexture(Texture destination, char[] glyphs, TCharIntMap glyphWidths, Font font, int width, int height) {
 		// Create an image for the texture
-		final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
+		final BufferedImage image = new BufferedImage(width + glyphs.length * GLYPH_PADDING * 2, height, BufferedImage.TYPE_4BYTE_ABGR);
 		final Graphics graphics = image.getGraphics();
 		// Draw the glyphs in white on a transparent background
 		graphics.setColor(Color.white);
@@ -308,10 +311,11 @@ public class StringModel extends Model {
 		//((Graphics2D) graphics).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
 		final FontMetrics fontMetrics = graphics.getFontMetrics();
 		int x = 0;
-		int y = fontMetrics.getAscent();
+		final int y = fontMetrics.getAscent();
 		for (char glyph : glyphs) {
+			x += GLYPH_PADDING;
 			graphics.drawString(String.valueOf(glyph), x, y);
-			x += glyphWidths.get(glyph);
+			x += glyphWidths.get(glyph) + GLYPH_PADDING;
 		}
 		// Dispose of the image graphics
 		graphics.dispose();
