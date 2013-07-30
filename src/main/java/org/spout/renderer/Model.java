@@ -31,7 +31,6 @@ import org.spout.math.matrix.Matrix4;
 import org.spout.math.vector.Vector3;
 import org.spout.renderer.data.Uniform.Matrix4Uniform;
 import org.spout.renderer.data.UniformHolder;
-import org.spout.renderer.data.VertexData;
 
 /**
  * Represents a model for OpenGL. Each model has it's own position and rotation. The {@link
@@ -46,8 +45,6 @@ public abstract class Model extends Creatable implements GLVersioned {
 	private boolean updateMatrix = true;
 	// Model uniforms
 	protected final UniformHolder uniforms = new UniformHolder();
-	// Vertex data
-	protected final VertexData vertices = new VertexData();
 	// Special camera
 	private Camera camera;
 
@@ -59,7 +56,6 @@ public abstract class Model extends Creatable implements GLVersioned {
 
 	@Override
 	public void destroy() {
-		vertices.clear();
 		uniforms.clear();
 		super.destroy();
 	}
@@ -169,24 +165,13 @@ public abstract class Model extends Creatable implements GLVersioned {
 		updateMatrix = true;
 	}
 
+	/**
+	 * Returns the model's uniforms
+	 *
+	 * @return The uniforms
+	 */
 	public UniformHolder getUniforms() {
 		return uniforms;
-	}
-
-	/**
-	 * Returns the of vertex data. Use it to add mesh data.
-	 *
-	 * @return The vertex data
-	 */
-	public VertexData getVertexData() {
-		return vertices;
-	}
-
-	/**
-	 * Deletes all the vertex data associated to the model.
-	 */
-	public void clearVertexData() {
-		vertices.clear();
 	}
 
 	/**

@@ -43,6 +43,7 @@ import org.spout.math.vector.Vector2;
 import org.spout.math.vector.Vector3;
 import org.spout.math.vector.Vector4;
 import org.spout.renderer.Shader.ShaderType;
+import org.spout.renderer.data.Uniform;
 import org.spout.renderer.data.UniformHolder;
 
 /**
@@ -97,6 +98,13 @@ public abstract class Program extends Creatable implements GLVersioned {
 	 * @param unit The unit to bind
 	 */
 	public abstract void bindTexture(int unit);
+
+	/**
+	 * Uploads the uniform to this program.
+	 *
+	 * @param uniform The uniform to upload
+	 */
+	public abstract void upload(Uniform uniform);
 
 	/**
 	 * Uploads the uniforms to this program.

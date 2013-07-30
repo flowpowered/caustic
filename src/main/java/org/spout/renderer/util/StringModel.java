@@ -157,9 +157,16 @@ public class StringModel extends Model {
 	}
 
 	@Override
+	public void uploadUniforms() {
+		super.uploadUniforms();
+		model.getMaterial().getProgram().upload(uniforms.getMatrix4("modelMatrix"));
+	}
+
+	@Override
 	public void render() {
 		checkCreated();
 		final Program program = model.getMaterial().getProgram();
+		program.upload(uniforms.getColor("fontColor"));
 		final VertexArray vertexArray = model.getVertexArray();
 		final FloatUniform glyphOffset = uniforms.getFloat("glyphOffset");
 		float totalGlyphOffset = 0;
@@ -174,7 +181,7 @@ public class StringModel extends Model {
 			vertexArray.setIndicesOffset(glyphIndex);
 			// Offset the glyph in the string
 			glyphOffset.set(totalGlyphOffset);
-			program.upload(uniforms);
+			program.upload(glyphOffset);
 			totalGlyphOffset += glyphOffsets.get(glyph);
 			// Render the model
 			model.render();
@@ -188,14 +195,12 @@ public class StringModel extends Model {
 
 	@Override
 	public void setMaterial(Material material) {
-		if (model != null) {
-			model.setMaterial(material);
-		}
+		throw new UnsupportedOperationException("Unsupported by string model");
 	}
 
 	@Override
 	public VertexArray getVertexArray() {
-		return model != null ? model.getVertexArray() : null;
+		throw new UnsupportedOperationException("Unsupported by string model");
 	}
 
 	@Override
@@ -259,7 +264,7 @@ public class StringModel extends Model {
 
 	private void generateMesh(Model destination, char[] glyphs, TCharIntMap glyphWidths, float textureWidth, float textureHeight) {
 		// Add the positions and texture coordinates attributes
-		final VertexData data = destination.getVertexData();
+		final VertexData data = new VertexData();
 		final VertexAttribute positionAttribute = new VertexAttribute("positions", DataType.FLOAT, 2);
 		final VertexAttribute textureCoordsAttribute = new VertexAttribute("textureCoords", DataType.FLOAT, 2);
 		final TFloatList positions = new TFloatArrayList();
@@ -298,6 +303,8 @@ public class StringModel extends Model {
 		}
 		positionAttribute.put(positions);
 		textureCoordsAttribute.put(textureCoords);
+		// Set the vertex data in the model
+		destination.getVertexArray().setVertexData(data);
 	}
 
 	private static void generateTexture(Texture destination, char[] glyphs, TCharIntMap glyphWidths, Font font, int width, int height) {

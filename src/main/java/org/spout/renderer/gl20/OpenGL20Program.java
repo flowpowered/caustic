@@ -153,6 +153,12 @@ public class OpenGL20Program extends Program {
 	}
 
 	@Override
+	public void upload(Uniform uniform) {
+		checkCreated();
+		uniform.upload(this);
+	}
+
+	@Override
 	public void upload(UniformHolder uniforms) {
 		checkCreated();
 		for (Uniform uniform : uniforms) {

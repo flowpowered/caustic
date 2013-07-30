@@ -24,75 +24,67 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.gl30;
+package org.spout.renderer;
 
-import org.spout.renderer.GLVersion;
-import org.spout.renderer.Material;
-import org.spout.renderer.Model;
 import org.spout.renderer.util.RenderUtil;
 
 /**
- * Represents a model for OpenGL 3.0. After constructing a new model, use {@link #getVertexArray()}
- * and {@link org.spout.renderer.VertexArray#setVertexData(org.spout.renderer.data.VertexData)} to
- * add vertex data and specify the rendering indices. Next, specify the material with {@link
- * #setMaterial(org.spout.renderer.Material)}. Then use {@link #create()} to create model in the
- * current OpenGL context. It can now be added to the {@link OpenGL30Renderer}. Use {@link
- * #destroy()} to free the model's OpenGL resources. This doesn't delete the mesh. Make sure you add
- * the mesh before creating the model.
+ *
  */
-public class OpenGL30Model extends Model {
-	private final OpenGL30VertexArray vertexArray = new OpenGL30VertexArray();
-	private OpenGL30Material material;
+public class InstancedModel extends Model {
+	private final Model instance;
+
+	public InstancedModel(Model instance) {
+		this.instance = instance;
+	}
 
 	@Override
 	public void create() {
-		if (created) {
-			throw new IllegalStateException("Model has already been created");
+		if (!instance.isCreated()) {
+			instance.create();
 		}
-		if (material == null) {
-			throw new IllegalStateException("Material has not been set");
-		}
-		vertexArray.create();
 		super.create();
 	}
 
 	@Override
 	public void destroy() {
 		checkCreated();
-		vertexArray.destroy();
+		if (instance.isCreated()) {
+			instance.destroy();
+		}
 		super.destroy();
 	}
 
 	@Override
 	public void uploadUniforms() {
 		super.uploadUniforms();
-		material.getProgram().upload(uniforms);
+		instance.getMaterial().getProgram().upload(uniforms);
 	}
 
 	@Override
 	public void render() {
 		checkCreated();
-		vertexArray.draw();
+		instance.render();
 	}
 
 	@Override
-	public OpenGL30Material getMaterial() {
-		return material;
+	public Material getMaterial() {
+		return instance.getMaterial();
 	}
 
 	@Override
 	public void setMaterial(Material material) {
-		RenderUtil.checkVersions(this, material);
-		this.material = (OpenGL30Material) material;
+		RenderUtil.checkVersions(instance, material);
+		instance.setMaterial(material);
 	}
 
 	@Override
-	public OpenGL30VertexArray getVertexArray() {
-		return vertexArray;
+	public VertexArray getVertexArray() {
+		return instance.getVertexArray();
 	}
 
 	@Override
 	public GLVersion getGLVersion() {
-		return GLVersion.GL30;
+		return instance.getGLVersion();
 	}
 }

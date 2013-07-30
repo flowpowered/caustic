@@ -32,8 +32,9 @@ import org.spout.renderer.Model;
 import org.spout.renderer.util.RenderUtil;
 
 /**
- * Represents a model for OpenGL 2.0. After constructing a new model, use {@link #getVertexData()}
- * to add data and specify the rendering indices. Next, specify the material with {@link
+ * Represents a model for OpenGL 2.0. After constructing a new model, use {@link #getVertexArray()}
+ * and {@link org.spout.renderer.VertexArray#setVertexData(org.spout.renderer.data.VertexData)} to
+ * add vertex data and specify the rendering indices. Next, specify the material with {@link
  * #setMaterial(org.spout.renderer.Material)}. Then use {@link #create()} to create model in the
  * current OpenGL context. It can now be added to the {@link org.spout.renderer.gl30.OpenGL30Renderer}.
  * Use {@link #destroy()} to free the model's OpenGL resources. This doesn't delete the mesh. Make
@@ -51,7 +52,6 @@ public class OpenGL20Model extends Model {
 		if (material == null) {
 			throw new IllegalStateException("Material has not been set");
 		}
-		vertexArray.setVertexData(vertices);
 		vertexArray.create();
 		super.create();
 	}
@@ -81,14 +81,14 @@ public class OpenGL20Model extends Model {
 	}
 
 	@Override
-	public OpenGL20VertexArray getVertexArray() {
-		return vertexArray;
-	}
-
-	@Override
 	public void setMaterial(Material material) {
 		RenderUtil.checkVersions(this, material);
 		this.material = (OpenGL20Material) material;
+	}
+
+	@Override
+	public OpenGL20VertexArray getVertexArray() {
+		return vertexArray;
 	}
 
 	@Override
