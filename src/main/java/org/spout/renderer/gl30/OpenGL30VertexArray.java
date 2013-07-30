@@ -71,7 +71,7 @@ public class OpenGL30VertexArray extends VertexArray {
 			final VertexAttribute attribute = vertexData.getAttribute(i);
 			final int bufferID = GL15.glGenBuffers();
 			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, bufferID);
-			GL15.glBufferData(GL15.GL_ARRAY_BUFFER, attribute.getBuffer(), GL15.GL_STATIC_DRAW);
+			GL15.glBufferData(GL15.GL_ARRAY_BUFFER, attribute.getData(), GL15.GL_STATIC_DRAW);
 			// Three ways to interpret integer data
 			if (attribute.getType().isInteger() && attribute.getUploadMode() == UploadMode.KEEP_INT) {
 				// Directly as an int

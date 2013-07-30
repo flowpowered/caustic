@@ -69,7 +69,7 @@ public class OpenGL20VertexArray extends VertexArray {
 		for (int i = 0; i < vertexData.getAttributeCount(); i++) {
 			final int bufferID = GL15.glGenBuffers();
 			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, bufferID);
-			GL15.glBufferData(GL15.GL_ARRAY_BUFFER, vertexData.getAttribute(i).getBuffer(), GL15.GL_STATIC_DRAW);
+			GL15.glBufferData(GL15.GL_ARRAY_BUFFER, vertexData.getAttributeBuffer(i), GL15.GL_STATIC_DRAW);
 			attributeBufferIDs[i] = bufferID;
 		}
 		// Unbind the last vbo

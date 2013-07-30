@@ -121,7 +121,7 @@ public class VertexAttribute implements Cloneable {
 	 *
 	 * @return The buffer
 	 */
-	public ByteBuffer getBuffer() {
+	public ByteBuffer getData() {
 		if (this.buffer == null) {
 			throw new IllegalStateException("ByteBuffer must have data before it is ready for use.");
 		}
@@ -133,22 +133,13 @@ public class VertexAttribute implements Cloneable {
 	}
 
 	/**
-	 * Clears all of the buffer data.
-	 */
-	public void clear() {
-		if (buffer != null) {
-			buffer.clear();
-		}
-	}
-
-	/**
 	 * Replaces the current buffer data with a copy of the given {@link ByteBuffer} This method
 	 * arbitrarily creates data for the ByteBuffer regardless of the data type of the vertex
 	 * attribute.
 	 *
-	 * @param buffer to put
+	 * @param buffer to set
 	 */
-	public void put(ByteBuffer buffer) {
+	public void setData(ByteBuffer buffer) {
 		buffer.rewind();
 		this.buffer = BufferUtils.createByteBuffer(buffer.capacity());
 		this.buffer.put(buffer);
@@ -159,9 +150,9 @@ public class VertexAttribute implements Cloneable {
 	 * method arbitrarily creates data for the ByteBuffer regardless of the data type of the vertex
 	 * attribute.
 	 *
-	 * @param list to put
+	 * @param list to set
 	 */
-	public void put(TByteList list) {
+	public void setData(TByteList list) {
 		this.buffer = BufferUtils.createByteBuffer(list.size());
 		this.buffer.put(list.toArray());
 	}
@@ -171,9 +162,9 @@ public class VertexAttribute implements Cloneable {
 	 * method arbitrarily creates data for the ByteBuffer regardless of the data type of the vertex
 	 * attribute.
 	 *
-	 * @param list to put
+	 * @param list to set
 	 */
-	public void put(TShortList list) {
+	public void setData(TShortList list) {
 		this.buffer = BufferUtils.createByteBuffer(list.size() * DataType.SHORT.getByteSize());
 		final TShortIterator iterator = list.iterator();
 		while (iterator.hasNext()) {
@@ -186,9 +177,9 @@ public class VertexAttribute implements Cloneable {
 	 * arbitrarily creates data for the ByteBuffer regardless of the data type of the vertex
 	 * attribute.
 	 *
-	 * @param list to put
+	 * @param list to set
 	 */
-	public void put(TIntList list) {
+	public void setData(TIntList list) {
 		this.buffer = BufferUtils.createByteBuffer(list.size() * DataType.INT.getByteSize());
 		final TIntIterator iterator = list.iterator();
 		while (iterator.hasNext()) {
@@ -201,9 +192,9 @@ public class VertexAttribute implements Cloneable {
 	 * method arbitrarily creates data for the ByteBuffer regardless of the data type of the vertex
 	 * attribute.
 	 *
-	 * @param list to put
+	 * @param list to set
 	 */
-	public void put(TFloatList list) {
+	public void setData(TFloatList list) {
 		this.buffer = BufferUtils.createByteBuffer(list.size() * DataType.FLOAT.getByteSize());
 		final TFloatIterator iterator = list.iterator();
 		while (iterator.hasNext()) {
@@ -216,9 +207,9 @@ public class VertexAttribute implements Cloneable {
 	 * method arbitrarily creates data for the ByteBuffer regardless of the data type of the vertex
 	 * attribute.
 	 *
-	 * @param list to put
+	 * @param list to set
 	 */
-	public void put(TDoubleList list) {
+	public void setData(TDoubleList list) {
 		this.buffer = BufferUtils.createByteBuffer(list.size() * DataType.DOUBLE.getByteSize());
 		final TDoubleIterator iterator = list.iterator();
 		while (iterator.hasNext()) {
@@ -226,10 +217,19 @@ public class VertexAttribute implements Cloneable {
 		}
 	}
 
+	/**
+	 * Clears all of the buffer data.
+	 */
+	public void clearData() {
+		if (buffer != null) {
+			buffer.clear();
+		}
+	}
+
 	@Override
 	public VertexAttribute clone() {
 		final VertexAttribute clone = new VertexAttribute(name, type, size, uploadMode);
-		clone.put(this.buffer);
+		clone.setData(this.buffer);
 		return clone;
 	}
 

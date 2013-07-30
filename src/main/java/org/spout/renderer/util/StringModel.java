@@ -301,8 +301,8 @@ public class StringModel extends Model {
 			glyphOffsets.put(glyph, glyphWidth / textureWidth);
 			i += 6;
 		}
-		positionAttribute.put(positions);
-		textureCoordsAttribute.put(textureCoords);
+		positionAttribute.setData(positions);
+		textureCoordsAttribute.setData(textureCoords);
 		// Set the vertex data in the model
 		destination.getVertexArray().setVertexData(data);
 	}

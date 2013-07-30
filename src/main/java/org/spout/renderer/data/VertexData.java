@@ -274,7 +274,7 @@ public class VertexData {
 		if (attribute == null) {
 			return null;
 		}
-		return attribute.getBuffer();
+		return attribute.getData();
 	}
 
 	/**

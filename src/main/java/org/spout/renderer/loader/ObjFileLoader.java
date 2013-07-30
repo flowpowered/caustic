@@ -137,7 +137,7 @@ public class ObjFileLoader {
 				normalAttribute = null;
 			}
 			destination.getIndices().addAll(positionIndices);
-			positionAttribute.put(positionComponents);
+			positionAttribute.setData(positionComponents);
 			if (textureCoords != null) {
 				for (int i = 0; i < textureCoordIndices.size(); i++) {
 					final int textureCoordIndex = textureCoordIndices.get(i) * textureCoordSize;
@@ -146,7 +146,7 @@ public class ObjFileLoader {
 						textureCoords.set(positionIndex + ii, textureCoordComponents.get(textureCoordIndex + ii));
 					}
 				}
-				textureCoordsAttribute.put(textureCoords);
+				textureCoordsAttribute.setData(textureCoords);
 			}
 			if (normals != null) {
 				for (int i = 0; i < normalIndices.size(); i++) {
@@ -156,7 +156,7 @@ public class ObjFileLoader {
 						normals.set(positionIndex + ii, normalComponents.get(normalIndex + ii));
 					}
 				}
-				normalAttribute.put(normals);
+				normalAttribute.setData(normals);
 			}
 		} catch (Exception ex) {
 			throw new MalformedObjFileException(line, ex);
