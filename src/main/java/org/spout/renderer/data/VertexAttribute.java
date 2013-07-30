@@ -122,11 +122,14 @@ public class VertexAttribute implements Cloneable {
 	 * @return The buffer
 	 */
 	public ByteBuffer getBuffer() {
-		if (buffer == null) {
+		if (this.buffer == null) {
 			throw new IllegalStateException("ByteBuffer must have data before it is ready for use.");
 		}
-		buffer.flip();
-		return buffer;
+		final ByteBuffer copy = BufferUtils.createByteBuffer(buffer.capacity());
+		buffer.rewind();
+		copy.put(buffer);
+		copy.flip();
+		return copy;
 	}
 
 	/**
