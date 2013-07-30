@@ -29,19 +29,28 @@ package org.spout.renderer;
 import org.spout.renderer.util.RenderUtil;
 
 /**
- *
+ * Represents an instance of another model. Model instancing can be used to reduce the amount of
+ * vertex data on the GPU, by reusing the same geometry for multiple models. To use this class,
+ * simply construct a new instance using the model to instance (the main model), create it, and add
+ * it to the renderer. This class should work with any model type as long as it has been implemented
+ * correctly.
  */
 public class InstancedModel extends Model {
-	private final Model instance;
+	private final Model main;
 
-	public InstancedModel(Model instance) {
-		this.instance = instance;
+	/**
+	 * Constructs a new instanced model from the main model.
+	 *
+	 * @param main The main model
+	 */
+	public InstancedModel(Model main) {
+		this.main = main;
 	}
 
 	@Override
 	public void create() {
-		if (!instance.isCreated()) {
-			instance.create();
+		if (!main.isCreated()) {
+			main.create();
 		}
 		super.create();
 	}
@@ -49,8 +58,8 @@ public class InstancedModel extends Model {
 	@Override
 	public void destroy() {
 		checkCreated();
-		if (instance.isCreated()) {
-			instance.destroy();
+		if (main.isCreated()) {
+			main.destroy();
 		}
 		super.destroy();
 	}
@@ -58,33 +67,33 @@ public class InstancedModel extends Model {
 	@Override
 	public void uploadUniforms() {
 		super.uploadUniforms();
-		instance.getMaterial().getProgram().upload(uniforms);
+		main.getMaterial().getProgram().upload(uniforms);
 	}
 
 	@Override
 	public void render() {
 		checkCreated();
-		instance.render();
+		main.render();
 	}
 
 	@Override
 	public Material getMaterial() {
-		return instance.getMaterial();
+		return main.getMaterial();
 	}
 
 	@Override
 	public void setMaterial(Material material) {
-		RenderUtil.checkVersions(instance, material);
-		instance.setMaterial(material);
+		RenderUtil.checkVersions(main, material);
+		main.setMaterial(material);
 	}
 
 	@Override
 	public VertexArray getVertexArray() {
-		return instance.getVertexArray();
+		return main.getVertexArray();
 	}
 
 	@Override
 	public GLVersion getGLVersion() {
-		return instance.getGLVersion();
+		return main.getGLVersion();
 	}
 }
