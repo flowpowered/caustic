@@ -53,32 +53,58 @@ public class VertexDataTest {
 		vertexData.addAttribute(2, new VertexAttribute("int", DataType.INT, 3, UploadMode.TO_FLOAT));
 		vertexData.addAttribute(3, new VertexAttribute("float", DataType.FLOAT, 4, UploadMode.TO_FLOAT));
 		vertexData.addAttribute(4, new VertexAttribute("double", DataType.DOUBLE, 5, UploadMode.TO_FLOAT));
+		vertexData.addAttribute(5, new VertexAttribute("unsigned_byte", DataType.UNSIGNED_BYTE, 6, UploadMode.TO_FLOAT));
+		vertexData.addAttribute(6, new VertexAttribute("unsigned_short", DataType.UNSIGNED_SHORT, 7, UploadMode.TO_FLOAT));
+		vertexData.addAttribute(7, new VertexAttribute("unsigned_int", DataType.UNSIGNED_INT, 8, UploadMode.TO_FLOAT));
 		// Get attribute
+		//Byte Attribute
 		VertexAttribute byteAttribute;
 		byteAttribute = vertexData.getAttribute(0);
 		Assert.assertNotNull(byteAttribute);
 		byteAttribute = vertexData.getAttribute("byte");
 		Assert.assertNotNull(byteAttribute);
+		//Short Attribute
 		VertexAttribute shortAttribute;
 		shortAttribute = vertexData.getAttribute(1);
 		Assert.assertNotNull(shortAttribute);
 		shortAttribute = vertexData.getAttribute("short");
 		Assert.assertNotNull(shortAttribute);
+		//Int Attribute
 		VertexAttribute intAttribute;
 		intAttribute = vertexData.getAttribute(2);
 		Assert.assertNotNull(intAttribute);
 		intAttribute = vertexData.getAttribute("int");
 		Assert.assertNotNull(intAttribute);
+		//Float Attribute
 		VertexAttribute floatAttribute;
 		floatAttribute = vertexData.getAttribute(3);
 		Assert.assertNotNull(floatAttribute);
 		floatAttribute = vertexData.getAttribute("float");
 		Assert.assertNotNull(floatAttribute);
+		//Double Attribute
 		VertexAttribute doubleAttribute;
 		doubleAttribute = vertexData.getAttribute(4);
 		Assert.assertNotNull(doubleAttribute);
 		doubleAttribute = vertexData.getAttribute("double");
 		Assert.assertNotNull(doubleAttribute);
+		//Unsigned Byte Attribute
+		VertexAttribute uByteAttribute;
+		uByteAttribute = vertexData.getAttribute(5);
+		Assert.assertNotNull(uByteAttribute);
+		uByteAttribute = vertexData.getAttribute("unsigned_byte");
+		Assert.assertNotNull(uByteAttribute);
+		//Unsigned Short Attribute
+		VertexAttribute uShortAttribute;
+		uShortAttribute = vertexData.getAttribute(6);
+		Assert.assertNotNull(uShortAttribute);
+		uShortAttribute = vertexData.getAttribute("unsigned_short");
+		Assert.assertNotNull(uShortAttribute);
+		//Unsigned Int Attribute
+		VertexAttribute uIntAttribute;
+		uIntAttribute = vertexData.getAttribute(7);
+		Assert.assertNotNull(uIntAttribute);
+		uIntAttribute = vertexData.getAttribute("unsigned_int");
+		Assert.assertNotNull(uIntAttribute);
 		// Get attribute index
 		int index;
 		index = vertexData.getAttributeIndex("byte");
@@ -91,6 +117,12 @@ public class VertexDataTest {
 		Assert.assertEquals(3, index);
 		index = vertexData.getAttributeIndex("double");
 		Assert.assertEquals(4, index);
+		index = vertexData.getAttributeIndex("unsigned_byte");
+		Assert.assertEquals(5, index);
+		index = vertexData.getAttributeIndex("unsigned_short");
+		Assert.assertEquals(6, index);
+		index = vertexData.getAttributeIndex("unsigned_int");
+		Assert.assertEquals(7, index);
 		// Get attribute size
 		int size;
 		size = vertexData.getAttributeSize(0);
@@ -113,6 +145,21 @@ public class VertexDataTest {
 		Assert.assertEquals(5, size);
 		size = vertexData.getAttributeSize("double");
 		Assert.assertEquals(5, size);
+
+		size = vertexData.getAttributeSize(5);
+		Assert.assertEquals(6, size);
+		size = vertexData.getAttributeSize("unsigned_byte");
+		Assert.assertEquals(6, size);
+
+		size = vertexData.getAttributeSize(6);
+		Assert.assertEquals(7, size);
+		size = vertexData.getAttributeSize("unsigned_short");
+		Assert.assertEquals(7, size);
+
+		size = vertexData.getAttributeSize(7);
+		Assert.assertEquals(8, size);
+		size = vertexData.getAttributeSize("unsigned_int");
+		Assert.assertEquals(8, size);
 		// Get attribute name
 		String name;
 		name = vertexData.getAttributeName(0);
@@ -125,18 +172,29 @@ public class VertexDataTest {
 		Assert.assertEquals("float", name);
 		name = vertexData.getAttributeName(4);
 		Assert.assertEquals("double", name);
+		name = vertexData.getAttributeName(5);
+		Assert.assertEquals("unsigned_byte", name);
+		name = vertexData.getAttributeName(6);
+		Assert.assertEquals("unsigned_short", name);
+		name = vertexData.getAttributeName(7);
+		Assert.assertEquals("unsigned_int", name);
 		// Get attribute count
 		int count = vertexData.getAttributeCount();
-		Assert.assertEquals(5, count);
+		Assert.assertEquals(8, count);
 		// Get attribute names
 		Set<String> names = vertexData.getAttributeNames();
-		Assert.assertEquals(new HashSet<>(Arrays.asList("byte", "short", "int", "float", "double")), names);
+		Assert.assertEquals(new HashSet<>(Arrays.asList("byte", "short", "int", "float", "double",
+														"unsigned_byte", "unsigned_short",
+														"unsigned_int")), names);
 		// Remove attribute
 		vertexData.removeAttribute("byte");
 		vertexData.removeAttribute("short");
 		vertexData.removeAttribute("int");
 		vertexData.removeAttribute("float");
 		vertexData.removeAttribute("double");
+		vertexData.removeAttribute("unsigned_byte");
+		vertexData.removeAttribute("unsigned_short");
+		vertexData.removeAttribute("unsigned_int");
 		count = vertexData.getAttributeCount();
 		Assert.assertEquals(0, count);
 	}
