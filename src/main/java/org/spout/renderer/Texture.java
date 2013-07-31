@@ -29,7 +29,9 @@ package org.spout.renderer;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL13;
@@ -46,13 +48,15 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	protected TextureFormat format = TextureFormat.RGB;
 	protected WrapMode wrapT = WrapMode.REPEAT;
 	protected WrapMode wrapS = WrapMode.REPEAT;
-	protected FilterMode minFilter = FilterMode.LINEAR;
+	protected FilterMode minFilter = FilterMode.NEAREST;
 	protected FilterMode magFilter = FilterMode.NEAREST;
-	protected BufferedImage image;
+	protected ByteBuffer imageData;
+	protected int width;
+	protected int height;
 
 	@Override
 	public void create() {
-		image = null;
+		imageData = null;
 		super.create();
 	}
 
@@ -99,6 +103,9 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	 * @param format The format to set
 	 */
 	public void setFormat(TextureFormat format) {
+		if (format == null) {
+			throw new IllegalArgumentException("Format cannot be null");
+		}
 		this.format = format;
 	}
 
@@ -108,6 +115,9 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	 * @param wrapS Horizontal texture wrap
 	 */
 	public void setWrapS(WrapMode wrapS) {
+		if (format == null) {
+			throw new IllegalArgumentException("Wrap cannot be null");
+		}
 		this.wrapS = wrapS;
 	}
 
@@ -117,6 +127,9 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	 * @param wrapT Vertical texture wrap
 	 */
 	public void setWrapT(WrapMode wrapT) {
+		if (format == null) {
+			throw new IllegalArgumentException("Wrap cannot be null");
+		}
 		this.wrapT = wrapT;
 	}
 
@@ -126,6 +139,9 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	 * @param minFilter The min filter
 	 */
 	public void setMinFilter(FilterMode minFilter) {
+		if (format == null) {
+			throw new IllegalArgumentException("Filter cannot be null");
+		}
 		this.minFilter = minFilter;
 	}
 
@@ -135,6 +151,9 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	 * @param magFilter The mag filter
 	 */
 	public void setMagFilter(FilterMode magFilter) {
+		if (format == null) {
+			throw new IllegalArgumentException("Filter cannot be null");
+		}
 		if (magFilter.needsMipMaps()) {
 			throw new IllegalArgumentException("Mimpmap filters cannot be used for texture magnification");
 		}
@@ -142,44 +161,100 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	}
 
 	/**
-	 * Sets the texture's image.
+	 * Sets the texture's image data from a source input stream. The image data reading is done
+	 * according to the set {@link TextureFormat}.
 	 *
-	 * @param image The image
+	 * @param source The input stream of the image
 	 */
-	public void setImage(BufferedImage image) {
-		this.image = image;
+	public void setImageData(InputStream source) {
+		try {
+			setImageData(ImageIO.read(source));
+			source.close();
+		} catch (Exception ex) {
+			throw new IllegalStateException("Unreadable texture image data", ex);
+		}
 	}
 
 	/**
-	 * Sets the texture's image from a source input stream
+	 * Sets the texture's image data. The image data reading is done according to the set {@link
+	 * TextureFormat}.
 	 *
-	 * @param source The input stream of the image texture
+	 * @param image The image
 	 */
-	public void setImage(InputStream source) {
-		try {
-			setImage(ImageIO.read(source));
-			source.close();
-		} catch (Exception ex) {
-			throw new IllegalStateException("Unreadable texture image", ex);
+	public void setImageData(BufferedImage image) {
+		final int width = image.getWidth();
+		final int height = image.getHeight();
+		// Obtain the image raw int data
+		final int[] pixels = new int[width * height];
+		image.getRGB(0, 0, width, height, pixels, 0, width);
+		// Place the data in the buffer
+		setImageData(pixels, width, height);
+	}
+
+	/**
+	 * Sets the texture's image data. The image data reading is done according to the set {@link
+	 * TextureFormat}.
+	 *
+	 * @param pixels The image pixels
+	 * @param width The width of the image
+	 * @param height the height of the image
+	 */
+	public void setImageData(int[] pixels, int width, int height) {
+		// Place the data in the buffer, only adding the required components
+		final ByteBuffer data = BufferUtils.createByteBuffer(width * height * format.getComponentCount());
+		for (int y = height - 1; y >= 0; y--) {
+			for (int x = 0; x < width; x++) {
+				final int pixel = pixels[x + y * width];
+				if (format.hasRed()) {
+					data.put((byte) (pixel >> 16 & 0xff));
+				}
+				if (format.hasGreen()) {
+					data.put((byte) (pixel >> 8 & 0xff));
+				}
+				if (format.hasBlue()) {
+					data.put((byte) (pixel & 0xff));
+				}
+				if (format.hasAlpha()) {
+					data.put((byte) (pixel >> 24 & 0xff));
+				}
+			}
 		}
+		setImageData(data, width, height);
+	}
+
+	/**
+	 * Sets the texture's image data. The image data reading is done according the the set {@link
+	 * TextureFormat}.
+	 *
+	 * @param imageData The image data
+	 * @param width The width of the image
+	 * @param height the height of the image
+	 */
+	public void setImageData(ByteBuffer imageData, int width, int height) {
+		imageData.flip();
+		this.imageData = imageData;
+		this.width = width;
+		this.height = height;
 	}
 
 	/**
 	 * Represents the pixel format for the texture. Only the specified components will be loaded.
 	 */
 	public static enum TextureFormat {
-		RED(GL11.GL_RED, true, false, false, false),
-		RG(GL30.GL_RG, true, true, false, false),
-		RGB(GL11.GL_RGB, true, true, true, false),
-		RGBA(GL11.GL_RGBA, true, true, true, true);
+		RED(GL11.GL_RED, 1, true, false, false, false),
+		RG(GL30.GL_RG, 2, true, true, false, false),
+		RGB(GL11.GL_RGB, 3, true, true, true, false),
+		RGBA(GL11.GL_RGBA, 4, true, true, true, true);
 		private final int glConstant;
+		private final int components;
 		private final boolean hasRed;
 		private final boolean hasGreen;
 		private final boolean hasBlue;
 		private final boolean hasAlpha;
 
-		private TextureFormat(int glConstant, boolean hasRed, boolean hasGreen, boolean hasBlue, boolean hasAlpha) {
+		private TextureFormat(int glConstant, int components, boolean hasRed, boolean hasGreen, boolean hasBlue, boolean hasAlpha) {
 			this.glConstant = glConstant;
+			this.components = components;
 			this.hasRed = hasRed;
 			this.hasGreen = hasGreen;
 			this.hasBlue = hasBlue;
@@ -193,6 +268,15 @@ public abstract class Texture extends Creatable implements GLVersioned {
 		 */
 		public int getGLConstant() {
 			return glConstant;
+		}
+
+		/**
+		 * Returns the number of components in the format.
+		 *
+		 * @return The number of components
+		 */
+		public int getComponentCount() {
+			return components;
 		}
 
 		/**

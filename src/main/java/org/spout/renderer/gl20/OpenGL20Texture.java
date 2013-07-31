@@ -28,7 +28,6 @@ package org.spout.renderer.gl20;
 
 import java.nio.ByteBuffer;
 
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.ContextCapabilities;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
@@ -47,45 +46,11 @@ import org.spout.renderer.util.RenderUtil;
 public class OpenGL20Texture extends Texture {
 	@Override
 	public void create() {
-		if (image == null) {
-			throw new IllegalStateException("Texture image has not been set.");
-		}
-		if (minFilter == null || magFilter == null) {
-			throw new IllegalStateException("Texture filters have not been set.");
-		}
-		if (wrapT == null || wrapS == null) {
-			throw new IllegalStateException("Texture wraps have not been set.");
-		}
-		final int width = image.getWidth();
-		final int height = image.getHeight();
 		// Get the context capabilities for the graphics hardware
 		final ContextCapabilities contextCaps = GLContext.getCapabilities();
 		if (!contextCaps.GL_ARB_texture_non_power_of_two && (!GenericMath.isPowerOfTwo(width) || !GenericMath.isPowerOfTwo(height))) {
 			// TODO: Resize images. Also, this only really matters for mipmaps
 		}
-		// Obtain the image raw int data
-		final int[] pixels = new int[width * height];
-		image.getRGB(0, 0, width, height, pixels, 0, width);
-		// Place the data in a buffer, only adding the needed components
-		final ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * 4);
-		for (int y = height - 1; y >= 0; y--) {
-			for (int x = 0; x < width; x++) {
-				final int pixel = pixels[x + y * width];
-				if (format.hasRed()) {
-					buffer.put((byte) (pixel >> 16 & 0xff));
-				}
-				if (format.hasGreen()) {
-					buffer.put((byte) (pixel >> 8 & 0xff));
-				}
-				if (format.hasBlue()) {
-					buffer.put((byte) (pixel & 0xff));
-				}
-				if (format.hasAlpha()) {
-					buffer.put((byte) (pixel >> 24 & 0xff));
-				}
-			}
-		}
-		buffer.flip();
 		// Generate and bind the texture in the unit
 		id = GL11.glGenTextures();
 		GL13.glActiveTexture(unit);
@@ -93,7 +58,7 @@ public class OpenGL20Texture extends Texture {
 		// Set pixel storage mode
 		GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
 		// Upload the texture to the GPU
-		uploadTexture(buffer, width, height);
+		uploadTexture(imageData, width, height);
 		// Set the vertical and horizontal texture wraps (in the texture parameters)
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, wrapT.getGLConstant());
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, wrapS.getGLConstant());
@@ -117,7 +82,7 @@ public class OpenGL20Texture extends Texture {
 	 * @param height The height of the image
 	 */
 	protected void uploadTexture(ByteBuffer buffer, int width, int height) {
-		if (minFilter.needsMipMaps()) {
+		if (minFilter.needsMipMaps() && buffer != null) {
 			// Build mipmaps if using mip mapped filters
 			GLU.gluBuild2DMipmaps(GL11.GL_TEXTURE_2D, format.getGLConstant(), width, height, format.getGLConstant(), GL11.GL_UNSIGNED_BYTE, buffer);
 		} else {

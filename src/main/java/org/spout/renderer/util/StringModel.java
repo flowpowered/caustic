@@ -327,8 +327,8 @@ public class StringModel extends Model {
 		// Dispose of the image graphics
 		graphics.dispose();
 		// Generate the texture
-		destination.setImage(image);
 		destination.setFormat(TextureFormat.RGBA);
+		destination.setImageData(image);
 		destination.setMagFilter(FilterMode.LINEAR);
 		destination.setMinFilter(FilterMode.LINEAR);
 		destination.setUnit(0);
