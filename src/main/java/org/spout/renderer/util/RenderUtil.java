@@ -30,7 +30,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.OpenGLException;
 import org.lwjgl.util.glu.GLU;
 
-import org.spout.renderer.GLVersioned;
+import org.spout.renderer.gl.GLVersioned;
 
 /**
  * Utility methods for rendering.

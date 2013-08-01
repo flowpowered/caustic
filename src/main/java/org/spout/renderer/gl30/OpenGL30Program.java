@@ -26,13 +26,13 @@
  */
 package org.spout.renderer.gl30;
 
-import org.spout.renderer.GLVersion;
+import org.spout.renderer.gl.GLVersion;
 import org.spout.renderer.gl20.OpenGL20Program;
 
 /**
- * An OpenGL 3.0 implementation of {@link org.spout.renderer.Program}.
+ * An OpenGL 3.0 implementation of {@link org.spout.renderer.gl.Program}.
  *
- * @see org.spout.renderer.Program
+ * @see org.spout.renderer.gl.Program
  */
 public class OpenGL30Program extends OpenGL20Program {
 	// TODO: support unsigned int scalars and vectors

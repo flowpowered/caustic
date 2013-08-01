@@ -24,7 +24,7 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer;
+package org.spout.renderer.data;
 
 import org.spout.math.imaginary.Quaternion;
 import org.spout.math.matrix.Matrix4;

@@ -24,8 +24,9 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer;
+package org.spout.renderer.gl;
 
+import org.spout.renderer.Creatable;
 import org.spout.renderer.data.UniformHolder;
 
 /**

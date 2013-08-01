@@ -30,8 +30,8 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 
-import org.spout.renderer.GLVersion;
-import org.spout.renderer.VertexArray;
+import org.spout.renderer.gl.GLVersion;
+import org.spout.renderer.gl.VertexArray;
 import org.spout.renderer.data.VertexAttribute;
 import org.spout.renderer.data.VertexAttribute.DataType;
 import org.spout.renderer.util.RenderUtil;

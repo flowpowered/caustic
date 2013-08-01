@@ -24,7 +24,7 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer;
+package org.spout.renderer.gl;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -37,6 +37,8 @@ import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL30;
+
+import org.spout.renderer.Creatable;
 
 /**
  * Represents a texture for OpenGL. Image data can be set with one of the
@@ -175,7 +177,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
 
 	/**
 	 * Sets the texture's image data from a source input stream. The image data reading is done
-	 * according to the set {@link org.spout.renderer.Texture.ImageFormat}.
+	 * according to the set {@link Texture.ImageFormat}.
 	 *
 	 * @param source The input stream of the image
 	 */
@@ -190,7 +192,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
 
 	/**
 	 * Sets the texture's image data. The image data reading is done according to the set {@link
-	 * org.spout.renderer.Texture.ImageFormat}.
+	 * Texture.ImageFormat}.
 	 *
 	 * @param image The image
 	 */
@@ -206,7 +208,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
 
 	/**
 	 * Sets the texture's image data. The image data reading is done according to the set {@link
-	 * org.spout.renderer.Texture.ImageFormat}.
+	 * Texture.ImageFormat}.
 	 *
 	 * @param pixels The image pixels
 	 * @param width The width of the image
@@ -237,7 +239,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
 
 	/**
 	 * Sets the texture's image data. The image data reading is done according the the set {@link
-	 * org.spout.renderer.Texture.ImageFormat}.
+	 * Texture.ImageFormat}.
 	 *
 	 * @param imageData The image data
 	 * @param width The width of the image

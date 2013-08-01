@@ -37,12 +37,12 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL32;
 import org.lwjgl.opengl.PixelFormat;
 
-import org.spout.renderer.FrameBuffer;
-import org.spout.renderer.GLVersion;
-import org.spout.renderer.Material;
-import org.spout.renderer.Model;
-import org.spout.renderer.Program;
-import org.spout.renderer.Renderer;
+import org.spout.renderer.gl.FrameBuffer;
+import org.spout.renderer.gl.GLVersion;
+import org.spout.renderer.gl.Material;
+import org.spout.renderer.gl.Model;
+import org.spout.renderer.gl.Program;
+import org.spout.renderer.gl.Renderer;
 import org.spout.renderer.data.RenderList;
 import org.spout.renderer.util.RenderUtil;
 

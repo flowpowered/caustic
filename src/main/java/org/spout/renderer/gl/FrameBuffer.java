@@ -24,9 +24,11 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer;
+package org.spout.renderer.gl;
 
 import org.lwjgl.opengl.GL30;
+
+import org.spout.renderer.Creatable;
 
 /**
  * Represents an OpenGL frame buffer. A frame buffer can be assigned to a render list. When

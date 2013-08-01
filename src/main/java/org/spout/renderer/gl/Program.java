@@ -24,7 +24,7 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer;
+package org.spout.renderer.gl;
 
 import java.awt.Color;
 import java.io.InputStream;
@@ -43,14 +43,15 @@ import org.spout.math.matrix.Matrix4;
 import org.spout.math.vector.Vector2;
 import org.spout.math.vector.Vector3;
 import org.spout.math.vector.Vector4;
-import org.spout.renderer.Shader.ShaderType;
+import org.spout.renderer.Creatable;
+import org.spout.renderer.gl.Shader.ShaderType;
 import org.spout.renderer.data.Uniform;
 import org.spout.renderer.data.UniformHolder;
 
 /**
  * Represents an OpenGL program. A program holds the necessary shaders for the rendering pipeline.
- * This requires at least that sources for the {@link ShaderType#VERTEX} and {@link
- * ShaderType#FRAGMENT} shaders be set with {@link #addShaderSource(org.spout.renderer.Shader.ShaderType,
+ * This requires at least that sources for the {@link org.spout.renderer.gl.Shader.ShaderType#VERTEX} and {@link
+ * org.spout.renderer.gl.Shader.ShaderType#FRAGMENT} shaders be set with {@link #addShaderSource(org.spout.renderer.gl.Shader.ShaderType,
  * java.io.InputStream)} before creation. When using GL20, it is strongly recommended to set the
  * attribute layout in the program with {@link #addAttributeLayout(String, int)}, which must be done
  * before creation. The layout allows for association between the attribute index in the vertex data

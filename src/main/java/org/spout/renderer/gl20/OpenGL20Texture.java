@@ -32,8 +32,8 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.util.glu.GLU;
 
-import org.spout.renderer.GLVersion;
-import org.spout.renderer.Texture;
+import org.spout.renderer.gl.GLVersion;
+import org.spout.renderer.gl.Texture;
 import org.spout.renderer.util.RenderUtil;
 
 /**

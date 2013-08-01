@@ -34,7 +34,7 @@ import org.spout.math.matrix.Matrix4;
 import org.spout.math.vector.Vector2;
 import org.spout.math.vector.Vector3;
 import org.spout.math.vector.Vector4;
-import org.spout.renderer.Program;
+import org.spout.renderer.gl.Program;
 
 /**
  * Represents a shader uniform, which has a name and a value.

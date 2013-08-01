@@ -31,14 +31,14 @@ import java.nio.ByteBuffer;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 
-import org.spout.renderer.GLVersion;
+import org.spout.renderer.gl.GLVersion;
 import org.spout.renderer.gl20.OpenGL20Texture;
 import org.spout.renderer.util.RenderUtil;
 
 /**
- * An OpenGL 3.0 implementation of {@link org.spout.renderer.Texture}.
+ * An OpenGL 3.0 implementation of {@link org.spout.renderer.gl.Texture}.
  *
- * @see org.spout.renderer.Texture
+ * @see org.spout.renderer.gl.Texture
  */
 public class OpenGL30Texture extends OpenGL20Texture {
 	@Override

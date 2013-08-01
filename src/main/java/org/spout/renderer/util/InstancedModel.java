@@ -24,9 +24,12 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer;
+package org.spout.renderer.util;
 
-import org.spout.renderer.util.RenderUtil;
+import org.spout.renderer.gl.GLVersion;
+import org.spout.renderer.gl.Material;
+import org.spout.renderer.gl.Model;
+import org.spout.renderer.gl.VertexArray;
 
 /**
  * Represents an instance of another model. Model instancing can be used to reduce the amount of

@@ -32,8 +32,8 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.OpenGLException;
 
-import org.spout.renderer.GLVersion;
-import org.spout.renderer.Shader;
+import org.spout.renderer.gl.GLVersion;
+import org.spout.renderer.gl.Shader;
 import org.spout.renderer.util.RenderUtil;
 
 /**
