@@ -39,7 +39,9 @@ public class RenderUtil {
 	private static final boolean DEBUG = true;
 
 	/**
-	 * Throws an {@link org.lwjgl.opengl.OpenGLException} if OpenGL reports an error.
+	 * Throws an exception if OpenGL reports an error.
+	 *
+	 * @throws {@link org.lwjgl.opengl.OpenGLException} If OpenGL reports an error
 	 */
 	public static void checkForOpenGLError() {
 		if (DEBUG) {
@@ -51,14 +53,14 @@ public class RenderUtil {
 	}
 
 	/**
-	 * Checks if two OpenGL versioned object have the same version. Throws an exception is that's not
+	 * Checks if two OpenGL versioned object have the same version. Throws an exception if that's not
 	 * the case.
 	 *
 	 * @param required The required version
 	 * @param object The object to check the version of
 	 * @throws IllegalStateException If the object versions to not match
 	 */
-	public static void checkVersions(GLVersioned required, GLVersioned object) {
+	public static void checkVersion(GLVersioned required, GLVersioned object) {
 		if (required.getGLVersion() != object.getGLVersion()) {
 			throw new IllegalStateException("Version mismatch: expected " + required.getGLVersion() + ", got " + object.getGLVersion());
 		}

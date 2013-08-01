@@ -30,6 +30,7 @@ import java.awt.Color;
 import java.io.InputStream;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Set;
 
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.TObjectIntMap;
@@ -47,15 +48,17 @@ import org.spout.renderer.data.Uniform;
 import org.spout.renderer.data.UniformHolder;
 
 /**
- * Represents a shader program for OpenGL. A program holds the necessary shaders for the rendering
- * pipeline. The GL20 and GL30 versions require at least that sources for the {@link
- * ShaderType#VERTEX} and {@link ShaderType#FRAGMENT} shaders be set before creation. When using
- * GL20, it is strongly recommended to set the attribute layout in the program, which must be done
+ * Represents an OpenGL program. A program holds the necessary shaders for the rendering pipeline.
+ * This requires at least that sources for the {@link ShaderType#VERTEX} and {@link
+ * ShaderType#FRAGMENT} shaders be set with {@link #addShaderSource(org.spout.renderer.Shader.ShaderType,
+ * java.io.InputStream)} before creation. When using GL20, it is strongly recommended to set the
+ * attribute layout in the program with {@link #addAttributeLayout(String, int)}, which must be done
  * before creation. The layout allows for association between the attribute index in the vertex data
  * and the name in the shaders. For GL30, it is recommended to do so in the shaders instead, using
  * the "layout" keyword. Failing to do so might result in partial, wrong or missing rendering, and
- * affects models using multiple attributes. The texture layout should also be setup. This one can
- * be done after creation, but is necessary for assigning texture units to sampler uniforms.
+ * affects models using multiple attributes. The texture layout should also be setup using {@link
+ * #addTextureLayout(String, int)} if textures are used in the shaders. This one can be done after
+ * creation, but is necessary for assigning texture units to sampler uniforms.
  */
 public abstract class Program extends Creatable implements GLVersioned {
 	protected int id;
@@ -192,6 +195,13 @@ public abstract class Program extends Creatable implements GLVersioned {
 	 * @param c The color value
 	 */
 	public abstract void setUniform(String name, Color c);
+
+	/**
+	 * Returns an set containing all of the uniform names for this program.
+	 *
+	 * @return A set of all the uniform names
+	 */
+	public abstract Set<String> getUniformNames();
 
 	/**
 	 * Gets the ID for this program as assigned by OpenGL.

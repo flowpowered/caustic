@@ -28,12 +28,13 @@ package org.spout.renderer;
 
 import java.awt.Color;
 
-import org.spout.renderer.data.Uniform.Matrix4Uniform;
+import org.spout.renderer.data.RenderList;
 import org.spout.renderer.data.UniformHolder;
 
 /**
- * Represents an OpenGL renderer. The renderer should never be created before setting the camera
- * using {@link #setCamera(Camera)}.
+ * Represents an OpenGL renderer. Creating the renderer also created the OpenGL context, and so must
+ * be done before any other OpenGL object. To add models to render, add them to a render list, then
+ * use {@link #addRenderList(org.spout.renderer.data.RenderList)} to add the list.
  */
 public abstract class Renderer extends Creatable implements GLVersioned {
 	// Window title
@@ -43,28 +44,10 @@ public abstract class Renderer extends Creatable implements GLVersioned {
 	protected int windowHeight = 480;
 	// Properties
 	protected Color backgroundColor = new Color(0.2f, 0.2f, 0.2f, 0);
-	// Camera
-	protected Camera camera;
 	//Culling enabled
 	protected boolean cullingEnabled;
 	// Renderer uniforms
 	protected final UniformHolder uniforms = new UniformHolder();
-
-	@Override
-	public void create() {
-		// Add the constant renderer uniforms
-		uniforms.add(new Matrix4Uniform("projectionMatrix", camera.getProjectionMatrix()));
-		uniforms.add(new Matrix4Uniform("cameraMatrix", camera.getMatrix()));
-		// Update the state
-		super.create();
-	}
-
-	@Override
-	public void destroy() {
-		camera = null;
-		// Update the state
-		super.destroy();
-	}
 
 	/**
 	 * Uploads the renderer uniforms to the desired program.
@@ -78,20 +61,13 @@ public abstract class Renderer extends Creatable implements GLVersioned {
 	 */
 	public abstract void render();
 
-	/**
-	 * Adds a model to the list. If a non-created model is added to the list, it will not be rendered
-	 * until it is created.
-	 *
-	 * @param model The model to add
-	 */
-	public abstract void addModel(Model model);
+	public abstract RenderList getRenderList(String name);
 
-	/**
-	 * Removes a model from the list.
-	 *
-	 * @param model The model to remove
-	 */
-	public abstract void removeModel(Model model);
+	public abstract boolean hasRenderList(String name);
+
+	public abstract void addRenderList(RenderList list);
+
+	public abstract void removeRenderList(String name);
 
 	/**
 	 * Returns the window title.
@@ -165,25 +141,6 @@ public abstract class Renderer extends Creatable implements GLVersioned {
 	 */
 	public void setBackgroundColor(Color color) {
 		backgroundColor = color;
-	}
-
-	/**
-	 * Gets the renderer camera.
-	 *
-	 * @return The camera
-	 */
-	public Camera getCamera() {
-		return camera;
-	}
-
-	/**
-	 * Sets the camera. This camera is used if the model's material has not camera. It's the default
-	 * camera.
-	 *
-	 * @param camera The camera
-	 */
-	public void setCamera(Camera camera) {
-		this.camera = camera;
 	}
 
 	/**

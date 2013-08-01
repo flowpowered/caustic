@@ -37,13 +37,14 @@ import org.spout.renderer.data.VertexAttribute.DataType;
 import org.spout.renderer.util.RenderUtil;
 
 /**
+ * An OpenGL 2.0 implementation of {@link VertexArray}.
+ * <p>
  * Represents an OpenGL 2.0 vertex array. Since core OpenGL doesn't actually support vertex array
  * objects until 3.0, this class doesn't use the that, but it does use the vertex array methods
  * available to define the attributes, just not individually for an array. Thus, they have to be
- * redefined on each render call. Basically, it's like if there was only one vao available. After
- * constructing it, set the vertex data source with {@link #setVertexData(org.spout.renderer.data.VertexData)}.
- * It can then be created in the OpenGL context with {@link #create()}. To dispose of it, use {@link
- * #destroy()}.
+ * redefined on each render call.
+ *
+ * @see VertexArray
  */
 public class OpenGL20VertexArray extends VertexArray {
 	@Override

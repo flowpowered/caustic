@@ -33,8 +33,7 @@ import org.lwjgl.opengl.GL40;
 import org.spout.renderer.data.VertexData;
 
 /**
- * Represent a vertex array for OpenGL. The {@link org.spout.renderer.Renderer} should always be
- * created before the vertex array. The vertex data source must be set with {@link
+ * Represent an OpenGL vertex array. The vertex data must be set with {@link
  * #setVertexData(org.spout.renderer.data.VertexData)} before it can be created.
  */
 public abstract class VertexArray extends Creatable implements GLVersioned {

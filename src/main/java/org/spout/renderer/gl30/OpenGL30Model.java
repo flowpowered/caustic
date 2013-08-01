@@ -32,13 +32,9 @@ import org.spout.renderer.Model;
 import org.spout.renderer.util.RenderUtil;
 
 /**
- * Represents a model for OpenGL 3.0. After constructing a new model, use {@link #getVertexArray()}
- * and {@link org.spout.renderer.VertexArray#setVertexData(org.spout.renderer.data.VertexData)} to
- * add vertex data and specify the rendering indices. Next, specify the material with {@link
- * #setMaterial(org.spout.renderer.Material)}. Then use {@link #create()} to create model in the
- * current OpenGL context. It can now be added to the {@link OpenGL30Renderer}. Use {@link
- * #destroy()} to free the model's OpenGL resources. This doesn't delete the mesh. Make sure you add
- * the mesh before creating the model.
+ * An OpenGL 3.0 implementation of {@link Model}.
+ *
+ * @see Model
  */
 public class OpenGL30Model extends Model {
 	private final OpenGL30VertexArray vertexArray = new OpenGL30VertexArray();
@@ -82,7 +78,7 @@ public class OpenGL30Model extends Model {
 
 	@Override
 	public void setMaterial(Material material) {
-		RenderUtil.checkVersions(this, material);
+		RenderUtil.checkVersion(this, material);
 		this.material = (OpenGL30Material) material;
 	}
 

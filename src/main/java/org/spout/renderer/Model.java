@@ -33,8 +33,10 @@ import org.spout.renderer.data.Uniform.Matrix4Uniform;
 import org.spout.renderer.data.UniformHolder;
 
 /**
- * Represents a model for OpenGL. Each model has it's own position and rotation. The {@link
- * org.spout.renderer.Renderer} should always be created before the models.
+ * Represents an OpenGL model. Each model has it's own position and rotation and set of uniforms.
+ * The material needs to be set with {@link #setMaterial(Material)}, before the model can be
+ * created. To give the material a mesh, use {@link #getVertexArray()} then {@link
+ * VertexArray#setVertexData(org.spout.renderer.data.VertexData)}.
  */
 public abstract class Model extends Creatable implements GLVersioned {
 	// Position and rotation properties
@@ -45,8 +47,6 @@ public abstract class Model extends Creatable implements GLVersioned {
 	private boolean updateMatrix = true;
 	// Model uniforms
 	protected final UniformHolder uniforms = new UniformHolder();
-	// Special camera
-	private Camera camera;
 
 	@Override
 	public void create() {
@@ -172,35 +172,5 @@ public abstract class Model extends Creatable implements GLVersioned {
 	 */
 	public UniformHolder getUniforms() {
 		return uniforms;
-	}
-
-	/**
-	 * Returns the camera for the model, or null if no specific camera has been assigned, and the
-	 * material or renderer camera should be used.
-	 *
-	 * @return The camera
-	 */
-	public Camera getCamera() {
-		return camera;
-	}
-
-	/**
-	 * Sets the camera for the model. This is an optional operation. If not set, the material camera
-	 * will be used. If this one too isn't set, the renderer camera is used, which should always be
-	 * present.
-	 *
-	 * @param camera The camera for the model
-	 */
-	public void setCamera(Camera camera) {
-		this.camera = camera;
-	}
-
-	/**
-	 * Returns true if a camera has been associated to the model.
-	 *
-	 * @return Whether or not a camera has been associated
-	 */
-	public boolean hasCamera() {
-		return camera != null;
 	}
 }

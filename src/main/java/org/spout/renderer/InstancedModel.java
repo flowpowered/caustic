@@ -33,7 +33,8 @@ import org.spout.renderer.util.RenderUtil;
  * vertex data on the GPU, by reusing the same geometry for multiple models. To use this class,
  * simply construct a new instance using the model to instance (the main model), create it, and add
  * it to the renderer. This class should work with any model type as long as it has been implemented
- * correctly.
+ * correctly. Note that the vertex array and material are shared amongst the main model and all of
+ * its instances. Any changes to these will be reflected across all models.
  */
 public class InstancedModel extends Model {
 	private final Model main;
@@ -83,7 +84,7 @@ public class InstancedModel extends Model {
 
 	@Override
 	public void setMaterial(Material material) {
-		RenderUtil.checkVersions(main, material);
+		RenderUtil.checkVersion(main, material);
 		main.setMaterial(material);
 	}
 

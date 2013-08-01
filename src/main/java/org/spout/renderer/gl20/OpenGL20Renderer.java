@@ -26,8 +26,8 @@
  */
 package org.spout.renderer.gl20;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.ContextAttribs;
@@ -36,33 +36,28 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.PixelFormat;
 
-import org.spout.renderer.Camera;
+import org.spout.renderer.FrameBuffer;
 import org.spout.renderer.GLVersion;
 import org.spout.renderer.Material;
 import org.spout.renderer.Model;
 import org.spout.renderer.Program;
 import org.spout.renderer.Renderer;
+import org.spout.renderer.data.RenderList;
 import org.spout.renderer.util.RenderUtil;
 
 /**
- * This is a renderer using OpenGL 2.0. To create a new render window, start by creating a camera
- * and setting it using {@link #setCamera(org.spout.renderer.Camera)}, then use {@link #create()} to
- * create the OpenGL context. To add and remove models, use {@link #addModel(org.spout.renderer.Model)}
- * and {@link #removeModel(org.spout.renderer.Model)}. The camera position and rotation can be
- * modified by accessing it with {@link #getCamera()}. When done, use {@link #destroy()} to destroy
- * the render window.
+ * An OpenGL 2.0 implementation of {@link Renderer}.
+ *
+ * @see Renderer
  */
 public class OpenGL20Renderer extends Renderer {
 	// Models
-	private final Set<Model> models = new HashSet<>();
+	private final Map<String, RenderList> renderLists = new TreeMap<>();
 
 	@Override
 	public void create() {
 		if (created) {
 			throw new IllegalStateException("Renderer has already been created");
-		}
-		if (camera == null) {
-			throw new IllegalStateException("Camera has not been set");
 		}
 		// Attempt to create the display
 		try {
@@ -76,7 +71,8 @@ public class OpenGL20Renderer extends Renderer {
 		// Set the view port to the window
 		GL11.glViewport(0, 0, windowWidth, windowHeight);
 		// Set the clear color, which will be the color of empty screen area
-		GL11.glClearColor(backgroundColor.getRed() / 255f, backgroundColor.getGreen() / 255f, backgroundColor.getBlue() / 255f, backgroundColor.getAlpha() / 255f);
+		GL11.glClearColor(backgroundColor.getRed() / 255f, backgroundColor.getGreen() / 255f,
+				backgroundColor.getBlue() / 255f, backgroundColor.getAlpha() / 255f);
 		// Enable dept testing to properly display depth
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		if (cullingEnabled) {
@@ -96,17 +92,23 @@ public class OpenGL20Renderer extends Renderer {
 	public void destroy() {
 		checkCreated();
 		// Destroy models and materials
-		for (Model model : models) {
-			if (model.isCreated()) {
-				model.destroy();
+		for (RenderList renderList : renderLists.values()) {
+			for (Model model : renderList) {
+				if (model.isCreated()) {
+					model.destroy();
+				}
+				final Material material = model.getMaterial();
+				if (material != null && material.isCreated()) {
+					model.getMaterial().destroy();
+				}
 			}
-			final Material material = model.getMaterial();
-			if (material != null && material.isCreated()) {
-				model.getMaterial().destroy();
+			final FrameBuffer frameBuffer = renderList.getFrameBuffer();
+			if (frameBuffer != null && frameBuffer.isCreated()) {
+				frameBuffer.destroy();
 			}
 		}
 		// Clear data
-		models.clear();
+		renderLists.clear();
 		uniforms.clear();
 		// Destroy display
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -127,26 +129,23 @@ public class OpenGL20Renderer extends Renderer {
 		checkCreated();
 		// Clear the last render
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-		// Render all the models
-		for (Model model : models) {
-			if (model.isCreated()) {
-				final Material material = model.getMaterial();
-				// Get the camera, checking in order of priority
-				final Camera camera;
-				if (model.hasCamera()) {
-					camera = model.getCamera();
-				} else if (material.hasCamera()) {
-					camera = material.getCamera();
-				} else {
-					camera = this.camera;
+		// Render all the created models
+		for (RenderList renderList : renderLists.values()) {
+			if (!renderList.isActive()) {
+				continue;
+			}
+			for (Model model : renderList) {
+				if (!model.isCreated()) {
+					continue;
 				}
-				// Update the camera uniforms
-				uniforms.getMatrix4("projectionMatrix").set(camera.getProjectionMatrix());
-				uniforms.getMatrix4("cameraMatrix").set(camera.getMatrix());
+				final Material material = model.getMaterial();
+				final Program program = material.getProgram();
 				// Bind the material
 				material.bind();
 				// Upload the renderer uniforms
-				uploadUniforms(material.getProgram());
+				uploadUniforms(program);
+				// Upload the render list uniforms
+				renderList.uploadUniforms(program);
 				// Upload the material uniforms
 				material.uploadUniforms();
 				// Upload the model uniforms
@@ -164,15 +163,23 @@ public class OpenGL20Renderer extends Renderer {
 	}
 
 	@Override
-	public void addModel(Model model) {
-		RenderUtil.checkVersions(this, model);
-		models.add(model);
+	public RenderList getRenderList(String name) {
+		return renderLists.get(name);
 	}
 
 	@Override
-	public void removeModel(Model model) {
-		RenderUtil.checkVersions(this, model);
-		models.remove(model);
+	public boolean hasRenderList(String name) {
+		return renderLists.containsKey(name);
+	}
+
+	@Override
+	public void addRenderList(RenderList list) {
+		renderLists.put(list.getName(), list);
+	}
+
+	@Override
+	public void removeRenderList(String name) {
+		renderLists.remove(name);
 	}
 
 	@Override

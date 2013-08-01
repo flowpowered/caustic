@@ -55,7 +55,12 @@ public abstract class Creatable {
 		return created;
 	}
 
-	protected void checkCreated() {
+	/**
+	 * Throws an exception is the resource hasn't been created yet.
+	 *
+	 * @throws IllegalStateException if the resource hasn't been created
+	 */
+	public void checkCreated() {
 		if (!isCreated()) {
 			throw new IllegalStateException("Resource has not been created yet");
 		}

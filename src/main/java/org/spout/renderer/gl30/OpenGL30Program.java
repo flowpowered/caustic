@@ -30,13 +30,9 @@ import org.spout.renderer.GLVersion;
 import org.spout.renderer.gl20.OpenGL20Program;
 
 /**
- * Represents a program for OpenGL 3.0. A program is a composed of a vertex shader and a fragment
- * shader. After being constructed, set the shader sources with {@link
- * #addShaderSource(org.spout.renderer.Shader.ShaderType, java.io.InputStream)}, for the {@link
- * org.spout.renderer.Shader.ShaderType#VERTEX} and {@link org.spout.renderer.Shader.ShaderType#FRAGMENT}
- * types. The program then needs to be created in the OpenGL context with {@link #create()}. The
- * OpenGL 3.0 version is an extension of the OpenGL 2.0 version that offers support for the new data
- * types.
+ * An OpenGL 3.0 implementation of {@link org.spout.renderer.Program}.
+ *
+ * @see org.spout.renderer.Program
  */
 public class OpenGL30Program extends OpenGL20Program {
 	// TODO: support unsigned int scalars and vectors

@@ -39,9 +39,9 @@ import org.spout.renderer.data.VertexAttribute.UploadMode;
 import org.spout.renderer.util.RenderUtil;
 
 /**
- * Represents an OpenGL 3.0 vertex array. After constructing it, set the vertex data source with
- * {@link #setVertexData(org.spout.renderer.data.VertexData)}. It can then be created in the OpenGL
- * context with {@link #create()}. To dispose of it, use {@link #destroy()}.
+ * An OpenGL 3.0 implementation of {@link VertexArray}.
+ *
+ * @see VertexArray
  */
 public class OpenGL30VertexArray extends VertexArray {
 	@Override

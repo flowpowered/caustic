@@ -24,71 +24,74 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.gl20;
+package org.spout.renderer.gl30;
+
+import org.lwjgl.opengl.GL30;
 
 import org.spout.renderer.GLVersion;
-import org.spout.renderer.Material;
-import org.spout.renderer.Model;
+import org.spout.renderer.RenderBuffer;
 import org.spout.renderer.util.RenderUtil;
 
 /**
- * An OpenGL 2.0 implementation of {@link Model}.
+ * An OpenGL 3.0 implementation of {@link RenderBuffer}.
  *
- * @see Model
+ * @see RenderBuffer
  */
-public class OpenGL20Model extends Model {
-	private final OpenGL20VertexArray vertexArray = new OpenGL20VertexArray();
-	private OpenGL20Material material;
-
+public class OpenGL30RenderBuffer extends RenderBuffer {
 	@Override
 	public void create() {
-		if (created) {
-			throw new IllegalStateException("Model has already been created");
+		if (format == null) {
+			throw new IllegalStateException("Format has not been set");
 		}
-		if (material == null) {
-			throw new IllegalStateException("Material has not been set");
+		if (width == -1) {
+			throw new IllegalStateException("Width has not been set");
 		}
-		vertexArray.create();
+		if (height == -1) {
+			throw new IllegalStateException("Height has not been set");
+		}
+		// Generate and bind the render buffer
+		id = GL30.glGenRenderbuffers();
+		GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, id);
+		// Set the storage format and size
+		GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, format.getGLConstant(), width, height);
+		// Unbind the render buffer
+		GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, 0);
+		// Update the state
 		super.create();
+		// Check for errors
+		RenderUtil.checkForOpenGLError();
 	}
 
 	@Override
 	public void destroy() {
 		checkCreated();
-		vertexArray.destroy();
+		// Unbind and delete the render buffer
+		GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, 0);
+		GL30.glDeleteRenderbuffers(id);
+		// Update state
 		super.destroy();
+		// Check for errors
+		RenderUtil.checkForOpenGLError();
 	}
 
 	@Override
-	public void uploadUniforms() {
-		super.uploadUniforms();
-		material.getProgram().upload(uniforms);
-	}
-
-	@Override
-	public void render() {
+	public void bind() {
 		checkCreated();
-		vertexArray.draw();
+		GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, id);
+		// Check for errors
+		RenderUtil.checkForOpenGLError();
 	}
 
 	@Override
-	public OpenGL20Material getMaterial() {
-		return material;
-	}
-
-	@Override
-	public void setMaterial(Material material) {
-		RenderUtil.checkVersion(this, material);
-		this.material = (OpenGL20Material) material;
-	}
-
-	@Override
-	public OpenGL20VertexArray getVertexArray() {
-		return vertexArray;
+	public void unbind() {
+		checkCreated();
+		GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, 0);
+		// Check for errors
+		RenderUtil.checkForOpenGLError();
 	}
 
 	@Override
 	public GLVersion getGLVersion() {
-		return GLVersion.GL20;
+		return GLVersion.GL30;
 	}
 }

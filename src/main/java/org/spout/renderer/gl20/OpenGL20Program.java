@@ -54,11 +54,9 @@ import org.spout.renderer.data.UniformHolder;
 import org.spout.renderer.util.RenderUtil;
 
 /**
- * Represents a program for OpenGL 2.0. A program is a composed of a vertex shader and a fragment
- * shader. After being constructed, set the shader sources with {@link
- * #addShaderSource(org.spout.renderer.Shader.ShaderType, java.io.InputStream)}, for the {@link
- * ShaderType#VERTEX} and {@link ShaderType#FRAGMENT} types. The program then needs to be created in
- * the OpenGL context with {@link #create()}.
+ * An OpenGL 2.0 implementation of {@link Program}.
+ *
+ * @see Program
  */
 public class OpenGL20Program extends Program {
 	// Shaders
@@ -263,11 +261,7 @@ public class OpenGL20Program extends Program {
 		}
 	}
 
-	/**
-	 * Returns an immutable set containing all of the uniform names for this program.
-	 *
-	 * @return A set of all the uniform names
-	 */
+	@Override
 	public Set<String> getUniformNames() {
 		return Collections.unmodifiableSet(uniforms.keySet());
 	}

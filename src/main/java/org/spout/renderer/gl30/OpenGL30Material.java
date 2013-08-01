@@ -35,9 +35,9 @@ import org.spout.renderer.Texture;
 import org.spout.renderer.util.RenderUtil;
 
 /**
- * Represents a material for OpenGL 3.0 models. The material holds the shader program, the texture
- * for each unit, and uniforms. When rendering, material uniforms are uploaded after the renderer
- * ones, but before the model ones.
+ * An OpenGL 3.0 implementation of {@link Material}.
+ *
+ * @see Material
  */
 public class OpenGL30Material extends Material {
 	private final OpenGL30Program program = new OpenGL30Program();
@@ -107,7 +107,7 @@ public class OpenGL30Material extends Material {
 
 	@Override
 	public void addTexture(Texture texture) {
-		RenderUtil.checkVersions(this, texture);
+		RenderUtil.checkVersion(this, texture);
 		if (textures == null) {
 			textures = new TIntObjectHashMap<>();
 		}

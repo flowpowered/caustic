@@ -39,18 +39,25 @@ import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL30;
 
 /**
- * Represents a texture for OpenGL. The textures image, dimension, wrapping and filters must be set
- * before it can be created.
+ * Represents a texture for OpenGL. Image data can be set with one of the
+ * <code>setImageData(...)</code> methods before creation, but is not obligatory. This results in an
+ * empty texture, with an undefined content. This is mostly used for frame buffers.
  */
 public abstract class Texture extends Creatable implements GLVersioned {
 	protected int id = 0;
+	// The unit
 	protected int unit = GL13.GL_TEXTURE0;
-	protected TextureFormat format = TextureFormat.RGB;
+	// The format
+	protected ImageFormat format = ImageFormat.RGB;
+	// Wrapping modes for s and t
 	protected WrapMode wrapT = WrapMode.REPEAT;
 	protected WrapMode wrapS = WrapMode.REPEAT;
+	// Minimisation and magnification modes
 	protected FilterMode minFilter = FilterMode.NEAREST;
 	protected FilterMode magFilter = FilterMode.NEAREST;
+	// The texture image data
 	protected ByteBuffer imageData;
+	// Texture image dimensions
 	protected int width;
 	protected int height;
 
@@ -58,6 +65,12 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	public void create() {
 		imageData = null;
 		super.create();
+	}
+
+	@Override
+	public void destroy() {
+		id = 0;
+		super.destroy();
 	}
 
 	/**
@@ -102,7 +115,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	 *
 	 * @param format The format to set
 	 */
-	public void setFormat(TextureFormat format) {
+	public void setFormat(ImageFormat format) {
 		if (format == null) {
 			throw new IllegalArgumentException("Format cannot be null");
 		}
@@ -115,7 +128,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	 * @param wrapS Horizontal texture wrap
 	 */
 	public void setWrapS(WrapMode wrapS) {
-		if (format == null) {
+		if (wrapS == null) {
 			throw new IllegalArgumentException("Wrap cannot be null");
 		}
 		this.wrapS = wrapS;
@@ -127,7 +140,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	 * @param wrapT Vertical texture wrap
 	 */
 	public void setWrapT(WrapMode wrapT) {
-		if (format == null) {
+		if (wrapT == null) {
 			throw new IllegalArgumentException("Wrap cannot be null");
 		}
 		this.wrapT = wrapT;
@@ -139,7 +152,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	 * @param minFilter The min filter
 	 */
 	public void setMinFilter(FilterMode minFilter) {
-		if (format == null) {
+		if (minFilter == null) {
 			throw new IllegalArgumentException("Filter cannot be null");
 		}
 		this.minFilter = minFilter;
@@ -151,7 +164,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	 * @param magFilter The mag filter
 	 */
 	public void setMagFilter(FilterMode magFilter) {
-		if (format == null) {
+		if (magFilter == null) {
 			throw new IllegalArgumentException("Filter cannot be null");
 		}
 		if (magFilter.needsMipMaps()) {
@@ -162,7 +175,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
 
 	/**
 	 * Sets the texture's image data from a source input stream. The image data reading is done
-	 * according to the set {@link TextureFormat}.
+	 * according to the set {@link org.spout.renderer.Texture.ImageFormat}.
 	 *
 	 * @param source The input stream of the image
 	 */
@@ -177,7 +190,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
 
 	/**
 	 * Sets the texture's image data. The image data reading is done according to the set {@link
-	 * TextureFormat}.
+	 * org.spout.renderer.Texture.ImageFormat}.
 	 *
 	 * @param image The image
 	 */
@@ -193,7 +206,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
 
 	/**
 	 * Sets the texture's image data. The image data reading is done according to the set {@link
-	 * TextureFormat}.
+	 * org.spout.renderer.Texture.ImageFormat}.
 	 *
 	 * @param pixels The image pixels
 	 * @param width The width of the image
@@ -224,14 +237,16 @@ public abstract class Texture extends Creatable implements GLVersioned {
 
 	/**
 	 * Sets the texture's image data. The image data reading is done according the the set {@link
-	 * TextureFormat}.
+	 * org.spout.renderer.Texture.ImageFormat}.
 	 *
 	 * @param imageData The image data
 	 * @param width The width of the image
 	 * @param height the height of the image
 	 */
 	public void setImageData(ByteBuffer imageData, int width, int height) {
-		imageData.flip();
+		if (imageData != null) {
+			imageData.flip();
+		}
 		this.imageData = imageData;
 		this.width = width;
 		this.height = height;
@@ -240,25 +255,31 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	/**
 	 * Represents the pixel format for the texture. Only the specified components will be loaded.
 	 */
-	public static enum TextureFormat {
-		RED(GL11.GL_RED, 1, true, false, false, false),
-		RG(GL30.GL_RG, 2, true, true, false, false),
-		RGB(GL11.GL_RGB, 3, true, true, true, false),
-		RGBA(GL11.GL_RGBA, 4, true, true, true, true);
+	public static enum ImageFormat {
+		RED(GL11.GL_RED, 1, true, false, false, false, false, false),
+		RG(GL30.GL_RG, 2, true, true, false, false, false, false),
+		RGB(GL11.GL_RGB, 3, true, true, true, false, false, false),
+		RGBA(GL11.GL_RGBA, 4, true, true, true, true, false, false),
+		DEPTH(GL11.GL_DEPTH_COMPONENT, 1, false, false, false, false, true, false),
+		DEPTH_STENCIL(GL30.GL_DEPTH_STENCIL, 1, false, false, false, false, false, true);
 		private final int glConstant;
 		private final int components;
 		private final boolean hasRed;
 		private final boolean hasGreen;
 		private final boolean hasBlue;
 		private final boolean hasAlpha;
+		private final boolean hasDepth;
+		private final boolean hasStencil;
 
-		private TextureFormat(int glConstant, int components, boolean hasRed, boolean hasGreen, boolean hasBlue, boolean hasAlpha) {
+		private ImageFormat(int glConstant, int components, boolean hasRed, boolean hasGreen, boolean hasBlue, boolean hasAlpha, boolean hasDepth, boolean hasStencil) {
 			this.glConstant = glConstant;
 			this.components = components;
 			this.hasRed = hasRed;
 			this.hasGreen = hasGreen;
 			this.hasBlue = hasBlue;
 			this.hasAlpha = hasAlpha;
+			this.hasDepth = hasDepth;
+			this.hasStencil = hasStencil;
 		}
 
 		/**
@@ -280,39 +301,57 @@ public abstract class Texture extends Creatable implements GLVersioned {
 		}
 
 		/**
-		 * Returns true if this format has a red color component.
+		 * Returns true if this format has a red component.
 		 *
-		 * @return True if a red color component is present
+		 * @return True if a red component is present
 		 */
 		public boolean hasRed() {
 			return hasRed;
 		}
 
 		/**
-		 * Returns true if this format has a green color component.
+		 * Returns true if this format has a green component.
 		 *
-		 * @return True if a green color component is present
+		 * @return True if a green component is present
 		 */
 		public boolean hasGreen() {
 			return hasGreen;
 		}
 
 		/**
-		 * Returns true if this format has a blue color component.
+		 * Returns true if this format has a blue component.
 		 *
-		 * @return True if a blue color component is present
+		 * @return True if a blue component is present
 		 */
 		public boolean hasBlue() {
 			return hasBlue;
 		}
 
 		/**
-		 * Returns true if this format has a alpha color component.
+		 * Returns true if this format has an alpha component.
 		 *
-		 * @return True if a alpha color component is present
+		 * @return True if an alpha component is present
 		 */
 		public boolean hasAlpha() {
 			return hasAlpha;
+		}
+
+		/**
+		 * Returns true if this format has a depth component.
+		 *
+		 * @return True if a depth component is present
+		 */
+		public boolean hasDepth() {
+			return hasDepth;
+		}
+
+		/**
+		 * Returns true if this format has a stencil component.
+		 *
+		 * @return True if a stencil component is present
+		 */
+		public boolean hasStencil() {
+			return hasStencil;
 		}
 	}
 
@@ -331,7 +370,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
 		}
 
 		/**
-		 * Gets the OpenGL constant for this texture wrap
+		 * Gets the OpenGL constant for this texture wrap.
 		 *
 		 * @return The OpenGL Constant
 		 */
@@ -357,7 +396,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
 		}
 
 		/**
-		 * Gets the OpenGL constant for this texture filter
+		 * Gets the OpenGL constant for this texture filter.
 		 *
 		 * @return The OpenGL Constant
 		 */

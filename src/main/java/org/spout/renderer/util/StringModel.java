@@ -50,7 +50,7 @@ import org.spout.renderer.Program;
 import org.spout.renderer.Shader.ShaderType;
 import org.spout.renderer.Texture;
 import org.spout.renderer.Texture.FilterMode;
-import org.spout.renderer.Texture.TextureFormat;
+import org.spout.renderer.Texture.ImageFormat;
 import org.spout.renderer.VertexArray;
 import org.spout.renderer.data.Uniform.ColorUniform;
 import org.spout.renderer.data.Uniform.FloatUniform;
@@ -327,7 +327,7 @@ public class StringModel extends Model {
 		// Dispose of the image graphics
 		graphics.dispose();
 		// Generate the texture
-		destination.setFormat(TextureFormat.RGBA);
+		destination.setFormat(ImageFormat.RGBA);
 		destination.setImageData(image);
 		destination.setMagFilter(FilterMode.LINEAR);
 		destination.setMinFilter(FilterMode.LINEAR);

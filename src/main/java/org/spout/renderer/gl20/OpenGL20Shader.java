@@ -37,10 +37,9 @@ import org.spout.renderer.Shader;
 import org.spout.renderer.util.RenderUtil;
 
 /**
- * Represents a shader for OpenGL 2.0. After being constructed, use {@link
- * #setSource(java.io.InputStream)} to set shader source and {@link #setType(org.spout.renderer.Shader.ShaderType)}
- * to set the shader type. The shader then needs to be created in the OpenGL context with {@link
- * #create()}. This class is meant to be used by the {@link OpenGL20Program} class.
+ * An OpenGL 2.0 implementation of {@link Shader}.
+ *
+ * @see Shader
  */
 public class OpenGL20Shader extends Shader {
 	@Override

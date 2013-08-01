@@ -28,29 +28,27 @@ package org.spout.renderer.gl20;
 
 import java.nio.ByteBuffer;
 
-import org.lwjgl.opengl.ContextCapabilities;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GLContext;
 import org.lwjgl.util.glu.GLU;
 
-import org.spout.math.GenericMath;
 import org.spout.renderer.GLVersion;
 import org.spout.renderer.Texture;
 import org.spout.renderer.util.RenderUtil;
 
 /**
- * Represents a texture for OpenGL 2.0. The textures image, dimension, wrapping and filters must be
- * set before it can be created. This texture offers mipmap support using GLU.
+ * An OpenGL 2.0 implementation of {@link Texture}.
+ *
+ * @see Texture
  */
 public class OpenGL20Texture extends Texture {
 	@Override
 	public void create() {
 		// Get the context capabilities for the graphics hardware
-		final ContextCapabilities contextCaps = GLContext.getCapabilities();
-		if (!contextCaps.GL_ARB_texture_non_power_of_two && (!GenericMath.isPowerOfTwo(width) || !GenericMath.isPowerOfTwo(height))) {
-			// TODO: Resize images. Also, this only really matters for mipmaps
-		}
+		//final ContextCapabilities contextCaps = GLContext.getCapabilities();
+		//if (!contextCaps.GL_ARB_texture_non_power_of_two && (!GenericMath.isPowerOfTwo(width) || !GenericMath.isPowerOfTwo(height))) {
+		// TODO: Resize images. Also, this only really matters for mipmaps
+		//}
 		// Generate and bind the texture in the unit
 		id = GL11.glGenTextures();
 		GL13.glActiveTexture(unit);
@@ -74,7 +72,7 @@ public class OpenGL20Texture extends Texture {
 	}
 
 	/**
-	 * Uploads a texture to the graphics card. This method has been separated from the create method
+	 * Uploads the texture to the graphics card. This method has been separated from the create method
 	 * for GL30 integrated mipmap support.
 	 *
 	 * @param buffer The buffer containing the image data
@@ -101,7 +99,6 @@ public class OpenGL20Texture extends Texture {
 		// Delete the texture
 		GL11.glDeleteTextures(id);
 		// Reset the data
-		id = 0;
 		super.destroy();
 		// Check for errors
 		RenderUtil.checkForOpenGLError();

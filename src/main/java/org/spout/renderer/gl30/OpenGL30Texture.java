@@ -33,10 +33,12 @@ import org.lwjgl.opengl.GL30;
 
 import org.spout.renderer.GLVersion;
 import org.spout.renderer.gl20.OpenGL20Texture;
+import org.spout.renderer.util.RenderUtil;
 
 /**
- * Represents a texture for OpenGL 3.0. The textures image, dimension, wrapping and filters must be
- * set before it can be created. This texture offers mipmap support using the OpenGL 3.0 feature.
+ * An OpenGL 3.0 implementation of {@link org.spout.renderer.Texture}.
+ *
+ * @see org.spout.renderer.Texture
  */
 public class OpenGL30Texture extends OpenGL20Texture {
 	@Override
@@ -47,6 +49,8 @@ public class OpenGL30Texture extends OpenGL20Texture {
 		if (minFilter.needsMipMaps() && buffer != null) {
 			GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
 		}
+		// Check for errors
+		RenderUtil.checkForOpenGLError();
 	}
 
 	@Override

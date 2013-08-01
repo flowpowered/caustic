@@ -33,9 +33,11 @@ import org.spout.renderer.gl20.OpenGL20Renderer;
 import org.spout.renderer.gl20.OpenGL20Shader;
 import org.spout.renderer.gl20.OpenGL20Texture;
 import org.spout.renderer.gl20.OpenGL20VertexArray;
+import org.spout.renderer.gl30.OpenGL30FrameBuffer;
 import org.spout.renderer.gl30.OpenGL30Material;
 import org.spout.renderer.gl30.OpenGL30Model;
 import org.spout.renderer.gl30.OpenGL30Program;
+import org.spout.renderer.gl30.OpenGL30RenderBuffer;
 import org.spout.renderer.gl30.OpenGL30Renderer;
 import org.spout.renderer.gl30.OpenGL30Texture;
 import org.spout.renderer.gl30.OpenGL30VertexArray;
@@ -154,6 +156,38 @@ public enum GLVersion {
 				return new OpenGL20Texture();
 			case GL30:
 				return new OpenGL30Texture();
+			default:
+				return null;
+		}
+	}
+
+	/**
+	 * Creates a new texture for the version.
+	 *
+	 * @return A new texture
+	 */
+	public FrameBuffer createFrameBuffer() {
+		switch (this) {
+			case GL20:
+				//return new OpenGL20Texture();
+			case GL30:
+				return new OpenGL30FrameBuffer();
+			default:
+				return null;
+		}
+	}
+
+	/**
+	 * Creates a new texture for the version.
+	 *
+	 * @return A new texture
+	 */
+	public RenderBuffer createRenderBuffer() {
+		switch (this) {
+			case GL20:
+				//return new OpenGL20Texture();
+			case GL30:
+				return new OpenGL30RenderBuffer();
 			default:
 				return null;
 		}
