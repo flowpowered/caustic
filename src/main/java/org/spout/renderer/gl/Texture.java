@@ -40,11 +40,12 @@ import org.lwjgl.opengl.GL30;
 
 import org.spout.renderer.Creatable;
 import org.spout.renderer.GLVersioned;
+import org.spout.renderer.data.VertexAttribute.DataType;
 
 /**
  * Represents a texture for OpenGL. Image data can be set with one of the
- * <code>setImageData(...)</code> methods before creation, but is not obligatory. This results in an
- * empty texture, with an undefined content. This is mostly used for frame buffers.
+ * <code>setImageData(...)</code> methods before creation, but this is not obligatory. This results
+ * in an empty texture, with an undefined content. This is mostly used for frame buffers.
  */
 public abstract class Texture extends Creatable implements GLVersioned {
 	protected int id = 0;
@@ -52,6 +53,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	protected int unit = GL13.GL_TEXTURE0;
 	// The format
 	protected ImageFormat format = ImageFormat.RGB;
+	protected DataType type = DataType.UNSIGNED_BYTE;
 	// Wrapping modes for s and t
 	protected WrapMode wrapT = WrapMode.REPEAT;
 	protected WrapMode wrapS = WrapMode.REPEAT;
@@ -123,6 +125,18 @@ public abstract class Texture extends Creatable implements GLVersioned {
 			throw new IllegalArgumentException("Format cannot be null");
 		}
 		this.format = format;
+	}
+
+	/**
+	 * Sets the texture's data type.
+	 *
+	 * @param type The type to set
+	 */
+	public void setType(DataType type) {
+		if (type == null) {
+			throw new IllegalArgumentException("Type cannot be null");
+		}
+		this.type = type;
 	}
 
 	/**
