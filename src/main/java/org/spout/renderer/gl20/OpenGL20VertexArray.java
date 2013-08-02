@@ -61,7 +61,6 @@ public class OpenGL20VertexArray extends VertexArray {
 		} else {
 			extension = VertexArrayExtension.NONE;
 		}
-		System.out.println("OpenGL20VertexArray extension: " + extension);
 	}
 
 	@Override

@@ -53,8 +53,6 @@ public class OpenGL20Texture extends Texture {
 		id = GL11.glGenTextures();
 		GL13.glActiveTexture(unit);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
-		// Set pixel storage mode
-		GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
 		// Upload the texture to the GPU
 		uploadTexture(imageData, width, height);
 		// Set the vertical and horizontal texture wraps (in the texture parameters)
@@ -82,10 +80,10 @@ public class OpenGL20Texture extends Texture {
 	protected void uploadTexture(ByteBuffer buffer, int width, int height) {
 		if (minFilter.needsMipMaps() && buffer != null) {
 			// Build mipmaps if using mip mapped filters
-			GLU.gluBuild2DMipmaps(GL11.GL_TEXTURE_2D, format.getGLConstant(), width, height, format.getGLConstant(), GL11.GL_UNSIGNED_BYTE, buffer);
+			GLU.gluBuild2DMipmaps(GL11.GL_TEXTURE_2D, format.getGLConstant(), width, height, format.getGLConstant(), type.getGLConstant(), buffer);
 		} else {
 			// Else just make it a normal texture
-			GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, format.getGLConstant(), width, height, 0, format.getGLConstant(), GL11.GL_UNSIGNED_BYTE, buffer);
+			GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, format.getGLConstant(), width, height, 0, format.getGLConstant(), type.getGLConstant(), buffer);
 		}
 	}
 

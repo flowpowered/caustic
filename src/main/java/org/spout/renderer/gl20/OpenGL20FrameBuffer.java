@@ -64,7 +64,7 @@ public class OpenGL20FrameBuffer extends FrameBuffer {
 	 */
 	public OpenGL20FrameBuffer() {
 		if (!GLContext.getCapabilities().GL_EXT_framebuffer_object) {
-			throw new UnsupportedOperationException("Frame buffers are not supported on this hardware");
+			throw new UnsupportedOperationException("Frame buffers are not supported by this hardware");
 		}
 	}
 
