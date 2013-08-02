@@ -31,6 +31,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.spout.renderer.Camera;
 import org.spout.renderer.gl.FrameBuffer;
 import org.spout.renderer.gl.Model;
 import org.spout.renderer.gl.Program;
