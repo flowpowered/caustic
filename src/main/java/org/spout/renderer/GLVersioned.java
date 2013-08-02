@@ -24,7 +24,7 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.gl;
+package org.spout.renderer;
 
 /**
  * Represents an object that has an OpenGL version associated to it.

@@ -43,7 +43,7 @@ import gnu.trove.map.TCharIntMap;
 import gnu.trove.map.hash.TCharFloatHashMap;
 import gnu.trove.map.hash.TCharIntHashMap;
 
-import org.spout.renderer.gl.GLVersion;
+import org.spout.renderer.GLVersion;
 import org.spout.renderer.gl.Material;
 import org.spout.renderer.gl.Model;
 import org.spout.renderer.gl.Program;
@@ -60,7 +60,7 @@ import org.spout.renderer.data.VertexData;
 
 /**
  * A model for rendering strings with a desired font. This model will work with both OpenGL
- * versions. After construction, set the OpenGL version with {@link #setGLVersion(org.spout.renderer.gl.GLVersion)}.
+ * versions. After construction, set the OpenGL version with {@link #setGLVersion(org.spout.renderer.GLVersion)}.
  * Next, set the glyphs that the model should support (the character set) with {@link
  * #setGlyphs(char...)} or {@link #setGlyphs(String)}. Finally, set the font with {@link
  * #setFont(java.awt.Font)}. The model can now be created with {@link #create()}, and added to a

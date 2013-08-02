@@ -27,6 +27,7 @@
 package org.spout.renderer.gl;
 
 import org.spout.renderer.Creatable;
+import org.spout.renderer.GLVersioned;
 import org.spout.renderer.data.UniformHolder;
 
 /**

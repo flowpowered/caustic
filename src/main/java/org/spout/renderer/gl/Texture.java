@@ -39,6 +39,7 @@ import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL30;
 
 import org.spout.renderer.Creatable;
+import org.spout.renderer.GLVersioned;
 
 /**
  * Represents a texture for OpenGL. Image data can be set with one of the

@@ -34,6 +34,7 @@ import org.lwjgl.opengl.GL40;
 import org.lwjgl.opengl.GL43;
 
 import org.spout.renderer.Creatable;
+import org.spout.renderer.GLVersioned;
 
 /**
  * Represents an OpenGL shader. The shader source and type must be set with {@link

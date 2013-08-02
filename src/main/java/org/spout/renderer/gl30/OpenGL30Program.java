@@ -26,7 +26,7 @@
  */
 package org.spout.renderer.gl30;
 
-import org.spout.renderer.gl.GLVersion;
+import org.spout.renderer.GLVersion;
 import org.spout.renderer.gl20.OpenGL20Program;
 
 /**

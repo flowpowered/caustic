@@ -30,6 +30,7 @@ import org.spout.math.imaginary.Quaternion;
 import org.spout.math.matrix.Matrix4;
 import org.spout.math.vector.Vector3;
 import org.spout.renderer.Creatable;
+import org.spout.renderer.GLVersioned;
 import org.spout.renderer.data.Uniform.Matrix4Uniform;
 import org.spout.renderer.data.UniformHolder;
 

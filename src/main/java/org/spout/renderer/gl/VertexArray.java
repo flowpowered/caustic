@@ -31,6 +31,7 @@ import org.lwjgl.opengl.GL32;
 import org.lwjgl.opengl.GL40;
 
 import org.spout.renderer.Creatable;
+import org.spout.renderer.GLVersioned;
 import org.spout.renderer.data.VertexData;
 
 /**

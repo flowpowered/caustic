@@ -24,8 +24,17 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.gl;
+package org.spout.renderer;
 
+import org.spout.renderer.gl.FrameBuffer;
+import org.spout.renderer.gl.Material;
+import org.spout.renderer.gl.Model;
+import org.spout.renderer.gl.Program;
+import org.spout.renderer.gl.RenderBuffer;
+import org.spout.renderer.gl.Renderer;
+import org.spout.renderer.gl.Shader;
+import org.spout.renderer.gl.Texture;
+import org.spout.renderer.gl.VertexArray;
 import org.spout.renderer.gl20.OpenGL20FrameBuffer;
 import org.spout.renderer.gl20.OpenGL20Material;
 import org.spout.renderer.gl20.OpenGL20Model;

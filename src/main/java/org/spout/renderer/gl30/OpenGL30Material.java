@@ -29,7 +29,7 @@ package org.spout.renderer.gl30;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
-import org.spout.renderer.gl.GLVersion;
+import org.spout.renderer.GLVersion;
 import org.spout.renderer.gl.Material;
 import org.spout.renderer.gl.Texture;
 import org.spout.renderer.util.RenderUtil;

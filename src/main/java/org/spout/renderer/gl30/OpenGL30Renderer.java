@@ -38,7 +38,7 @@ import org.lwjgl.opengl.GL32;
 import org.lwjgl.opengl.PixelFormat;
 
 import org.spout.renderer.gl.FrameBuffer;
-import org.spout.renderer.gl.GLVersion;
+import org.spout.renderer.GLVersion;
 import org.spout.renderer.gl.Material;
 import org.spout.renderer.gl.Model;
 import org.spout.renderer.gl.Program;

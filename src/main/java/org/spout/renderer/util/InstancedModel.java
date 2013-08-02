@@ -26,7 +26,7 @@
  */
 package org.spout.renderer.util;
 
-import org.spout.renderer.gl.GLVersion;
+import org.spout.renderer.GLVersion;
 import org.spout.renderer.gl.Material;
 import org.spout.renderer.gl.Model;
 import org.spout.renderer.gl.VertexArray;

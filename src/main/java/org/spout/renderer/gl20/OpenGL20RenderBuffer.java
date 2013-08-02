@@ -29,7 +29,7 @@ package org.spout.renderer.gl20;
 import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GLContext;
 
-import org.spout.renderer.gl.GLVersion;
+import org.spout.renderer.GLVersion;
 import org.spout.renderer.gl.RenderBuffer;
 import org.spout.renderer.util.RenderUtil;
 

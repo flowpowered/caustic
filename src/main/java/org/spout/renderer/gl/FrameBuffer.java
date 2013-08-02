@@ -30,6 +30,7 @@ import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GL30;
 
 import org.spout.renderer.Creatable;
+import org.spout.renderer.GLVersioned;
 
 /**
  * Represents an OpenGL frame buffer. A frame buffer can be assigned to a render list. When
