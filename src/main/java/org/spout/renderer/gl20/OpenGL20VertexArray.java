@@ -26,27 +26,44 @@
  */
 package org.spout.renderer.gl20;
 
+import org.lwjgl.opengl.APPLEVertexArrayObject;
+import org.lwjgl.opengl.ARBVertexArrayObject;
+import org.lwjgl.opengl.ContextCapabilities;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GLContext;
 
 import org.spout.renderer.GLVersion;
-import org.spout.renderer.gl.VertexArray;
 import org.spout.renderer.data.VertexAttribute;
 import org.spout.renderer.data.VertexAttribute.DataType;
+import org.spout.renderer.gl.VertexArray;
 import org.spout.renderer.util.RenderUtil;
 
 /**
  * An OpenGL 2.0 implementation of {@link VertexArray}.
- * <p>
- * Represents an OpenGL 2.0 vertex array. Since core OpenGL doesn't actually support vertex array
- * objects until 3.0, this class doesn't use the that, but it does use the vertex array methods
- * available to define the attributes, just not individually for an array. Thus, they have to be
- * redefined on each render call.
+ * <p/>
+ * Vertex arrays will be used if the ARB or APPLE extension is supported by the hardware. Else,
+ * since core OpenGL doesn't support them until 3.0, the vertex attributes will have to be redefined
+ * on each render call.
  *
  * @see VertexArray
  */
 public class OpenGL20VertexArray extends VertexArray {
+	private final VertexArrayExtension extension;
+
+	public OpenGL20VertexArray() {
+		final ContextCapabilities capabilities = GLContext.getCapabilities();
+		if (capabilities.GL_ARB_vertex_array_object) {
+			extension = VertexArrayExtension.ARB;
+		} else if (capabilities.GL_APPLE_vertex_array_object) {
+			extension = VertexArrayExtension.APPLE;
+		} else {
+			extension = VertexArrayExtension.NONE;
+		}
+		System.out.println("OpenGL20VertexArray extension: " + extension);
+	}
+
 	@Override
 	public void create() {
 		if (created) {
@@ -54,6 +71,11 @@ public class OpenGL20VertexArray extends VertexArray {
 		}
 		if (vertexData == null) {
 			throw new IllegalStateException("Vertex data has not been set");
+		}
+		if (extension.has()) {
+			// Generate and bind the vao
+			id = extension.glGenVertexArrays();
+			extension.glBindVertexArray(id);
 		}
 		// Generate, bind and fill the indices vbo then unbind
 		indicesBufferID = GL15.glGenBuffers();
@@ -68,10 +90,15 @@ public class OpenGL20VertexArray extends VertexArray {
 		// For each attribute, generate, bind and fill the vbo,
 		// no vao setup here, this is done during the render call
 		for (int i = 0; i < vertexData.getAttributeCount(); i++) {
+			final VertexAttribute attribute = vertexData.getAttribute(i);
 			final int bufferID = GL15.glGenBuffers();
 			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, bufferID);
-			GL15.glBufferData(GL15.GL_ARRAY_BUFFER, vertexData.getAttributeBuffer(i), GL15.GL_STATIC_DRAW);
+			GL15.glBufferData(GL15.GL_ARRAY_BUFFER, attribute.getData(), GL15.GL_STATIC_DRAW);
 			attributeBufferIDs[i] = bufferID;
+			if (extension.has()) {
+				// Or as a float, normalized or not
+				GL20.glVertexAttribPointer(i, attribute.getSize(), attribute.getType().getGLConstant(), attribute.getUploadMode().normalize(), 0, 0);
+			}
 		}
 		// Unbind the last vbo
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
@@ -89,9 +116,22 @@ public class OpenGL20VertexArray extends VertexArray {
 		// Unbind and delete indices buffer
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
 		GL15.glDeleteBuffers(indicesBufferID);
+		if (extension.has()) {
+			// Bind the vao for deletion
+			extension.glBindVertexArray(id);
+		}
 		// Delete the attribute buffers
 		for (int i = 0; i < vertexData.getAttributeCount(); i++) {
+			if (extension.has()) {
+				// Disable the attribute
+				GL20.glDisableVertexAttribArray(i);
+			}
 			GL15.glDeleteBuffers(attributeBufferIDs[i]);
+		}
+		if (extension.has()) {
+			// Unbind the vao and delete it
+			extension.glBindVertexArray(0);
+			extension.glDeleteVertexArrays(id);
 		}
 		// Reset the data and state
 		indicesBufferID = 0;
@@ -104,18 +144,26 @@ public class OpenGL20VertexArray extends VertexArray {
 	@Override
 	public void draw() {
 		checkCreated();
-		// Bind and enable the vertex attributes
+		if (extension.has()) {
+			// Bind the vao and enable all attributes
+			extension.glBindVertexArray(id);
+		}
+		// Enable the vertex attributes
 		for (int i = 0; i < vertexData.getAttributeCount(); i++) {
-			// Bind the buffer
-			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, attributeBufferIDs[i]);
-			// Define the attribute
-			final VertexAttribute attribute = vertexData.getAttribute(i);
-			GL20.glVertexAttribPointer(i, attribute.getSize(), attribute.getType().getGLConstant(), attribute.getUploadMode().normalize(), 0, 0);
+			if (!extension.has()) {
+				// Bind the buffer
+				GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, attributeBufferIDs[i]);
+				// Define the attribute
+				final VertexAttribute attribute = vertexData.getAttribute(i);
+				GL20.glVertexAttribPointer(i, attribute.getSize(), attribute.getType().getGLConstant(), attribute.getUploadMode().normalize(), 0, 0);
+			}
 			// Enable it
 			GL20.glEnableVertexAttribArray(i);
 		}
-		// Unbind the last buffer
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+		if (!extension.has()) {
+			// Unbind the last buffer
+			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+		}
 		// Bind the indices buffer
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesBufferID);
 		// Draw all indices with the provided mode
@@ -133,5 +181,46 @@ public class OpenGL20VertexArray extends VertexArray {
 	@Override
 	public GLVersion getGLVersion() {
 		return GLVersion.GL20;
+	}
+
+	private static enum VertexArrayExtension {
+		NONE, ARB, APPLE;
+
+		private boolean has() {
+			return this != NONE;
+		}
+
+		private int glGenVertexArrays() {
+			switch (this) {
+				case ARB:
+					return ARBVertexArrayObject.glGenVertexArrays();
+				case APPLE:
+					return APPLEVertexArrayObject.glGenVertexArraysAPPLE();
+				default:
+					return 0;
+			}
+		}
+
+		private void glBindVertexArray(int array) {
+			switch (this) {
+				case ARB:
+					ARBVertexArrayObject.glBindVertexArray(array);
+					break;
+				case APPLE:
+					APPLEVertexArrayObject.glBindVertexArrayAPPLE(array);
+					break;
+			}
+		}
+
+		private void glDeleteVertexArrays(int array) {
+			switch (this) {
+				case ARB:
+					ARBVertexArrayObject.glDeleteVertexArrays(array);
+					break;
+				case APPLE:
+					APPLEVertexArrayObject.glDeleteVertexArraysAPPLE(array);
+					break;
+			}
+		}
 	}
 }

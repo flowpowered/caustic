@@ -32,10 +32,10 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
 import org.spout.renderer.GLVersion;
-import org.spout.renderer.gl.VertexArray;
 import org.spout.renderer.data.VertexAttribute;
 import org.spout.renderer.data.VertexAttribute.DataType;
 import org.spout.renderer.data.VertexAttribute.UploadMode;
+import org.spout.renderer.gl.VertexArray;
 import org.spout.renderer.util.RenderUtil;
 
 /**
@@ -72,6 +72,7 @@ public class OpenGL30VertexArray extends VertexArray {
 			final int bufferID = GL15.glGenBuffers();
 			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, bufferID);
 			GL15.glBufferData(GL15.GL_ARRAY_BUFFER, attribute.getData(), GL15.GL_STATIC_DRAW);
+			attributeBufferIDs[i] = bufferID;
 			// Three ways to interpret integer data
 			if (attribute.getType().isInteger() && attribute.getUploadMode() == UploadMode.KEEP_INT) {
 				// Directly as an int
@@ -80,7 +81,6 @@ public class OpenGL30VertexArray extends VertexArray {
 				// Or as a float, normalized or not
 				GL20.glVertexAttribPointer(i, attribute.getSize(), attribute.getType().getGLConstant(), attribute.getUploadMode().normalize(), 0, 0);
 			}
-			attributeBufferIDs[i] = bufferID;
 		}
 		// Unbind the vbo and vao
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
