@@ -92,7 +92,7 @@ public class OpenGL30Renderer extends Renderer {
 	@Override
 	public void destroy() {
 		checkCreated();
-		// Destroy models
+		// Destroy models and materials
 		for (RenderList renderList : renderLists.values()) {
 			for (Model model : renderList) {
 				if (model.isCreated()) {

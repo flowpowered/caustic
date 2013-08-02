@@ -127,12 +127,18 @@ public class OpenGL20Renderer extends Renderer {
 	@Override
 	public void render() {
 		checkCreated();
-		// Clear the last render
+		// Clear the last render on the screen buffer
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		// Render all the created models
 		for (RenderList renderList : renderLists.values()) {
 			if (!renderList.isActive()) {
 				continue;
+			}
+			final FrameBuffer frameBuffer = renderList.getFrameBuffer();
+			if (frameBuffer != null) {
+				frameBuffer.bind();
+				// Clear the last render on the frame buffer
+				GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 			}
 			for (Model model : renderList) {
 				if (!model.isCreated()) {
@@ -154,6 +160,9 @@ public class OpenGL20Renderer extends Renderer {
 				model.render();
 				// Unbind the material
 				material.unbind();
+			}
+			if (frameBuffer != null) {
+				frameBuffer.unbind();
 			}
 		}
 		// Check for errors

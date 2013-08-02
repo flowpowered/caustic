@@ -285,7 +285,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
 		}
 
 		/**
-		 * Gets the OpenGL constant for this texture wrap
+		 * Gets the OpenGL constant for this image format.
 		 *
 		 * @return The OpenGL Constant
 		 */

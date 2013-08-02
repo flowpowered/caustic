@@ -26,18 +26,11 @@
  */
 package org.spout.renderer.gl;
 
-import org.spout.renderer.gl.FrameBuffer;
-import org.spout.renderer.gl.Material;
-import org.spout.renderer.gl.Model;
-import org.spout.renderer.gl.Program;
-import org.spout.renderer.gl.RenderBuffer;
-import org.spout.renderer.gl.Renderer;
-import org.spout.renderer.gl.Shader;
-import org.spout.renderer.gl.Texture;
-import org.spout.renderer.gl.VertexArray;
+import org.spout.renderer.gl20.OpenGL20FrameBuffer;
 import org.spout.renderer.gl20.OpenGL20Material;
 import org.spout.renderer.gl20.OpenGL20Model;
 import org.spout.renderer.gl20.OpenGL20Program;
+import org.spout.renderer.gl20.OpenGL20RenderBuffer;
 import org.spout.renderer.gl20.OpenGL20Renderer;
 import org.spout.renderer.gl20.OpenGL20Shader;
 import org.spout.renderer.gl20.OpenGL20Texture;
@@ -178,7 +171,7 @@ public enum GLVersion {
 	public FrameBuffer createFrameBuffer() {
 		switch (this) {
 			case GL20:
-				//return new OpenGL20Texture();
+				return new OpenGL20FrameBuffer();
 			case GL30:
 				return new OpenGL30FrameBuffer();
 			default:
@@ -194,7 +187,7 @@ public enum GLVersion {
 	public RenderBuffer createRenderBuffer() {
 		switch (this) {
 			case GL20:
-				//return new OpenGL20Texture();
+				return new OpenGL20RenderBuffer();
 			case GL30:
 				return new OpenGL30RenderBuffer();
 			default:
