@@ -35,6 +35,8 @@ import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import gnu.trove.impl.Constants;
 import gnu.trove.list.TFloatList;
@@ -42,13 +44,16 @@ import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TFloatArrayList;
 import gnu.trove.map.TCharFloatMap;
 import gnu.trove.map.TCharIntMap;
+import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TCharFloatHashMap;
 import gnu.trove.map.hash.TCharIntHashMap;
+import gnu.trove.map.hash.TIntObjectHashMap;
 
 import org.spout.math.GenericMath;
+import org.spout.math.vector.Vector2;
 import org.spout.renderer.GLVersion;
 import org.spout.renderer.data.Uniform.ColorUniform;
-import org.spout.renderer.data.Uniform.FloatUniform;
+import org.spout.renderer.data.Uniform.Vector2Uniform;
 import org.spout.renderer.data.VertexAttribute;
 import org.spout.renderer.data.VertexAttribute.DataType;
 import org.spout.renderer.data.VertexData;
@@ -74,6 +79,11 @@ import org.spout.renderer.gl.VertexArray;
  * resources. Please note that altering the OpenGL version, glyphs or font after creation has no
  * effect. The model needs to be recreated. The only exception is the font color.
  * <p/>
+ * Colors are supported. Use <code>#aarrggbb</code>, where <code>aa</code> is the alpha hexadecimal
+ * value, <code>rr</code> is the red hexadecimal value, <code>gg</code> is the green hexadecimal
+ * value and <code>bb</code> is the blue hexadecimal value. Color codes can be escaped with
+ * <code>\</code>.
+ * <p/>
  * As for the implementation, this model wraps a model of the desired OpenGL version. The model
  * contains a mesh of tiles, all at (0,0). Each tile has one glyph on it. When rendering, the
  * desired tile is selected, placed at the origin and rendered. The next glyph will be rendered in
@@ -82,6 +92,7 @@ import org.spout.renderer.gl.VertexArray;
  */
 public class StringModel extends Model {
 	private static final int GLYPH_INDEX_COUNT = 6;
+	private static final Pattern COLOR_PATTERN = Pattern.compile("[^\\\\]?#([a-fA-F\\d]{8})");
 	private GLVersion glVersion;
 	private char[] glyphs;
 	private Font font;
@@ -89,9 +100,11 @@ public class StringModel extends Model {
 	private Model model;
 	private final TCharIntMap glyphIndexes = new TCharIntHashMap(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, (char) 0, -1);
 	private final TCharFloatMap glyphOffsets = new TCharFloatHashMap();
-	private int glyphPadding = 6;
-	private float normalizedGlyphPadding;
+	private int glyphPadding;
+	private float worldGlyphPadding;
+	private float worldLineHeight;
 	private String string;
+	private final TIntObjectMap<Color> colorIndices = new TIntObjectHashMap<>();
 
 	@Override
 	public void create() {
@@ -122,7 +135,7 @@ public class StringModel extends Model {
 		for (char glyph : glyphs) {
 			widths.put(glyph, fontMetrics.charWidth(glyph));
 		}
-		// Set the glyph padding to half the max width of the first 256 characters
+		// Set the glyph padding to half the mean width of the first 256 characters
 		glyphPadding = GenericMath.mean(fontMetrics.getWidths()) / 2;
 		// Dispose of the temporary resources
 		graphics.dispose();
@@ -133,7 +146,9 @@ public class StringModel extends Model {
 		width = generateTexture(texture, glyphs, widths, font, width, height);
 		texture.create();
 		// Set the normalized glyph padding, needs to be subtracted to the initial glyph offset
-		normalizedGlyphPadding = glyphPadding / width;
+		worldGlyphPadding = (float) glyphPadding / windowWidth;
+		// Set the line height, for new lines
+		worldLineHeight = (float) fontMetrics.getHeight() / windowWidth;
 		// Create the material
 		final Material material = glVersion.createMaterial();
 		generateMaterial(material, glVersion);
@@ -147,7 +162,7 @@ public class StringModel extends Model {
 		// Only render one glyph per render call
 		model.getVertexArray().setIndicesCount(GLYPH_INDEX_COUNT);
 		// Add a uniform for the glyph position offset
-		uniforms.add(new FloatUniform("glyphOffset", 0));
+		uniforms.add(new Vector2Uniform("glyphOffset", Vector2.ZERO));
 		// Add a uniform for the font color
 		uniforms.add(new ColorUniform("fontColor", Color.WHITE));
 		// Release some resources
@@ -180,12 +195,31 @@ public class StringModel extends Model {
 	public void render() {
 		checkCreated();
 		final Program program = model.getMaterial().getProgram();
-		program.upload(uniforms.getColor("fontColor"));
+		final ColorUniform colorUniform = uniforms.getColor("fontColor");
+		colorUniform.set(Color.WHITE);
+		program.upload(colorUniform);
 		final VertexArray vertexArray = model.getVertexArray();
-		final FloatUniform glyphOffset = uniforms.getFloat("glyphOffset");
+		final Vector2Uniform glyphOffset = uniforms.getVector2("glyphOffset");
 		// Remove the padding for the first glyph
-		float totalGlyphOffset = -normalizedGlyphPadding;
-		for (char glyph : string.toCharArray()) {
+		Vector2 offset = new Vector2(-worldGlyphPadding, 0);
+		final char[] glyphs = string.toCharArray();
+		for (int i = 0; i < glyphs.length; i++) {
+			final char glyph = glyphs[i];
+			// Move the glyph offset to the next line for the new line character
+			if (glyph == '\n') {
+				offset = new Vector2(-worldGlyphPadding, offset.getY() - worldLineHeight);
+				continue;
+			}
+			// Look for a color code
+			final Color color = colorIndices.get(i);
+			if (color != null) {
+				// Upload the color
+				colorUniform.set(color);
+				program.upload(colorUniform);
+				// Skip the color code
+				i += 8;
+				continue;
+			}
 			// Get the glyph start index
 			final int glyphIndex = glyphIndexes.get(glyph);
 			// Skip glyphs missing in the texture
@@ -195,10 +229,10 @@ public class StringModel extends Model {
 			// Set rendering indices offset for the glyph
 			vertexArray.setIndicesOffset(glyphIndex);
 			// Offset the glyph in the string
-			glyphOffset.set(totalGlyphOffset);
+			glyphOffset.set(offset);
 			program.upload(glyphOffset);
 			// Offset for the next glyph
-			totalGlyphOffset += glyphOffsets.get(glyph);
+			offset = offset.add(glyphOffsets.get(glyph), 0);
 			// Render the model
 			model.render();
 		}
@@ -276,15 +310,13 @@ public class StringModel extends Model {
 	 */
 	public void setString(String string) {
 		this.string = string;
-	}
-
-	/**
-	 * Sets the font color.
-	 *
-	 * @param color The font color
-	 */
-	public void setColor(Color color) {
-		uniforms.getColor("fontColor").set(color);
+		// Find all the colors
+		colorIndices.clear();
+		final Matcher matcher = COLOR_PATTERN.matcher(string);
+		while (matcher.find()) {
+			// Save the color and its index
+			colorIndices.put(matcher.start(1) - 1, new Color((int) Long.parseLong(matcher.group(1), 16), true));
+		}
 	}
 
 	private void generateMesh(Model destination, char[] glyphs, TCharIntMap glyphWidths, int textureWidth, int textureHeight) {
@@ -310,21 +342,20 @@ public class StringModel extends Model {
 		float x = 0;
 		int index = 0;
 		int i = 0;
-		// This ratio corrects the size so that pixels correspond as perfectly as possible
-		final float widthRatio = (float) textureWidth / windowWidth;
-		final float glyphHeight = ((float) textureHeight / textureWidth) * widthRatio;
+		final float glyphHeight = (float) textureHeight / windowWidth;
 		for (char glyph : glyphs) {
 			final int glyphWidth = glyphWidths.get(glyph);
-			final float paddedGlyphWidth = (float) (glyphWidth + glyphPadding * 2) / textureWidth;
+			float paddedGlyphWidth = glyphWidth + glyphPadding * 2;
 			add(positions, 0, 0, 0, glyphHeight);
 			add(textureCoords, x, 0, x, 1);
-			x += paddedGlyphWidth;
-			add(positions, paddedGlyphWidth * widthRatio, 0, paddedGlyphWidth * widthRatio, glyphHeight);
+			x += paddedGlyphWidth / textureWidth;
+			paddedGlyphWidth /= windowWidth;
+			add(positions, paddedGlyphWidth, 0, paddedGlyphWidth, glyphHeight);
 			add(textureCoords, x, 0, x, 1);
 			add(indices, index, index + 2, index + 1, index + 2, index + 3, index + 1);
 			index += 4;
 			glyphIndexes.put(glyph, i);
-			glyphOffsets.put(glyph, ((float) glyphWidth / textureWidth) * widthRatio);
+			glyphOffsets.put(glyph, (float) glyphWidth / windowWidth);
 			i += 6;
 		}
 		positionAttribute.setData(positions);
