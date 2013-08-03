@@ -38,7 +38,7 @@ import org.spout.renderer.data.UniformHolder;
  * Represents an OpenGL model. Each model has it's own position and rotation and set of uniforms.
  * The material needs to be set with {@link #setMaterial(Material)}, before the model can be
  * created. To give the material a mesh, use {@link #getVertexArray()} then {@link
- * VertexArray#setVertexData(org.spout.renderer.data.VertexData)}.
+ * VertexArray#setData(org.spout.renderer.data.VertexData)}.
  */
 public abstract class Model extends Creatable implements GLVersioned {
 	// Position and rotation properties

@@ -30,6 +30,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -43,7 +45,13 @@ import gnu.trove.map.TCharIntMap;
 import gnu.trove.map.hash.TCharFloatHashMap;
 import gnu.trove.map.hash.TCharIntHashMap;
 
+import org.spout.math.GenericMath;
 import org.spout.renderer.GLVersion;
+import org.spout.renderer.data.Uniform.ColorUniform;
+import org.spout.renderer.data.Uniform.FloatUniform;
+import org.spout.renderer.data.VertexAttribute;
+import org.spout.renderer.data.VertexAttribute.DataType;
+import org.spout.renderer.data.VertexData;
 import org.spout.renderer.gl.Material;
 import org.spout.renderer.gl.Model;
 import org.spout.renderer.gl.Program;
@@ -52,23 +60,19 @@ import org.spout.renderer.gl.Texture;
 import org.spout.renderer.gl.Texture.FilterMode;
 import org.spout.renderer.gl.Texture.ImageFormat;
 import org.spout.renderer.gl.VertexArray;
-import org.spout.renderer.data.Uniform.ColorUniform;
-import org.spout.renderer.data.Uniform.FloatUniform;
-import org.spout.renderer.data.VertexAttribute;
-import org.spout.renderer.data.VertexAttribute.DataType;
-import org.spout.renderer.data.VertexData;
 
 /**
  * A model for rendering strings with a desired font. This model will work with both OpenGL
  * versions. After construction, set the OpenGL version with {@link #setGLVersion(org.spout.renderer.GLVersion)}.
  * Next, set the glyphs that the model should support (the character set) with {@link
- * #setGlyphs(char...)} or {@link #setGlyphs(String)}. Finally, set the font with {@link
- * #setFont(java.awt.Font)}. The model can now be created with {@link #create()}, and added to a
- * renderer. To render a string, set it with {@link #setString(String)}. Glyphs in the string that
- * have not been declared when setting the glyphs will be ignored. When done, use {@link #destroy()}
- * to release the model resources. Please note that altering the OpenGL version, glyphs or font
- * after creation has no effect. The model needs to be recreated. The only exception is the font
- * color.
+ * #setGlyphs(char...)} or {@link #setGlyphs(String)}. Then, set the font with {@link
+ * #setFont(java.awt.Font)}. Finally, set the window width with {@link #setWindowWidth(int)}. This
+ * is used to calculate the dimensions of pixels so that the font appears as smooth as possible on a
+ * GUI. The model can now be created with {@link #create()}, and added to a renderer. To render a
+ * string, set it with {@link #setString(String)}. Glyphs in the string that have not been declared
+ * when setting the glyphs will be ignored. When done, use {@link #destroy()} to release the model
+ * resources. Please note that altering the OpenGL version, glyphs or font after creation has no
+ * effect. The model needs to be recreated. The only exception is the font color.
  * <p/>
  * As for the implementation, this model wraps a model of the desired OpenGL version. The model
  * contains a mesh of tiles, all at (0,0). Each tile has one glyph on it. When rendering, the
@@ -77,14 +81,16 @@ import org.spout.renderer.data.VertexData;
  * are only uploaded once; the renderer uses the indices for the desired glyph.
  */
 public class StringModel extends Model {
-	private static final int GLYPH_PADDING = 6;
 	private static final int GLYPH_INDEX_COUNT = 6;
 	private GLVersion glVersion;
 	private char[] glyphs;
 	private Font font;
+	private int windowWidth = -1;
 	private Model model;
 	private final TCharIntMap glyphIndexes = new TCharIntHashMap(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, (char) 0, -1);
 	private final TCharFloatMap glyphOffsets = new TCharFloatHashMap();
+	private int glyphPadding = 6;
+	private float normalizedGlyphPadding;
 	private String string;
 
 	@Override
@@ -101,6 +107,9 @@ public class StringModel extends Model {
 		if (font == null) {
 			throw new IllegalStateException("Font has not been set");
 		}
+		if (windowWidth == -1) {
+			throw new IllegalStateException("The window width has not been set");
+		}
 		// Create temporary graphics, font metrics and render context
 		final Graphics graphics = new BufferedImage(1, 1, BufferedImage.TYPE_4BYTE_ABGR).getGraphics();
 		graphics.setFont(font);
@@ -113,14 +122,18 @@ public class StringModel extends Model {
 		for (char glyph : glyphs) {
 			widths.put(glyph, fontMetrics.charWidth(glyph));
 		}
+		// Set the glyph padding to half the max width of the first 256 characters
+		glyphPadding = GenericMath.mean(fontMetrics.getWidths()) / 2;
 		// Dispose of the temporary resources
 		graphics.dispose();
 		// Create the texture
-		final int width = (int) Math.ceil(size.getWidth());
+		int width = (int) Math.ceil(size.getWidth());
 		final int height = (int) Math.ceil(size.getHeight());
 		final Texture texture = glVersion.createTexture();
-		generateTexture(texture, glyphs, widths, font, width, height);
+		width = generateTexture(texture, glyphs, widths, font, width, height);
 		texture.create();
+		// Set the normalized glyph padding, needs to be subtracted to the initial glyph offset
+		normalizedGlyphPadding = glyphPadding / width;
 		// Create the material
 		final Material material = glVersion.createMaterial();
 		generateMaterial(material, glVersion);
@@ -141,6 +154,7 @@ public class StringModel extends Model {
 		glVersion = null;
 		glyphs = null;
 		font = null;
+		windowWidth = -1;
 		// Update the state
 		super.create();
 	}
@@ -169,7 +183,8 @@ public class StringModel extends Model {
 		program.upload(uniforms.getColor("fontColor"));
 		final VertexArray vertexArray = model.getVertexArray();
 		final FloatUniform glyphOffset = uniforms.getFloat("glyphOffset");
-		float totalGlyphOffset = 0;
+		// Remove the padding for the first glyph
+		float totalGlyphOffset = -normalizedGlyphPadding;
 		for (char glyph : string.toCharArray()) {
 			// Get the glyph start index
 			final int glyphIndex = glyphIndexes.get(glyph);
@@ -182,6 +197,7 @@ public class StringModel extends Model {
 			// Offset the glyph in the string
 			glyphOffset.set(totalGlyphOffset);
 			program.upload(glyphOffset);
+			// Offset for the next glyph
 			totalGlyphOffset += glyphOffsets.get(glyph);
 			// Render the model
 			model.render();
@@ -245,6 +261,15 @@ public class StringModel extends Model {
 	}
 
 	/**
+	 * Sets the window width.
+	 *
+	 * @param width The window width
+	 */
+	public void setWindowWidth(int width) {
+		this.windowWidth = width;
+	}
+
+	/**
 	 * Sets the string to render.
 	 *
 	 * @param string The string to render
@@ -262,7 +287,7 @@ public class StringModel extends Model {
 		uniforms.getColor("fontColor").set(color);
 	}
 
-	private void generateMesh(Model destination, char[] glyphs, TCharIntMap glyphWidths, float textureWidth, float textureHeight) {
+	private void generateMesh(Model destination, char[] glyphs, TCharIntMap glyphWidths, int textureWidth, int textureHeight) {
 		// Add the positions and texture coordinates attributes
 		final VertexData data = new VertexData();
 		final VertexAttribute positionAttribute = new VertexAttribute("positions", DataType.FLOAT, 2);
@@ -285,44 +310,45 @@ public class StringModel extends Model {
 		float x = 0;
 		int index = 0;
 		int i = 0;
-		final float paddedTextureWidth = textureWidth + glyphs.length * GLYPH_PADDING * 2;
-		final float glyphHeight = textureHeight / paddedTextureWidth;
+		// This ratio corrects the size so that pixels correspond as perfectly as possible
+		final float widthRatio = (float) textureWidth / windowWidth;
+		final float glyphHeight = ((float) textureHeight / textureWidth) * widthRatio;
 		for (char glyph : glyphs) {
 			final int glyphWidth = glyphWidths.get(glyph);
-			final float paddedGlyphWidth = (glyphWidth + GLYPH_PADDING * 2) / paddedTextureWidth;
+			final float paddedGlyphWidth = (float) (glyphWidth + glyphPadding * 2) / textureWidth;
 			add(positions, 0, 0, 0, glyphHeight);
 			add(textureCoords, x, 0, x, 1);
 			x += paddedGlyphWidth;
-			add(positions, paddedGlyphWidth, 0, paddedGlyphWidth, glyphHeight);
+			add(positions, paddedGlyphWidth * widthRatio, 0, paddedGlyphWidth * widthRatio, glyphHeight);
 			add(textureCoords, x, 0, x, 1);
 			add(indices, index, index + 2, index + 1, index + 2, index + 3, index + 1);
 			index += 4;
 			glyphIndexes.put(glyph, i);
-			glyphOffsets.put(glyph, glyphWidth / textureWidth);
+			glyphOffsets.put(glyph, ((float) glyphWidth / textureWidth) * widthRatio);
 			i += 6;
 		}
 		positionAttribute.setData(positions);
 		textureCoordsAttribute.setData(textureCoords);
 		// Set the vertex data in the model
-		destination.getVertexArray().setVertexData(data);
+		destination.getVertexArray().setData(data);
 	}
 
-	private static void generateTexture(Texture destination, char[] glyphs, TCharIntMap glyphWidths, Font font, int width, int height) {
+	private int generateTexture(Texture destination, char[] glyphs, TCharIntMap glyphWidths, Font font, int width, int height) {
 		// Create an image for the texture
-		final BufferedImage image = new BufferedImage(width + glyphs.length * GLYPH_PADDING * 2, height, BufferedImage.TYPE_4BYTE_ABGR);
+		width += glyphs.length * glyphPadding * 2;
+		final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		final Graphics graphics = image.getGraphics();
 		// Draw the glyphs in white on a transparent background
 		graphics.setColor(Color.white);
 		graphics.setFont(font);
-		// TODO: add support for transparency, and test this out
-		//((Graphics2D) graphics).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+		((Graphics2D) graphics).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
 		final FontMetrics fontMetrics = graphics.getFontMetrics();
 		int x = 0;
 		final int y = fontMetrics.getAscent();
 		for (char glyph : glyphs) {
-			x += GLYPH_PADDING;
+			x += glyphPadding;
 			graphics.drawString(String.valueOf(glyph), x, y);
-			x += glyphWidths.get(glyph) + GLYPH_PADDING;
+			x += glyphWidths.get(glyph) + glyphPadding;
 		}
 		// Dispose of the image graphics
 		graphics.dispose();
@@ -332,6 +358,7 @@ public class StringModel extends Model {
 		destination.setMagFilter(FilterMode.LINEAR);
 		destination.setMinFilter(FilterMode.LINEAR);
 		destination.setUnit(0);
+		return width;
 	}
 
 	private static void add(TFloatList list, float... f) {

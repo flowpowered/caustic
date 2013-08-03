@@ -27,6 +27,14 @@
 package org.spout.renderer.gl;
 
 import java.awt.Color;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL32;
 
 import org.spout.renderer.Creatable;
 import org.spout.renderer.GLVersioned;
@@ -45,11 +53,12 @@ public abstract class Renderer extends Creatable implements GLVersioned {
 	protected int windowWidth = 640;
 	protected int windowHeight = 480;
 	// Properties
-	protected Color backgroundColor = new Color(0.2f, 0.2f, 0.2f, 0);
-	//Culling enabled
-	protected boolean cullingEnabled;
+	protected final Set<Capability> capabilities = EnumSet.noneOf(Capability.class);
 	// Renderer uniforms
 	protected final UniformHolder uniforms = new UniformHolder();
+	// Models
+	protected final Set<RenderList> renderLists = new TreeSet<>();
+	protected final Map<String, RenderList> renderListsByName = new HashMap<>();
 
 	/**
 	 * Uploads the renderer uniforms to the desired program.
@@ -63,13 +72,85 @@ public abstract class Renderer extends Creatable implements GLVersioned {
 	 */
 	public abstract void render();
 
-	public abstract RenderList getRenderList(String name);
+	/**
+	 * Sets the renderer buffer clear color. This can be interpreted as the background color.
+	 *
+	 * @param color The clear color
+	 */
+	public abstract void setClearColor(Color color);
 
-	public abstract boolean hasRenderList(String name);
+	/**
+	 * Disables the capability.
+	 *
+	 * @param capability The capability to disable
+	 */
+	protected abstract void disable(Capability capability);
 
-	public abstract void addRenderList(RenderList list);
+	/**
+	 * Enables the capability.
+	 *
+	 * @param capability The capability to enable
+	 */
+	protected abstract void enable(Capability capability);
 
-	public abstract void removeRenderList(String name);
+	/**
+	 * Sets the renderer capabilities to only the provided ones.
+	 *
+	 * @param capabilities The capabilities to set
+	 */
+	protected void setCapabilities(Set<Capability> capabilities) {
+		for (Capability oldCapability : this.capabilities) {
+			if (!capabilities.contains(oldCapability)) {
+				disable(oldCapability);
+				this.capabilities.remove(oldCapability);
+			}
+		}
+		for (Capability newCapability : capabilities) {
+			if (!this.capabilities.contains(newCapability)) {
+				enable(newCapability);
+				this.capabilities.add(newCapability);
+			}
+		}
+	}
+
+	/**
+	 * Returns the render list for the name.
+	 *
+	 * @param name the name for lookup
+	 * @return The render list, or null if non can be found
+	 */
+	public RenderList getRenderList(String name) {
+		return renderListsByName.get(name);
+	}
+
+	/**
+	 * Returns true if the render has a render list for the name.
+	 *
+	 * @param name The name to lookup
+	 * @return Whether or not a list of that name is present
+	 */
+	public boolean hasRenderList(String name) {
+		return renderListsByName.containsKey(name);
+	}
+
+	/**
+	 * Adds a render list to the renderer.
+	 *
+	 * @param list The list to add
+	 */
+	public void addRenderList(RenderList list) {
+		renderLists.add(list);
+		renderListsByName.put(list.getName(), list);
+	}
+
+	/**
+	 * Removes the render list with the provided name from the renderer.
+	 *
+	 * @param name The name of the list to remove
+	 */
+	public void removeRenderList(String name) {
+		renderLists.remove(renderListsByName.remove(name));
+	}
 
 	/**
 	 * Returns the window title.
@@ -137,29 +218,37 @@ public abstract class Renderer extends Creatable implements GLVersioned {
 	}
 
 	/**
-	 * Sets the background color.
-	 *
-	 * @param color The background color
-	 */
-	public void setBackgroundColor(Color color) {
-		backgroundColor = color;
-	}
-
-	/**
-	 * Sets if culling is enabled or not
-	 *
-	 * @param cullingEnabled If it is enabled
-	 */
-	public void setCullingEnabled(boolean cullingEnabled) {
-		this.cullingEnabled = cullingEnabled;
-	}
-
-	/**
 	 * Returns the Uniforms for this renderer
 	 *
 	 * @return The renderer uniforms
 	 */
 	public UniformHolder getUniforms() {
 		return uniforms;
+	}
+
+	/**
+	 * An enum of the renderer capabilities.
+	 */
+	public static enum Capability {
+		BLEND(GL11.GL_BLEND),
+		CULL_FACE(GL11.GL_CULL_FACE),
+		DEPTH_CLAMP(GL32.GL_DEPTH_CLAMP),
+		DEPTH_TEST(GL11.GL_DEPTH_TEST),
+		LINE_SMOOTH(GL11.GL_LINE_SMOOTH),
+		POLYGON_SMOOTH(GL11.GL_POLYGON_SMOOTH);
+		private final int glConstant;
+
+		private Capability(int glConstant) {
+			this.glConstant = glConstant;
+		}
+
+		/**
+		 * Returns the OpenGL constant associated to the capability.
+		 *
+		 * @return The OpenGL constant
+		 */
+		public int getGLConstant() {
+			return glConstant;
+		}
 	}
 }

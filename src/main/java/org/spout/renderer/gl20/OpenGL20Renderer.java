@@ -26,8 +26,9 @@
  */
 package org.spout.renderer.gl20;
 
-import java.util.Map;
-import java.util.TreeMap;
+import java.awt.Color;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.ContextAttribs;
@@ -36,13 +37,13 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.PixelFormat;
 
-import org.spout.renderer.gl.FrameBuffer;
 import org.spout.renderer.GLVersion;
+import org.spout.renderer.data.RenderList;
+import org.spout.renderer.gl.FrameBuffer;
 import org.spout.renderer.gl.Material;
 import org.spout.renderer.gl.Model;
 import org.spout.renderer.gl.Program;
 import org.spout.renderer.gl.Renderer;
-import org.spout.renderer.data.RenderList;
 import org.spout.renderer.util.RenderUtil;
 
 /**
@@ -51,9 +52,6 @@ import org.spout.renderer.util.RenderUtil;
  * @see Renderer
  */
 public class OpenGL20Renderer extends Renderer {
-	// Models
-	private final Map<String, RenderList> renderLists = new TreeMap<>();
-
 	@Override
 	public void create() {
 		if (created) {
@@ -70,18 +68,8 @@ public class OpenGL20Renderer extends Renderer {
 		Display.setTitle(windowTitle);
 		// Set the view port to the window
 		GL11.glViewport(0, 0, windowWidth, windowHeight);
-		// Set the clear color, which will be the color of empty screen area
-		GL11.glClearColor(backgroundColor.getRed() / 255f, backgroundColor.getGreen() / 255f,
-				backgroundColor.getBlue() / 255f, backgroundColor.getAlpha() / 255f);
-		// Enable dept testing to properly display depth
-		GL11.glEnable(GL11.GL_DEPTH_TEST);
-		if (cullingEnabled) {
-			// Enable culling of the back face
-			GL11.glEnable(GL11.GL_CULL_FACE);
-			GL11.glCullFace(GL11.GL_BACK);
-		}
-		// Enable the depth mask
-		GL11.glDepthMask(true);
+		// Set the alpha blending function for transparency
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		// Check for errors
 		RenderUtil.checkForOpenGLError();
 		// Update the state
@@ -92,7 +80,7 @@ public class OpenGL20Renderer extends Renderer {
 	public void destroy() {
 		checkCreated();
 		// Destroy models and materials
-		for (RenderList renderList : renderLists.values()) {
+		for (RenderList renderList : renderLists) {
 			for (Model model : renderList) {
 				if (model.isCreated()) {
 					model.destroy();
@@ -109,14 +97,33 @@ public class OpenGL20Renderer extends Renderer {
 		}
 		// Clear data
 		renderLists.clear();
+		renderListsByName.clear();
 		uniforms.clear();
-		// Destroy display
-		GL11.glDisable(GL11.GL_DEPTH_TEST);
-		GL11.glDepthMask(false);
 		// Display goes after else there's no context in which to check for an error
 		RenderUtil.checkForOpenGLError();
 		Display.destroy();
 		super.destroy();
+	}
+
+	@Override
+	public void setClearColor(Color color) {
+		GL11.glClearColor(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
+		// Check for errors
+		RenderUtil.checkForOpenGLError();
+	}
+
+	@Override
+	public void enable(Capability capability) {
+		GL11.glEnable(capability.getGLConstant());
+		// Check for errors
+		RenderUtil.checkForOpenGLError();
+	}
+
+	@Override
+	public void disable(Capability capability) {
+		GL11.glDisable(capability.getGLConstant());
+		// Check for errors
+		RenderUtil.checkForOpenGLError();
 	}
 
 	@Override
@@ -129,16 +136,24 @@ public class OpenGL20Renderer extends Renderer {
 		checkCreated();
 		// Clear the last render on the screen buffer
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+		// Keep track of all cleared frame buffers so we don't clear one twice
+		final Set<FrameBuffer> clearedFrameBuffers = new HashSet<>();
 		// Render all the created models
-		for (RenderList renderList : renderLists.values()) {
+		for (RenderList renderList : renderLists) {
 			if (!renderList.isActive()) {
 				continue;
 			}
+			// Update the context capabilities
+			setCapabilities(renderList.getCapabilities());
+			// Bind the frame buffer if present
 			final FrameBuffer frameBuffer = renderList.getFrameBuffer();
 			if (frameBuffer != null) {
 				frameBuffer.bind();
-				// Clear the last render on the frame buffer
-				GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+				if (!clearedFrameBuffers.contains(frameBuffer)) {
+					// Clear the last render on the frame buffer
+					GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+					clearedFrameBuffers.add(frameBuffer);
+				}
 			}
 			for (Model model : renderList) {
 				if (!model.isCreated()) {
@@ -169,26 +184,6 @@ public class OpenGL20Renderer extends Renderer {
 		RenderUtil.checkForOpenGLError();
 		// Update the display
 		Display.update();
-	}
-
-	@Override
-	public RenderList getRenderList(String name) {
-		return renderLists.get(name);
-	}
-
-	@Override
-	public boolean hasRenderList(String name) {
-		return renderLists.containsKey(name);
-	}
-
-	@Override
-	public void addRenderList(RenderList list) {
-		renderLists.put(list.getName(), list);
-	}
-
-	@Override
-	public void removeRenderList(String name) {
-		renderLists.remove(name);
 	}
 
 	@Override

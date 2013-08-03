@@ -36,7 +36,7 @@ import org.spout.renderer.data.VertexData;
 
 /**
  * Represent an OpenGL vertex array. The vertex data must be set with {@link
- * #setVertexData(org.spout.renderer.data.VertexData)} before it can be created.
+ * #setData(org.spout.renderer.data.VertexData)} before it can be created.
  */
 public abstract class VertexArray extends Creatable implements GLVersioned {
 	protected int id = 0;
@@ -72,7 +72,7 @@ public abstract class VertexArray extends Creatable implements GLVersioned {
 	 *
 	 * @param vertexData The vertex data source
 	 */
-	public void setVertexData(VertexData vertexData) {
+	public void setData(VertexData vertexData) {
 		this.vertexData = vertexData;
 	}
 

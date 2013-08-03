@@ -26,31 +26,41 @@
  */
 package org.spout.renderer.data;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 
 import org.spout.renderer.Camera;
+import org.spout.renderer.data.Uniform.Matrix4Uniform;
 import org.spout.renderer.gl.FrameBuffer;
 import org.spout.renderer.gl.Model;
 import org.spout.renderer.gl.Program;
-import org.spout.renderer.data.Uniform.Matrix4Uniform;
+import org.spout.renderer.gl.Renderer.Capability;
 
 /**
- * Represents a named collection of models for rendering. The collection shares the same camera and
- * a set of uniforms. Optionally, they may share a frame buffer for the render output. A render list
- * can be deactivated and reactivated as necessary. Inactive lists will not be rendered. List has an
- * index which is used to sort them by priority. The index doesn't need to be unique or positive.
- * The smaller the index, the higher the priority.
+ * Represents a named list of models for rendering. The list shares the same camera and a set of
+ * uniforms. Optionally, they may share a frame buffer for the render output. A render list can be
+ * deactivated and reactivated as necessary. Inactive lists will not be rendered. List has an index
+ * which is used to sort them by priority. The index doesn't need to be unique or positive. The
+ * smaller the index, the higher the priority. Renders lists also manage the context capabilities.
+ * These are activated before the list is rendered and deactivated when rendering is complete.
+ *
+ * @see List
  */
-public class RenderList implements Collection<Model>, Comparable<RenderList> {
+public class RenderList implements List<Model>, Comparable<RenderList> {
 	private final UniformHolder uniforms = new UniformHolder();
 	private final String name;
-	private final Set<Model> models = new HashSet<>();
+	private final List<Model> models = new ArrayList<>();
 	private Camera camera;
 	private final int index;
 	private boolean active = true;
+	private final Set<Capability> capabilities = EnumSet.noneOf(Capability.class);
 	private FrameBuffer frameBuffer;
 
 	/**
@@ -130,6 +140,68 @@ public class RenderList implements Collection<Model>, Comparable<RenderList> {
 	 */
 	public void toggleActive() {
 		active ^= true;
+	}
+
+	/**
+	 * Adds the capability to the list
+	 *
+	 * @param capability The capability to add
+	 */
+	public void addCapability(Capability capability) {
+		capabilities.add(capability);
+	}
+
+	/**
+	 * Adds the capabilities to the list
+	 *
+	 * @param capabilities The capabilities to add
+	 */
+	public void addCapabilities(Capability... capabilities) {
+		Collections.addAll(this.capabilities, capabilities);
+	}
+
+	/**
+	 * Returns true if the list has the capability.
+	 *
+	 * @param capability The capability to check for
+	 * @return Whether or not the list has the capability
+	 */
+	public boolean hasCapability(Capability capability) {
+		return capabilities.contains(capability);
+	}
+
+	/**
+	 * Removes the capability from the list.
+	 *
+	 * @param capability The capability to remove
+	 */
+	public void removeCapability(Capability capability) {
+		capabilities.remove(capability);
+	}
+
+	/**
+	 * Removes the capabilities from the list.
+	 *
+	 * @param capabilities The capabilities to remove
+	 */
+	public void removeCapabilities(Capability... capabilities) {
+		this.capabilities.removeAll(Arrays.asList(capabilities));
+	}
+
+	/**
+	 * Removes all capabilities from the list.
+	 */
+	public void clearCapabilities() {
+		capabilities.clear();
+	}
+
+	/**
+	 * Returns the set of all the capabilities for the list.
+	 *
+	 * @return The capability set
+	 */
+	public Set<Capability> getCapabilities() {
+		return capabilities;
 	}
 
 	/**
@@ -232,6 +304,11 @@ public class RenderList implements Collection<Model>, Comparable<RenderList> {
 	}
 
 	@Override
+	public boolean addAll(int index, Collection<? extends Model> c) {
+		return models.addAll(index, c);
+	}
+
+	@Override
 	public boolean removeAll(Collection<?> c) {
 		return models.removeAll(c);
 	}
@@ -244,6 +321,51 @@ public class RenderList implements Collection<Model>, Comparable<RenderList> {
 	@Override
 	public void clear() {
 		models.clear();
+	}
+
+	@Override
+	public Model get(int index) {
+		return models.get(index);
+	}
+
+	@Override
+	public Model set(int index, Model model) {
+		return models.set(index, model);
+	}
+
+	@Override
+	public void add(int index, Model model) {
+		models.add(index, model);
+	}
+
+	@Override
+	public Model remove(int index) {
+		return models.remove(index);
+	}
+
+	@Override
+	public int indexOf(Object o) {
+		return models.indexOf(o);
+	}
+
+	@Override
+	public int lastIndexOf(Object o) {
+		return models.lastIndexOf(o);
+	}
+
+	@Override
+	public ListIterator<Model> listIterator() {
+		return models.listIterator();
+	}
+
+	@Override
+	public ListIterator<Model> listIterator(int index) {
+		return models.listIterator(index);
+	}
+
+	@Override
+	public List<Model> subList(int fromIndex, int toIndex) {
+		return models.subList(fromIndex, toIndex);
 	}
 
 	@Override
@@ -278,6 +400,6 @@ public class RenderList implements Collection<Model>, Comparable<RenderList> {
 
 	@Override
 	public int compareTo(RenderList o) {
-		return o.getIndex() - index;
+		return index - o.getIndex();
 	}
 }
