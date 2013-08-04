@@ -53,8 +53,7 @@ public class RenderUtil {
 	}
 
 	/**
-	 * Checks if two OpenGL versioned object have the same version. Throws an exception if that's not
-	 * the case.
+	 * Checks if two OpenGL versioned object have the same version. Throws an exception if that's not the case.
 	 *
 	 * @param required The required version
 	 * @param object The object to check the version of

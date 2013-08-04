@@ -67,28 +67,16 @@ import org.spout.renderer.gl.Texture.ImageFormat;
 import org.spout.renderer.gl.VertexArray;
 
 /**
- * A model for rendering strings with a desired font. This model will work with both OpenGL
- * versions. After construction, set the OpenGL version with {@link #setGLVersion(org.spout.renderer.GLVersion)}.
- * Next, set the glyphs that the model should support (the character set) with {@link
- * #setGlyphs(char...)} or {@link #setGlyphs(String)}. Then, set the font with {@link
- * #setFont(java.awt.Font)}. Finally, set the window width with {@link #setWindowWidth(int)}. This
- * is used to calculate the dimensions of pixels so that the font appears as smooth as possible on a
- * GUI. The model can now be created with {@link #create()}, and added to a renderer. To render a
- * string, set it with {@link #setString(String)}. Glyphs in the string that have not been declared
- * when setting the glyphs will be ignored. When done, use {@link #destroy()} to release the model
- * resources. Please note that altering the OpenGL version, glyphs or font after creation has no
- * effect. The model needs to be recreated. The only exception is the font color.
- * <p/>
- * Colors are supported. Use <code>#aarrggbb</code>, where <code>aa</code> is the alpha hexadecimal
- * value, <code>rr</code> is the red hexadecimal value, <code>gg</code> is the green hexadecimal
- * value and <code>bb</code> is the blue hexadecimal value. Color codes can be escaped with
- * <code>\</code>.
- * <p/>
- * As for the implementation, this model wraps a model of the desired OpenGL version. The model
- * contains a mesh of tiles, all at (0,0). Each tile has one glyph on it. When rendering, the
- * desired tile is selected, placed at the origin and rendered. The next glyph will be rendered in
- * the same fashion, but offset on the x axis by the width of the last glyph. The mesh and indices
- * are only uploaded once; the renderer uses the indices for the desired glyph.
+ * A model for rendering strings with a desired font. This model will work with both OpenGL versions. After construction, set the OpenGL version with {@link
+ * #setGLVersion(org.spout.renderer.GLVersion)}. Next, set the glyphs that the model should support (the character set) with {@link #setGlyphs(char...)} or {@link #setGlyphs(String)}. Then, set the
+ * font with {@link #setFont(java.awt.Font)}. Finally, set the window width with {@link #setWindowWidth(int)}. This is used to calculate the dimensions of pixels so that the font appears as smooth as
+ * possible on a GUI. The model can now be created with {@link #create()}, and added to a renderer. To render a string, set it with {@link #setString(String)}. Glyphs in the string that have not been
+ * declared when setting the glyphs will be ignored. When done, use {@link #destroy()} to release the model resources. Please note that altering the OpenGL version, glyphs or font after creation has
+ * no effect. The model needs to be recreated. The only exception is the font color. <p/> Colors are supported. Use <code>#aarrggbb</code>, where <code>aa</code> is the alpha hexadecimal value,
+ * <code>rr</code> is the red hexadecimal value, <code>gg</code> is the green hexadecimal value and <code>bb</code> is the blue hexadecimal value. Color codes can be escaped with <code>\</code>. <p/>
+ * As for the implementation, this model wraps a model of the desired OpenGL version. The model contains a mesh of tiles, all at (0,0). Each tile has one glyph on it. When rendering, the desired tile
+ * is selected, placed at the origin and rendered. The next glyph will be rendered in the same fashion, but offset on the x axis by the width of the last glyph. The mesh and indices are only uploaded
+ * once; the renderer uses the indices for the desired glyph.
  */
 public class StringModel extends Model {
 	private static final int GLYPH_INDEX_COUNT = 6;

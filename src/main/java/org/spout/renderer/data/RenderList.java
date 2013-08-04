@@ -44,12 +44,9 @@ import org.spout.renderer.gl.Program;
 import org.spout.renderer.gl.Renderer.Capability;
 
 /**
- * Represents a named list of models for rendering. The list shares the same camera and a set of
- * uniforms. Optionally, they may share a frame buffer for the render output. A render list can be
- * deactivated and reactivated as necessary. Inactive lists will not be rendered. List has an index
- * which is used to sort them by priority. The index doesn't need to be unique or positive. The
- * smaller the index, the higher the priority. Renders lists also manage the context capabilities.
- * These are activated before the list is rendered and deactivated when rendering is complete.
+ * Represents a named list of models for rendering. The list shares the same camera and a set of uniforms. Optionally, they may share a frame buffer for the render output. A render list can be
+ * deactivated and reactivated as necessary. Inactive lists will not be rendered. List has an index which is used to sort them by priority. The index doesn't need to be unique or positive. The smaller
+ * the index, the higher the priority. Renders lists also manage the context capabilities. These are activated before the list is rendered and deactivated when rendering is complete.
  *
  * @see List
  */
@@ -224,8 +221,7 @@ public class RenderList implements List<Model>, Comparable<RenderList> {
 	}
 
 	/**
-	 * Sets the frame buffer to use. All rendering with this list will have it's output redirected to
-	 * it.
+	 * Sets the frame buffer to use. All rendering with this list will have it's output redirected to it.
 	 *
 	 * @param frameBuffer The frame buffer to render to
 	 */

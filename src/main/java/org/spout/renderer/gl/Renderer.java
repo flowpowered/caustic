@@ -42,8 +42,7 @@ import org.spout.renderer.data.RenderList;
 import org.spout.renderer.data.UniformHolder;
 
 /**
- * Represents an OpenGL renderer. Creating the renderer also created the OpenGL context, and so must
- * be done before any other OpenGL object. To add models to render, add them to a render list, then
+ * Represents an OpenGL renderer. Creating the renderer also created the OpenGL context, and so must be done before any other OpenGL object. To add models to render, add them to a render list, then
  * use {@link #addRenderList(org.spout.renderer.data.RenderList)} to add the list.
  */
 public abstract class Renderer extends Creatable implements GLVersioned {

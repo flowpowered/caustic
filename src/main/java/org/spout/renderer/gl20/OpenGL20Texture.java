@@ -47,7 +47,7 @@ public class OpenGL20Texture extends Texture {
 		// Get the context capabilities for the graphics hardware
 		//final ContextCapabilities contextCaps = GLContext.getCapabilities();
 		//if (!contextCaps.GL_ARB_texture_non_power_of_two && (!GenericMath.isPowerOfTwo(width) || !GenericMath.isPowerOfTwo(height))) {
-		// TODO: Resize images. Also, this only really matters for mipmaps
+		//	TODO: Resize images. Also, this only really matters for mipmaps
 		//}
 		// Generate and bind the texture in the unit
 		id = GL11.glGenTextures();
@@ -70,8 +70,7 @@ public class OpenGL20Texture extends Texture {
 	}
 
 	/**
-	 * Uploads the texture to the graphics card. This method has been separated from the create method
-	 * for GL30 integrated mipmap support.
+	 * Uploads the texture to the graphics card. This method has been separated from the create method for GL30 integrated mipmap support.
 	 *
 	 * @param buffer The buffer containing the image data
 	 * @param width The width of the image

@@ -37,9 +37,7 @@ import org.spout.renderer.Creatable;
 import org.spout.renderer.GLVersioned;
 
 /**
- * Represents an OpenGL shader. The shader source and type must be set with {@link
- * #setSource(java.io.InputStream)} and {@link #setType(Shader.ShaderType)}
- * respectively before it can be created.
+ * Represents an OpenGL shader. The shader source and type must be set with {@link #setSource(java.io.InputStream)} and {@link #setType(Shader.ShaderType)} respectively before it can be created.
  */
 public abstract class Shader extends Creatable implements GLVersioned {
 	protected int id;

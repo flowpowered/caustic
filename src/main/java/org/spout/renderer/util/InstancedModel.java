@@ -32,12 +32,9 @@ import org.spout.renderer.gl.Model;
 import org.spout.renderer.gl.VertexArray;
 
 /**
- * Represents an instance of another model. Model instancing can be used to reduce the amount of
- * vertex data on the GPU, by reusing the same geometry for multiple models. To use this class,
- * simply construct a new instance using the model to instance (the main model), create it, and add
- * it to the renderer. This class should work with any model type as long as it has been implemented
- * correctly. Note that the vertex array and material are shared amongst the main model and all of
- * its instances. Any changes to these will be reflected across all models.
+ * Represents an instance of another model. Model instancing can be used to reduce the amount of vertex data on the GPU, by reusing the same geometry for multiple models. To use this class, simply
+ * construct a new instance using the model to instance (the main model), create it, and add it to the renderer. This class should work with any model type as long as it has been implemented
+ * correctly. Note that the vertex array and material are shared amongst the main model and all of its instances. Any changes to these will be reflected across all models.
  */
 public class InstancedModel extends Model {
 	private final Model main;

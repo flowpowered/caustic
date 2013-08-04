@@ -42,8 +42,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
 /**
- * Represents a vertex attribute. It has a name, a data type, a size (the number of components) and
- * data.
+ * Represents a vertex attribute. It has a name, a data type, a size (the number of components) and data.
  */
 public class VertexAttribute implements Cloneable {
 	protected final String name;
@@ -53,8 +52,7 @@ public class VertexAttribute implements Cloneable {
 	private ByteBuffer buffer;
 
 	/**
-	 * Creates a new vertex attribute from the name, the data type and the size. The upload mode will
-	 * be {@link UploadMode#TO_FLOAT}.
+	 * Creates a new vertex attribute from the name, the data type and the size. The upload mode will be {@link UploadMode#TO_FLOAT}.
 	 *
 	 * @param name The name
 	 * @param type The type
@@ -116,8 +114,7 @@ public class VertexAttribute implements Cloneable {
 	}
 
 	/**
-	 * Returns a new byte buffer filled and ready to read, containing the attribute data. This method
-	 * will {@link java.nio.ByteBuffer#flip()} the buffer before returning it.
+	 * Returns a new byte buffer filled and ready to read, containing the attribute data. This method will {@link java.nio.ByteBuffer#flip()} the buffer before returning it.
 	 *
 	 * @return The buffer
 	 */
@@ -133,9 +130,7 @@ public class VertexAttribute implements Cloneable {
 	}
 
 	/**
-	 * Replaces the current buffer data with a copy of the given {@link ByteBuffer} This method
-	 * arbitrarily creates data for the ByteBuffer regardless of the data type of the vertex
-	 * attribute.
+	 * Replaces the current buffer data with a copy of the given {@link ByteBuffer} This method arbitrarily creates data for the ByteBuffer regardless of the data type of the vertex attribute.
 	 *
 	 * @param buffer to set
 	 */
@@ -146,9 +141,7 @@ public class VertexAttribute implements Cloneable {
 	}
 
 	/**
-	 * Replaces the current buffer data with the list of bytes in the give {@link TByteList} This
-	 * method arbitrarily creates data for the ByteBuffer regardless of the data type of the vertex
-	 * attribute.
+	 * Replaces the current buffer data with the list of bytes in the give {@link TByteList} This method arbitrarily creates data for the ByteBuffer regardless of the data type of the vertex attribute.
 	 *
 	 * @param list to set
 	 */
@@ -158,9 +151,7 @@ public class VertexAttribute implements Cloneable {
 	}
 
 	/**
-	 * Replaces the current buffer data with the list of bytes in the give {@link TShortList} This
-	 * method arbitrarily creates data for the ByteBuffer regardless of the data type of the vertex
-	 * attribute.
+	 * Replaces the current buffer data with the list of bytes in the give {@link TShortList} This method arbitrarily creates data for the ByteBuffer regardless of the data type of the vertex attribute.
 	 *
 	 * @param list to set
 	 */
@@ -173,9 +164,7 @@ public class VertexAttribute implements Cloneable {
 	}
 
 	/**
-	 * Replaces the current buffer data with the list of bytes in the give {@link TIntList} This method
-	 * arbitrarily creates data for the ByteBuffer regardless of the data type of the vertex
-	 * attribute.
+	 * Replaces the current buffer data with the list of bytes in the give {@link TIntList} This method arbitrarily creates data for the ByteBuffer regardless of the data type of the vertex attribute.
 	 *
 	 * @param list to set
 	 */
@@ -188,9 +177,7 @@ public class VertexAttribute implements Cloneable {
 	}
 
 	/**
-	 * Replaces the current buffer data with the list of bytes in the give {@link TFloatList} This
-	 * method arbitrarily creates data for the ByteBuffer regardless of the data type of the vertex
-	 * attribute.
+	 * Replaces the current buffer data with the list of bytes in the give {@link TFloatList} This method arbitrarily creates data for the ByteBuffer regardless of the data type of the vertex attribute.
 	 *
 	 * @param list to set
 	 */
@@ -203,8 +190,7 @@ public class VertexAttribute implements Cloneable {
 	}
 
 	/**
-	 * Replaces the current buffer data with the list of bytes in the give {@link TDoubleList} This
-	 * method arbitrarily creates data for the ByteBuffer regardless of the data type of the vertex
+	 * Replaces the current buffer data with the list of bytes in the give {@link TDoubleList} This method arbitrarily creates data for the ByteBuffer regardless of the data type of the vertex
 	 * attribute.
 	 *
 	 * @param list to set
@@ -274,8 +260,7 @@ public class VertexAttribute implements Cloneable {
 		}
 
 		/**
-		 * Returns true if the data type is an integer number ({@link DataType#BYTE}, {@link
-		 * DataType#SHORT} or {@link DataType#INT}).
+		 * Returns true if the data type is an integer number ({@link DataType#BYTE}, {@link DataType#SHORT} or {@link DataType#INT}).
 		 *
 		 * @return Whether or not the data type is an integer
 		 */
@@ -285,10 +270,8 @@ public class VertexAttribute implements Cloneable {
 	}
 
 	/**
-	 * The uploading mode. When uploading attribute data to OpenGL, integer data can be either
-	 * converted to float or not (the later is only possible with version 3.0+). When converting to
-	 * float, the data can be normalized or not. By default, {@link UploadMode#TO_FLOAT} is used as it
-	 * provides the best compatibility.
+	 * The uploading mode. When uploading attribute data to OpenGL, integer data can be either converted to float or not (the later is only possible with version 3.0+). When converting to float, the data
+	 * can be normalized or not. By default, {@link UploadMode#TO_FLOAT} is used as it provides the best compatibility.
 	 */
 	public static enum UploadMode {
 		TO_FLOAT,

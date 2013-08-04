@@ -31,7 +31,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import gnu.trove.list.TIntList;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -183,9 +182,7 @@ public class VertexDataTest {
 		Assert.assertEquals(8, count);
 		// Get attribute names
 		Set<String> names = vertexData.getAttributeNames();
-		Assert.assertEquals(new HashSet<>(Arrays.asList("byte", "short", "int", "float", "double",
-														"unsigned_byte", "unsigned_short",
-														"unsigned_int")), names);
+		Assert.assertEquals(new HashSet<>(Arrays.asList("byte", "short", "int", "float", "double", "unsigned_byte", "unsigned_short", "unsigned_int")), names);
 		// Remove attribute
 		vertexData.removeAttribute("byte");
 		vertexData.removeAttribute("short");

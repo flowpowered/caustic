@@ -40,8 +40,8 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL32;
 
-import org.spout.renderer.gl.FrameBuffer;
 import org.spout.renderer.GLVersion;
+import org.spout.renderer.gl.FrameBuffer;
 import org.spout.renderer.gl.RenderBuffer;
 import org.spout.renderer.gl.Texture;
 import org.spout.renderer.util.RenderUtil;

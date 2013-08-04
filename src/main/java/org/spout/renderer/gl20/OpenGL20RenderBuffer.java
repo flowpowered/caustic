@@ -40,11 +40,9 @@ import org.spout.renderer.util.RenderUtil;
  */
 public class OpenGL20RenderBuffer extends RenderBuffer {
 	/**
-	 * Constructs a new render buffer for OpenGL 2.0. If no EXT extension for render buffers is
-	 * available, an exception is thrown.
+	 * Constructs a new render buffer for OpenGL 2.0. If no EXT extension for render buffers is available, an exception is thrown.
 	 *
-	 * @throws UnsupportedOperationException If the hardware doesn't support EXT render
-	 * buffers.
+	 * @throws UnsupportedOperationException If the hardware doesn't support EXT render buffers.
 	 */
 	public OpenGL20RenderBuffer() {
 		if (!GLContext.getCapabilities().GL_EXT_framebuffer_object) {

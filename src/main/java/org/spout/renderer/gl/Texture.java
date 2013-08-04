@@ -26,10 +26,10 @@
  */
 package org.spout.renderer.gl;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import javax.imageio.ImageIO;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -43,9 +43,8 @@ import org.spout.renderer.GLVersioned;
 import org.spout.renderer.data.VertexAttribute.DataType;
 
 /**
- * Represents a texture for OpenGL. Image data can be set with one of the
- * <code>setImageData(...)</code> methods before creation, but this is not obligatory. This results
- * in an empty texture, with an undefined content. This is mostly used for frame buffers.
+ * Represents a texture for OpenGL. Image data can be set with one of the <code>setImageData(...)</code> methods before creation, but this is not obligatory. This results in an empty texture, with an
+ * undefined content. This is mostly used for frame buffers.
  */
 public abstract class Texture extends Creatable implements GLVersioned {
 	protected int id = 0;
@@ -191,8 +190,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	}
 
 	/**
-	 * Sets the texture's image data from a source input stream. The image data reading is done
-	 * according to the set {@link Texture.ImageFormat}.
+	 * Sets the texture's image data from a source input stream. The image data reading is done according to the set {@link Texture.ImageFormat}.
 	 *
 	 * @param source The input stream of the image
 	 */
@@ -206,8 +204,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	}
 
 	/**
-	 * Sets the texture's image data. The image data reading is done according to the set {@link
-	 * Texture.ImageFormat}.
+	 * Sets the texture's image data. The image data reading is done according to the set {@link Texture.ImageFormat}.
 	 *
 	 * @param image The image
 	 */
@@ -222,8 +219,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	}
 
 	/**
-	 * Sets the texture's image data. The image data reading is done according to the set {@link
-	 * Texture.ImageFormat}.
+	 * Sets the texture's image data. The image data reading is done according to the set {@link Texture.ImageFormat}.
 	 *
 	 * @param pixels The image pixels
 	 * @param width The width of the image
@@ -253,8 +249,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	}
 
 	/**
-	 * Sets the texture's image data. The image data reading is done according the the set {@link
-	 * Texture.ImageFormat}.
+	 * Sets the texture's image data. The image data reading is done according the the set {@link Texture.ImageFormat}.
 	 *
 	 * @param imageData The image data
 	 * @param width The width of the image

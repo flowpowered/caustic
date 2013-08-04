@@ -39,9 +39,8 @@ import org.spout.renderer.data.VertexAttribute.DataType;
 import org.spout.renderer.data.VertexData;
 
 /**
- * A static loading class for standard .obj model files. This class will load positions, normals can
- * texture coordinates. Missing normals are not calculated. Normals are expected to be of unit
- * length. Models should be triangulated.
+ * A static loading class for standard .obj model files. This class will load positions, normals can texture coordinates. Missing normals are not calculated. Normals are expected to be of unit length.
+ * Models should be triangulated.
  */
 public class ObjFileLoader {
 	private static final String COMPONENT_SEPARATOR = " ";
@@ -52,9 +51,8 @@ public class ObjFileLoader {
 	private static final String INDEX_LIST_PREFIX = "f";
 
 	/**
-	 * Loads a .obj file, storing the data in the VertexData. Position attributes will be added with
-	 * the name "positions", normals with "normals" and texture coordinate with "textureCoords", in
-	 * this order. After loading, the input stream will be closed.
+	 * Loads a .obj file, storing the data in the VertexData. Position attributes will be added with the name "positions", normals with "normals" and texture coordinate with "textureCoords", in this
+	 * order. After loading, the input stream will be closed.
 	 *
 	 * @param stream The input stream for the .obj file
 	 * @return The vertex data, filed with the loaded vertices
@@ -65,10 +63,8 @@ public class ObjFileLoader {
 	}
 
 	/**
-	 * Loads a .obj file, storing the data in the VertexData. Position attributes will be added with
-	 * the name "positions", normals with "normals" and texture coordinate with "textureCoords", in
-	 * this order. If destination is null, a new one is created and returned. After loading, the input
-	 * stream will be closed.
+	 * Loads a .obj file, storing the data in the VertexData. Position attributes will be added with the name "positions", normals with "normals" and texture coordinate with "textureCoords", in this
+	 * order. If destination is null, a new one is created and returned. After loading, the input stream will be closed.
 	 *
 	 * @param destination The destination for the vertex data. Can be null
 	 * @param stream The input stream for the .obj file
@@ -190,8 +186,7 @@ public class ObjFileLoader {
 	 */
 	public static class MalformedObjFileException extends RuntimeException {
 		/**
-		 * Creates a new exception from the line at which the error occurred and the cause. If the error
-		 * did not occur on a line, the variable can be passed as null.
+		 * Creates a new exception from the line at which the error occurred and the cause. If the error did not occur on a line, the variable can be passed as null.
 		 *
 		 * @param line The line of origin, or null, if not on a line
 		 * @param cause The original exception

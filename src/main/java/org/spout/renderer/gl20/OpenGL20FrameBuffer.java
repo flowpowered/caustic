@@ -40,8 +40,8 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GLContext;
 
-import org.spout.renderer.gl.FrameBuffer;
 import org.spout.renderer.GLVersion;
+import org.spout.renderer.gl.FrameBuffer;
 import org.spout.renderer.gl.RenderBuffer;
 import org.spout.renderer.gl.Texture;
 import org.spout.renderer.util.RenderUtil;
@@ -57,8 +57,7 @@ public class OpenGL20FrameBuffer extends FrameBuffer {
 	private final Map<AttachmentPoint, OpenGL20RenderBuffer> buffers = new EnumMap<>(AttachmentPoint.class);
 
 	/**
-	 * Constructs a new frame buffer for OpenGL 2.0. If no EXT extension for frame buffers is
-	 * available, an exception is thrown.
+	 * Constructs a new frame buffer for OpenGL 2.0. If no EXT extension for frame buffers is available, an exception is thrown.
 	 *
 	 * @throws UnsupportedOperationException If the hardware doesn't support EXT frame buffers
 	 */

@@ -35,8 +35,7 @@ import org.spout.renderer.GLVersioned;
 import org.spout.renderer.data.VertexData;
 
 /**
- * Represent an OpenGL vertex array. The vertex data must be set with {@link
- * #setData(org.spout.renderer.data.VertexData)} before it can be created.
+ * Represent an OpenGL vertex array. The vertex data must be set with {@link #setData(org.spout.renderer.data.VertexData)} before it can be created.
  */
 public abstract class VertexArray extends Creatable implements GLVersioned {
 	protected int id = 0;

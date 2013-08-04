@@ -31,10 +31,8 @@ import org.spout.renderer.GLVersioned;
 import org.spout.renderer.data.UniformHolder;
 
 /**
- * Represents an OpenGL material. Materials are assigned to models, and these can share the same
- * material. The material provides the shader program to use when rendering the models, the texture
- * for each unit (if any) and a set of uniforms that will be constant for all models using the
- * material.
+ * Represents an OpenGL material. Materials are assigned to models, and these can share the same material. The material provides the shader program to use when rendering the models, the texture for
+ * each unit (if any) and a set of uniforms that will be constant for all models using the material.
  */
 public abstract class Material extends Creatable implements GLVersioned {
 	// Material uniforms
@@ -63,8 +61,7 @@ public abstract class Material extends Creatable implements GLVersioned {
 	public abstract Program getProgram();
 
 	/**
-	 * Adds a texture to the material. If a texture is a already present in the same unit as this one,
-	 * it will be replaced.
+	 * Adds a texture to the material. If a texture is a already present in the same unit as this one, it will be replaced.
 	 *
 	 * @param texture The texture to add
 	 */

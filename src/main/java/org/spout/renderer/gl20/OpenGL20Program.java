@@ -47,10 +47,10 @@ import org.spout.math.vector.Vector2;
 import org.spout.math.vector.Vector3;
 import org.spout.math.vector.Vector4;
 import org.spout.renderer.GLVersion;
-import org.spout.renderer.gl.Program;
-import org.spout.renderer.gl.Shader.ShaderType;
 import org.spout.renderer.data.Uniform;
 import org.spout.renderer.data.UniformHolder;
+import org.spout.renderer.gl.Program;
+import org.spout.renderer.gl.Shader.ShaderType;
 import org.spout.renderer.util.RenderUtil;
 
 /**
@@ -164,7 +164,7 @@ public class OpenGL20Program extends Program {
 		}
 	}
 
-	// TODO: support int and boolean vectors
+	// TODO: Support int and boolean vectors
 
 	@Override
 	public void setUniform(String name, boolean b) {

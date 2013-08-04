@@ -45,22 +45,17 @@ import org.spout.math.vector.Vector3;
 import org.spout.math.vector.Vector4;
 import org.spout.renderer.Creatable;
 import org.spout.renderer.GLVersioned;
-import org.spout.renderer.gl.Shader.ShaderType;
 import org.spout.renderer.data.Uniform;
 import org.spout.renderer.data.UniformHolder;
+import org.spout.renderer.gl.Shader.ShaderType;
 
 /**
- * Represents an OpenGL program. A program holds the necessary shaders for the rendering pipeline.
- * This requires at least that sources for the {@link org.spout.renderer.gl.Shader.ShaderType#VERTEX} and {@link
- * org.spout.renderer.gl.Shader.ShaderType#FRAGMENT} shaders be set with {@link #addShaderSource(org.spout.renderer.gl.Shader.ShaderType,
- * java.io.InputStream)} before creation. When using GL20, it is strongly recommended to set the
- * attribute layout in the program with {@link #addAttributeLayout(String, int)}, which must be done
- * before creation. The layout allows for association between the attribute index in the vertex data
- * and the name in the shaders. For GL30, it is recommended to do so in the shaders instead, using
- * the "layout" keyword. Failing to do so might result in partial, wrong or missing rendering, and
- * affects models using multiple attributes. The texture layout should also be setup using {@link
- * #addTextureLayout(String, int)} if textures are used in the shaders. This one can be done after
- * creation, but is necessary for assigning texture units to sampler uniforms.
+ * Represents an OpenGL program. A program holds the necessary shaders for the rendering pipeline. This requires at least that sources for the {@link org.spout.renderer.gl.Shader.ShaderType#VERTEX}
+ * and {@link org.spout.renderer.gl.Shader.ShaderType#FRAGMENT} shaders be set with {@link #addShaderSource(org.spout.renderer.gl.Shader.ShaderType, java.io.InputStream)} before creation. When using
+ * GL20, it is strongly recommended to set the attribute layout in the program with {@link #addAttributeLayout(String, int)}, which must be done before creation. The layout allows for association
+ * between the attribute index in the vertex data and the name in the shaders. For GL30, it is recommended to do so in the shaders instead, using the "layout" keyword. Failing to do so might result in
+ * partial, wrong or missing rendering, and affects models using multiple attributes. The texture layout should also be setup using {@link #addTextureLayout(String, int)} if textures are used in the
+ * shaders. This one can be done after creation, but is necessary for assigning texture units to sampler uniforms.
  */
 public abstract class Program extends Creatable implements GLVersioned {
 	protected int id;
@@ -96,9 +91,8 @@ public abstract class Program extends Creatable implements GLVersioned {
 	public abstract void unbind();
 
 	/**
-	 * Binds the texture unit to the shader uniform. The binding is done according to the texture
-	 * layout, which must be set in the program for the textures that will be used before any binding
-	 * can be done.
+	 * Binds the texture unit to the shader uniform. The binding is done according to the texture layout, which must be set in the program for the textures that will be used before any binding can be
+	 * done.
 	 *
 	 * @param unit The unit to bind
 	 */

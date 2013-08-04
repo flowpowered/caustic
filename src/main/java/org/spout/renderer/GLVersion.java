@@ -54,8 +54,7 @@ import org.spout.renderer.gl30.OpenGL30Texture;
 import org.spout.renderer.gl30.OpenGL30VertexArray;
 
 /**
- * An enum of the supported OpenGL versions. Use this class to generate rendering objects compatible
- * with the version.
+ * An enum of the supported OpenGL versions. Use this class to generate rendering objects compatible with the version.
  */
 public enum GLVersion {
 	GL20,

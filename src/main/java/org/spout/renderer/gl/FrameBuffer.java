@@ -33,10 +33,8 @@ import org.spout.renderer.Creatable;
 import org.spout.renderer.GLVersioned;
 
 /**
- * Represents an OpenGL frame buffer. A frame buffer can be assigned to a render list. When
- * assigned, all models in the list will be rendered to the frame buffer, instead of the screen.
- * This is meant for advanced rendering techniques such as shadow mapping and screen space ambient
- * occlusion (SSAO).
+ * Represents an OpenGL frame buffer. A frame buffer can be assigned to a render list. When assigned, all models in the list will be rendered to the frame buffer, instead of the screen. This is meant
+ * for advanced rendering techniques such as shadow mapping and screen space ambient occlusion (SSAO).
  */
 public abstract class FrameBuffer extends Creatable implements GLVersioned {
 	protected int id;

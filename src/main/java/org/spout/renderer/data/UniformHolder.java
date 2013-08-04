@@ -77,8 +77,7 @@ public class UniformHolder implements Iterable<Uniform> {
 	}
 
 	/**
-	 * Returns a boolean uniform with the provided name, or null if non can be found, or if the found
-	 * uniform is not of boolean type.
+	 * Returns a boolean uniform with the provided name, or null if non can be found, or if the found uniform is not of boolean type.
 	 *
 	 * @param name The name to lookup
 	 * @return The uniform
@@ -92,8 +91,7 @@ public class UniformHolder implements Iterable<Uniform> {
 	}
 
 	/**
-	 * Returns a int uniform with the provided name, or null if non can be found, or if the found
-	 * uniform is not of int type.
+	 * Returns a int uniform with the provided name, or null if non can be found, or if the found uniform is not of int type.
 	 *
 	 * @param name The name to lookup
 	 * @return The uniform
@@ -107,8 +105,7 @@ public class UniformHolder implements Iterable<Uniform> {
 	}
 
 	/**
-	 * Returns a float uniform with the provided name, or null if non can be found, or if the found
-	 * uniform is not of float type.
+	 * Returns a float uniform with the provided name, or null if non can be found, or if the found uniform is not of float type.
 	 *
 	 * @param name The name to lookup
 	 * @return The uniform
@@ -122,8 +119,7 @@ public class UniformHolder implements Iterable<Uniform> {
 	}
 
 	/**
-	 * Returns a vector2 uniform with the provided name, or null if non can be found, or if the found
-	 * uniform is not of vector2 type.
+	 * Returns a vector2 uniform with the provided name, or null if non can be found, or if the found uniform is not of vector2 type.
 	 *
 	 * @param name The name to lookup
 	 * @return The uniform
@@ -137,8 +133,7 @@ public class UniformHolder implements Iterable<Uniform> {
 	}
 
 	/**
-	 * Returns a vector3 uniform with the provided name, or null if non can be found, or if the found
-	 * uniform is not of vector3 type.
+	 * Returns a vector3 uniform with the provided name, or null if non can be found, or if the found uniform is not of vector3 type.
 	 *
 	 * @param name The name to lookup
 	 * @return The uniform
@@ -152,8 +147,7 @@ public class UniformHolder implements Iterable<Uniform> {
 	}
 
 	/**
-	 * Returns a vector4 uniform with the provided name, or null if non can be found, or if the found
-	 * uniform is not of vector4 type.
+	 * Returns a vector4 uniform with the provided name, or null if non can be found, or if the found uniform is not of vector4 type.
 	 *
 	 * @param name The name to lookup
 	 * @return The uniform
@@ -167,8 +161,7 @@ public class UniformHolder implements Iterable<Uniform> {
 	}
 
 	/**
-	 * Returns a matrix2 uniform with the provided name, or null if non can be found, or if the found
-	 * uniform is not of matrix2 type.
+	 * Returns a matrix2 uniform with the provided name, or null if non can be found, or if the found uniform is not of matrix2 type.
 	 *
 	 * @param name The name to lookup
 	 * @return The uniform
@@ -182,8 +175,7 @@ public class UniformHolder implements Iterable<Uniform> {
 	}
 
 	/**
-	 * Returns a matrix3 uniform with the provided name, or null if non can be found, or if the found
-	 * uniform is not of matrix3 type.
+	 * Returns a matrix3 uniform with the provided name, or null if non can be found, or if the found uniform is not of matrix3 type.
 	 *
 	 * @param name The name to lookup
 	 * @return The uniform
@@ -197,8 +189,7 @@ public class UniformHolder implements Iterable<Uniform> {
 	}
 
 	/**
-	 * Returns a matrix4 uniform with the provided name, or null if non can be found, or if the found
-	 * uniform is not of matrix4 type.
+	 * Returns a matrix4 uniform with the provided name, or null if non can be found, or if the found uniform is not of matrix4 type.
 	 *
 	 * @param name The name to lookup
 	 * @return The uniform
@@ -212,8 +203,7 @@ public class UniformHolder implements Iterable<Uniform> {
 	}
 
 	/**
-	 * Returns a color uniform with the provided name, or null if non can be found, or if the found
-	 * uniform is not of color type.
+	 * Returns a color uniform with the provided name, or null if non can be found, or if the found uniform is not of color type.
 	 *
 	 * @param name The name to lookup
 	 * @return The uniform

@@ -44,8 +44,7 @@ import org.lwjgl.BufferUtils;
 import org.spout.renderer.data.VertexAttribute.DataType;
 
 /**
- * Represents a vertex data. A vertex is a collection of attributes, most often attached to a point
- * in space. This class is a data structure which groups together collections of primitives to
+ * Represents a vertex data. A vertex is a collection of attributes, most often attached to a point in space. This class is a data structure which groups together collections of primitives to
  * represent a list of vertices.
  */
 public class VertexData {
@@ -57,8 +56,7 @@ public class VertexData {
 	private final TObjectIntMap<String> nameToIndex = new TObjectIntHashMap<>(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, -1);
 
 	/**
-	 * Returns the list of indices used by OpenGL to pick the vertices to draw the object with in the
-	 * correct order. Use it to add mesh data.
+	 * Returns the list of indices used by OpenGL to pick the vertices to draw the object with in the correct order. Use it to add mesh data.
 	 *
 	 * @return The indices list
 	 */
@@ -110,8 +108,7 @@ public class VertexData {
 	}
 
 	/**
-	 * Returns the {@link VertexAttribute} at the desired index, or null if none is associated to the
-	 * index.
+	 * Returns the {@link VertexAttribute} at the desired index, or null if none is associated to the index.
 	 *
 	 * @param index The index to lookup
 	 * @return The attribute, or null if none is associated to the index.
@@ -151,8 +148,7 @@ public class VertexData {
 	}
 
 	/**
-	 * Removes the attribute associated to the provided name. If no attribute is found, nothing will be
-	 * removed.
+	 * Removes the attribute associated to the provided name. If no attribute is found, nothing will be removed.
 	 *
 	 * @param name The name of the attribute to remove
 	 */
@@ -195,8 +191,7 @@ public class VertexData {
 	}
 
 	/**
-	 * Returns the type of the attribute associated to the provided name, or null if none can be
-	 * found.
+	 * Returns the type of the attribute associated to the provided name, or null if none can be found.
 	 *
 	 * @param name The name to lookup
 	 * @return The type of the attribute, or null if none can be found
@@ -252,8 +247,7 @@ public class VertexData {
 	}
 
 	/**
-	 * Returns the buffer for the attribute associated to the provided name, or null if none can be
-	 * found. The buffer is returned filled and ready for reading.
+	 * Returns the buffer for the attribute associated to the provided name, or null if none can be found. The buffer is returned filled and ready for reading.
 	 *
 	 * @param name The name to lookup
 	 * @return The attribute buffer, filled and flipped
@@ -263,8 +257,7 @@ public class VertexData {
 	}
 
 	/**
-	 * Returns the buffer for the attribute at the provided index, or null if none can be found. The
-	 * buffer is returned filled and ready for reading.
+	 * Returns the buffer for the attribute at the provided index, or null if none can be found. The buffer is returned filled and ready for reading.
 	 *
 	 * @param index The index to lookup
 	 * @return The attribute buffer, filled and flipped
@@ -287,8 +280,7 @@ public class VertexData {
 	}
 
 	/**
-	 * Replaces the contents of this vertex data by the provided one. This is a deep copy. The vertex
-	 * attribute are each individually cloned.
+	 * Replaces the contents of this vertex data by the provided one. This is a deep copy. The vertex attribute are each individually cloned.
 	 *
 	 * @param data The data to copy.
 	 */

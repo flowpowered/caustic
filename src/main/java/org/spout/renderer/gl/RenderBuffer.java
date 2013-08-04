@@ -31,11 +31,9 @@ import org.spout.renderer.GLVersioned;
 import org.spout.renderer.gl.Texture.ImageFormat;
 
 /**
- * Represents an OpenGL render buffer. A render buffer can be used as a faster alternative to a
- * texture in a frame buffer when its rendering output doesn't need to be read. The storage format,
- * width and height dimensions need to be set with {@link #setFormat(org.spout.renderer.gl.Texture.ImageFormat)},
- * {@link #setWidth(int)} and {@link #setHeight(int)} respectively before the render buffer can be
- * created.
+ * Represents an OpenGL render buffer. A render buffer can be used as a faster alternative to a texture in a frame buffer when its rendering output doesn't need to be read. The storage format, width
+ * and height dimensions need to be set with {@link #setFormat(org.spout.renderer.gl.Texture.ImageFormat)}, {@link #setWidth(int)} and {@link #setHeight(int)} respectively before the render buffer can
+ * be created.
  */
 public abstract class RenderBuffer extends Creatable implements GLVersioned {
 	protected int id;

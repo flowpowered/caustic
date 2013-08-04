@@ -35,7 +35,7 @@ import org.spout.renderer.gl20.OpenGL20Program;
  * @see org.spout.renderer.gl.Program
  */
 public class OpenGL30Program extends OpenGL20Program {
-	// TODO: support unsigned int scalars and vectors
+	// TODO: Support unsigned int scalars and vectors
 
 	@Override
 	public GLVersion getGLVersion() {

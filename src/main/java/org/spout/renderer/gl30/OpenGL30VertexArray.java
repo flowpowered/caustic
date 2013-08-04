@@ -65,8 +65,7 @@ public class OpenGL30VertexArray extends VertexArray {
 		resetIndicesCountAndOffset();
 		// Create the map for attribute index to buffer ID
 		attributeBufferIDs = new int[vertexData.getAttributeCount()];
-		// For each attribute, generate, bind and fill the vbo,
-		// then setup the attribute in the vao and save the buffer ID for the index
+		// For each attribute, generate, bind and fill the vbo, then setup the attribute in the vao and save the buffer ID for the index
 		for (int i = 0; i < vertexData.getAttributeCount(); i++) {
 			final VertexAttribute attribute = vertexData.getAttribute(i);
 			final int bufferID = GL15.glGenBuffers();

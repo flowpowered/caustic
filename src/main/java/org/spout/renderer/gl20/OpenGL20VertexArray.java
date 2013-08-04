@@ -41,11 +41,8 @@ import org.spout.renderer.gl.VertexArray;
 import org.spout.renderer.util.RenderUtil;
 
 /**
- * An OpenGL 2.0 implementation of {@link VertexArray}.
- * <p/>
- * Vertex arrays will be used if the ARB or APPLE extension is supported by the hardware. Else,
- * since core OpenGL doesn't support them until 3.0, the vertex attributes will have to be redefined
- * on each render call.
+ * An OpenGL 2.0 implementation of {@link VertexArray}. <p/> Vertex arrays will be used if the ARB or APPLE extension is supported by the hardware. Else, since core OpenGL doesn't support them until
+ * 3.0, the vertex attributes will have to be redefined on each render call.
  *
  * @see VertexArray
  */
@@ -183,7 +180,9 @@ public class OpenGL20VertexArray extends VertexArray {
 	}
 
 	private static enum VertexArrayExtension {
-		NONE, ARB, APPLE;
+		NONE,
+		ARB,
+		APPLE;
 
 		private boolean has() {
 			return this != NONE;
