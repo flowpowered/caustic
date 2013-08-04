@@ -80,7 +80,7 @@ import org.spout.renderer.gl.VertexArray;
  */
 public class StringModel extends Model {
 	private static final int GLYPH_INDEX_COUNT = 6;
-	private static final Pattern COLOR_PATTERN = Pattern.compile("[^\\\\]?#([a-fA-F\\d]{8})");
+	private static final Pattern COLOR_PATTERN = Pattern.compile("#[a-fA-F\\d]{1,8}");
 	private GLVersion glVersion;
 	private char[] glyphs;
 	private Font font;
@@ -204,9 +204,6 @@ public class StringModel extends Model {
 				// Upload the color
 				colorUniform.set(color);
 				program.upload(colorUniform);
-				// Skip the color code
-				i += 8;
-				continue;
 			}
 			// Get the glyph start index
 			final int glyphIndex = glyphIndexes.get(glyph);
@@ -297,14 +294,29 @@ public class StringModel extends Model {
 	 * @param string The string to render
 	 */
 	public void setString(String string) {
-		this.string = string;
-		// Find all the colors
 		colorIndices.clear();
+		// Search for color codes
+		final StringBuilder stringBuilder = new StringBuilder(string);
 		final Matcher matcher = COLOR_PATTERN.matcher(string);
+		int removedCount = 0;
 		while (matcher.find()) {
-			// Save the color and its index
-			colorIndices.put(matcher.start(1) - 1, new Color((int) Long.parseLong(matcher.group(1), 16), true));
+			final int index = matcher.start() - removedCount;
+			// Ignore escaped color codes
+			if (index > 0 && stringBuilder.charAt(index - 1) == '\\') {
+				// Remove the escape character
+				stringBuilder.deleteCharAt(index - 1);
+				removedCount++;
+				continue;
+			}
+			// Add the color for the index and delete it from the string
+			final String colorCode = matcher.group();
+			colorIndices.put(index, new Color(Long.decode(colorCode).intValue(), true));
+			final int length = colorCode.length();
+			stringBuilder.delete(index, index + length);
+			removedCount += length;
 		}
+		// Color code free string
+		this.string = stringBuilder.toString();
 	}
 
 	private void generateMesh(Model destination, char[] glyphs, TCharIntMap glyphWidths, int textureWidth, int textureHeight) {
