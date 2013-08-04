@@ -91,6 +91,7 @@ public class StringModel extends Model {
 	private int glyphPadding;
 	private float worldGlyphPadding;
 	private float worldLineHeight;
+	private String rawString;
 	private String string;
 	private final TIntObjectMap<Color> colorIndices = new TIntObjectHashMap<>();
 
@@ -294,6 +295,7 @@ public class StringModel extends Model {
 	 * @param string The string to render
 	 */
 	public void setString(String string) {
+		rawString = string;
 		colorIndices.clear();
 		// Search for color codes
 		final StringBuilder stringBuilder = new StringBuilder(string);
@@ -317,6 +319,15 @@ public class StringModel extends Model {
 		}
 		// Color code free string
 		this.string = stringBuilder.toString();
+	}
+
+	/**
+	 * Returns the model's string.
+	 *
+	 * @return The string
+	 */
+	public String getString() {
+		return rawString;
 	}
 
 	private void generateMesh(Model destination, char[] glyphs, TCharIntMap glyphWidths, int textureWidth, int textureHeight) {

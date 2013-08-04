@@ -208,6 +208,8 @@ public abstract class Program extends Creatable implements GLVersioned {
 		return id;
 	}
 
+	// TODO: use shaders directly, not sources
+
 	/**
 	 * Sets the source of the shader for the type.
 	 *
