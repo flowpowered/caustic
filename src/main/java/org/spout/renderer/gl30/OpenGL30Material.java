@@ -26,12 +26,15 @@
  */
 package org.spout.renderer.gl30;
 
+import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
 import org.spout.renderer.GLVersion;
 import org.spout.renderer.gl.Material;
+import org.spout.renderer.gl.Program;
 import org.spout.renderer.gl.Texture;
+import org.spout.renderer.gl20.OpenGL20Texture;
 import org.spout.renderer.util.RenderUtil;
 
 /**
@@ -40,7 +43,7 @@ import org.spout.renderer.util.RenderUtil;
  * @see Material
  */
 public class OpenGL30Material extends Material {
-	private final OpenGL30Program program = new OpenGL30Program();
+	private OpenGL30Program program;
 	// Textures by unit
 	protected TIntObjectMap<OpenGL30Texture> textures;
 
@@ -49,22 +52,22 @@ public class OpenGL30Material extends Material {
 		if (created) {
 			throw new IllegalStateException("Material has already been created");
 		}
-		program.create();
+		if (program == null) {
+			throw new IllegalStateException("Program has not been set");
+		}
+		program.checkCreated();
+		if (textures != null) {
+			for (OpenGL20Texture texture : textures.valueCollection()) {
+				texture.checkCreated();
+			}
+		}
 		super.create();
 	}
 
 	@Override
 	public void destroy() {
 		checkCreated();
-		program.destroy();
-		if (textures != null) {
-			for (OpenGL30Texture texture : textures.valueCollection()) {
-				if (texture.isCreated()) {
-					texture.destroy();
-				}
-			}
-		}
-		uniforms.clear();
+		textures = null;
 		super.destroy();
 	}
 
@@ -78,11 +81,14 @@ public class OpenGL30Material extends Material {
 		checkCreated();
 		program.bind();
 		if (textures != null) {
-			for (OpenGL30Texture texture : textures.valueCollection()) {
-				if (texture.isCreated()) {
-					texture.bind();
-					program.bindTexture(texture.getUnit());
-				}
+			final TIntObjectIterator<OpenGL30Texture> iterator = textures.iterator();
+			while (iterator.hasNext()) {
+				iterator.advance();
+				// Bind the texture to the unit
+				final int unit = iterator.key();
+				iterator.value().bind(unit);
+				// Bind the shader sampler uniform to the unit
+				program.bindTextureUniform(unit);
 			}
 		}
 	}
@@ -93,11 +99,15 @@ public class OpenGL30Material extends Material {
 		program.unbind();
 		if (textures != null) {
 			for (OpenGL30Texture texture : textures.valueCollection()) {
-				if (texture.isCreated()) {
-					texture.unbind();
-				}
+				texture.unbind();
 			}
 		}
+	}
+
+	@Override
+	public void setProgram(Program program) {
+		RenderUtil.checkVersion(this, program);
+		this.program = (OpenGL30Program) program;
 	}
 
 	@Override
@@ -106,13 +116,12 @@ public class OpenGL30Material extends Material {
 	}
 
 	@Override
-	public void addTexture(Texture texture) {
+	public void addTexture(int unit, Texture texture) {
 		RenderUtil.checkVersion(this, texture);
 		if (textures == null) {
 			textures = new TIntObjectHashMap<>();
 		}
-		final OpenGL30Texture gl20Texture = (OpenGL30Texture) texture;
-		textures.put(gl20Texture.getUnit(), gl20Texture);
+		textures.put(unit, (OpenGL30Texture) texture);
 	}
 
 	@Override

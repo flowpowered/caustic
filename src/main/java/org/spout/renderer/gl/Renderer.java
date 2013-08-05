@@ -59,6 +59,15 @@ public abstract class Renderer extends Creatable implements GLVersioned {
 	protected final Set<RenderList> renderLists = new TreeSet<>();
 	protected final Map<String, RenderList> renderListsByName = new HashMap<>();
 
+	@Override
+	public void destroy() {
+		capabilities.clear();
+		uniforms.clear();
+		renderLists.clear();
+		renderListsByName.clear();
+		super.destroy();
+	}
+
 	/**
 	 * Uploads the renderer uniforms to the desired program.
 	 *

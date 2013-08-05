@@ -29,6 +29,7 @@ package org.spout.renderer.gl20;
 import org.spout.renderer.GLVersion;
 import org.spout.renderer.gl.Material;
 import org.spout.renderer.gl.Model;
+import org.spout.renderer.gl.VertexArray;
 import org.spout.renderer.util.RenderUtil;
 
 /**
@@ -37,7 +38,7 @@ import org.spout.renderer.util.RenderUtil;
  * @see Model
  */
 public class OpenGL20Model extends Model {
-	private final OpenGL20VertexArray vertexArray = new OpenGL20VertexArray();
+	private OpenGL20VertexArray vertexArray;
 	private OpenGL20Material material;
 
 	@Override
@@ -45,17 +46,22 @@ public class OpenGL20Model extends Model {
 		if (created) {
 			throw new IllegalStateException("Model has already been created");
 		}
+		if (vertexArray == null) {
+			throw new IllegalStateException("Vertex array has not been set");
+		}
 		if (material == null) {
 			throw new IllegalStateException("Material has not been set");
 		}
-		vertexArray.create();
+		vertexArray.checkCreated();
+		material.checkCreated();
 		super.create();
 	}
 
 	@Override
 	public void destroy() {
 		checkCreated();
-		vertexArray.destroy();
+		vertexArray = null;
+		material = null;
 		super.destroy();
 	}
 
@@ -72,6 +78,17 @@ public class OpenGL20Model extends Model {
 	}
 
 	@Override
+	public OpenGL20VertexArray getVertexArray() {
+		return vertexArray;
+	}
+
+	@Override
+	public void setVertexArray(VertexArray vertexArray) {
+		RenderUtil.checkVersion(this, vertexArray);
+		this.vertexArray = (OpenGL20VertexArray) vertexArray;
+	}
+
+	@Override
 	public OpenGL20Material getMaterial() {
 		return material;
 	}
@@ -80,11 +97,6 @@ public class OpenGL20Model extends Model {
 	public void setMaterial(Material material) {
 		RenderUtil.checkVersion(this, material);
 		this.material = (OpenGL20Material) material;
-	}
-
-	@Override
-	public OpenGL20VertexArray getVertexArray() {
-		return vertexArray;
 	}
 
 	@Override

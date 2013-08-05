@@ -60,6 +60,7 @@ import org.spout.renderer.data.VertexData;
 import org.spout.renderer.gl.Material;
 import org.spout.renderer.gl.Model;
 import org.spout.renderer.gl.Program;
+import org.spout.renderer.gl.Shader;
 import org.spout.renderer.gl.Shader.ShaderType;
 import org.spout.renderer.gl.Texture;
 import org.spout.renderer.gl.Texture.FilterMode;
@@ -141,7 +142,7 @@ public class StringModel extends Model {
 		// Create the material
 		final Material material = glVersion.createMaterial();
 		generateMaterial(material, glVersion);
-		material.addTexture(texture);
+		material.addTexture(0, texture);
 		material.create();
 		// Create the model mesh
 		model = glVersion.createModel();
@@ -225,17 +226,22 @@ public class StringModel extends Model {
 	}
 
 	@Override
+	public VertexArray getVertexArray() {
+		return model != null ? model.getVertexArray() : null;
+	}
+
+	@Override
+	public void setVertexArray(VertexArray vertexArray) {
+		throw new UnsupportedOperationException("Unsupported by string model");
+	}
+
+	@Override
 	public Material getMaterial() {
 		return model != null ? model.getMaterial() : null;
 	}
 
 	@Override
 	public void setMaterial(Material material) {
-		throw new UnsupportedOperationException("Unsupported by string model");
-	}
-
-	@Override
-	public VertexArray getVertexArray() {
 		throw new UnsupportedOperationException("Unsupported by string model");
 	}
 
@@ -372,7 +378,10 @@ public class StringModel extends Model {
 		positionAttribute.setData(positions);
 		textureCoordsAttribute.setData(textureCoords);
 		// Set the vertex data in the model
-		destination.getVertexArray().setData(data);
+		final VertexArray vertexArray = glVersion.createVertexArray();
+		vertexArray.setData(data);
+		vertexArray.create();
+		destination.setVertexArray(vertexArray);
 	}
 
 	private int generateTexture(Texture destination, char[] glyphs, TCharIntMap glyphWidths, Font font, int width, int height) {
@@ -399,8 +408,29 @@ public class StringModel extends Model {
 		destination.setImageData(image);
 		destination.setMagFilter(FilterMode.LINEAR);
 		destination.setMinFilter(FilterMode.LINEAR);
-		destination.setUnit(0);
 		return width;
+	}
+
+	private void generateMaterial(Material destination, GLVersion version) {
+		final Program program = glVersion.createProgram();
+		final String shaderPath = "/shaders/" + version.toString().toLowerCase() + "/";
+		final Shader vertShader = glVersion.createShader();
+		vertShader.setSource(StringModel.class.getResourceAsStream(shaderPath + "font.vert"));
+		vertShader.setType(ShaderType.VERTEX);
+		vertShader.create();
+		program.addShader(vertShader);
+		final Shader fragShader = glVersion.createShader();
+		fragShader.setSource(StringModel.class.getResourceAsStream(shaderPath + "font.frag"));
+		fragShader.setType(ShaderType.FRAGMENT);
+		fragShader.create();
+		program.addShader(fragShader);
+		if (version == GLVersion.GL20) {
+			program.addAttributeLayout("position", 0);
+			program.addAttributeLayout("textureCoords", 1);
+		}
+		program.addTextureLayout("diffuse", 0);
+		destination.setProgram(program);
+		program.create();
 	}
 
 	private static void add(TFloatList list, float... f) {
@@ -409,17 +439,5 @@ public class StringModel extends Model {
 
 	private static void add(TIntList list, int... f) {
 		list.add(f);
-	}
-
-	private static void generateMaterial(Material destination, GLVersion version) {
-		final Program program = destination.getProgram();
-		final String shaderPath = "/shaders/" + version.toString().toLowerCase() + "/";
-		program.addShaderSource(ShaderType.VERTEX, StringModel.class.getResourceAsStream(shaderPath + "font.vert"));
-		program.addShaderSource(ShaderType.FRAGMENT, StringModel.class.getResourceAsStream(shaderPath + "font.frag"));
-		if (version == GLVersion.GL20) {
-			program.addAttributeLayout("position", 0);
-			program.addAttributeLayout("textureCoords", 1);
-		}
-		program.addTextureLayout("diffuse", 0);
 	}
 }

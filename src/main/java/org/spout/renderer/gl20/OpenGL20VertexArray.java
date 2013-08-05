@@ -48,6 +48,9 @@ import org.spout.renderer.util.RenderUtil;
  */
 public class OpenGL20VertexArray extends VertexArray {
 	private final VertexArrayExtension extension;
+	private int[] attributeSizes;
+	private int[] attributeTypes;
+	private boolean[] attributeNormalizing;
 
 	public OpenGL20VertexArray() {
 		final ContextCapabilities capabilities = GLContext.getCapabilities();
@@ -82,10 +85,17 @@ public class OpenGL20VertexArray extends VertexArray {
 		indicesCountCache = vertexData.getIndicesCount();
 		resetIndicesCountAndOffset();
 		// Create the map for attribute index to buffer ID
-		attributeBufferIDs = new int[vertexData.getAttributeCount()];
-		// For each attribute, generate, bind and fill the vbo,
-		// no vao setup here, this is done during the render call
-		for (int i = 0; i < vertexData.getAttributeCount(); i++) {
+		final int attributeCount = vertexData.getAttributeCount();
+		attributeBufferIDs = new int[attributeCount];
+		if (!extension.has()) {
+			// If we don't have a vao, we have to save these manually
+			attributeSizes = new int[attributeCount];
+			attributeTypes = new int[attributeCount];
+			attributeNormalizing = new boolean[attributeCount];
+		}
+		// For each attribute, generate, bind and fill the vbo
+		// Setup the vao if available
+		for (int i = 0; i < attributeCount; i++) {
 			final VertexAttribute attribute = vertexData.getAttribute(i);
 			final int bufferID = GL15.glGenBuffers();
 			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, bufferID);
@@ -94,6 +104,11 @@ public class OpenGL20VertexArray extends VertexArray {
 			if (extension.has()) {
 				// Or as a float, normalized or not
 				GL20.glVertexAttribPointer(i, attribute.getSize(), attribute.getType().getGLConstant(), attribute.getUploadMode().normalize(), 0, 0);
+			} else {
+				// We save the properties for rendering
+				attributeSizes[i] = attribute.getSize();
+				attributeTypes[i] = attribute.getType().getGLConstant();
+				attributeNormalizing[i] = attribute.getUploadMode().normalize();
 			}
 		}
 		// Unbind the last vbo
@@ -117,7 +132,7 @@ public class OpenGL20VertexArray extends VertexArray {
 			extension.glBindVertexArray(id);
 		}
 		// Delete the attribute buffers
-		for (int i = 0; i < vertexData.getAttributeCount(); i++) {
+		for (int i = 0; i < attributeBufferIDs.length; i++) {
 			if (extension.has()) {
 				// Disable the attribute
 				GL20.glDisableVertexAttribArray(i);
@@ -128,10 +143,12 @@ public class OpenGL20VertexArray extends VertexArray {
 			// Unbind the vao and delete it
 			extension.glBindVertexArray(0);
 			extension.glDeleteVertexArrays(id);
+		} else {
+			// Delete the attribute properties
+			attributeSizes = null;
+			attributeTypes = null;
+			attributeNormalizing = null;
 		}
-		// Reset the data and state
-		indicesBufferID = 0;
-		attributeBufferIDs = null;
 		super.destroy();
 		// Check for errors
 		RenderUtil.checkForOpenGLError();
@@ -145,13 +162,12 @@ public class OpenGL20VertexArray extends VertexArray {
 			extension.glBindVertexArray(id);
 		}
 		// Enable the vertex attributes
-		for (int i = 0; i < vertexData.getAttributeCount(); i++) {
+		for (int i = 0; i < attributeBufferIDs.length; i++) {
 			if (!extension.has()) {
 				// Bind the buffer
 				GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, attributeBufferIDs[i]);
 				// Define the attribute
-				final VertexAttribute attribute = vertexData.getAttribute(i);
-				GL20.glVertexAttribPointer(i, attribute.getSize(), attribute.getType().getGLConstant(), attribute.getUploadMode().normalize(), 0, 0);
+				GL20.glVertexAttribPointer(i, attributeSizes[i], attributeTypes[i], attributeNormalizing[i], 0, 0);
 			}
 			// Enable it
 			GL20.glEnableVertexAttribArray(i);
@@ -167,7 +183,7 @@ public class OpenGL20VertexArray extends VertexArray {
 		// Unbind the indices buffer
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
 		// Disable all attributes
-		for (int i = 0; i < vertexData.getAttributeCount(); i++) {
+		for (int i = 0; i < attributeBufferIDs.length; i++) {
 			GL20.glDisableVertexAttribArray(i);
 		}
 		// Check for errors

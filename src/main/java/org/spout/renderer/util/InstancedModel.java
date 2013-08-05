@@ -78,6 +78,16 @@ public class InstancedModel extends Model {
 	}
 
 	@Override
+	public VertexArray getVertexArray() {
+		return main.getVertexArray();
+	}
+
+	@Override
+	public void setVertexArray(VertexArray vertexArray) {
+		main.setVertexArray(vertexArray);
+	}
+
+	@Override
 	public Material getMaterial() {
 		return main.getMaterial();
 	}
@@ -86,11 +96,6 @@ public class InstancedModel extends Model {
 	public void setMaterial(Material material) {
 		RenderUtil.checkVersion(main, material);
 		main.setMaterial(material);
-	}
-
-	@Override
-	public VertexArray getVertexArray() {
-		return main.getVertexArray();
 	}
 
 	@Override

@@ -108,9 +108,6 @@ public class OpenGL30VertexArray extends VertexArray {
 		// Unbind the vao and delete it
 		GL30.glBindVertexArray(0);
 		GL30.glDeleteVertexArrays(id);
-		// Reset the data and state
-		indicesBufferID = 0;
-		attributeBufferIDs = null;
 		super.destroy();
 		// Check for errors
 		RenderUtil.checkForOpenGLError();

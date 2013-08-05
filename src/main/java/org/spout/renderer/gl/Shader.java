@@ -41,20 +41,20 @@ import org.spout.renderer.GLVersioned;
  */
 public abstract class Shader extends Creatable implements GLVersioned {
 	protected int id;
-	protected InputStream shaderSource;
-	protected ShaderType shaderType;
+	protected InputStream source;
+	protected ShaderType type;
 
 	@Override
 	public void create() {
 		// Release the shader input stream
-		shaderSource = null;
+		source = null;
 		super.create();
 	}
 
 	@Override
 	public void destroy() {
 		id = 0;
-		shaderType = null;
+		type = null;
 		super.destroy();
 	}
 
@@ -73,7 +73,7 @@ public abstract class Shader extends Creatable implements GLVersioned {
 	 * @param shaderSource The source input stream
 	 */
 	public void setSource(InputStream shaderSource) {
-		this.shaderSource = shaderSource;
+		this.source = shaderSource;
 	}
 
 	/**
@@ -82,7 +82,11 @@ public abstract class Shader extends Creatable implements GLVersioned {
 	 * @param type The shader type
 	 */
 	public void setType(ShaderType type) {
-		this.shaderType = type;
+		this.type = type;
+	}
+
+	public ShaderType getType() {
+		return type;
 	}
 
 	/**

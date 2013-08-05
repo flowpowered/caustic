@@ -74,6 +74,15 @@ public abstract class Model extends Creatable implements GLVersioned {
 	public abstract void render();
 
 	/**
+	 * Returns the model's vertex array.
+	 *
+	 * @return The vertex array
+	 */
+	public abstract VertexArray getVertexArray();
+
+	public abstract void setVertexArray(VertexArray vertexArray);
+
+	/**
 	 * Returns the model's material.
 	 *
 	 * @return The material
@@ -86,13 +95,6 @@ public abstract class Model extends Creatable implements GLVersioned {
 	 * @param material The material
 	 */
 	public abstract void setMaterial(Material material);
-
-	/**
-	 * Returns the model's vertex array.
-	 *
-	 * @return The vertex array
-	 */
-	public abstract VertexArray getVertexArray();
 
 	/**
 	 * Returns the transformation matrix that represent the model's current scale, rotation and position.

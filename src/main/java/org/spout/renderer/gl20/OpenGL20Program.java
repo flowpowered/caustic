@@ -59,10 +59,7 @@ import org.spout.renderer.util.RenderUtil;
  * @see Program
  */
 public class OpenGL20Program extends Program {
-	// Shaders
-	private final OpenGL20Shader vertexShader = new OpenGL20Shader();
-	private final OpenGL20Shader fragmentShader = new OpenGL20Shader();
-	// Map of the uniform name to their location
+	// Map of the uniform names to their locations
 	private final TObjectIntMap<String> uniforms = new TObjectIntHashMap<>(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, -1);
 
 	@Override
@@ -70,27 +67,18 @@ public class OpenGL20Program extends Program {
 		if (created) {
 			throw new IllegalStateException("Program has already been created");
 		}
-		if (shaderSources == null || shaderSources.isEmpty()) {
-			throw new IllegalStateException("No sources set for shaders");
-		}
-		if (!shaderSources.containsKey(ShaderType.VERTEX)) {
+		if (!shaders.containsKey(ShaderType.VERTEX)) {
 			throw new IllegalStateException("No source set for vertex shader");
 		}
-		if (!shaderSources.containsKey(ShaderType.FRAGMENT)) {
+		if (!shaders.containsKey(ShaderType.FRAGMENT)) {
 			throw new IllegalStateException("No source set for fragment shader");
 		}
 		// Create program
 		id = GL20.glCreateProgram();
 		// Create the vertex Shader
-		vertexShader.setType(ShaderType.VERTEX);
-		vertexShader.setSource(shaderSources.get(ShaderType.VERTEX));
-		vertexShader.create();
-		GL20.glAttachShader(id, vertexShader.getID());
+		GL20.glAttachShader(id, shaders.get(ShaderType.VERTEX).getID());
 		// Create the fragment Shader
-		fragmentShader.setType(ShaderType.FRAGMENT);
-		fragmentShader.setSource(shaderSources.get(ShaderType.FRAGMENT));
-		fragmentShader.create();
-		GL20.glAttachShader(id, fragmentShader.getID());
+		GL20.glAttachShader(id, shaders.get(ShaderType.FRAGMENT).getID());
 		// If the attribute layout has been setup, apply it
 		if (attributeLayouts != null && !attributeLayouts.isEmpty()) {
 			final TObjectIntIterator<String> iterator = attributeLayouts.iterator();
@@ -122,8 +110,6 @@ public class OpenGL20Program extends Program {
 	@Override
 	public void destroy() {
 		checkCreated();
-		vertexShader.destroy();
-		fragmentShader.destroy();
 		GL20.glDeleteProgram(id);
 		uniforms.clear();
 		super.destroy();
@@ -143,7 +129,7 @@ public class OpenGL20Program extends Program {
 	}
 
 	@Override
-	public void bindTexture(int unit) {
+	public void bindTextureUniform(int unit) {
 		if (textureLayouts == null || !textureLayouts.containsKey(unit)) {
 			throw new IllegalArgumentException("No texture layout has been set for the unit: " + unit);
 		}

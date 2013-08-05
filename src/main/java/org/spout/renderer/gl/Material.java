@@ -38,6 +38,12 @@ public abstract class Material extends Creatable implements GLVersioned {
 	// Material uniforms
 	protected final UniformHolder uniforms = new UniformHolder();
 
+	@Override
+	public void destroy() {
+		uniforms.clear();
+		super.destroy();
+	}
+
 	/**
 	 * Binds the material to the OpenGL context.
 	 */
@@ -53,6 +59,8 @@ public abstract class Material extends Creatable implements GLVersioned {
 	 */
 	public abstract void unbind();
 
+	public abstract void setProgram(Program program);
+
 	/**
 	 * Returns the material's program.
 	 *
@@ -63,9 +71,10 @@ public abstract class Material extends Creatable implements GLVersioned {
 	/**
 	 * Adds a texture to the material. If a texture is a already present in the same unit as this one, it will be replaced.
 	 *
+	 * @param unit
 	 * @param texture The texture to add
 	 */
-	public abstract void addTexture(Texture texture);
+	public abstract void addTexture(int unit, Texture texture);
 
 	/**
 	 * Returns true if a texture is present in the unit.

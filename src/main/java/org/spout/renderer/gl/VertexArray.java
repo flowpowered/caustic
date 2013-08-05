@@ -53,11 +53,18 @@ public abstract class VertexArray extends Creatable implements GLVersioned {
 	protected DrawingMode drawingMode = DrawingMode.TRIANGLES;
 
 	@Override
+	public void create() {
+		vertexData = null;
+		super.create();
+	}
+
+	@Override
 	public void destroy() {
 		id = 0;
 		indicesCountCache = 0;
+		indicesBufferID = 0;
+		attributeBufferIDs = null;
 		resetIndicesCountAndOffset();
-		vertexData = null;
 		super.destroy();
 	}
 

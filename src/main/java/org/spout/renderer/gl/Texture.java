@@ -26,10 +26,10 @@
  */
 package org.spout.renderer.gl;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import javax.imageio.ImageIO;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -48,8 +48,6 @@ import org.spout.renderer.data.VertexAttribute.DataType;
  */
 public abstract class Texture extends Creatable implements GLVersioned {
 	protected int id = 0;
-	// The unit
-	protected int unit = GL13.GL_TEXTURE0;
 	// The format
 	protected ImageFormat format = ImageFormat.RGB;
 	protected DataType type = DataType.UNSIGNED_BYTE;
@@ -79,8 +77,10 @@ public abstract class Texture extends Creatable implements GLVersioned {
 
 	/**
 	 * Binds the texture to the OpenGL context.
+	 *
+	 * @param unit The unit to bind the texture to, or -1 to just bind the texture
 	 */
-	public abstract void bind();
+	public abstract void bind(int unit);
 
 	/**
 	 * Unbinds the texture from the OpenGL context.
@@ -94,24 +94,6 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	 */
 	public int getID() {
 		return id;
-	}
-
-	/**
-	 * Returns the texture unit, a number between 0 and 31.
-	 *
-	 * @return The texture unit
-	 */
-	public int getUnit() {
-		return unit - GL13.GL_TEXTURE0;
-	}
-
-	/**
-	 * Sets the texture unit.
-	 *
-	 * @param unit The texture unit to set
-	 */
-	public void setUnit(int unit) {
-		this.unit = GL13.GL_TEXTURE0 + unit;
 	}
 
 	/**
@@ -257,6 +239,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	 */
 	public void setImageData(ByteBuffer imageData, int width, int height) {
 		if (imageData != null) {
+			// TODO: don't flip me
 			imageData.flip();
 		}
 		this.imageData = imageData;

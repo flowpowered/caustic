@@ -27,7 +27,6 @@
 package org.spout.renderer.gl;
 
 import java.awt.Color;
-import java.io.InputStream;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
@@ -50,17 +49,17 @@ import org.spout.renderer.data.UniformHolder;
 import org.spout.renderer.gl.Shader.ShaderType;
 
 /**
- * Represents an OpenGL program. A program holds the necessary shaders for the rendering pipeline. This requires at least that sources for the {@link org.spout.renderer.gl.Shader.ShaderType#VERTEX}
- * and {@link org.spout.renderer.gl.Shader.ShaderType#FRAGMENT} shaders be set with {@link #addShaderSource(org.spout.renderer.gl.Shader.ShaderType, java.io.InputStream)} before creation. When using
- * GL20, it is strongly recommended to set the attribute layout in the program with {@link #addAttributeLayout(String, int)}, which must be done before creation. The layout allows for association
- * between the attribute index in the vertex data and the name in the shaders. For GL30, it is recommended to do so in the shaders instead, using the "layout" keyword. Failing to do so might result in
- * partial, wrong or missing rendering, and affects models using multiple attributes. The texture layout should also be setup using {@link #addTextureLayout(String, int)} if textures are used in the
- * shaders. This one can be done after creation, but is necessary for assigning texture units to sampler uniforms.
+ * Represents an OpenGL program. A program holds the necessary shaders for the rendering pipeline. This requires at least that the {@link org.spout.renderer.gl.Shader.ShaderType#VERTEX} and {@link
+ * org.spout.renderer.gl.Shader.ShaderType#FRAGMENT} shaders be set with {@link #addShader(Shader)} before creation. When using GL20, it is strongly recommended to set the attribute layout in the
+ * program with {@link #addAttributeLayout(String, int)}, which must be done before creation. The layout allows for association between the attribute index in the vertex data and the name in the
+ * shaders. For GL30, it is recommended to do so in the shaders instead, using the "layout" keyword. Failing to do so might result in partial, wrong or missing rendering, and affects models using
+ * multiple attributes. The texture layout should also be setup using {@link #addTextureLayout(String, int)} if textures are used in the shaders. This one can be done after creation, but is necessary
+ * for assigning texture units to sampler uniforms.
  */
 public abstract class Program extends Creatable implements GLVersioned {
 	protected int id;
-	// Shader sources
-	protected Map<ShaderType, InputStream> shaderSources;
+	// Shaders
+	protected final Map<ShaderType, Shader> shaders = new EnumMap<>(ShaderType.class);
 	// Map of the attribute names to their vao index (optional for GL30 as they can be defined in the shader instead)
 	protected TObjectIntMap<String> attributeLayouts;
 	// Map of the texture units to their names. Only necessary if textures are used
@@ -68,13 +67,13 @@ public abstract class Program extends Creatable implements GLVersioned {
 
 	@Override
 	public void create() {
-		shaderSources = null;
 		attributeLayouts = null;
 		super.create();
 	}
 
 	@Override
 	public void destroy() {
+		shaders.clear();
 		textureLayouts = null;
 		id = 0;
 		super.destroy();
@@ -96,7 +95,7 @@ public abstract class Program extends Creatable implements GLVersioned {
 	 *
 	 * @param unit The unit to bind
 	 */
-	public abstract void bindTexture(int unit);
+	public abstract void bindTextureUniform(int unit);
 
 	/**
 	 * Uploads the uniform to this program.
@@ -208,19 +207,21 @@ public abstract class Program extends Creatable implements GLVersioned {
 		return id;
 	}
 
-	// TODO: use shaders directly, not sources
-
 	/**
-	 * Sets the source of the shader for the type.
+	 * Adds a shader.
 	 *
-	 * @param type The target type
-	 * @param source The source to set
+	 * @param shader The shader to add
 	 */
-	public void addShaderSource(ShaderType type, InputStream source) {
-		if (shaderSources == null) {
-			shaderSources = new EnumMap<>(ShaderType.class);
-		}
-		shaderSources.put(type, source);
+	public void addShader(Shader shader) {
+		shaders.put(shader.getType(), shader);
+	}
+
+	public Shader getShader(ShaderType type) {
+		return shaders.get(type);
+	}
+
+	public boolean hasShader(ShaderType type) {
+		return shaders.containsKey(type);
 	}
 
 	/**
@@ -228,13 +229,8 @@ public abstract class Program extends Creatable implements GLVersioned {
 	 *
 	 * @param type The type to remove
 	 */
-	public void removeShaderSource(ShaderType type) {
-		if (shaderSources != null) {
-			shaderSources.remove(type);
-			if (shaderSources.isEmpty()) {
-				shaderSources = null;
-			}
-		}
+	public void removeShader(ShaderType type) {
+		shaders.remove(type);
 	}
 
 	/**

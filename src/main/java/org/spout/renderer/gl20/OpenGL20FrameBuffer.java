@@ -123,17 +123,6 @@ public class OpenGL20FrameBuffer extends FrameBuffer {
 		// Unbind and delete the frame buffer
 		EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0);
 		EXTFramebufferObject.glDeleteFramebuffersEXT(id);
-		// Destroy the textures and buffers
-		for (OpenGL20Texture texture : textures.values()) {
-			if (texture.isCreated()) {
-				texture.destroy();
-			}
-		}
-		for (OpenGL20RenderBuffer buffer : buffers.values()) {
-			if (buffer.isCreated()) {
-				buffer.destroy();
-			}
-		}
 		// Release some resources
 		textures.clear();
 		buffers.clear();

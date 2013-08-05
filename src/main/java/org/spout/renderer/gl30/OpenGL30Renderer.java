@@ -79,26 +79,6 @@ public class OpenGL30Renderer extends Renderer {
 	@Override
 	public void destroy() {
 		checkCreated();
-		// Destroy models and materials
-		for (RenderList renderList : renderLists) {
-			for (Model model : renderList) {
-				if (model.isCreated()) {
-					model.destroy();
-				}
-				final Material material = model.getMaterial();
-				if (material != null && material.isCreated()) {
-					model.getMaterial().destroy();
-				}
-			}
-			final FrameBuffer frameBuffer = renderList.getFrameBuffer();
-			if (frameBuffer != null && frameBuffer.isCreated()) {
-				frameBuffer.destroy();
-			}
-		}
-		// Clear data
-		renderLists.clear();
-		renderListsByName.clear();
-		uniforms.clear();
 		// Display goes after else there's no context in which to check for an error
 		RenderUtil.checkForOpenGLError();
 		Display.destroy();

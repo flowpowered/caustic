@@ -47,24 +47,24 @@ public class OpenGL20Shader extends Shader {
 		if (created) {
 			throw new IllegalStateException("Shader has already been created");
 		}
-		if (shaderSource == null) {
+		if (source == null) {
 			throw new IllegalStateException("Shader source has not been set");
 		}
-		if (shaderType == null) {
+		if (type == null) {
 			throw new IllegalStateException("Shader type has not been set");
 		}
 		// Attempt to read the source and place it into a string builder
 		final StringBuilder source = new StringBuilder();
-		try (Scanner reader = new Scanner(shaderSource)) {
+		try (Scanner reader = new Scanner(this.source)) {
 			while (reader.hasNextLine()) {
 				source.append(reader.nextLine()).append('\n');
 			}
-			shaderSource.close();
+			this.source.close();
 		} catch (Exception ex) {
 			throw new IllegalStateException("Unreadable shader source", ex);
 		}
 		// Create a shader for the type
-		final int id = GL20.glCreateShader(shaderType.getGLConstant());
+		final int id = GL20.glCreateShader(type.getGLConstant());
 		// Send the source
 		GL20.glShaderSource(id, source);
 		// Compile the shader

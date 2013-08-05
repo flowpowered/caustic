@@ -51,7 +51,6 @@ public class OpenGL20Texture extends Texture {
 		//}
 		// Generate and bind the texture in the unit
 		id = GL11.glGenTextures();
-		GL13.glActiveTexture(unit);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
 		// Upload the texture to the GPU
 		uploadTexture(imageData, width, height);
@@ -89,8 +88,6 @@ public class OpenGL20Texture extends Texture {
 	@Override
 	public void destroy() {
 		checkCreated();
-		// Activate the unit
-		GL13.glActiveTexture(unit);
 		// Unbind the texture
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 		// Delete the texture
@@ -102,10 +99,12 @@ public class OpenGL20Texture extends Texture {
 	}
 
 	@Override
-	public void bind() {
+	public void bind(int unit) {
 		checkCreated();
-		// Activate the unit
-		GL13.glActiveTexture(unit);
+		if (unit != -1) {
+			// Activate the texture unit
+			GL13.glActiveTexture(GL13.GL_TEXTURE0 + unit);
+		}
 		// Bind the texture
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
 		// Check for errors
@@ -115,8 +114,6 @@ public class OpenGL20Texture extends Texture {
 	@Override
 	public void unbind() {
 		checkCreated();
-		// Activate the unit
-		GL13.glActiveTexture(unit);
 		// Unbind the texture
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 		// Check for errors
