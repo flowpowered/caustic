@@ -26,8 +26,6 @@
  */
 package org.spout.renderer.gl20;
 
-import java.util.Scanner;
-
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.OpenGLException;
@@ -53,19 +51,9 @@ public class OpenGL20Shader extends Shader {
 		if (type == null) {
 			throw new IllegalStateException("Shader type has not been set");
 		}
-		// Attempt to read the source and place it into a string builder
-		final StringBuilder source = new StringBuilder();
-		try (Scanner reader = new Scanner(this.source)) {
-			while (reader.hasNextLine()) {
-				source.append(reader.nextLine()).append('\n');
-			}
-			this.source.close();
-		} catch (Exception ex) {
-			throw new IllegalStateException("Unreadable shader source", ex);
-		}
 		// Create a shader for the type
 		final int id = GL20.glCreateShader(type.getGLConstant());
-		// Send the source
+		// Upload the source
 		GL20.glShaderSource(id, source);
 		// Compile the shader
 		GL20.glCompileShader(id);

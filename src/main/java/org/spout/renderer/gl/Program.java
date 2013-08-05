@@ -216,10 +216,22 @@ public abstract class Program extends Creatable implements GLVersioned {
 		shaders.put(shader.getType(), shader);
 	}
 
+	/**
+	 * Returns the shader for the type.
+	 *
+	 * @param type The shader type to lookup
+	 * @return The shader, or null if none could be found
+	 */
 	public Shader getShader(ShaderType type) {
 		return shaders.get(type);
 	}
 
+	/**
+	 * Returns true if a shader is present for the shader type.
+	 *
+	 * @param type The shader type to lookup
+	 * @return Whether or not a shader of the type is present
+	 */
 	public boolean hasShader(ShaderType type) {
 		return shaders.containsKey(type);
 	}

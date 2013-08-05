@@ -27,6 +27,7 @@
 package org.spout.renderer.gl;
 
 import java.io.InputStream;
+import java.util.Scanner;
 
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL32;
@@ -41,12 +42,12 @@ import org.spout.renderer.GLVersioned;
  */
 public abstract class Shader extends Creatable implements GLVersioned {
 	protected int id;
-	protected InputStream source;
+	protected CharSequence source;
 	protected ShaderType type;
 
 	@Override
 	public void create() {
-		// Release the shader input stream
+		// Release the shader source
 		source = null;
 		super.create();
 	}
@@ -70,10 +71,27 @@ public abstract class Shader extends Creatable implements GLVersioned {
 	/**
 	 * Sets the shader source input stream.
 	 *
-	 * @param shaderSource The source input stream
+	 * @param source The source input stream
 	 */
-	public void setSource(InputStream shaderSource) {
-		this.source = shaderSource;
+	public void setSource(InputStream source) {
+		final StringBuilder stringSource = new StringBuilder();
+		try (Scanner reader = new Scanner(source)) {
+			while (reader.hasNextLine()) {
+				stringSource.append(reader.nextLine()).append('\n');
+			}
+		} catch (Exception ex) {
+			throw new IllegalArgumentException("Unreadable shader source", ex);
+		}
+		setSource(stringSource);
+	}
+
+	/**
+	 * Sets the shader source.
+	 *
+	 * @param source The shader source
+	 */
+	public void setSource(CharSequence source) {
+		this.source = source;
 	}
 
 	/**
@@ -85,6 +103,11 @@ public abstract class Shader extends Creatable implements GLVersioned {
 		this.type = type;
 	}
 
+	/**
+	 * Gets the shader type.
+	 *
+	 * @return The shader type
+	 */
 	public ShaderType getType() {
 		return type;
 	}

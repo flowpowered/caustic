@@ -35,8 +35,8 @@ import org.spout.renderer.data.Uniform.Matrix4Uniform;
 import org.spout.renderer.data.UniformHolder;
 
 /**
- * Represents an OpenGL model. Each model has it's own position and rotation and set of uniforms. The material needs to be set with {@link #setMaterial(Material)}, before the model can be created. To
- * give the material a mesh, use {@link #getVertexArray()} then {@link VertexArray#setData(org.spout.renderer.data.VertexData)}.
+ * Represents an OpenGL model. Each model has it's own position and rotation and set of uniforms. The vertex array and material need to be set with {@link #setVertexArray(VertexArray)} and {@link
+ * #setMaterial(Material)} respectively, before the model can be created. The vertex array provides the vertex data (mesh), while the material provides uniforms and textures for the shader.
  */
 public abstract class Model extends Creatable implements GLVersioned {
 	// Position and rotation properties
@@ -80,6 +80,11 @@ public abstract class Model extends Creatable implements GLVersioned {
 	 */
 	public abstract VertexArray getVertexArray();
 
+	/**
+	 * Sets the vertex array for this model.
+	 *
+	 * @param vertexArray The vertex array to use
+	 */
 	public abstract void setVertexArray(VertexArray vertexArray);
 
 	/**
