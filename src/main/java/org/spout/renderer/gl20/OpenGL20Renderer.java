@@ -40,8 +40,8 @@ import org.lwjgl.opengl.PixelFormat;
 import org.spout.renderer.GLVersion;
 import org.spout.renderer.data.RenderList;
 import org.spout.renderer.gl.FrameBuffer;
-import org.spout.renderer.gl.Material;
-import org.spout.renderer.gl.Model;
+import org.spout.renderer.Material;
+import org.spout.renderer.Model;
 import org.spout.renderer.gl.Program;
 import org.spout.renderer.gl.Renderer;
 import org.spout.renderer.util.RenderUtil;
@@ -136,9 +136,6 @@ public class OpenGL20Renderer extends Renderer {
 				}
 			}
 			for (Model model : renderList) {
-				if (!model.isCreated()) {
-					continue;
-				}
 				final Material material = model.getMaterial();
 				final Program program = material.getProgram();
 				// Bind the material

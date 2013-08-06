@@ -24,82 +24,129 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.gl;
+package org.spout.renderer;
 
 import org.spout.math.imaginary.Quaternion;
 import org.spout.math.matrix.Matrix4;
 import org.spout.math.vector.Vector3;
-import org.spout.renderer.Creatable;
-import org.spout.renderer.GLVersioned;
 import org.spout.renderer.data.Uniform.Matrix4Uniform;
 import org.spout.renderer.data.UniformHolder;
+import org.spout.renderer.gl.VertexArray;
 
 /**
- * Represents an OpenGL model. Each model has it's own position and rotation and set of uniforms. The vertex array and material need to be set with {@link #setVertexArray(VertexArray)} and {@link
- * #setMaterial(Material)} respectively, before the model can be created. The vertex array provides the vertex data (mesh), while the material provides uniforms and textures for the shader.
+ * Represents a model. Each model has it's own position and rotation and set of uniforms. The vertex array provides the vertex data (mesh), while the material provides uniforms and textures for the
+ * shader.
  */
-public abstract class Model extends Creatable implements GLVersioned {
+public class Model {
+	// Vertex array
+	private VertexArray vertexArray;
+	// Material
+	private Material material;
 	// Position and rotation properties
-	protected Vector3 position = new Vector3(0, 0, 0);
-	protected Vector3 scale = new Vector3(1, 1, 1);
-	protected Quaternion rotation = new Quaternion();
+	private Vector3 position = new Vector3(0, 0, 0);
+	private Vector3 scale = new Vector3(1, 1, 1);
+	private Quaternion rotation = new Quaternion();
 	private Matrix4 matrix = new Matrix4();
 	private boolean updateMatrix = true;
 	// Model uniforms
-	protected final UniformHolder uniforms = new UniformHolder();
+	private final UniformHolder uniforms = new UniformHolder();
 
-	@Override
-	public void create() {
+	/**
+	 * Constructs a new model without a vertex array or a material.
+	 */
+	protected Model() {
 		uniforms.add(new Matrix4Uniform("modelMatrix", getMatrix()));
-		super.create();
 	}
 
-	@Override
-	public void destroy() {
-		uniforms.clear();
-		super.destroy();
+	/**
+	 * Constructs a new model from the provided one. The vertex array and material are reused. No information is copied.
+	 *
+	 * @param model The model to derive this one from
+	 */
+	protected Model(Model model) {
+		this(model.getVertexArray(), model.getMaterial());
+		uniforms.addAll(model.getUniforms());
+	}
+
+	/**
+	 * Constructs a new model from the vertex array and material.
+	 *
+	 * @param vertexArray The vertex array
+	 * @param material The material
+	 */
+	public Model(VertexArray vertexArray, Material material) {
+		if (vertexArray == null) {
+			throw new IllegalArgumentException("Vertex array cannot be null");
+		}
+		if (material == null) {
+			throw new IllegalArgumentException("Material cannot be null");
+		}
+		vertexArray.checkCreated();
+		this.vertexArray = vertexArray;
+		this.material = material;
+		uniforms.add(new Matrix4Uniform("modelMatrix", getMatrix()));
 	}
 
 	/**
 	 * Uploads the model's uniforms to its material's program.
 	 */
 	public void uploadUniforms() {
-		checkCreated();
 		uniforms.getMatrix4("modelMatrix").set(getMatrix());
+		material.getProgram().upload(uniforms);
 	}
 
 	/**
 	 * Draws the model to the screen.
 	 */
-	public abstract void render();
+	public void render() {
+		if (vertexArray == null) {
+			throw new IllegalStateException("Vertex array has not been set");
+		}
+		vertexArray.draw();
+	}
 
 	/**
 	 * Returns the model's vertex array.
 	 *
 	 * @return The vertex array
 	 */
-	public abstract VertexArray getVertexArray();
+	public VertexArray getVertexArray() {
+		return vertexArray;
+	}
 
 	/**
 	 * Sets the vertex array for this model.
 	 *
 	 * @param vertexArray The vertex array to use
 	 */
-	public abstract void setVertexArray(VertexArray vertexArray);
+	public void setVertexArray(VertexArray vertexArray) {
+		if (vertexArray == null) {
+			throw new IllegalArgumentException("Vertex array cannot be null");
+		}
+		vertexArray.checkCreated();
+		this.vertexArray = vertexArray;
+	}
 
 	/**
 	 * Returns the model's material.
 	 *
 	 * @return The material
 	 */
-	public abstract Material getMaterial();
+	public Material getMaterial() {
+		return material;
+	}
 
 	/**
 	 * Sets the model's material.
 	 *
 	 * @param material The material
 	 */
-	public abstract void setMaterial(Material material);
+	public void setMaterial(Material material) {
+		if (material == null) {
+			throw new IllegalArgumentException("Material cannot be null");
+		}
+		this.material = material;
+	}
 
 	/**
 	 * Returns the transformation matrix that represent the model's current scale, rotation and position.

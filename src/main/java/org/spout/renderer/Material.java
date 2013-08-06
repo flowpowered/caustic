@@ -24,63 +24,43 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.gl20;
+package org.spout.renderer;
 
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
-import org.spout.renderer.GLVersion;
-import org.spout.renderer.gl.Material;
+import org.spout.renderer.data.UniformHolder;
 import org.spout.renderer.gl.Program;
 import org.spout.renderer.gl.Texture;
-import org.spout.renderer.util.RenderUtil;
 
 /**
- * An OpenGL 2.0 implementation of {@link Material}.
- *
- * @see Material
+ * Represents an OpenGL material. Materials are assigned to models, and these can share the same material. The material provides the shader program to use when rendering the models, the texture for
+ * each unit (if any) and a set of uniforms that will be constant for all models using the material.
  */
-public class OpenGL20Material extends Material {
-	private OpenGL20Program program;
+public class Material {
+	// Shader program
+	private Program program;
 	// Textures by unit
-	protected TIntObjectMap<OpenGL20Texture> textures;
+	private TIntObjectMap<Texture> textures;
+	// Material uniforms
+	private final UniformHolder uniforms = new UniformHolder();
 
-	@Override
-	public void create() {
-		if (created) {
-			throw new IllegalStateException("Material has already been created");
-		}
+	public Material(Program program) {
 		if (program == null) {
-			throw new IllegalStateException("Program has not been set");
+			throw new IllegalStateException("Program cannot be null");
 		}
 		program.checkCreated();
-		if (textures != null) {
-			for (OpenGL20Texture texture : textures.valueCollection()) {
-				texture.checkCreated();
-			}
-		}
-		super.create();
+		this.program = program;
 	}
 
-	@Override
-	public void destroy() {
-		checkCreated();
-		textures = null;
-		super.destroy();
-	}
-
-	@Override
-	public void uploadUniforms() {
-		program.upload(uniforms);
-	}
-
-	@Override
+	/**
+	 * Binds the material to the OpenGL context.
+	 */
 	public void bind() {
-		checkCreated();
 		program.bind();
 		if (textures != null) {
-			final TIntObjectIterator<OpenGL20Texture> iterator = textures.iterator();
+			final TIntObjectIterator<Texture> iterator = textures.iterator();
 			while (iterator.hasNext()) {
 				iterator.advance();
 				// Bind the texture to the unit
@@ -92,56 +72,101 @@ public class OpenGL20Material extends Material {
 		}
 	}
 
-	@Override
+	/**
+	 * Unbinds the material from the OpenGL context.
+	 */
 	public void unbind() {
-		checkCreated();
 		program.unbind();
 		if (textures != null) {
-			for (OpenGL20Texture texture : textures.valueCollection()) {
+			for (Texture texture : textures.valueCollection()) {
 				texture.unbind();
 			}
 		}
 	}
 
-	@Override
-	public void setProgram(Program program) {
-		RenderUtil.checkVersion(this, program);
-		this.program = (OpenGL20Program) program;
+	/**
+	 * Uploads the material's uniforms to its program.
+	 */
+	public void uploadUniforms() {
+		program.upload(uniforms);
 	}
 
-	@Override
-	public OpenGL20Program getProgram() {
+	/**
+	 * Sets the program to be used by this material to shade the models.
+	 *
+	 * @param program The program to use
+	 */
+	public void setProgram(Program program) {
+		if (program == null) {
+			throw new IllegalStateException("Program cannot be null");
+		}
+		program.checkCreated();
+		this.program = program;
+	}
+
+	/**
+	 * Returns the material's program.
+	 *
+	 * @return The program
+	 */
+	public Program getProgram() {
 		return program;
 	}
 
-	@Override
+	/**
+	 * Adds a texture to the material. If a texture is a already present in the same unit as this one, it will be replaced.
+	 *
+	 * @param unit The unit to add the texture to
+	 * @param texture The texture to add
+	 */
 	public void addTexture(int unit, Texture texture) {
-		RenderUtil.checkVersion(this, texture);
+		if (texture == null) {
+			throw new IllegalStateException("Texture cannot be null");
+		}
+		texture.checkCreated();
 		if (textures == null) {
 			textures = new TIntObjectHashMap<>();
 		}
-		textures.put(unit, (OpenGL20Texture) texture);
+		textures.put(unit, texture);
 	}
 
-	@Override
+	/**
+	 * Returns true if a texture is present in the unit.
+	 *
+	 * @param unit The unit to check
+	 * @return Whether or not a texture is present
+	 */
 	public boolean hasTexture(int unit) {
 		return textures != null && textures.containsKey(unit);
 	}
 
-	@Override
-	public OpenGL20Texture getTexture(int unit) {
+	/**
+	 * Returns the texture in the unit, or null if none is present.
+	 *
+	 * @param unit The unit to check
+	 * @return The texture
+	 */
+	public Texture getTexture(int unit) {
 		return textures != null ? textures.get(unit) : null;
 	}
 
-	@Override
+	/**
+	 * Removed the texture in the unit, if present.
+	 *
+	 * @param unit The unit to remove the texture from
+	 */
 	public void removeTexture(int unit) {
 		if (textures != null) {
 			textures.remove(unit);
 		}
 	}
 
-	@Override
-	public GLVersion getGLVersion() {
-		return GLVersion.GL20;
+	/**
+	 * Returns the uniform holder for this material.
+	 *
+	 * @return The uniforms
+	 */
+	public UniformHolder getUniforms() {
+		return uniforms;
 	}
 }

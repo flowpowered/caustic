@@ -26,88 +26,18 @@
  */
 package org.spout.renderer.util;
 
-import org.spout.renderer.GLVersion;
-import org.spout.renderer.gl.Material;
-import org.spout.renderer.gl.Model;
-import org.spout.renderer.gl.VertexArray;
-
 /**
  * Represents an instance of another string model.
  *
  * @see InstancedModel
  */
-public class InstancedStringModel extends Model {
-	private final StringModel main;
-	private String string;
-
+public class InstancedStringModel extends StringModel {
 	/**
 	 * Constructs a new instanced model from the main model.
 	 *
 	 * @param main The main model
 	 */
 	public InstancedStringModel(StringModel main) {
-		this.main = main;
-	}
-
-	@Override
-	public void create() {
-		if (!main.isCreated()) {
-			main.create();
-		}
-		super.create();
-	}
-
-	@Override
-	public void destroy() {
-		checkCreated();
-		if (main.isCreated()) {
-			main.destroy();
-		}
-		super.destroy();
-	}
-
-	@Override
-	public void uploadUniforms() {
-		super.uploadUniforms();
-		main.getMaterial().getProgram().upload(uniforms);
-	}
-
-	@Override
-	public void render() {
-		checkCreated();
-		final String mainString = main.getString();
-		main.setString(string);
-		main.render();
-		main.setString(mainString);
-	}
-
-	@Override
-	public VertexArray getVertexArray() {
-		return main.getVertexArray();
-	}
-
-	@Override
-	public void setVertexArray(VertexArray vertexArray) {
-		main.setVertexArray(vertexArray);
-	}
-
-	@Override
-	public Material getMaterial() {
-		return main.getMaterial();
-	}
-
-	@Override
-	public void setMaterial(Material material) {
-		RenderUtil.checkVersion(main, material);
-		main.setMaterial(material);
-	}
-
-	public void setString(String string) {
-		this.string = string;
-	}
-
-	@Override
-	public GLVersion getGLVersion() {
-		return main.getGLVersion();
+		super(main);
 	}
 }

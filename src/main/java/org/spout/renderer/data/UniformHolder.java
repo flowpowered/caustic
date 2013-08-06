@@ -57,6 +57,17 @@ public class UniformHolder implements Iterable<Uniform> {
 	}
 
 	/**
+	 * Adds all the uniforms to the holder.
+	 *
+	 * @param uniforms The uniforms to add
+	 */
+	public void addAll(UniformHolder uniforms) {
+		for (Uniform uniform : uniforms) {
+			add(uniform);
+		}
+	}
+
+	/**
 	 * Returns true if the holder has a uniform with the provided name
 	 *
 	 * @param name The name to lookup

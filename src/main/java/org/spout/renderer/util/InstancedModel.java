@@ -26,10 +26,7 @@
  */
 package org.spout.renderer.util;
 
-import org.spout.renderer.GLVersion;
-import org.spout.renderer.gl.Material;
-import org.spout.renderer.gl.Model;
-import org.spout.renderer.gl.VertexArray;
+import org.spout.renderer.Model;
 
 /**
  * Represents an instance of another model. Model instancing can be used to reduce the amount of vertex data on the GPU, by reusing the same geometry for multiple models. To use this class, simply
@@ -37,69 +34,12 @@ import org.spout.renderer.gl.VertexArray;
  * correctly. Note that the vertex array and material are shared amongst the main model and all of its instances. Any changes to these will be reflected across all models.
  */
 public class InstancedModel extends Model {
-	private final Model main;
-
 	/**
 	 * Constructs a new instanced model from the main model.
 	 *
 	 * @param main The main model
 	 */
 	public InstancedModel(Model main) {
-		this.main = main;
-	}
-
-	@Override
-	public void create() {
-		if (!main.isCreated()) {
-			main.create();
-		}
-		super.create();
-	}
-
-	@Override
-	public void destroy() {
-		checkCreated();
-		if (main.isCreated()) {
-			main.destroy();
-		}
-		super.destroy();
-	}
-
-	@Override
-	public void uploadUniforms() {
-		super.uploadUniforms();
-		main.getMaterial().getProgram().upload(uniforms);
-	}
-
-	@Override
-	public void render() {
-		checkCreated();
-		main.render();
-	}
-
-	@Override
-	public VertexArray getVertexArray() {
-		return main.getVertexArray();
-	}
-
-	@Override
-	public void setVertexArray(VertexArray vertexArray) {
-		main.setVertexArray(vertexArray);
-	}
-
-	@Override
-	public Material getMaterial() {
-		return main.getMaterial();
-	}
-
-	@Override
-	public void setMaterial(Material material) {
-		RenderUtil.checkVersion(main, material);
-		main.setMaterial(material);
-	}
-
-	@Override
-	public GLVersion getGLVersion() {
-		return main.getGLVersion();
+		super(main);
 	}
 }

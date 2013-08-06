@@ -27,8 +27,6 @@
 package org.spout.renderer;
 
 import org.spout.renderer.gl.FrameBuffer;
-import org.spout.renderer.gl.Material;
-import org.spout.renderer.gl.Model;
 import org.spout.renderer.gl.Program;
 import org.spout.renderer.gl.RenderBuffer;
 import org.spout.renderer.gl.Renderer;
@@ -36,8 +34,6 @@ import org.spout.renderer.gl.Shader;
 import org.spout.renderer.gl.Texture;
 import org.spout.renderer.gl.VertexArray;
 import org.spout.renderer.gl20.OpenGL20FrameBuffer;
-import org.spout.renderer.gl20.OpenGL20Material;
-import org.spout.renderer.gl20.OpenGL20Model;
 import org.spout.renderer.gl20.OpenGL20Program;
 import org.spout.renderer.gl20.OpenGL20RenderBuffer;
 import org.spout.renderer.gl20.OpenGL20Renderer;
@@ -45,8 +41,6 @@ import org.spout.renderer.gl20.OpenGL20Shader;
 import org.spout.renderer.gl20.OpenGL20Texture;
 import org.spout.renderer.gl20.OpenGL20VertexArray;
 import org.spout.renderer.gl30.OpenGL30FrameBuffer;
-import org.spout.renderer.gl30.OpenGL30Material;
-import org.spout.renderer.gl30.OpenGL30Model;
 import org.spout.renderer.gl30.OpenGL30Program;
 import org.spout.renderer.gl30.OpenGL30RenderBuffer;
 import org.spout.renderer.gl30.OpenGL30Renderer;
@@ -77,22 +71,6 @@ public enum GLVersion {
 	}
 
 	/**
-	 * Creates a new model for the version.
-	 *
-	 * @return A new model
-	 */
-	public Model createModel() {
-		switch (this) {
-			case GL20:
-				return new OpenGL20Model();
-			case GL30:
-				return new OpenGL30Model();
-			default:
-				return null;
-		}
-	}
-
-	/**
 	 * Creates a new vertex array for the version.
 	 *
 	 * @return A new vertex array
@@ -103,22 +81,6 @@ public enum GLVersion {
 				return new OpenGL20VertexArray();
 			case GL30:
 				return new OpenGL30VertexArray();
-			default:
-				return null;
-		}
-	}
-
-	/**
-	 * Creates a new material for the version.
-	 *
-	 * @return A new material
-	 */
-	public Material createMaterial() {
-		switch (this) {
-			case GL20:
-				return new OpenGL20Material();
-			case GL30:
-				return new OpenGL30Material();
 			default:
 				return null;
 		}
