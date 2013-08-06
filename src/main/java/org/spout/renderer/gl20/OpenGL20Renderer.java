@@ -38,10 +38,10 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.PixelFormat;
 
 import org.spout.renderer.GLVersion;
-import org.spout.renderer.data.RenderList;
-import org.spout.renderer.gl.FrameBuffer;
 import org.spout.renderer.Material;
 import org.spout.renderer.Model;
+import org.spout.renderer.data.RenderList;
+import org.spout.renderer.gl.FrameBuffer;
 import org.spout.renderer.gl.Program;
 import org.spout.renderer.gl.Renderer;
 import org.spout.renderer.util.RenderUtil;
@@ -60,7 +60,7 @@ public class OpenGL20Renderer extends Renderer {
 		// Attempt to create the display
 		try {
 			Display.setDisplayMode(new DisplayMode(windowWidth, windowHeight));
-			Display.create(new PixelFormat(), createContextAttributes());
+			Display.create(new PixelFormat().withSamples(MSAA), createContextAttributes());
 		} catch (LWJGLException ex) {
 			throw new RuntimeException(ex);
 		}

@@ -51,6 +51,8 @@ public abstract class Renderer extends Creatable implements GLVersioned {
 	// Window size
 	protected int windowWidth = 640;
 	protected int windowHeight = 480;
+	// MSAA value
+	protected int MSAA = 0;
 	// Properties
 	protected final Set<Capability> capabilities = EnumSet.noneOf(Capability.class);
 	// Renderer uniforms
@@ -223,6 +225,18 @@ public abstract class Renderer extends Creatable implements GLVersioned {
 	public void setWindowSize(int windowWidth, int windowHeight) {
 		setWindowWidth(windowWidth);
 		setWindowHeight(windowHeight);
+	}
+
+	/**
+	 * Sets the MSAA value. Must be greater or equal to zero. Zero means no MSAA.
+	 *
+	 * @param value The MSAA value, greater or equal to zero
+	 */
+	public void setMSAA(int value) {
+		if (MSAA < 0) {
+			throw new IllegalArgumentException("MSAA value must be greater or equal to zero");
+		}
+		this.MSAA = value;
 	}
 
 	/**

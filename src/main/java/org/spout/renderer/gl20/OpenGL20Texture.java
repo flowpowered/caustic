@@ -28,6 +28,7 @@ package org.spout.renderer.gl20;
 
 import java.nio.ByteBuffer;
 
+import org.lwjgl.opengl.EXTTextureFilterAnisotropic;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.util.glu.GLU;
@@ -60,6 +61,10 @@ public class OpenGL20Texture extends Texture {
 		// Set the min and max texture filters (in the texture parameters)
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, minFilter.getGLConstant());
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, magFilter.getGLConstant());
+		// Set the anisotropic filtering value, if any
+		if (anisotropicFiltering > 0) {
+			GL11.glTexParameterf(GL11.GL_TEXTURE_2D, EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropicFiltering);
+		}
 		// Unbind the texture
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 		// Update the state

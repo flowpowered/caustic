@@ -57,6 +57,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	// Minimisation and magnification modes
 	protected FilterMode minFilter = FilterMode.NEAREST;
 	protected FilterMode magFilter = FilterMode.NEAREST;
+	protected float anisotropicFiltering = 0;
 	// The texture image data
 	protected ByteBuffer imageData;
 	// Texture image dimensions
@@ -106,6 +107,15 @@ public abstract class Texture extends Creatable implements GLVersioned {
 			throw new IllegalArgumentException("Format cannot be null");
 		}
 		this.format = format;
+	}
+
+	/**
+	 * Sets the value for anisotropic filtering. A value smaller or equal to zero is considered as no filtering. Note that this is EXT based and might not be supported on all hardware.
+	 *
+	 * @param value The anisotropic filtering value
+	 */
+	public void setAnisotropicFiltering(float value) {
+		this.anisotropicFiltering = value;
 	}
 
 	/**
