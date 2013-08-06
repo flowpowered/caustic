@@ -26,141 +26,21 @@
  */
 package org.spout.renderer.gl30;
 
-import java.awt.Color;
-import java.util.HashSet;
-import java.util.Set;
-
-import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.ContextAttribs;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.PixelFormat;
 
 import org.spout.renderer.GLVersion;
-import org.spout.renderer.data.RenderList;
-import org.spout.renderer.gl.FrameBuffer;
-import org.spout.renderer.Material;
-import org.spout.renderer.Model;
-import org.spout.renderer.gl.Program;
 import org.spout.renderer.gl.Renderer;
-import org.spout.renderer.util.RenderUtil;
+import org.spout.renderer.gl20.OpenGL20Renderer;
 
 /**
  * An OpenGL 3.0 implementation of {@link Renderer}.
  *
  * @see Renderer
  */
-public class OpenGL30Renderer extends Renderer {
+public class OpenGL30Renderer extends OpenGL20Renderer {
 	@Override
-	public void create() {
-		if (created) {
-			throw new IllegalStateException("Renderer has already been created");
-		}
-		// Attempt to create the display
-		try {
-			Display.setDisplayMode(new DisplayMode(windowWidth, windowHeight));
-			Display.create(new PixelFormat(), new ContextAttribs(3, 2).withProfileCore(true));
-		} catch (LWJGLException ex) {
-			throw new RuntimeException(ex);
-		}
-		// Set the title
-		Display.setTitle(windowTitle);
-		// Set the view port to the window
-		GL11.glViewport(0, 0, windowWidth, windowHeight);
-		// Set the alpha blending function for transparency
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		// Check for errors
-		RenderUtil.checkForOpenGLError();
-		// Update the state
-		super.create();
-	}
-
-	@Override
-	public void destroy() {
-		checkCreated();
-		// Display goes after else there's no context in which to check for an error
-		RenderUtil.checkForOpenGLError();
-		Display.destroy();
-		super.destroy();
-	}
-
-	@Override
-	public void setClearColor(Color color) {
-		GL11.glClearColor(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
-		// Check for errors
-		RenderUtil.checkForOpenGLError();
-	}
-
-	@Override
-	public void enable(Capability capability) {
-		GL11.glEnable(capability.getGLConstant());
-		// Check for errors
-		RenderUtil.checkForOpenGLError();
-	}
-
-	@Override
-	public void disable(Capability capability) {
-		GL11.glDisable(capability.getGLConstant());
-		// Check for errors
-		RenderUtil.checkForOpenGLError();
-	}
-
-	@Override
-	public void uploadUniforms(Program program) {
-		program.upload(uniforms);
-	}
-
-	@Override
-	public void render() {
-		checkCreated();
-		// Clear the last render on the screen buffer
-		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-		// Keep track of all cleared frame buffers so we don't clear one twice
-		final Set<FrameBuffer> clearedFrameBuffers = new HashSet<>();
-		// Render all the created models
-		for (RenderList renderList : renderLists) {
-			if (!renderList.isActive()) {
-				continue;
-			}
-			// Update the context capabilities
-			setCapabilities(renderList.getCapabilities());
-			// Bind the frame buffer if present
-			final FrameBuffer frameBuffer = renderList.getFrameBuffer();
-			if (frameBuffer != null) {
-				frameBuffer.bind();
-				if (!clearedFrameBuffers.contains(frameBuffer)) {
-					// Clear the last render on the frame buffer
-					GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-					clearedFrameBuffers.add(frameBuffer);
-				}
-			}
-			for (Model model : renderList) {
-				final Material material = model.getMaterial();
-				final Program program = material.getProgram();
-				// Bind the material
-				material.bind();
-				// Upload the renderer uniforms
-				uploadUniforms(program);
-				// Upload the render list uniforms
-				renderList.uploadUniforms(program);
-				// Upload the material uniforms
-				material.uploadUniforms();
-				// Upload the model uniforms
-				model.uploadUniforms();
-				// Render the model
-				model.render();
-				// Unbind the material
-				material.unbind();
-			}
-			if (frameBuffer != null) {
-				frameBuffer.unbind();
-			}
-		}
-		// Check for errors
-		RenderUtil.checkForOpenGLError();
-		// Update the display
-		Display.update();
+	protected ContextAttribs createContextAttributes() {
+		return new ContextAttribs(3, 2).withProfileCore(true);
 	}
 
 	@Override

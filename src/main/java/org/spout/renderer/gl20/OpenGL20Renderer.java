@@ -60,7 +60,7 @@ public class OpenGL20Renderer extends Renderer {
 		// Attempt to create the display
 		try {
 			Display.setDisplayMode(new DisplayMode(windowWidth, windowHeight));
-			Display.create(new PixelFormat(), new ContextAttribs(2, 1));
+			Display.create(new PixelFormat(), createContextAttributes());
 		} catch (LWJGLException ex) {
 			throw new RuntimeException(ex);
 		}
@@ -74,6 +74,15 @@ public class OpenGL20Renderer extends Renderer {
 		RenderUtil.checkForOpenGLError();
 		// Update the state
 		super.create();
+	}
+
+	/**
+	 * Created new context attributes for the version.
+	 *
+	 * @return The context attributes
+	 */
+	protected ContextAttribs createContextAttributes() {
+		return new ContextAttribs(2, 1);
 	}
 
 	@Override
