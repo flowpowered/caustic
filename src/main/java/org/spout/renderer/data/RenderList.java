@@ -37,9 +37,9 @@ import java.util.ListIterator;
 import java.util.Set;
 
 import org.spout.renderer.Camera;
+import org.spout.renderer.Model;
 import org.spout.renderer.data.Uniform.Matrix4Uniform;
 import org.spout.renderer.gl.FrameBuffer;
-import org.spout.renderer.Model;
 import org.spout.renderer.gl.Program;
 import org.spout.renderer.gl.Renderer.Capability;
 
