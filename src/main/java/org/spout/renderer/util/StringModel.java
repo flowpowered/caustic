@@ -66,7 +66,7 @@ import org.spout.renderer.gl.Shader;
 import org.spout.renderer.gl.Shader.ShaderType;
 import org.spout.renderer.gl.Texture;
 import org.spout.renderer.gl.Texture.FilterMode;
-import org.spout.renderer.gl.Texture.ImageFormat;
+import org.spout.renderer.gl.Texture.Format;
 import org.spout.renderer.gl.VertexArray;
 
 /**
@@ -329,7 +329,7 @@ public class StringModel extends Model {
 		// Dispose of the image graphics
 		graphics.dispose();
 		// Generate the texture
-		texture.setFormat(ImageFormat.RGBA);
+		texture.setFormat(Format.RGBA);
 		texture.setImageData(image);
 		texture.setMagFilter(FilterMode.LINEAR);
 		texture.setMinFilter(FilterMode.LINEAR);

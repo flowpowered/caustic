@@ -152,6 +152,14 @@ public abstract class Program extends Creatable implements GLVersioned {
 	public abstract void setUniform(String name, Vector3 v);
 
 	/**
+	 * Sets a uniform {@link org.spout.math.vector.Vector3} array in the shader to the desired value.
+	 *
+	 * @param name The name of the uniform to set
+	 * @param vs The vector array value
+	 */
+	public abstract void setUniform(String name, Vector3[] vs);
+
+	/**
 	 * Sets a uniform {@link org.spout.math.vector.Vector3} in the shader to the desired value.
 	 *
 	 * @param name The name of the uniform to set

@@ -44,7 +44,7 @@ public class OpenGL30Texture extends OpenGL20Texture {
 	@Override
 	protected void uploadTexture(ByteBuffer buffer, int width, int height) {
 		// Upload the texture
-		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, format.getGLConstant(), width, height, 0, format.getGLConstant(), GL11.GL_UNSIGNED_BYTE, buffer);
+		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, internalFormat != null ? internalFormat.getGLConstant() : format.getGLConstant(), width, height, 0, format.getGLConstant(), GL11.GL_UNSIGNED_BYTE, buffer);
 		// Generate mipmaps if necessary
 		if (minFilter.needsMipMaps() && buffer != null) {
 			GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);

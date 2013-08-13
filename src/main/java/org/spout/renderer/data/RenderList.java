@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
+import org.spout.math.matrix.Matrix4;
 import org.spout.renderer.Camera;
 import org.spout.renderer.Model;
 import org.spout.renderer.data.Uniform.Matrix4Uniform;
@@ -72,7 +73,8 @@ public class RenderList implements List<Model>, Comparable<RenderList> {
 		this.camera = camera;
 		this.index = index;
 		uniforms.add(new Matrix4Uniform("projectionMatrix", camera.getProjectionMatrix()));
-		uniforms.add(new Matrix4Uniform("cameraMatrix", camera.getMatrix()));
+		uniforms.add(new Matrix4Uniform("viewMatrix", camera.getViewMatrix()));
+		uniforms.add(new Matrix4Uniform("normalMatrix", Matrix4.IDENTITY));
 	}
 
 	/**
@@ -245,7 +247,7 @@ public class RenderList implements List<Model>, Comparable<RenderList> {
 	 */
 	public void uploadUniforms(Program program) {
 		uniforms.getMatrix4("projectionMatrix").set(camera.getProjectionMatrix());
-		uniforms.getMatrix4("cameraMatrix").set(camera.getMatrix());
+		uniforms.getMatrix4("viewMatrix").set(camera.getViewMatrix());
 		program.upload(uniforms);
 	}
 

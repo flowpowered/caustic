@@ -28,7 +28,6 @@ package org.spout.renderer.gl20;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.OpenGLException;
 
 import org.spout.renderer.GLVersion;
 import org.spout.renderer.gl.Shader;
@@ -59,7 +58,7 @@ public class OpenGL20Shader extends Shader {
 		GL20.glCompileShader(id);
 		// Get the shader compile status property, check it's false and fail if that's the case
 		if (GL20.glGetShaderi(id, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
-			throw new OpenGLException("OPEN GL ERROR: Could not compile shader\n" + GL20.glGetShaderInfoLog(id, 1000));
+			throw new IllegalStateException("OPEN GL ERROR: Could not compile shader\n" + GL20.glGetShaderInfoLog(id, 1000));
 		}
 		this.id = id;
 		super.create();

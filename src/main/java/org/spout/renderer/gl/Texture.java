@@ -49,7 +49,8 @@ import org.spout.renderer.data.VertexAttribute.DataType;
 public abstract class Texture extends Creatable implements GLVersioned {
 	protected int id = 0;
 	// The format
-	protected ImageFormat format = ImageFormat.RGB;
+	protected Format format = Format.RGB;
+	protected InternalFormat internalFormat = null;
 	protected DataType type = DataType.UNSIGNED_BYTE;
 	// Wrapping modes for s and t
 	protected WrapMode wrapT = WrapMode.REPEAT;
@@ -102,11 +103,20 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	 *
 	 * @param format The format to set
 	 */
-	public void setFormat(ImageFormat format) {
+	public void setFormat(Format format) {
 		if (format == null) {
 			throw new IllegalArgumentException("Format cannot be null");
 		}
 		this.format = format;
+	}
+
+	/**
+	 * Sets the texture's internal format. Set to null to use the un-sized format instead.
+	 *
+	 * @param internalFormat The internal format to set
+	 */
+	public void setInternalFormat(InternalFormat internalFormat) {
+		this.internalFormat = internalFormat;
 	}
 
 	/**
@@ -123,7 +133,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	 *
 	 * @param type The type to set
 	 */
-	public void setType(DataType type) {
+	public void setComponentType(DataType type) {
 		if (type == null) {
 			throw new IllegalArgumentException("Type cannot be null");
 		}
@@ -182,7 +192,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	}
 
 	/**
-	 * Sets the texture's image data from a source input stream. The image data reading is done according to the set {@link Texture.ImageFormat}.
+	 * Sets the texture's image data from a source input stream. The image data reading is done according to the set {@link org.spout.renderer.gl.Texture.Format}.
 	 *
 	 * @param source The input stream of the image
 	 */
@@ -196,7 +206,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	}
 
 	/**
-	 * Sets the texture's image data. The image data reading is done according to the set {@link Texture.ImageFormat}.
+	 * Sets the texture's image data. The image data reading is done according to the set {@link org.spout.renderer.gl.Texture.Format}.
 	 *
 	 * @param image The image
 	 */
@@ -211,7 +221,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	}
 
 	/**
-	 * Sets the texture's image data. The image data reading is done according to the set {@link Texture.ImageFormat}.
+	 * Sets the texture's image data. The image data reading is done according to the set {@link org.spout.renderer.gl.Texture.Format}.
 	 *
 	 * @param pixels The image pixels
 	 * @param width The width of the image
@@ -241,7 +251,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	}
 
 	/**
-	 * Sets the texture's image data. The image data reading is done according the the set {@link Texture.ImageFormat}.
+	 * Sets the texture's image data. The image data reading is done according the the set {@link org.spout.renderer.gl.Texture.Format}.
 	 *
 	 * @param imageData The image data
 	 * @param width The width of the image
@@ -258,9 +268,9 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	}
 
 	/**
-	 * Represents the pixel format for the texture. Only the specified components will be loaded.
+	 * An enum of texture component formats.
 	 */
-	public static enum ImageFormat {
+	public static enum Format {
 		RED(GL11.GL_RED, 1, true, false, false, false, false, false),
 		RG(GL30.GL_RG, 2, true, true, false, false, false, false),
 		RGB(GL11.GL_RGB, 3, true, true, true, false, false, false),
@@ -276,7 +286,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
 		private final boolean hasDepth;
 		private final boolean hasStencil;
 
-		private ImageFormat(int glConstant, int components, boolean hasRed, boolean hasGreen, boolean hasBlue, boolean hasAlpha, boolean hasDepth, boolean hasStencil) {
+		private Format(int glConstant, int components, boolean hasRed, boolean hasGreen, boolean hasBlue, boolean hasAlpha, boolean hasDepth, boolean hasStencil) {
 			this.glConstant = glConstant;
 			this.components = components;
 			this.hasRed = hasRed;
@@ -288,7 +298,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
 		}
 
 		/**
-		 * Gets the OpenGL constant for this image format.
+		 * Gets the OpenGL constant for this format.
 		 *
 		 * @return The OpenGL Constant
 		 */
@@ -358,6 +368,45 @@ public abstract class Texture extends Creatable implements GLVersioned {
 		public boolean hasStencil() {
 			return hasStencil;
 		}
+	}
+
+	/**
+	 * An enum of sized texture component formats.
+	 */
+	public static enum InternalFormat {
+		R8(GL30.GL_R8),
+		R16(GL30.GL_R16),
+		RG8(GL30.GL_RG8),
+		RG16(GL30.GL_RG16),
+		RGB8(GL11.GL_RGB8),
+		RGBA8(GL11.GL_RGBA8),
+		RGBA16(GL11.GL_RGBA16),
+		R16F(GL30.GL_R16F),
+		RG16F(GL30.GL_RG16F),
+		RGB16F(GL30.GL_RGB16F),
+		RGBA16F(GL30.GL_RGBA16F),
+		R32F(GL30.GL_R32F),
+		RG32F(GL30.GL_RG32F),
+		RGB32F(GL30.GL_RGB32F),
+		RGBA32F(GL30.GL_RGBA32F),
+		DEPTH_COMPONENT16(GL14.GL_DEPTH_COMPONENT16),
+		DEPTH_COMPONENT24(GL14.GL_DEPTH_COMPONENT24),
+		DEPTH_COMPONENT32(GL14.GL_DEPTH_COMPONENT32);
+		private final int glConstant;
+
+		private InternalFormat(int glConstant) {
+			this.glConstant = glConstant;
+		}
+
+		/**
+		 * Gets the OpenGL constant for this internal format.
+		 *
+		 * @return The OpenGL Constant
+		 */
+		public int getGLConstant() {
+			return glConstant;
+		}
+
 	}
 
 	/**

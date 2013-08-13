@@ -27,6 +27,7 @@
 package org.spout.renderer.gl20;
 
 import java.nio.IntBuffer;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -79,9 +80,9 @@ public class OpenGL20FrameBuffer extends FrameBuffer {
 			final AttachmentPoint point = entry.getKey();
 			final OpenGL20Texture texture = entry.getValue();
 			texture.checkCreated();
-			EXTFramebufferObject.glFramebufferTexture2DEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, point.getEXTConstant(), GL11.GL_TEXTURE_2D, texture.getID(), 0);
+			EXTFramebufferObject.glFramebufferTexture2DEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, point.getGLConstant(), GL11.GL_TEXTURE_2D, texture.getID(), 0);
 			if (point.isColor()) {
-				outputBuffers.add(point.getEXTConstant());
+				outputBuffers.add(point.getGLConstant());
 			}
 		}
 		// Attach the render buffers
@@ -89,9 +90,9 @@ public class OpenGL20FrameBuffer extends FrameBuffer {
 			final AttachmentPoint point = entry.getKey();
 			final OpenGL20RenderBuffer buffer = entry.getValue();
 			buffer.checkCreated();
-			EXTFramebufferObject.glFramebufferRenderbufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, point.getEXTConstant(), EXTFramebufferObject.GL_RENDERBUFFER_EXT, buffer.getID());
+			EXTFramebufferObject.glFramebufferRenderbufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, point.getGLConstant(), EXTFramebufferObject.GL_RENDERBUFFER_EXT, buffer.getID());
 			if (point.isColor()) {
-				outputBuffers.add(point.getEXTConstant());
+				outputBuffers.add(point.getGLConstant());
 			}
 		}
 		// Set the output to the proper buffers
@@ -101,7 +102,11 @@ public class OpenGL20FrameBuffer extends FrameBuffer {
 		} else {
 			// Keep track of the buffers to output
 			final IntBuffer buffer = BufferUtils.createIntBuffer(outputBuffers.size());
-			buffer.put(outputBuffers.toArray());
+			final int[] outputBuffersArray = outputBuffers.toArray();
+			// Sorting the array ensures that attachments are in order n, n + 1, n + 2...
+			// This is important!
+			Arrays.sort(outputBuffersArray);
+			buffer.put(outputBuffersArray);
 			buffer.flip();
 			GL20.glDrawBuffers(buffer);
 		}

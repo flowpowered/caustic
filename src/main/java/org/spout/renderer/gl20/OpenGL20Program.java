@@ -38,6 +38,7 @@ import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
 import org.spout.math.matrix.Matrix2;
@@ -90,6 +91,10 @@ public class OpenGL20Program extends Program {
 		}
 		// Link program
 		GL20.glLinkProgram(id);
+		// Check program link status
+		if (GL20.glGetProgrami(id, GL20.GL_LINK_STATUS) == GL11.GL_FALSE) {
+			throw new IllegalStateException("Program could not be linked\n" + GL20.glGetProgramInfoLog(id, 1000));
+		}
 		// Validate program
 		GL20.glValidateProgram(id);
 		// Load uniforms
@@ -100,7 +105,8 @@ public class OpenGL20Program extends Program {
 			nameBuffer.rewind();
 			final byte[] nameBytes = new byte[256];
 			nameBuffer.get(nameBytes);
-			final String name = new String(nameBytes).trim();
+			// Simplify array names
+			final String name = new String(nameBytes).trim().replaceFirst("\\[\\d+\\]", "");
 			uniforms.put(name, GL20.glGetUniformLocation(id, name));
 		}
 		super.create();
@@ -120,6 +126,7 @@ public class OpenGL20Program extends Program {
 	public void bind() {
 		checkCreated();
 		GL20.glUseProgram(id);
+		RenderUtil.checkForOpenGLError();
 	}
 
 	@Override
@@ -155,7 +162,9 @@ public class OpenGL20Program extends Program {
 	@Override
 	public void setUniform(String name, boolean b) {
 		checkCreated();
-		checkContainsUniform(name);
+		if (!uniforms.containsKey(name)) {
+			return;
+		}
 		GL20.glUniform1i(uniforms.get(name), b ? 1 : 0);
 		RenderUtil.checkForOpenGLError();
 	}
@@ -163,7 +172,9 @@ public class OpenGL20Program extends Program {
 	@Override
 	public void setUniform(String name, int i) {
 		checkCreated();
-		checkContainsUniform(name);
+		if (!uniforms.containsKey(name)) {
+			return;
+		}
 		GL20.glUniform1i(uniforms.get(name), i);
 		RenderUtil.checkForOpenGLError();
 	}
@@ -171,7 +182,9 @@ public class OpenGL20Program extends Program {
 	@Override
 	public void setUniform(String name, float f) {
 		checkCreated();
-		checkContainsUniform(name);
+		if (!uniforms.containsKey(name)) {
+			return;
+		}
 		GL20.glUniform1f(uniforms.get(name), f);
 		RenderUtil.checkForOpenGLError();
 	}
@@ -179,7 +192,9 @@ public class OpenGL20Program extends Program {
 	@Override
 	public void setUniform(String name, Vector2 v) {
 		checkCreated();
-		checkContainsUniform(name);
+		if (!uniforms.containsKey(name)) {
+			return;
+		}
 		GL20.glUniform2f(uniforms.get(name), v.getX(), v.getY());
 		RenderUtil.checkForOpenGLError();
 	}
@@ -187,15 +202,36 @@ public class OpenGL20Program extends Program {
 	@Override
 	public void setUniform(String name, Vector3 v) {
 		checkCreated();
-		checkContainsUniform(name);
+		if (!uniforms.containsKey(name)) {
+			return;
+		}
 		GL20.glUniform3f(uniforms.get(name), v.getX(), v.getY(), v.getZ());
+		RenderUtil.checkForOpenGLError();
+	}
+
+	@Override
+	public void setUniform(String name, Vector3[] vs) {
+		checkCreated();
+		if (!uniforms.containsKey(name)) {
+			return;
+		}
+		final FloatBuffer vectorBuffer = BufferUtils.createFloatBuffer(vs.length * 3);
+		for (Vector3 v : vs) {
+			vectorBuffer.put(v.getX());
+			vectorBuffer.put(v.getY());
+			vectorBuffer.put(v.getZ());
+		}
+		vectorBuffer.flip();
+		GL20.glUniform3(uniforms.get(name), vectorBuffer);
 		RenderUtil.checkForOpenGLError();
 	}
 
 	@Override
 	public void setUniform(String name, Vector4 v) {
 		checkCreated();
-		checkContainsUniform(name);
+		if (!uniforms.containsKey(name)) {
+			return;
+		}
 		GL20.glUniform4f(uniforms.get(name), v.getX(), v.getY(), v.getZ(), v.getW());
 		RenderUtil.checkForOpenGLError();
 	}
@@ -203,7 +239,9 @@ public class OpenGL20Program extends Program {
 	@Override
 	public void setUniform(String name, Matrix2 m) {
 		checkCreated();
-		checkContainsUniform(name);
+		if (!uniforms.containsKey(name)) {
+			return;
+		}
 		final FloatBuffer buffer = BufferUtils.createFloatBuffer(4);
 		buffer.put(m.toArray(true));
 		buffer.flip();
@@ -214,7 +252,9 @@ public class OpenGL20Program extends Program {
 	@Override
 	public void setUniform(String name, Matrix3 m) {
 		checkCreated();
-		checkContainsUniform(name);
+		if (!uniforms.containsKey(name)) {
+			return;
+		}
 		final FloatBuffer buffer = BufferUtils.createFloatBuffer(9);
 		buffer.put(m.toArray(true));
 		buffer.flip();
@@ -225,7 +265,9 @@ public class OpenGL20Program extends Program {
 	@Override
 	public void setUniform(String name, Matrix4 m) {
 		checkCreated();
-		checkContainsUniform(name);
+		if (!uniforms.containsKey(name)) {
+			return;
+		}
 		final FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
 		buffer.put(m.toArray(true));
 		buffer.flip();
@@ -236,15 +278,11 @@ public class OpenGL20Program extends Program {
 	@Override
 	public void setUniform(String name, Color c) {
 		checkCreated();
-		checkContainsUniform(name);
+		if (!uniforms.containsKey(name)) {
+			return;
+		}
 		GL20.glUniform4f(uniforms.get(name), c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, c.getAlpha() / 255f);
 		RenderUtil.checkForOpenGLError();
-	}
-
-	private void checkContainsUniform(String name) {
-		if (!uniforms.containsKey(name)) {
-			throw new IllegalArgumentException("The uniform \"" + name + "\" could not be found in the program");
-		}
 	}
 
 	@Override

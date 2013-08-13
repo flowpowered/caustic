@@ -26,7 +26,6 @@
  */
 package org.spout.renderer.gl;
 
-import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GL30;
 
 import org.spout.renderer.Creatable;
@@ -85,20 +84,18 @@ public abstract class FrameBuffer extends Creatable implements GLVersioned {
 	 */
 	public static enum AttachmentPoint {
 		// TODO: remove color from enum and support n color attachments
-		COLOR0(GL30.GL_COLOR_ATTACHMENT0, EXTFramebufferObject.GL_COLOR_ATTACHMENT0_EXT, true),
-		COLOR1(GL30.GL_COLOR_ATTACHMENT1, EXTFramebufferObject.GL_COLOR_ATTACHMENT1_EXT, true),
-		COLOR2(GL30.GL_COLOR_ATTACHMENT2, EXTFramebufferObject.GL_COLOR_ATTACHMENT2_EXT, true),
-		COLOR3(GL30.GL_COLOR_ATTACHMENT3, EXTFramebufferObject.GL_COLOR_ATTACHMENT3_EXT, true),
-		DEPTH(GL30.GL_DEPTH_ATTACHMENT, EXTFramebufferObject.GL_DEPTH_ATTACHMENT_EXT, false),
-		STENCIL(GL30.GL_STENCIL_ATTACHMENT, EXTFramebufferObject.GL_STENCIL_ATTACHMENT_EXT, false),
-		DEPTH_STENCIL(GL30.GL_DEPTH_STENCIL_ATTACHMENT, -1, false);
+		COLOR0(GL30.GL_COLOR_ATTACHMENT0, true),
+		COLOR1(GL30.GL_COLOR_ATTACHMENT1, true),
+		COLOR2(GL30.GL_COLOR_ATTACHMENT2, true),
+		COLOR3(GL30.GL_COLOR_ATTACHMENT3, true),
+		DEPTH(GL30.GL_DEPTH_ATTACHMENT, false),
+		STENCIL(GL30.GL_STENCIL_ATTACHMENT, false),
+		DEPTH_STENCIL(GL30.GL_DEPTH_STENCIL_ATTACHMENT, false);
 		private final int glConstant;
-		private final int extConstant;
 		private final boolean isColor;
 
-		private AttachmentPoint(int glConstant, int extConstant, boolean isColor) {
+		private AttachmentPoint(int glConstant, boolean isColor) {
 			this.glConstant = glConstant;
-			this.extConstant = extConstant;
 			this.isColor = isColor;
 		}
 
@@ -109,18 +106,6 @@ public abstract class FrameBuffer extends Creatable implements GLVersioned {
 		 */
 		public int getGLConstant() {
 			return glConstant;
-		}
-
-		/**
-		 * Gets the EXT constant for this attachment point.
-		 *
-		 * @return The EXT Constant
-		 */
-		public int getEXTConstant() {
-			if (extConstant == -1) {
-				throw new UnsupportedOperationException("This constant is not supported by EXT");
-			}
-			return extConstant;
 		}
 
 		/**

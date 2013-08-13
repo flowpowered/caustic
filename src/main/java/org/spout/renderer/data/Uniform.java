@@ -268,6 +268,47 @@ public abstract class Uniform {
 	}
 
 	/**
+	 * Represents a uniform with a vector3 array value.
+	 */
+	public static class Vector3ArrayUniform extends Uniform {
+		private Vector3[] value;
+
+		/**
+		 * Constructs a new vector3 array uniform from the name and the value.
+		 *
+		 * @param name The name of the uniform
+		 * @param value Its value
+		 */
+		public Vector3ArrayUniform(String name, Vector3[] value) {
+			super(name);
+			this.value = value;
+		}
+
+		@Override
+		public void upload(Program program) {
+			program.setUniform(name, value);
+		}
+
+		/**
+		 * Returns the value of the uniform.
+		 *
+		 * @return The value
+		 */
+		public Vector3[] get() {
+			return value;
+		}
+
+		/**
+		 * Sets the value of the uniform.
+		 *
+		 * @param value The value
+		 */
+		public void set(Vector3[] value) {
+			this.value = value;
+		}
+	}
+
+	/**
 	 * Represents a uniform with a vector4 value.
 	 */
 	public static class Vector4Uniform extends Uniform {

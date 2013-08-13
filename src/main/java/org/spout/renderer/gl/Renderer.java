@@ -255,9 +255,7 @@ public abstract class Renderer extends Creatable implements GLVersioned {
 		BLEND(GL11.GL_BLEND),
 		CULL_FACE(GL11.GL_CULL_FACE),
 		DEPTH_CLAMP(GL32.GL_DEPTH_CLAMP),
-		DEPTH_TEST(GL11.GL_DEPTH_TEST),
-		LINE_SMOOTH(GL11.GL_LINE_SMOOTH),
-		POLYGON_SMOOTH(GL11.GL_POLYGON_SMOOTH);
+		DEPTH_TEST(GL11.GL_DEPTH_TEST);
 		private final int glConstant;
 
 		private Capability(int glConstant) {

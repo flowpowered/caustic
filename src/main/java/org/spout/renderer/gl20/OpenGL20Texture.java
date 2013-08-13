@@ -83,11 +83,13 @@ public class OpenGL20Texture extends Texture {
 	protected void uploadTexture(ByteBuffer buffer, int width, int height) {
 		if (minFilter.needsMipMaps() && buffer != null) {
 			// Build mipmaps if using mip mapped filters
-			GLU.gluBuild2DMipmaps(GL11.GL_TEXTURE_2D, format.getGLConstant(), width, height, format.getGLConstant(), type.getGLConstant(), buffer);
+			GLU.gluBuild2DMipmaps(GL11.GL_TEXTURE_2D, internalFormat != null ? internalFormat.getGLConstant() : format.getGLConstant(), width, height, format.getGLConstant(), type.getGLConstant(), buffer);
 		} else {
 			// Else just make it a normal texture
-			GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, format.getGLConstant(), width, height, 0, format.getGLConstant(), type.getGLConstant(), buffer);
+			GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, internalFormat != null ? internalFormat.getGLConstant() : format.getGLConstant(), width, height, 0, format.getGLConstant(), type.getGLConstant(), buffer);
 		}
+		// Check for errors
+		RenderUtil.checkForOpenGLError();
 	}
 
 	@Override

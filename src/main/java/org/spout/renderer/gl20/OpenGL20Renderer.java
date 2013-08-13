@@ -37,6 +37,7 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.PixelFormat;
 
+import org.spout.math.matrix.Matrix4;
 import org.spout.renderer.GLVersion;
 import org.spout.renderer.Material;
 import org.spout.renderer.Model;
@@ -151,6 +152,11 @@ public class OpenGL20Renderer extends Renderer {
 				material.bind();
 				// Upload the renderer uniforms
 				uploadUniforms(program);
+				// Generate the normal matrix for the model
+				final Matrix4 modelMatrix = model.getMatrix();
+				final Matrix4 viewMatrix = renderList.getCamera().getViewMatrix();
+				final Matrix4 normalMatrix = viewMatrix.mul(modelMatrix).invert().transpose();
+				renderList.getUniforms().getMatrix4("normalMatrix").set(normalMatrix);
 				// Upload the render list uniforms
 				renderList.uploadUniforms(program);
 				// Upload the material uniforms

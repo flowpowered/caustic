@@ -27,6 +27,7 @@
 package org.spout.renderer.gl30;
 
 import java.nio.IntBuffer;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -90,7 +91,11 @@ public class OpenGL30FrameBuffer extends FrameBuffer {
 		} else {
 			// Keep track of the buffers to output
 			final IntBuffer buffer = BufferUtils.createIntBuffer(outputBuffers.size());
-			buffer.put(outputBuffers.toArray());
+			final int[] outputBuffersArray = outputBuffers.toArray();
+			// Sorting the array ensures that attachments are in order n, n + 1, n + 2...
+			// This is important!
+			Arrays.sort(outputBuffersArray);
+			buffer.put(outputBuffersArray);
 			buffer.flip();
 			GL20.glDrawBuffers(buffer);
 		}

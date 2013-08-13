@@ -28,6 +28,7 @@ package org.spout.renderer;
 
 import org.spout.math.imaginary.Quaternion;
 import org.spout.math.matrix.Matrix4;
+import org.spout.math.matrix.MatrixN;
 import org.spout.math.vector.Vector3;
 
 /**
@@ -60,11 +61,11 @@ public class Camera {
 	}
 
 	/**
-	 * Returns the camera matrix, which is the transformation matrix for the position and rotation.
+	 * Returns the view matrix, which is the transformation matrix for the position and rotation.
 	 *
-	 * @return The camera matrix
+	 * @return The view matrix
 	 */
-	public Matrix4 getMatrix() {
+	public Matrix4 getViewMatrix() {
 		if (updateMatrix) {
 			final Matrix4 rotationMatrix = Matrix4.createRotation(rotation.invert());
 			rotationMatrixInverse = rotationMatrix.invert();
@@ -152,16 +153,18 @@ public class Camera {
 	 * @param fieldOfView The field of view, in degrees
 	 * @param windowWidth The window width
 	 * @param windowHeight The widow height
-	 * @param near The near plane, cannot be 0
+	 * @param near The near plane
 	 * @param far The far plane
 	 * @return The camera
 	 */
-	public static Camera createPerspective(float fieldOfView, int windowWidth, int windowHeight,
-										   float near, float far) {
+	public static Camera createPerspective(float fieldOfView, int windowWidth, int windowHeight, float near, float far) {
 		if (near == 0) {
 			throw new IllegalArgumentException("Near cannot be zero");
 		}
-		return new Camera(Matrix4.createPerspective(fieldOfView, (float) windowWidth / windowHeight, near, far));
+		final MatrixN m = MatrixN.createPerspective(4, fieldOfView, (float) windowWidth / windowHeight, near, far);
+		// TODO: fix me in Math
+		m.set(3, 3, 0);
+		return new Camera(m.toMatrix4());
 	}
 
 	/**

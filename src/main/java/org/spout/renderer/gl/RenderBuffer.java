@@ -28,17 +28,17 @@ package org.spout.renderer.gl;
 
 import org.spout.renderer.Creatable;
 import org.spout.renderer.GLVersioned;
-import org.spout.renderer.gl.Texture.ImageFormat;
+import org.spout.renderer.gl.Texture.Format;
 
 /**
  * Represents an OpenGL render buffer. A render buffer can be used as a faster alternative to a texture in a frame buffer when its rendering output doesn't need to be read. The storage format, width
- * and height dimensions need to be set with {@link #setFormat(org.spout.renderer.gl.Texture.ImageFormat)}, {@link #setWidth(int)} and {@link #setHeight(int)} respectively before the render buffer can
+ * and height dimensions need to be set with {@link #setFormat(org.spout.renderer.gl.Texture.Format)}, {@link #setWidth(int)} and {@link #setHeight(int)} respectively before the render buffer can
  * be created.
  */
 public abstract class RenderBuffer extends Creatable implements GLVersioned {
 	protected int id;
 	// The render buffer storage format
-	protected ImageFormat format;
+	protected Format format;
 	// The storage dimensions
 	protected int width = -1;
 	protected int height = -1;
@@ -64,7 +64,7 @@ public abstract class RenderBuffer extends Creatable implements GLVersioned {
 	 *
 	 * @param format The storage format, cannot be null
 	 */
-	public void setFormat(ImageFormat format) {
+	public void setFormat(Format format) {
 		if (format == null) {
 			throw new IllegalArgumentException("Format cannot be null");
 		}
