@@ -43,6 +43,7 @@ import org.spout.math.vector.Vector3;
 import org.spout.math.vector.Vector4;
 import org.spout.renderer.Creatable;
 import org.spout.renderer.GLVersioned;
+import org.spout.renderer.data.Color;
 import org.spout.renderer.data.Uniform;
 import org.spout.renderer.data.UniformHolder;
 import org.spout.renderer.gl.Shader.ShaderType;
@@ -196,7 +197,9 @@ public abstract class Program extends Creatable implements GLVersioned {
 	 * @param name The name of the uniform to set
 	 * @param c The color value
 	 */
-	public abstract void setUniform(String name, Color c);
+	public void setUniform(String name, Color c) {
+		setUniform(name, (Vector4) c.normalize());
+	}
 
 	/**
 	 * Returns an set containing all of the uniform names for this program.

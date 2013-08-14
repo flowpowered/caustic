@@ -49,7 +49,6 @@ import org.spout.math.vector.Vector4;
 import org.spout.renderer.GLVersion;
 import org.spout.renderer.data.Uniform;
 import org.spout.renderer.data.UniformHolder;
-import org.spout.renderer.gl.Color;
 import org.spout.renderer.gl.Program;
 import org.spout.renderer.gl.Shader.ShaderType;
 import org.spout.renderer.util.RenderUtil;
@@ -273,15 +272,6 @@ public class OpenGL20Program extends Program {
 		buffer.flip();
 		GL20.glUniformMatrix4(uniforms.get(name), false, buffer);
 		RenderUtil.checkForOpenGLError();
-	}
-
-	@Override
-	public void setUniform(String name, Color c) {
-		if (c.isNormalized()) {
-			setUniform(name, (Vector4) c);
-		} else {
-			setUniform(name, (Vector4) c.normalize());
-		}
 	}
 
 	@Override

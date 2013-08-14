@@ -60,7 +60,7 @@ import org.spout.renderer.data.UniformHolder;
 import org.spout.renderer.data.VertexAttribute;
 import org.spout.renderer.data.VertexAttribute.DataType;
 import org.spout.renderer.data.VertexData;
-import org.spout.renderer.gl.Color;
+import org.spout.renderer.data.Color;
 import org.spout.renderer.gl.Program;
 import org.spout.renderer.gl.Shader;
 import org.spout.renderer.gl.Shader.ShaderType;

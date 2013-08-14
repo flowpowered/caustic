@@ -26,20 +26,20 @@
  */
 package org.spout.renderer.util;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.OpenGLException;
-import org.lwjgl.util.glu.GLU;
-
-import org.spout.renderer.GLVersioned;
-import org.spout.renderer.gl.Color;
-import org.spout.renderer.gl.Texture.Format;
-
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.OpenGLException;
+import org.lwjgl.util.glu.GLU;
+
+import org.spout.renderer.GLVersioned;
+import org.spout.renderer.data.Color;
+import org.spout.renderer.gl.Texture.Format;
 
 /**
  * Utility methods for rendering.
@@ -50,7 +50,7 @@ public class RenderUtil {
 	/**
 	 * Throws an exception if OpenGL reports an error.
 	 *
-	 * @throws {@link org.lwjgl.opengl.OpenGLException} If OpenGL reports an error
+	 * @throws OpenGLException If OpenGL reports an error
 	 */
 	public static void checkForOpenGLError() {
 		if (DEBUG) {
@@ -74,12 +74,11 @@ public class RenderUtil {
 		}
 	}
 
-
 	/**
 	 * Gets the {@link BufferedImage}'s data as a {@link ByteBuffer}. The image data reading is done according to the {@link org.spout.renderer.gl.Texture.Format}
 	 *
-	 * @param image
-	 * @param format
+	 * @param image The image to extract the data from
+	 * @param format The format of the image data
 	 * @return buffer containing the decoded image data
 	 */
 	public static ByteBuffer getImageData(BufferedImage image, Format format) {
@@ -113,11 +112,11 @@ public class RenderUtil {
 	/**
 	 * Gets the {@link InputStream}'s data as a {@link ByteBuffer}. The image data reading is done according to the {@link org.spout.renderer.gl.Texture.Format}
 	 *
-	 * @param source
-	 * @param format
+	 * @param source The image input stream to extract the data from
+	 * @param format The format of the image data
 	 * @return buffer containing the decoded image data
 	 */
-	public ByteBuffer getImageData(InputStream source, Format format) throws IOException {
+	public static ByteBuffer getImageData(InputStream source, Format format) throws IOException {
 		try {
 			return getImageData(ImageIO.read(source), format);
 		} catch (Exception ex) {
@@ -127,10 +126,16 @@ public class RenderUtil {
 		}
 	}
 
-	public java.awt.Color toAWTColor(Color c) {
+	/**
+	 * Converts a {@link org.spout.renderer.data.Color} to a {@link java.awt.Color}.
+	 *
+	 * @param c The Caustic color to convert
+	 * @return The AWT color
+	 */
+	public static java.awt.Color toAWTColor(Color c) {
 		if (c.isNormalized()) {
 			return new java.awt.Color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha());
-		}   else {
+		} else {
 			return new java.awt.Color((int) c.getRed(), (int) c.getGreen(), (int) c.getBlue(), (int) c.getAlpha());
 		}
 	}

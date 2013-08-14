@@ -41,7 +41,7 @@ import org.spout.renderer.GLVersion;
 import org.spout.renderer.Material;
 import org.spout.renderer.Model;
 import org.spout.renderer.data.RenderList;
-import org.spout.renderer.gl.Color;
+import org.spout.renderer.data.Color;
 import org.spout.renderer.gl.FrameBuffer;
 import org.spout.renderer.gl.Program;
 import org.spout.renderer.gl.Renderer;
@@ -97,11 +97,8 @@ public class OpenGL20Renderer extends Renderer {
 
 	@Override
 	public void setClearColor(Color color) {
-		if (color.isNormalized()) {
-			GL11.glClearColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
-		} else {
-			GL11.glClearColor(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
-		}
+		color = color.normalize();
+		GL11.glClearColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 		// Check for errors
 		RenderUtil.checkForOpenGLError();
 	}
