@@ -26,10 +26,6 @@
  */
 package org.spout.renderer.gl;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL32;
-import org.lwjgl.opengl.GL40;
-
 import org.spout.renderer.Creatable;
 import org.spout.renderer.GLVersioned;
 import org.spout.renderer.data.VertexData;
@@ -130,18 +126,18 @@ public abstract class VertexArray extends Creatable implements GLVersioned {
 	 * Represents the different drawing modes for the model
 	 */
 	public static enum DrawingMode {
-		POINTS(GL11.GL_POINTS),
-		LINE_STRIP(GL11.GL_LINE_STRIP),
-		LINE_LOOP(GL11.GL_LINE_LOOP),
-		LINES(GL11.GL_LINES),
-		LINE_STRIP_ADJACENCY(GL32.GL_LINE_STRIP_ADJACENCY),
-		LINES_ADJACENCY(GL32.GL_LINES_ADJACENCY),
-		TRIANGLES_STRIP(GL11.GL_TRIANGLE_STRIP),
-		TRIANGLE_FAN(GL11.GL_TRIANGLE_FAN),
-		TRIANGLES(GL11.GL_TRIANGLES),
-		TRIANGLE_STRIP_ADJACENCY(GL32.GL_TRIANGLE_STRIP_ADJACENCY),
-		TRIANGLES_ADJACENCY(GL32.GL_TRIANGLES_ADJACENCY),
-		PATCHES(GL40.GL_PATCHES);
+		POINTS(0x0), // GL11.GL_POINTS
+		LINES(0x1), // GL11.GL_LINES
+		LINE_LOOP(0x2), // GL11.GL_LINE_LOOP
+		LINE_STRIP(0x3), // GL11.GL_LINE_STRIP
+		TRIANGLES(0x4), // GL11.GL_TRIANGLES
+		TRIANGLES_STRIP(0x5), // GL11.GL_TRIANGLE_STRIP
+		TRIANGLE_FAN(0x7), // GL11.GL_TRIANGLE_FAN
+		LINES_ADJACENCY(0xA), // GL32.GL_LINES_ADJACENCY
+		LINE_STRIP_ADJACENCY(0xB), // GL32.GL_LINE_STRIP_ADJACENCY
+		TRIANGLES_ADJACENCY(0xC), // GL32.GL_TRIANGLES_ADJACENCY
+		TRIANGLE_STRIP_ADJACENCY(0xD), // GL32.GL_TRIANGLE_STRIP_ADJACENCY
+		PATCHES(0xE); // GL40.GL_PATCHES
 		private final int glConstant;
 
 		private DrawingMode(int constant) {

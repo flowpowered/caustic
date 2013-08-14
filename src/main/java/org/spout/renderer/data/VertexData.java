@@ -27,6 +27,7 @@
 package org.spout.renderer.data;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Collections;
 import java.util.Set;
 
@@ -38,8 +39,6 @@ import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
-
-import org.lwjgl.BufferUtils;
 
 import org.spout.renderer.data.VertexAttribute.DataType;
 
@@ -79,7 +78,7 @@ public class VertexData {
 	 * @return A buffer of the indices
 	 */
 	public ByteBuffer getIndicesBuffer() {
-		final ByteBuffer buffer = BufferUtils.createByteBuffer(indices.size() * DataType.INT.getByteSize());
+		final ByteBuffer buffer = ByteBuffer.allocateDirect(indices.size() * DataType.INT.getByteSize()).order(ByteOrder.nativeOrder());
 		for (int i = 0; i < indices.size(); i++) {
 			buffer.putInt(indices.get(i));
 		}

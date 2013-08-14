@@ -26,8 +26,6 @@
  */
 package org.spout.renderer.gl;
 
-import org.lwjgl.opengl.GL30;
-
 import org.spout.renderer.Creatable;
 import org.spout.renderer.GLVersioned;
 
@@ -84,13 +82,13 @@ public abstract class FrameBuffer extends Creatable implements GLVersioned {
 	 */
 	public static enum AttachmentPoint {
 		// TODO: remove color from enum and support n color attachments
-		COLOR0(GL30.GL_COLOR_ATTACHMENT0, true),
-		COLOR1(GL30.GL_COLOR_ATTACHMENT1, true),
-		COLOR2(GL30.GL_COLOR_ATTACHMENT2, true),
-		COLOR3(GL30.GL_COLOR_ATTACHMENT3, true),
-		DEPTH(GL30.GL_DEPTH_ATTACHMENT, false),
-		STENCIL(GL30.GL_STENCIL_ATTACHMENT, false),
-		DEPTH_STENCIL(GL30.GL_DEPTH_STENCIL_ATTACHMENT, false);
+		COLOR0(GL.GL_COLOR_ATTACHMENT0, true),
+		COLOR1(GL.GL_COLOR_ATTACHMENT1, true),
+		COLOR2(GL.GL_COLOR_ATTACHMENT2, true),
+		COLOR3(GL.GL_COLOR_ATTACHMENT3, true),
+		DEPTH(GL.GL_DEPTH_ATTACHMENT, false),
+		STENCIL(GL.GL_STENCIL_ATTACHMENT, false),
+		DEPTH_STENCIL(GL.GL_DEPTH_STENCIL_ATTACHMENT, false);
 		private final int glConstant;
 		private final boolean isColor;
 

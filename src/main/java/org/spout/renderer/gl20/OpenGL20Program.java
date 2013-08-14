@@ -26,7 +26,6 @@
  */
 package org.spout.renderer.gl20;
 
-import java.awt.Color;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.Collections;
@@ -50,6 +49,7 @@ import org.spout.math.vector.Vector4;
 import org.spout.renderer.GLVersion;
 import org.spout.renderer.data.Uniform;
 import org.spout.renderer.data.UniformHolder;
+import org.spout.renderer.gl.Color;
 import org.spout.renderer.gl.Program;
 import org.spout.renderer.gl.Shader.ShaderType;
 import org.spout.renderer.util.RenderUtil;
@@ -277,12 +277,11 @@ public class OpenGL20Program extends Program {
 
 	@Override
 	public void setUniform(String name, Color c) {
-		checkCreated();
-		if (!uniforms.containsKey(name)) {
-			return;
+		if (c.isNormalized()) {
+			setUniform(name, (Vector4) c);
+		} else {
+			setUniform(name, (Vector4) c.normalize());
 		}
-		GL20.glUniform4f(uniforms.get(name), c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, c.getAlpha() / 255f);
-		RenderUtil.checkForOpenGLError();
 	}
 
 	@Override

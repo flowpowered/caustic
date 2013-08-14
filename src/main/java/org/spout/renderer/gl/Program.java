@@ -26,7 +26,6 @@
  */
 package org.spout.renderer.gl;
 
-import java.awt.Color;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;

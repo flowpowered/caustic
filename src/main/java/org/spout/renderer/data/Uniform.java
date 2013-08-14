@@ -26,14 +26,13 @@
  */
 package org.spout.renderer.data;
 
-import java.awt.Color;
-
 import org.spout.math.matrix.Matrix2;
 import org.spout.math.matrix.Matrix3;
 import org.spout.math.matrix.Matrix4;
 import org.spout.math.vector.Vector2;
 import org.spout.math.vector.Vector3;
 import org.spout.math.vector.Vector4;
+import org.spout.renderer.gl.Color;
 import org.spout.renderer.gl.Program;
 
 /**

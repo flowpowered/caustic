@@ -40,6 +40,7 @@ import gnu.trove.list.TShortList;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
+import org.spout.renderer.gl.GL;
 
 /**
  * Represents a vertex attribute. It has a name, a data type, a size (the number of components) and data.
@@ -223,14 +224,14 @@ public class VertexAttribute implements Cloneable {
 	 * Represents an attribute data type.
 	 */
 	public static enum DataType {
-		BYTE(GL11.GL_BYTE, 1, true),
-		UNSIGNED_BYTE(GL11.GL_UNSIGNED_BYTE, 1, true),
-		SHORT(GL11.GL_SHORT, 2, true),
-		UNSIGNED_SHORT(GL11.GL_UNSIGNED_SHORT, 2, true),
-		INT(GL11.GL_INT, 4, true),
-		UNSIGNED_INT(GL11.GL_UNSIGNED_INT, 4, true),
-		FLOAT(GL11.GL_FLOAT, 4, false),
-		DOUBLE(GL11.GL_DOUBLE, 8, false);
+		BYTE(GL.GL_BYTE, 1, true),
+		UNSIGNED_BYTE(GL.GL_UNSIGNED_BYTE, 1, true),
+		SHORT(GL.GL_SHORT, 2, true),
+		UNSIGNED_SHORT(GL.GL_UNSIGNED_SHORT, 2, true),
+		INT(GL.GL_INT, 4, true),
+		UNSIGNED_INT(GL.GL_UNSIGNED_INT, 4, true),
+		FLOAT(GL.GL_FLOAT, 4, false),
+		DOUBLE(GL.GL_DOUBLE, 8, false);
 		private final int glConstant;
 		private final int byteSize;
 		private final boolean integer;

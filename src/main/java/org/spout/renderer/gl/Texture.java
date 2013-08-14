@@ -26,17 +26,8 @@
  */
 package org.spout.renderer.gl;
 
-import java.awt.image.BufferedImage;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
-import javax.imageio.ImageIO;
-
-import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
-import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GL14;
-import org.lwjgl.opengl.GL30;
+import java.nio.ByteOrder;
 
 import org.spout.renderer.Creatable;
 import org.spout.renderer.GLVersioned;
@@ -192,35 +183,6 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	}
 
 	/**
-	 * Sets the texture's image data from a source input stream. The image data reading is done according to the set {@link org.spout.renderer.gl.Texture.Format}.
-	 *
-	 * @param source The input stream of the image
-	 */
-	public void setImageData(InputStream source) {
-		try {
-			setImageData(ImageIO.read(source));
-			source.close();
-		} catch (Exception ex) {
-			throw new IllegalStateException("Unreadable texture image data", ex);
-		}
-	}
-
-	/**
-	 * Sets the texture's image data. The image data reading is done according to the set {@link org.spout.renderer.gl.Texture.Format}.
-	 *
-	 * @param image The image
-	 */
-	public void setImageData(BufferedImage image) {
-		final int width = image.getWidth();
-		final int height = image.getHeight();
-		// Obtain the image raw int data
-		final int[] pixels = new int[width * height];
-		image.getRGB(0, 0, width, height, pixels, 0, width);
-		// Place the data in the buffer
-		setImageData(pixels, width, height);
-	}
-
-	/**
 	 * Sets the texture's image data. The image data reading is done according to the set {@link org.spout.renderer.gl.Texture.Format}.
 	 *
 	 * @param pixels The image pixels
@@ -229,7 +191,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	 */
 	public void setImageData(int[] pixels, int width, int height) {
 		// Place the data in the buffer, only adding the required components
-		final ByteBuffer data = BufferUtils.createByteBuffer(width * height * format.getComponentCount());
+		final ByteBuffer data = ByteBuffer.allocateDirect(width * height * format.getComponentCount()).order(ByteOrder.nativeOrder());
 		for (int y = height - 1; y >= 0; y--) {
 			for (int x = 0; x < width; x++) {
 				final int pixel = pixels[x + y * width];
@@ -271,12 +233,12 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	 * An enum of texture component formats.
 	 */
 	public static enum Format {
-		RED(GL11.GL_RED, 1, true, false, false, false, false, false),
-		RG(GL30.GL_RG, 2, true, true, false, false, false, false),
-		RGB(GL11.GL_RGB, 3, true, true, true, false, false, false),
-		RGBA(GL11.GL_RGBA, 4, true, true, true, true, false, false),
-		DEPTH(GL11.GL_DEPTH_COMPONENT, 1, false, false, false, false, true, false),
-		DEPTH_STENCIL(GL30.GL_DEPTH_STENCIL, 1, false, false, false, false, false, true);
+		RED(GL.GL_RED, 1, true, false, false, false, false, false),
+		RG(GL.GL_RG, 2, true, true, false, false, false, false),
+		RGB(GL.GL_RGB, 3, true, true, true, false, false, false),
+		RGBA(GL.GL_RGBA, 4, true, true, true, true, false, false),
+		DEPTH(GL.GL_DEPTH_COMPONENT, 1, false, false, false, false, true, false),
+		DEPTH_STENCIL(GL.GL_DEPTH_STENCIL, 1, false, false, false, false, false, true);
 		private final int glConstant;
 		private final int components;
 		private final boolean hasRed;
@@ -374,24 +336,36 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	 * An enum of sized texture component formats.
 	 */
 	public static enum InternalFormat {
-		R8(GL30.GL_R8),
-		R16(GL30.GL_R16),
-		RG8(GL30.GL_RG8),
-		RG16(GL30.GL_RG16),
-		RGB8(GL11.GL_RGB8),
-		RGBA8(GL11.GL_RGBA8),
-		RGBA16(GL11.GL_RGBA16),
-		R16F(GL30.GL_R16F),
-		RG16F(GL30.GL_RG16F),
-		RGB16F(GL30.GL_RGB16F),
-		RGBA16F(GL30.GL_RGBA16F),
-		R32F(GL30.GL_R32F),
-		RG32F(GL30.GL_RG32F),
-		RGB32F(GL30.GL_RGB32F),
-		RGBA32F(GL30.GL_RGBA32F),
-		DEPTH_COMPONENT16(GL14.GL_DEPTH_COMPONENT16),
-		DEPTH_COMPONENT24(GL14.GL_DEPTH_COMPONENT24),
-		DEPTH_COMPONENT32(GL14.GL_DEPTH_COMPONENT32);
+		/**
+		 * Added in OpenGL 1.1
+		 */
+		RGB8(0x8051), // GL11.GL_RGB8
+		RGBA8(0x8058), // GL11.GL_RGBA8
+		RGBA16(0x805B), // GL11.GL_RGBA16
+
+		/**
+		 * Added in OpenGL 1.4
+		 */
+		DEPTH_COMPONENT16(0x81A5), // GL14.GL_DEPTH_COMPONENT16
+		DEPTH_COMPONENT24(0x81A6), // GL14.GL_DEPTH_COMPONENT24
+		DEPTH_COMPONENT32(0x81A7), // GL14.GL_DEPTH_COMPONENT32
+
+		/**
+		 * Added in OpenGL 3.0
+		 */
+		R8(0x8229), // GL30.GL_R8
+		R16(0x822A), // GL30.GL_R16
+		RG8(0x822B), // GL30.GL_RG8
+		RG16(0x822C), // GL30.GL_RG16
+		R16F(0x822D), // GL30.GL_R16F
+		R32F(0x822E), // GL30.GL_R32F
+		RG16F(0x822F), // GL30.GL_RG16F
+		RG32F(0x8230), // GL30.GL_RG32F
+		RGBA32F(0x8814), // GL30.GL_RGBA32F
+		RGB32F(0x8815), // GL30.GL_RGB32F
+		RGBA16F(0x881A), // GL30.GL_RGBA16F
+		RGB16F(0x881B); // GL30.GL_RGB16F
+
 		private final int glConstant;
 
 		private InternalFormat(int glConstant) {
@@ -413,10 +387,10 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	 * An enum for the texture wrapping modes.
 	 */
 	public static enum WrapMode {
-		CLAMP_TO_EDGE(GL12.GL_CLAMP_TO_EDGE),
-		CLAMP_TO_BORDER(GL13.GL_CLAMP_TO_BORDER),
-		MIRRORED_REPEAT(GL14.GL_MIRRORED_REPEAT),
-		REPEAT(GL11.GL_REPEAT);
+		CLAMP_TO_EDGE(0x812F), // GL12.GL_CLAMP_TO_EDGE
+		CLAMP_TO_BORDER(0x812D), // GL13.GL_CLAMP_TO_BORDER
+		MIRRORED_REPEAT(0x8370), // GL14.GL_MIRRORED_REPEAT
+		REPEAT(0x2901); // GL11.GL_REPEAT
 		private final int glConstant;
 
 		private WrapMode(int glConstant) {
@@ -437,12 +411,12 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	 * An enum for the texture filtering modes.
 	 */
 	public static enum FilterMode {
-		LINEAR(GL11.GL_LINEAR),
-		NEAREST(GL11.GL_NEAREST),
-		NEAREST_MIPMAP_NEAREST(GL11.GL_NEAREST_MIPMAP_NEAREST),
-		LINEAR_MIPMAP_NEAREST(GL11.GL_LINEAR_MIPMAP_NEAREST),
-		NEAREST_MIPMAP_LINEAR(GL11.GL_NEAREST_MIPMAP_LINEAR),
-		LINEAR_MIPMAP_LINEAR(GL11.GL_LINEAR_MIPMAP_LINEAR);
+		LINEAR(0x2601), // GL11.GL_LINEAR
+		NEAREST(0x2600), // GL11.GL_NEAREST
+		NEAREST_MIPMAP_NEAREST(0x2700), // GL11.GL_NEAREST_MIPMAP_NEAREST
+		LINEAR_MIPMAP_NEAREST(0x2701), //GL11.GL_LINEAR_MIPMAP_NEAREST
+		NEAREST_MIPMAP_LINEAR(0x2702), // GL11.GL_NEAREST_MIPMAP_LINEAR
+		LINEAR_MIPMAP_LINEAR(0x2703); // GL11.GL_LINEAR_MIPMAP_LINEAR
 		private final int glConstant;
 
 		private FilterMode(int glConstant) {

@@ -26,7 +26,6 @@
  */
 package org.spout.renderer.util;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -61,6 +60,7 @@ import org.spout.renderer.data.UniformHolder;
 import org.spout.renderer.data.VertexAttribute;
 import org.spout.renderer.data.VertexAttribute.DataType;
 import org.spout.renderer.data.VertexData;
+import org.spout.renderer.gl.Color;
 import org.spout.renderer.gl.Program;
 import org.spout.renderer.gl.Shader;
 import org.spout.renderer.gl.Shader.ShaderType;
@@ -314,7 +314,7 @@ public class StringModel extends Model {
 		final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		final Graphics graphics = image.getGraphics();
 		// Draw the glyphs in white on a transparent background
-		graphics.setColor(Color.white);
+		graphics.setColor(java.awt.Color.WHITE);
 		graphics.setFont(font);
 		((Graphics2D) graphics).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
 		final FontMetrics fontMetrics = graphics.getFontMetrics();
@@ -330,7 +330,7 @@ public class StringModel extends Model {
 		graphics.dispose();
 		// Generate the texture
 		texture.setFormat(Format.RGBA);
-		texture.setImageData(image);
+		texture.setImageData(RenderUtil.getImageData(image, Format.RGBA), image.getWidth(), image.getHeight());
 		texture.setMagFilter(FilterMode.LINEAR);
 		texture.setMinFilter(FilterMode.LINEAR);
 		texture.create();

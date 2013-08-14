@@ -31,6 +31,15 @@ import org.lwjgl.opengl.OpenGLException;
 import org.lwjgl.util.glu.GLU;
 
 import org.spout.renderer.GLVersioned;
+import org.spout.renderer.gl.Color;
+import org.spout.renderer.gl.Texture.Format;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 /**
  * Utility methods for rendering.
@@ -62,6 +71,67 @@ public class RenderUtil {
 	public static void checkVersion(GLVersioned required, GLVersioned object) {
 		if (required.getGLVersion() != object.getGLVersion()) {
 			throw new IllegalStateException("Version mismatch: expected " + required.getGLVersion() + ", got " + object.getGLVersion());
+		}
+	}
+
+
+	/**
+	 * Gets the {@link BufferedImage}'s data as a {@link ByteBuffer}. The image data reading is done according to the {@link org.spout.renderer.gl.Texture.Format}
+	 *
+	 * @param image
+	 * @param format
+	 * @return buffer containing the decoded image data
+	 */
+	public static ByteBuffer getImageData(BufferedImage image, Format format) {
+		final int width = image.getWidth();
+		final int height = image.getHeight();
+		// Obtain the image raw int data
+		final int[] pixels = new int[width * height];
+		image.getRGB(0, 0, width, height, pixels, 0, width);
+		// Place the data in the buffer
+		final ByteBuffer data = ByteBuffer.allocateDirect(width * height * format.getComponentCount()).order(ByteOrder.nativeOrder());
+		for (int y = height - 1; y >= 0; y--) {
+			for (int x = 0; x < width; x++) {
+				final int pixel = pixels[x + y * width];
+				if (format.hasRed()) {
+					data.put((byte) (pixel >> 16 & 0xff));
+				}
+				if (format.hasGreen()) {
+					data.put((byte) (pixel >> 8 & 0xff));
+				}
+				if (format.hasBlue()) {
+					data.put((byte) (pixel & 0xff));
+				}
+				if (format.hasAlpha()) {
+					data.put((byte) (pixel >> 24 & 0xff));
+				}
+			}
+		}
+		return data;
+	}
+
+	/**
+	 * Gets the {@link InputStream}'s data as a {@link ByteBuffer}. The image data reading is done according to the {@link org.spout.renderer.gl.Texture.Format}
+	 *
+	 * @param source
+	 * @param format
+	 * @return buffer containing the decoded image data
+	 */
+	public ByteBuffer getImageData(InputStream source, Format format) throws IOException {
+		try {
+			return getImageData(ImageIO.read(source), format);
+		} catch (Exception ex) {
+			throw new IllegalStateException("Unreadable texture image data", ex);
+		} finally {
+			source.close();
+		}
+	}
+
+	public java.awt.Color toAWTColor(Color c) {
+		if (c.isNormalized()) {
+			return new java.awt.Color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha());
+		}   else {
+			return new java.awt.Color((int) c.getRed(), (int) c.getGreen(), (int) c.getBlue(), (int) c.getAlpha());
 		}
 	}
 }
