@@ -29,10 +29,27 @@ package org.spout.renderer.data;
 import org.spout.math.vector.Vector4;
 
 public class Color extends Vector4 {
+	/**
+	 * The color white.
+	 */
+	public final static Color WHITE = new Color(255, 255, 255);
+	/**
+	 * The color blue.
+	 */
+	public final static Color BLUE = new Color(0, 0, 255);
+	/**
+	 * The color dark gray.
+	 */
+	public final static Color DARK_GRAY = new Color(64, 64, 64);
+	private static final long serialVersionUID = 1L;
 	private final boolean normalized;
 
 	public Color(int rgba, boolean hasAlpha) {
 		this((rgba >> 16) & 0xFF, (rgba >> 8) & 0xFF, rgba & 0xFF, hasAlpha ? (rgba >> 24) & 0xFF : 0);
+	}
+
+	public Color(double r, double g, double b) {
+		this((float) r, (float) g, (float) b, 0);
 	}
 
 	public Color(double r, double g, double b, double a) {
@@ -79,17 +96,4 @@ public class Color extends Vector4 {
 	public boolean isNormalized() {
 		return normalized;
 	}
-
-	/**
-	 * The color white.
-	 */
-	public final static Color WHITE = new Color(255, 255, 255);
-	/**
-	 * The color blue.
-	 */
-	public final static Color BLUE = new Color(0, 0, 255);
-	/**
-	 * The color dark gray.
-	 */
-	public final static Color DARK_GRAY = new Color(64, 64, 64);
 }
