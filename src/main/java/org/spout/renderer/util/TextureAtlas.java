@@ -26,63 +26,55 @@
  */
 package org.spout.renderer.util;
 
-import gnu.trove.map.TMap;
-import gnu.trove.map.hash.THashMap;
-
+import javax.imageio.ImageIO;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-
-import javax.imageio.ImageIO;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.spout.renderer.gl.Texture;
+import org.spout.renderer.gl.Texture.Format;
 
 /**
- * A utility class used to stitch together multiple textures as to reduce the textures used by OpenGL.
+ * A utility class used to stitch together multiple textures as to reduce the textures used.
  */
 public class TextureAtlas {
-	private final TMap<String, RegionData> regions = new THashMap<>(16, 0.5f);
-	private BufferedImage image;
+	private final Map<String, RegionData> regions = new HashMap<>();
+	private final BufferedImage image;
 
 	public TextureAtlas(int width, int height) {
 		this.image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 	}
-	
+
 	/**
-	 * Sets the image data of the provided {@link Texture} with the 
-	 * image data found in this {@link TextureAtlas}. 
-	 * This should be called after all textures have been added to the {@link TextureAtlas}.
-	 * 
+	 * Sets the image data of the provided {@link Texture} with the image data found in this {@link TextureAtlas}. This should be called after all textures have been added to the {@link TextureAtlas}.
+	 *
 	 * @param texture Texture to set image data
 	 */
 	public void attachTo(Texture texture) {
 		final int width = image.getWidth();
 		final int height = image.getHeight();
-		final int[] pixels = new int[width * height];
-		this.image.getRGB(0, 0, width, height, pixels, 0, width);
-		texture.setImageData(pixels, width, height);
-		this.image = null;
+		texture.setImageData(RenderUtil.getImageData(image, Format.RGBA), width, height);
 	}
-	
+
 	/**
-	 * Retrieves the {@link RegionData} which is stored under the
-	 * provided name.
-	 * 
+	 * Retrieves the {@link RegionData} which is stored under the provided name.
+	 *
 	 * @param name Name of the region
 	 * @return The region data
 	 */
 	public RegionData getTextureRegion(String name) {
 		return regions.get(name);
 	}
-	
+
 	/**
-	 * Adds the provided texture from the {@link InputStream} into
-	 * this {@link TextureAtlas}.
-	 * 
+	 * Adds the provided texture from the {@link InputStream} into this {@link TextureAtlas}.
+	 *
 	 * @param name The name of this {@link Texture}
 	 * @param input The {@link InputStream} of the texture
-	 * @throws org.spout.renderer.util.TextureAtlas.TextureTooBigException 
+	 * @throws org.spout.renderer.util.TextureAtlas.TextureTooBigException
 	 */
 	public void addTexture(String name, InputStream input) throws TextureTooBigException {
 		try {
@@ -94,15 +86,14 @@ public class TextureAtlas {
 	}
 
 	/**
-	 * Adds the provided texture from the {@link BufferedImage} into
-	 * this {@link TextureAtlas}.
-	 * 
+	 * Adds the provided texture from the {@link BufferedImage} into this {@link TextureAtlas}.
+	 *
 	 * @param name The name of this {@link Texture}
 	 * @param image The {@link BufferedImage} of the texture
-	 * @throws org.spout.renderer.util.TextureAtlas.TextureTooBigException 
+	 * @throws org.spout.renderer.util.TextureAtlas.TextureTooBigException
 	 */
 	public void addTexture(String name, BufferedImage image) throws TextureTooBigException {
-		RegionData data = findUsableRegion(image.getWidth(), image.getHeight());
+		final RegionData data = findUsableRegion(image.getWidth(), image.getHeight());
 		if (data == null) {
 			throw new TextureTooBigException();
 		}
@@ -111,19 +102,19 @@ public class TextureAtlas {
 		image.getRGB(0, 0, image.getWidth(), image.getHeight(), pixels, 0, image.getWidth());
 		this.image.setRGB(data.x, data.y, data.width, data.height, pixels, 0, data.width);
 	}
-	
+
 	/**
 	 * Attempts to find a usable region of this {@link TextureAtlas}
-	 * 
+	 *
 	 * @param width Width of the region
 	 * @param height Height of the region
 	 * @return The data for a valid region, null if none found.
 	 */
 	private RegionData findUsableRegion(int width, int height) {
-		final int image_width = image.getWidth();
-		final int image_height = image.getHeight();
-		for(int y=0 ; y<image_height - height ; y++) {
-			for(int x=0 ; x<image_width - width ; x++) {
+		final int imageWidth = image.getWidth();
+		final int imageHeight = image.getHeight();
+		for (int y = 0; y < imageHeight - height; y++) {
+			for (int x = 0; x < imageWidth - width; x++) {
 				final RegionData data = new RegionData(x, y, width, height);
 				if (!intersectsOtherTexture(data)) {
 					return data;
@@ -132,25 +123,24 @@ public class TextureAtlas {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Checks to see if the provided {@link RegionData} intersects
-	 * with any other region currently used by another texture.
-	 * 
-	 * @param data {@link RegionData} 
+	 * Checks to see if the provided {@link RegionData} intersects with any other region currently used by another texture.
+	 *
+	 * @param data {@link RegionData}
 	 * @return true if it intersects another texture region
 	 */
 	private boolean intersectsOtherTexture(RegionData data) {
-		for(RegionData other : regions.values()) {
-			Rectangle rec1 = new Rectangle(data.x, data.y, data.width, data.height);
-			Rectangle rec2 = new Rectangle(other.x, other.y, other.width, other.height);
+		final Rectangle rec1 = new Rectangle(data.x, data.y, data.width, data.height);
+		for (RegionData other : regions.values()) {
+			final Rectangle rec2 = new Rectangle(other.x, other.y, other.width, other.height);
 			if (rec1.intersects(rec2)) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Stores data for a region in the {@link TextureAtlas}
 	 */
@@ -165,16 +155,18 @@ public class TextureAtlas {
 		}
 
 		/**
-		 * Gets the x-coordinate of this texture region
-		 * @return X-coordinate
+		 * Gets the x coordinate of this texture region
+		 *
+		 * @return The x coordinate
 		 */
 		public int getX() {
 			return x;
 		}
 
 		/**
-		 * Gets the y-coordinate of this texture region
-		 * @return Y-coordinate
+		 * Gets the y coordinate of this texture region
+		 *
+		 * @return The y coordinate
 		 */
 		public int getY() {
 			return y;
@@ -182,6 +174,7 @@ public class TextureAtlas {
 
 		/**
 		 * Gets the width of this texture region
+		 *
 		 * @return Texture region width
 		 */
 		public int getWidth() {
@@ -190,19 +183,19 @@ public class TextureAtlas {
 
 		/**
 		 * Gets the height of this texture region
+		 *
 		 * @return Texture region height
 		 */
 		public int getHeight() {
 			return height;
 		}
 	}
-	
+
 	/**
-	 * If the texture attempting to be added to this {@link TextureAtlas} is too
-	 * big or there is no space left for it, then this exception will be thrown.
+	 * If the texture attempting to be added to this {@link TextureAtlas} is too big or there is no space left for it, then this exception will be thrown.
 	 */
 	private class TextureTooBigException extends Exception {
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = 1;
 
 		public TextureTooBigException() {
 			super("Texture is too big for this TextureAtlas or there isn't enough space");
