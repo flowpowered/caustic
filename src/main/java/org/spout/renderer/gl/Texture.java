@@ -27,7 +27,6 @@
 package org.spout.renderer.gl;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
 import org.spout.renderer.Creatable;
 import org.spout.renderer.GLVersioned;
@@ -183,36 +182,6 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	}
 
 	/**
-	 * Sets the texture's image data. The image data reading is done according to the set {@link org.spout.renderer.gl.Texture.Format}.
-	 *
-	 * @param pixels The image pixels
-	 * @param width The width of the image
-	 * @param height the height of the image
-	 */
-	public void setImageData(int[] pixels, int width, int height) {
-		// Place the data in the buffer, only adding the required components
-		final ByteBuffer data = ByteBuffer.allocateDirect(width * height * format.getComponentCount()).order(ByteOrder.nativeOrder());
-		for (int y = height - 1; y >= 0; y--) {
-			for (int x = 0; x < width; x++) {
-				final int pixel = pixels[x + y * width];
-				if (format.hasRed()) {
-					data.put((byte) (pixel >> 16 & 0xff));
-				}
-				if (format.hasGreen()) {
-					data.put((byte) (pixel >> 8 & 0xff));
-				}
-				if (format.hasBlue()) {
-					data.put((byte) (pixel & 0xff));
-				}
-				if (format.hasAlpha()) {
-					data.put((byte) (pixel >> 24 & 0xff));
-				}
-			}
-		}
-		setImageData(data, width, height);
-	}
-
-	/**
 	 * Sets the texture's image data. The image data reading is done according the the set {@link org.spout.renderer.gl.Texture.Format}.
 	 *
 	 * @param imageData The image data
@@ -220,10 +189,6 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	 * @param height the height of the image
 	 */
 	public void setImageData(ByteBuffer imageData, int width, int height) {
-		if (imageData != null) {
-			// TODO: don't flip me
-			imageData.flip();
-		}
 		this.imageData = imageData;
 		this.width = width;
 		this.height = height;
