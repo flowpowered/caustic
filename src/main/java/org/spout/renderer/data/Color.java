@@ -29,37 +29,38 @@ package org.spout.renderer.data;
 import org.spout.math.vector.Vector4;
 
 /**
- * Represents an immutable color with red, green and blue components, and an optional alpha component. When no alpha component is present, the return value is 0. A color can be normalized (all
+ * Represents an immutable color with red, green and blue components, and an optional alpha component. When no alpha component is present, the return value is 255 (opaque). A color can be normalized (all
  * components have their value between 0 and 1) or not (components are in the range of 0 to 255).
  */
 public class Color extends Vector4 {
 	/**
 	 * The color white.
 	 */
-	public final static Color WHITE = new Color(255, 255, 255, 255);
+	public final static Color WHITE = new Color(255, 255, 255);
 	/**
 	 * The color blue.
 	 */
-	public final static Color BLUE = new Color(0, 0, 255, 255);
+	public final static Color BLUE = new Color(0, 0, 255);
 	/**
 	 * The color dark gray.
 	 */
-	public final static Color DARK_GRAY = new Color(64, 64, 64, 255);
+	public final static Color DARK_GRAY = new Color(64, 64, 64);
 	private static final long serialVersionUID = 1L;
 	private final boolean normalized;
 
 	/**
-	 * Constructs a new color from the encoded RGBA value. If <code>hasAlpha</code> is false, the alpha value is discarded and replaced with 0.
+	 * Constructs a new color from the encoded RGBA value. If <code>hasAlpha</code> is false, the alpha value is discarded and replaced with 255 (opaque).
 	 *
 	 * @param rgba The rgba color
 	 * @param hasAlpha Whether or not to keep the alpha component
 	 */
 	public Color(int rgba, boolean hasAlpha) {
-		this((rgba >> 16) & 0xFF, (rgba >> 8) & 0xFF, rgba & 0xFF, hasAlpha ? (rgba >> 24) & 0xFF : 0);
+		this((rgba >> 16) & 0xFF, (rgba >> 8) & 0xFF, rgba & 0xFF, hasAlpha ? (rgba >> 24) & 0xFF : 255);
 	}
 
 	/**
-	 * Constructs a new color from the color components as doubles. Alpha will be 0.
+	 * Constructs a new color from the color components as doubles. Alpha will be 255 (opaque).
+	 * Colors are assumed to be non-normalized.
 	 *
 	 * @param r The red component
 	 * @param g The green component
@@ -70,18 +71,20 @@ public class Color extends Vector4 {
 	}
 
 	/**
-	 * Constructs a new color from the color components as floats. Alpha will be 0.
+	 * Constructs a new color from the color components as floats. Alpha will be 255 {opaque)
+	 * Colors are assumed to be non-normalized.
 	 *
 	 * @param r The red component
 	 * @param g The green component
 	 * @param b The blue component
 	 */
 	public Color(float r, float g, float b) {
-		this(r, g, b, 0);
+		this(r, g, b, 255);
 	}
 
 	/**
-	 * Constructs a new color from the components as doubles.
+	 * Constructs a new color from the components as doubles. Only accepts values in the range of 0 - 1 for normalized Colors, or 0 - 255 for non-normalized Colors. Values outside of these ranges
+	 * will cause an {@link IllegalArgumentException}.
 	 *
 	 * @param r The red component
 	 * @param g The green component
@@ -93,7 +96,8 @@ public class Color extends Vector4 {
 	}
 
 	/**
-	 * Constructs a new color from the components as floats.
+	 * Constructs a new color from the components as floats. Only accepts values in the range of 0 - 1 for normalized Colors, or 0 - 255 for non-normalized Colors. Values outside of these ranges
+	 * will cause an {@link IllegalArgumentException}.
 	 *
 	 * @param r The red component
 	 * @param g The green component
@@ -104,6 +108,9 @@ public class Color extends Vector4 {
 		super(r, g, b, a);
 		if (r < 0 || g < 0 || b < 0 || a < 0) {
 			throw new IllegalArgumentException("Colors can not have negative values");
+		}
+		if (r > 255 || g > 255 || b > 255 || a > 255) {
+			throw new IllegalArgumentException("Colors can not have values greater than 255");
 		}
 		normalized = r <= 1 && g <= 1 && b <= 1 && a <= 1;
 	}
