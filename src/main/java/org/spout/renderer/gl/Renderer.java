@@ -32,9 +32,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL32;
-
 import org.spout.renderer.Creatable;
 import org.spout.renderer.GLVersioned;
 import org.spout.renderer.data.Color;
@@ -252,10 +249,10 @@ public abstract class Renderer extends Creatable implements GLVersioned {
 	 * An enum of the renderer capabilities.
 	 */
 	public static enum Capability {
-		BLEND(GL11.GL_BLEND),
-		CULL_FACE(GL11.GL_CULL_FACE),
-		DEPTH_CLAMP(GL32.GL_DEPTH_CLAMP),
-		DEPTH_TEST(GL11.GL_DEPTH_TEST);
+		BLEND(0xBE2), // GL11.GL_BLEND
+		CULL_FACE(0xB44), // GL11.GL_CULL_FACE
+		DEPTH_CLAMP(0x864F), // GL32.GL_DEPTH_CLAMP
+		DEPTH_TEST(0xB71); // GL11.GL_DEPTH_TEST
 		private final int glConstant;
 
 		private Capability(int glConstant) {
