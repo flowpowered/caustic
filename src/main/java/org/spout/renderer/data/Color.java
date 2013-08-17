@@ -26,6 +26,7 @@
  */
 package org.spout.renderer.data;
 
+import org.spout.math.GenericMath;
 import org.spout.math.vector.Vector4;
 
 /**
@@ -173,5 +174,63 @@ public class Color extends Vector4 {
 	 */
 	public boolean isNormalized() {
 		return normalized;
+	}
+
+	/**
+	 * Converts the components of a color, as specified by the HSB model, to an equivalent set of values for the default RGB model.
+	 * The <code>saturation</code> and <code>brightness</code> components should be floating-point values between zero and one (numbers in the range 0.0-1.0).
+	 * The <code>hue</code> component can be any floating-point number.
+	 * 
+	 * @param hue The hue component of the color
+	 * @param saturation The saturation of the color
+	 * @param brightness The brightness of the color
+	 * @return The RGB value of the color with the indicated hue, saturation, and brightness.
+	 */
+	public static Color fromHSB(float hue, float saturation, float brightness) {
+		float r = 0;
+		float g = 0;
+		float b = 0;
+		if (saturation == 0) {
+			r = g = b = brightness;
+		} else {
+			final float h = (hue - GenericMath.floor(hue)) * 6.0f;
+			final float f = h - GenericMath.floor(h);
+			final float p = brightness * (1.0f - saturation);
+			final float q = brightness * (1.0f - saturation * f);
+			final float t = brightness * (1.0f - saturation * (1.0f - f));
+			switch ((int) h) {
+				case 0:
+					r = brightness;
+					g = t;
+					b = p;
+					break;
+				case 1:
+					r = q;
+					g = brightness;
+					b = p;
+					break;
+				case 2:
+					r = p;
+					g = brightness;
+					b = t;
+					break;
+				case 3:
+					r = p;
+					g = q;
+					b = brightness;
+					break;
+				case 4:
+					r = t;
+					g = p;
+					b = brightness;
+					break;
+				case 5:
+					r = brightness;
+					g = p;
+					b = q;
+					break;
+			}
+		}
+		return new Color(r, g, b, 1.0f);
 	}
 }
