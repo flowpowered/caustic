@@ -194,10 +194,8 @@ public class TextureAtlas {
 	/**
 	 * If the texture attempting to be added to this {@link TextureAtlas} is too big or there is no space left for it, then this exception will be thrown.
 	 */
-	private class TextureTooBigException extends Exception {
-		private static final long serialVersionUID = 1;
-
-		public TextureTooBigException() {
+	private static class TextureTooBigException extends Exception {
+		private TextureTooBigException() {
 			super("Texture is too big for this TextureAtlas or there isn't enough space");
 		}
 	}

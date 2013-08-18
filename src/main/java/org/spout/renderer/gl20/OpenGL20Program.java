@@ -64,7 +64,7 @@ public class OpenGL20Program extends Program {
 
 	@Override
 	public void create() {
-		if (created) {
+		if (isCreated()) {
 			throw new IllegalStateException("Program has already been created");
 		}
 		if (!shaders.containsKey(ShaderType.VERTEX)) {

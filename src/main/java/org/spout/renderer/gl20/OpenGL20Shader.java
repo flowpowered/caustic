@@ -41,7 +41,7 @@ import org.spout.renderer.util.RenderUtil;
 public class OpenGL20Shader extends Shader {
 	@Override
 	public void create() {
-		if (created) {
+		if (isCreated()) {
 			throw new IllegalStateException("Shader has already been created");
 		}
 		if (source == null) {
@@ -68,7 +68,7 @@ public class OpenGL20Shader extends Shader {
 
 	@Override
 	public void destroy() {
-		if (!created) {
+		if (!isCreated()) {
 			throw new IllegalStateException("Shader has not been created yet");
 		}
 		// Delete the shader

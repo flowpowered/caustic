@@ -65,7 +65,7 @@ public class OpenGL20VertexArray extends VertexArray {
 
 	@Override
 	public void create() {
-		if (created) {
+		if (isCreated()) {
 			throw new IllegalStateException("VertexArray has already been created");
 		}
 		if (vertexData == null) {
