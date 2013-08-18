@@ -45,7 +45,16 @@ import org.spout.renderer.gl.Texture.Format;
  * Utility methods for rendering.
  */
 public class RenderUtil {
-	private static final boolean DEBUG = true;
+	private static boolean DEBUG = true;
+	
+	/**
+	 * Sets the caustic renderer in debug mode.
+	 * 
+	 * @param enabled If debug should be enabled
+	 */
+	public static void setDebugEnabled(boolean enabled) {
+		RenderUtil.DEBUG = enabled;
+	}
 
 	/**
 	 * Throws an exception if OpenGL reports an error.

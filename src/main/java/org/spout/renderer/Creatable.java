@@ -30,7 +30,7 @@ package org.spout.renderer;
  * Represents a resource that can be created and destroyed.
  */
 public abstract class Creatable {
-	protected boolean created = false;
+	private boolean created = false;
 
 	/**
 	 * Creates the resources. It can now be used.
