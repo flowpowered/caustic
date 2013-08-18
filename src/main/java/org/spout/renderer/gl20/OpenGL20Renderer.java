@@ -55,7 +55,7 @@ import org.spout.renderer.util.RenderUtil;
 public class OpenGL20Renderer extends Renderer {
 	@Override
 	public void create() {
-		if (created) {
+		if (isCreated()) {
 			throw new IllegalStateException("Renderer has already been created");
 		}
 		// Attempt to create the display

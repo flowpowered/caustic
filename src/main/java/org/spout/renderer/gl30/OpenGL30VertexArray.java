@@ -46,7 +46,7 @@ import org.spout.renderer.util.RenderUtil;
 public class OpenGL30VertexArray extends VertexArray {
 	@Override
 	public void create() {
-		if (created) {
+		if (isCreated()) {
 			throw new IllegalStateException("Vertex array has already been created");
 		}
 		if (vertexData == null) {
