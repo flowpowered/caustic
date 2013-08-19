@@ -82,13 +82,13 @@ public abstract class FrameBuffer extends Creatable implements GLVersioned {
 	 */
 	public static enum AttachmentPoint {
 		// TODO: remove color from enum and support n color attachments
-		COLOR0(GL.GL_COLOR_ATTACHMENT0, true),
-		COLOR1(GL.GL_COLOR_ATTACHMENT1, true),
-		COLOR2(GL.GL_COLOR_ATTACHMENT2, true),
-		COLOR3(GL.GL_COLOR_ATTACHMENT3, true),
-		DEPTH(GL.GL_DEPTH_ATTACHMENT, false),
-		STENCIL(GL.GL_STENCIL_ATTACHMENT, false),
-		DEPTH_STENCIL(GL.GL_DEPTH_STENCIL_ATTACHMENT, false);
+		COLOR0(0x8CE0, true), // GL30.GL_COLOR_ATTACHMENT0
+		COLOR1(0x8CE1, true), // GL30.GL_COLOR_ATTACHMENT1
+		COLOR2(0x8CE2, true), // GL30.GL_COLOR_ATTACHMENT2
+		COLOR3(0x8CE3, true), // GL30.GL_COLOR_ATTACHMENT3
+		DEPTH(0x8D00, false), // GL30.GL_DEPTH_ATTACHMENT
+		STENCIL(0x8D20, false), // GL30.GL_STENCIL_ATTACHMENT
+		DEPTH_STENCIL(0x821A, false); // GL30.GL_DEPTH_STENCIL_ATTACHMENT
 		private final int glConstant;
 		private final boolean isColor;
 

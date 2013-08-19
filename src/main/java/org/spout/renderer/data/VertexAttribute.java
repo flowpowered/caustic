@@ -38,7 +38,6 @@ import gnu.trove.list.TDoubleList;
 import gnu.trove.list.TFloatList;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.TShortList;
-import org.spout.renderer.gl.GL;
 
 /**
  * Represents a vertex attribute. It has a name, a data type, a size (the number of components) and data.
@@ -222,14 +221,14 @@ public class VertexAttribute implements Cloneable {
 	 * Represents an attribute data type.
 	 */
 	public static enum DataType {
-		BYTE(GL.GL_BYTE, 1, true),
-		UNSIGNED_BYTE(GL.GL_UNSIGNED_BYTE, 1, true),
-		SHORT(GL.GL_SHORT, 2, true),
-		UNSIGNED_SHORT(GL.GL_UNSIGNED_SHORT, 2, true),
-		INT(GL.GL_INT, 4, true),
-		UNSIGNED_INT(GL.GL_UNSIGNED_INT, 4, true),
-		FLOAT(GL.GL_FLOAT, 4, false),
-		DOUBLE(GL.GL_DOUBLE, 8, false);
+		BYTE(0x1400, 1, true), // GL11.GL_BYTE
+		UNSIGNED_BYTE(0x1401, 1, true), // GL11.GL_UNSIGNED_BYTE
+		SHORT(0x1402, 2, true), // GL11.GL_SHORT
+		UNSIGNED_SHORT(0x1403, 2, true), // GL11.GL_UNSIGNED_SHORT
+		INT(0x1404, 4, true), // GL11.GL_INT
+		UNSIGNED_INT(0x1405, 4, true), // GL11.GL_UNSIGNED_INT
+		FLOAT(0x1406, 4, false), // GL11.GL_FLOAT
+		DOUBLE(0x140A, 8, false); // GL11.GL_DOUBLE
 		private final int glConstant;
 		private final int byteSize;
 		private final boolean integer;

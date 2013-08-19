@@ -198,12 +198,12 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	 * An enum of texture component formats.
 	 */
 	public static enum Format {
-		RED(GL.GL_RED, 1, true, false, false, false, false, false),
-		RG(GL.GL_RG, 2, true, true, false, false, false, false),
-		RGB(GL.GL_RGB, 3, true, true, true, false, false, false),
-		RGBA(GL.GL_RGBA, 4, true, true, true, true, false, false),
-		DEPTH(GL.GL_DEPTH_COMPONENT, 1, false, false, false, false, true, false),
-		DEPTH_STENCIL(GL.GL_DEPTH_STENCIL, 1, false, false, false, false, false, true);
+		RED(0x1903, 1, true, false, false, false, false, false), // GL11.GL_RED
+		RGB(0x1907, 3, true, true, true, false, false, false), // GL11.GL_RGB
+		RGBA(0x1908, 4, true, true, true, true, false, false), // GL11.GL_RGBA
+		DEPTH(0x1902, 1, false, false, false, false, true, false), // GL11.GL_DEPTH_COMPONENT
+		RG(0x8227, 2, true, true, false, false, false, false), // GL30.GL_RG
+		DEPTH_STENCIL(0x84F9, 1, false, false, false, false, false, true); // GL30.GL_DEPTH_STENCIL
 		private final int glConstant;
 		private final int components;
 		private final boolean hasRed;
@@ -301,23 +301,12 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	 * An enum of sized texture component formats.
 	 */
 	public static enum InternalFormat {
-		/**
-		 * Added in OpenGL 1.1
-		 */
 		RGB8(0x8051), // GL11.GL_RGB8
 		RGBA8(0x8058), // GL11.GL_RGBA8
 		RGBA16(0x805B), // GL11.GL_RGBA16
-
-		/**
-		 * Added in OpenGL 1.4
-		 */
 		DEPTH_COMPONENT16(0x81A5), // GL14.GL_DEPTH_COMPONENT16
 		DEPTH_COMPONENT24(0x81A6), // GL14.GL_DEPTH_COMPONENT24
 		DEPTH_COMPONENT32(0x81A7), // GL14.GL_DEPTH_COMPONENT32
-
-		/**
-		 * Added in OpenGL 3.0
-		 */
 		R8(0x8229), // GL30.GL_R8
 		R16(0x822A), // GL30.GL_R16
 		RG8(0x822B), // GL30.GL_RG8
@@ -330,7 +319,6 @@ public abstract class Texture extends Creatable implements GLVersioned {
 		RGB32F(0x8815), // GL30.GL_RGB32F
 		RGBA16F(0x881A), // GL30.GL_RGBA16F
 		RGB16F(0x881B); // GL30.GL_RGB16F
-
 		private final int glConstant;
 
 		private InternalFormat(int glConstant) {
@@ -352,10 +340,10 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	 * An enum for the texture wrapping modes.
 	 */
 	public static enum WrapMode {
+		REPEAT(0x2901), // GL11.GL_REPEAT
 		CLAMP_TO_EDGE(0x812F), // GL12.GL_CLAMP_TO_EDGE
 		CLAMP_TO_BORDER(0x812D), // GL13.GL_CLAMP_TO_BORDER
-		MIRRORED_REPEAT(0x8370), // GL14.GL_MIRRORED_REPEAT
-		REPEAT(0x2901); // GL11.GL_REPEAT
+		MIRRORED_REPEAT(0x8370); // GL14.GL_MIRRORED_REPEAT
 		private final int glConstant;
 
 		private WrapMode(int glConstant) {
