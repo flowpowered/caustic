@@ -279,7 +279,8 @@ public abstract class Uniform {
 		 */
 		public Vector3ArrayUniform(String name, Vector3[] value) {
 			super(name);
-			this.value = value;
+			this.value = new Vector3[value.length];
+			System.arraycopy(value, 0, this.value, 0, value.length);
 		}
 
 		@Override
@@ -302,7 +303,8 @@ public abstract class Uniform {
 		 * @param value The value
 		 */
 		public void set(Vector3[] value) {
-			this.value = value;
+			this.value = new Vector3[value.length];
+			System.arraycopy(value, 0, this.value, 0, value.length);
 		}
 	}
 
