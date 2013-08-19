@@ -83,8 +83,8 @@ public class GLES20Renderer extends Renderer implements GLSurfaceView.Renderer {
 
 	@Override
 	public void setClearColor(Color color) {
-		color = color.normalize();
-		GLES20.glClearColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+		Color normC = color.normalize();
+		GLES20.glClearColor(normC.getRed(), normC.getGreen(), normC.getBlue(), normC.getAlpha());
 		// Check for errors
 		AndroidUtil.checkForOpenGLError();
 	}

@@ -37,15 +37,15 @@ public class Color extends Vector4 {
 	/**
 	 * The color white.
 	 */
-	public final static Color WHITE = new Color(255, 255, 255);
+	public static final Color WHITE = new Color(255, 255, 255);
 	/**
 	 * The color blue.
 	 */
-	public final static Color BLUE = new Color(0, 0, 255);
+	public static final Color BLUE = new Color(0, 0, 255);
 	/**
 	 * The color dark gray.
 	 */
-	public final static Color DARK_GRAY = new Color(64, 64, 64);
+	public static final Color DARK_GRAY = new Color(64, 64, 64);
 	private static final long serialVersionUID = 1L;
 	private final boolean normalized;
 

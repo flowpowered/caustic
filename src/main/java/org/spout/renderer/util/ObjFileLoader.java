@@ -58,7 +58,7 @@ public class ObjFileLoader {
 	 * @return The vertex data, filed with the loaded vertices
 	 * @throws MalformedObjFileException If any errors occur during loading
 	 */
-	public static VertexData load(InputStream stream) throws MalformedObjFileException {
+	public static VertexData load(InputStream stream) {
 		return load(null, stream);
 	}
 
@@ -71,7 +71,7 @@ public class ObjFileLoader {
 	 * @return The vertex data, filed with the loaded vertices
 	 * @throws MalformedObjFileException If any errors occur during loading
 	 */
-	public static VertexData load(VertexData destination, InputStream stream) throws MalformedObjFileException {
+	public static VertexData load(VertexData destination, InputStream stream) {
 		if (destination == null) {
 			destination = new VertexData();
 		}

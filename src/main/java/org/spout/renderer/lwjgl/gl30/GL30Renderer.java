@@ -28,13 +28,12 @@ package org.spout.renderer.lwjgl.gl30;
 
 import org.lwjgl.opengl.ContextAttribs;
 
-import org.spout.renderer.gl.Renderer;
 import org.spout.renderer.lwjgl.gl20.GL20Renderer;
 
 /**
- * An OpenGL 3.0 implementation of {@link Renderer}.
+ * An OpenGL 3.0 implementation of {@link org.spout.renderer.gl.Renderer}.
  *
- * @see Renderer
+ * {@see Renderer}
  */
 public class GL30Renderer extends GL20Renderer {
 	@Override

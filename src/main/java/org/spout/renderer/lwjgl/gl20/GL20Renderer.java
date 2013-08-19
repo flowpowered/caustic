@@ -59,15 +59,15 @@ public class GL20Renderer extends Renderer {
 		}
 		// Attempt to create the display
 		try {
-			Display.setDisplayMode(new DisplayMode(windowWidth, windowHeight));
-			Display.create(new PixelFormat().withSamples(MSAA), createContextAttributes());
+			Display.setDisplayMode(new DisplayMode(this.windowWidth, this.windowHeight));
+			Display.create(new PixelFormat().withSamples(this.msaa), createContextAttributes());
 		} catch (LWJGLException ex) {
 			throw new RuntimeException(ex);
 		}
 		// Set the title
-		Display.setTitle(windowTitle);
+		Display.setTitle(this.windowTitle);
 		// Set the view port to the window
-		GL11.glViewport(0, 0, windowWidth, windowHeight);
+		GL11.glViewport(0, 0, this.windowWidth, this.windowHeight);
 		// Set the alpha blending function for transparency
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		// Check for errors
@@ -96,8 +96,8 @@ public class GL20Renderer extends Renderer {
 
 	@Override
 	public void setClearColor(Color color) {
-		color = color.normalize();
-		GL11.glClearColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+		Color normC = color.normalize();
+		GL11.glClearColor(normC.getRed(), normC.getGreen(), normC.getBlue(), normC.getAlpha());
 		// Check for errors
 		LWJGLUtil.checkForOpenGLError();
 	}

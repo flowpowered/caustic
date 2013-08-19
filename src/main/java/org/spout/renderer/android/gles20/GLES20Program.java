@@ -47,7 +47,6 @@ import org.spout.renderer.gl.Shader.ShaderType;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.util.Collections;
 import java.util.Set;
 

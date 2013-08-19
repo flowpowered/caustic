@@ -76,13 +76,9 @@ public class TextureAtlas {
 	 * @param input The {@link InputStream} of the texture
 	 * @throws org.spout.renderer.util.TextureAtlas.TextureTooBigException
 	 */
-	public void addTexture(String name, InputStream input) throws TextureTooBigException {
-		try {
-			addTexture(name, ImageIO.read(input));
-			input.close();
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
+	public void addTexture(String name, InputStream input) throws TextureTooBigException, IOException {
+		addTexture(name, ImageIO.read(input));
+		input.close();
 	}
 
 	/**

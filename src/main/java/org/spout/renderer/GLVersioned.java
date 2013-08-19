@@ -35,7 +35,7 @@ public interface GLVersioned {
 	 *
 	 * @return The OpenGL version
 	 */
-	public GLVersion getGLVersion();
+	GLVersion getGLVersion();
 
 	/**
 	 * An enum of the supported OpenGL versions. Use this class to generate rendering objects compatible with the version.
