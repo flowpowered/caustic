@@ -31,7 +31,6 @@ import android.opengl.GLES20;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
 
-import org.spout.renderer.GLVersion;
 import org.spout.renderer.android.AndroidUtil;
 import org.spout.renderer.gl.FrameBuffer;
 import org.spout.renderer.gl.RenderBuffer;

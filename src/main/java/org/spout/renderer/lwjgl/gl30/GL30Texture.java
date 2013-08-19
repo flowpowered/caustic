@@ -31,7 +31,6 @@ import java.nio.ByteBuffer;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 
-import org.spout.renderer.GLVersion;
 import org.spout.renderer.lwjgl.LWJGLUtil;
 import org.spout.renderer.lwjgl.gl20.GL20Texture;
 

@@ -28,7 +28,6 @@ package org.spout.renderer.lwjgl.gl30;
 
 import org.lwjgl.opengl.ContextAttribs;
 
-import org.spout.renderer.GLVersion;
 import org.spout.renderer.gl.Renderer;
 import org.spout.renderer.lwjgl.gl20.GL20Renderer;
 

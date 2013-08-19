@@ -33,13 +33,36 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.OpenGLException;
-import org.lwjgl.util.glu.GLU;
-
-import org.spout.renderer.GLVersioned;
+import org.spout.renderer.GLVersioned.GLVersion;
+import org.spout.renderer.android.gles20.GLES20FrameBuffer;
+import org.spout.renderer.android.gles20.GLES20Program;
+import org.spout.renderer.android.gles20.GLES20RenderBuffer;
+import org.spout.renderer.android.gles20.GLES20Renderer;
+import org.spout.renderer.android.gles20.GLES20Shader;
+import org.spout.renderer.android.gles20.GLES20Texture;
+import org.spout.renderer.android.gles20.GLES20VertexArray;
 import org.spout.renderer.data.Color;
+import org.spout.renderer.gl.FrameBuffer;
+import org.spout.renderer.gl.Program;
+import org.spout.renderer.gl.RenderBuffer;
+import org.spout.renderer.gl.Renderer;
+import org.spout.renderer.gl.Shader;
+import org.spout.renderer.gl.Texture;
 import org.spout.renderer.gl.Texture.Format;
+import org.spout.renderer.gl.VertexArray;
+import org.spout.renderer.lwjgl.gl20.GL20FrameBuffer;
+import org.spout.renderer.lwjgl.gl20.GL20Program;
+import org.spout.renderer.lwjgl.gl20.GL20RenderBuffer;
+import org.spout.renderer.lwjgl.gl20.GL20Renderer;
+import org.spout.renderer.lwjgl.gl20.GL20Shader;
+import org.spout.renderer.lwjgl.gl20.GL20Texture;
+import org.spout.renderer.lwjgl.gl20.GL20VertexArray;
+import org.spout.renderer.lwjgl.gl30.GL30FrameBuffer;
+import org.spout.renderer.lwjgl.gl30.GL30Program;
+import org.spout.renderer.lwjgl.gl30.GL30RenderBuffer;
+import org.spout.renderer.lwjgl.gl30.GL30Renderer;
+import org.spout.renderer.lwjgl.gl30.GL30Texture;
+import org.spout.renderer.lwjgl.gl30.GL30VertexArray;
 
 /**
  * Utility methods for rendering.
@@ -120,6 +143,132 @@ public class RenderUtil {
 			return new java.awt.Color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha());
 		} else {
 			return new java.awt.Color((int) c.getRed(), (int) c.getGreen(), (int) c.getBlue(), (int) c.getAlpha());
+		}
+	}
+
+	/**
+	 * Creates a new renderer for the version.
+	 *
+	 * @return A new renderer
+	 */
+	public static Renderer createRenderer(GLVersion glVersion) {
+		switch (glVersion) {
+			case GL20:
+				return new GL20Renderer();
+			case GL30:
+				return new GL30Renderer();
+			case GLES20:
+				return new GLES20Renderer();
+			default:
+				return null;
+		}
+	}
+
+	/**
+	 * Creates a new vertex array for the version.
+	 *
+	 * @return A new vertex array
+	 */
+	public static VertexArray createVertexArray(GLVersion glVersion) {
+		switch (glVersion) {
+			case GL20:
+				return new GL20VertexArray();
+			case GL30:
+				return new GL30VertexArray();
+			case GLES20:
+				return new GLES20VertexArray();
+			default:
+				return null;
+		}
+	}
+
+	/**
+	 * Creates a new program for the version.
+	 *
+	 * @return A new program
+	 */
+	public static Program createProgram(GLVersion glVersion) {
+		switch (glVersion) {
+			case GL20:
+				return new GL20Program();
+			case GL30:
+				return new GL30Program();
+			case GLES20:
+				return new GLES20Program();
+			default:
+				return null;
+		}
+	}
+
+	/**
+	 * Creates a new shader for the version.
+	 *
+	 * @return A new shader
+	 */
+	public static Shader createShader(GLVersion glVersion) {
+		switch (glVersion) {
+			case GL20:
+			case GL30:
+				return new GL20Shader();
+			case GLES20:
+			case GLES30:
+				return new GLES20Shader();
+			default:
+				return null;
+		}
+	}
+
+	/**
+	 * Creates a new texture for the version.
+	 *
+	 * @return A new texture
+	 */
+	public static Texture createTexture(GLVersion glVersion) {
+		switch (glVersion) {
+			case GL20:
+				return new GL20Texture();
+			case GL30:
+				return new GL30Texture();
+			case GLES20:
+				return new GLES20Texture();
+			default:
+				return null;
+		}
+	}
+
+	/**
+	 * Creates a new texture for the version.
+	 *
+	 * @return A new texture
+	 */
+	public static FrameBuffer createFrameBuffer(GLVersion glVersion) {
+		switch (glVersion) {
+			case GL20:
+				return new GL20FrameBuffer();
+			case GL30:
+				return new GL30FrameBuffer();
+			case GLES20:
+				return new GLES20FrameBuffer();
+			default:
+				return null;
+		}
+	}
+
+	/**
+	 * Creates a new texture for the version.
+	 *
+	 * @return A new texture
+	 */
+	public static RenderBuffer createRenderBuffer(GLVersion glVersion) {
+		switch (glVersion) {
+			case GL20:
+				return new GL20RenderBuffer();
+			case GL30:
+				return new GL30RenderBuffer();
+			case GLES20:
+				return new GLES20RenderBuffer();
+			default:
+				return null;
 		}
 	}
 }

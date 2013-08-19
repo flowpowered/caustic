@@ -46,7 +46,6 @@ import org.spout.math.matrix.Matrix4;
 import org.spout.math.vector.Vector2;
 import org.spout.math.vector.Vector3;
 import org.spout.math.vector.Vector4;
-import org.spout.renderer.GLVersion;
 import org.spout.renderer.data.Uniform;
 import org.spout.renderer.data.UniformHolder;
 import org.spout.renderer.gl.Program;

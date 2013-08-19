@@ -28,7 +28,6 @@ package org.spout.renderer.android.gles20;
 
 import android.opengl.GLES20;
 
-import org.spout.renderer.GLVersion;
 import org.spout.renderer.android.AndroidUtil;
 import org.spout.renderer.gl.Shader;
 

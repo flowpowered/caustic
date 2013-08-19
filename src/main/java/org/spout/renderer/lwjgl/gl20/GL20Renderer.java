@@ -37,7 +37,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.PixelFormat;
 
 import org.spout.math.matrix.Matrix4;
-import org.spout.renderer.GLVersion;
 import org.spout.renderer.Material;
 import org.spout.renderer.Model;
 import org.spout.renderer.data.RenderList;

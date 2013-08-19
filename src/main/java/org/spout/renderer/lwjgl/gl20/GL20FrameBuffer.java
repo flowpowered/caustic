@@ -41,7 +41,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GLContext;
 
-import org.spout.renderer.GLVersion;
 import org.spout.renderer.gl.FrameBuffer;
 import org.spout.renderer.gl.RenderBuffer;
 import org.spout.renderer.gl.Texture;

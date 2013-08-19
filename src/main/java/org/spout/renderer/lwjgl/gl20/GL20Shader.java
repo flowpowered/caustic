@@ -29,7 +29,6 @@ package org.spout.renderer.lwjgl.gl20;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
-import org.spout.renderer.GLVersion;
 import org.spout.renderer.gl.Shader;
 import org.spout.renderer.lwjgl.LWJGLUtil;
 

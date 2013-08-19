@@ -51,7 +51,7 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 
 import org.spout.math.GenericMath;
 import org.spout.math.vector.Vector2;
-import org.spout.renderer.GLVersion;
+import org.spout.renderer.GLVersioned.GLVersion;
 import org.spout.renderer.Material;
 import org.spout.renderer.Model;
 import org.spout.renderer.data.Uniform.ColorUniform;
@@ -260,7 +260,7 @@ public class StringModel extends Model {
 		return rawString;
 	}
 
-	private VertexArray generateMesh(GLVersion version, CharSequence glyphs, int windowWidth, TCharIntMap glyphWidths, int textureWidth, int textureHeight) {
+	private VertexArray generateMesh(GLVersion glVersion, CharSequence glyphs, int windowWidth, TCharIntMap glyphWidths, int textureWidth, int textureHeight) {
 		final VertexData data = new VertexData();
 		// Add the positions and texture coordinates attributes
 		final VertexAttribute positionAttribute = new VertexAttribute("positions", DataType.FLOAT, 2);
@@ -303,14 +303,14 @@ public class StringModel extends Model {
 		positionAttribute.setData(positions);
 		textureCoordsAttribute.setData(textureCoords);
 		// Set the vertex data in the model
-		final VertexArray vertexArray = version.createVertexArray();
+		final VertexArray vertexArray = RenderUtil.createVertexArray(glVersion);
 		vertexArray.setData(data);
 		vertexArray.create();
 		return vertexArray;
 	}
 
 	private Texture generateTexture(GLVersion glVersion, CharSequence glyphs, TCharIntMap glyphWidths, Font font, int width, int height) {
-		final Texture texture = glVersion.createTexture();
+		final Texture texture = RenderUtil.createTexture(glVersion);
 		// Create an image for the texture
 		final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		final Graphics graphics = image.getGraphics();
@@ -338,20 +338,20 @@ public class StringModel extends Model {
 		return texture;
 	}
 
-	private Material generateMaterial(GLVersion version) {
-		final Program program = version.createProgram();
-		final String shaderPath = "/shaders/" + version.toString().toLowerCase() + "/";
-		final Shader vertShader = version.createShader();
+	private Material generateMaterial(GLVersion glVersion) {
+		final Program program = RenderUtil.createProgram(glVersion);
+		final String shaderPath = "/shaders/" + glVersion.toString().toLowerCase() + "/";
+		final Shader vertShader = RenderUtil.createShader(glVersion);
 		vertShader.setSource(StringModel.class.getResourceAsStream(shaderPath + "font.vert"));
 		vertShader.setType(ShaderType.VERTEX);
 		vertShader.create();
 		program.addShader(vertShader);
-		final Shader fragShader = version.createShader();
+		final Shader fragShader = RenderUtil.createShader(glVersion);
 		fragShader.setSource(StringModel.class.getResourceAsStream(shaderPath + "font.frag"));
 		fragShader.setType(ShaderType.FRAGMENT);
 		fragShader.create();
 		program.addShader(fragShader);
-		if (version == GLVersion.GL20) {
+		if (glVersion == GLVersion.GL20 || glVersion == GLVersion.GLES20) {
 			program.addAttributeLayout("position", 0);
 			program.addAttributeLayout("textureCoords", 1);
 		}
