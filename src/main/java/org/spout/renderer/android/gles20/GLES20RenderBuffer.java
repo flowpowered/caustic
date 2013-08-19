@@ -102,6 +102,6 @@ public class GLES20RenderBuffer extends RenderBuffer {
 
 	@Override
 	public GLVersion getGLVersion() {
-		return GLVersion.GL20;
+		return GLVersion.GLES20;
 	}
 }

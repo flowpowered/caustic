@@ -287,6 +287,6 @@ public class GLES20Program extends Program {
 
 	@Override
 	public GLVersion getGLVersion() {
-		return GLVersion.GL20;
+		return GLVersion.GLES20;
 	}
 }
