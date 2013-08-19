@@ -32,7 +32,9 @@ import android.opengl.GLU;
 import org.spout.renderer.GLVersioned;
 
 public class AndroidUtil {
-	private static boolean DEBUG = true;
+	private AndroidUtil() { }
+
+	private static boolean debug = true;
 
 	/**
 	 * Sets the caustic renderer in debug mode.
@@ -40,7 +42,7 @@ public class AndroidUtil {
 	 * @param enabled If debug should be enabled
 	 */
 	public static void setDebugEnabled(boolean enabled) {
-		DEBUG = enabled;
+		debug = enabled;
 	}
 
 	/**
@@ -49,7 +51,7 @@ public class AndroidUtil {
 	 * @throws org.lwjgl.opengl.OpenGLException If OpenGL reports an error
 	 */
 	public static void checkForOpenGLError() {
-		if (DEBUG) {
+		if (debug) {
 			final int errorValue = GLES20.glGetError();
 			if (errorValue != GLES20.GL_NO_ERROR) {
 				throw new AndroidGLException("OPEN GL ERROR: " + GLU.gluErrorString(errorValue));

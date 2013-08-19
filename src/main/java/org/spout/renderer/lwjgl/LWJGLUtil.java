@@ -32,7 +32,9 @@ import org.lwjgl.util.glu.GLU;
 import org.spout.renderer.GLVersioned;
 
 public class LWJGLUtil {
-	private static boolean DEBUG = true;
+	private LWJGLUtil() { }
+
+	private static boolean debug = true;
 
 	/**
 	 * Sets the caustic renderer in debug mode.
@@ -40,7 +42,7 @@ public class LWJGLUtil {
 	 * @param enabled If debug should be enabled
 	 */
 	public static void setDebugEnabled(boolean enabled) {
-		DEBUG = enabled;
+		debug = enabled;
 	}
 
 	/**
@@ -49,7 +51,7 @@ public class LWJGLUtil {
 	 * @throws org.lwjgl.opengl.OpenGLException If OpenGL reports an error
 	 */
 	public static void checkForOpenGLError() {
-		if (DEBUG) {
+		if (debug) {
 			final int errorValue = GL11.glGetError();
 			if (errorValue != GL11.GL_NO_ERROR) {
 				throw new OpenGLException("OPEN GL ERROR: " + GLU.gluErrorString(errorValue));
