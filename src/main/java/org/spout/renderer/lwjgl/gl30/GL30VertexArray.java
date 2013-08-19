@@ -24,7 +24,7 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.gl30;
+package org.spout.renderer.lwjgl.gl30;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
@@ -36,14 +36,14 @@ import org.spout.renderer.data.VertexAttribute;
 import org.spout.renderer.data.VertexAttribute.DataType;
 import org.spout.renderer.data.VertexAttribute.UploadMode;
 import org.spout.renderer.gl.VertexArray;
-import org.spout.renderer.util.RenderUtil;
+import org.spout.renderer.lwjgl.LWJGLUtil;
 
 /**
  * An OpenGL 3.0 implementation of {@link VertexArray}.
  *
  * @see VertexArray
  */
-public class OpenGL30VertexArray extends VertexArray {
+public class GL30VertexArray extends VertexArray {
 	@Override
 	public void create() {
 		if (isCreated()) {
@@ -87,7 +87,7 @@ public class OpenGL30VertexArray extends VertexArray {
 		// Update state
 		super.create();
 		// Check for errors
-		RenderUtil.checkForOpenGLError();
+		LWJGLUtil.checkForOpenGLError();
 	}
 
 	@Override
@@ -110,7 +110,7 @@ public class OpenGL30VertexArray extends VertexArray {
 		GL30.glDeleteVertexArrays(id);
 		super.destroy();
 		// Check for errors
-		RenderUtil.checkForOpenGLError();
+		LWJGLUtil.checkForOpenGLError();
 	}
 
 	@Override
@@ -133,7 +133,7 @@ public class OpenGL30VertexArray extends VertexArray {
 		}
 		GL30.glBindVertexArray(0);
 		// Check for errors
-		RenderUtil.checkForOpenGLError();
+		LWJGLUtil.checkForOpenGLError();
 	}
 
 	@Override

@@ -24,7 +24,7 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.gl20;
+package org.spout.renderer.lwjgl.gl20;
 
 import org.lwjgl.opengl.APPLEVertexArrayObject;
 import org.lwjgl.opengl.ARBVertexArrayObject;
@@ -38,7 +38,7 @@ import org.spout.renderer.GLVersion;
 import org.spout.renderer.data.VertexAttribute;
 import org.spout.renderer.data.VertexAttribute.DataType;
 import org.spout.renderer.gl.VertexArray;
-import org.spout.renderer.util.RenderUtil;
+import org.spout.renderer.lwjgl.LWJGLUtil;
 
 /**
  * An OpenGL 2.0 implementation of {@link VertexArray}. <p/> Vertex arrays will be used if the ARB or APPLE extension is supported by the hardware. Else, since core OpenGL doesn't support them until
@@ -46,13 +46,13 @@ import org.spout.renderer.util.RenderUtil;
  *
  * @see VertexArray
  */
-public class OpenGL20VertexArray extends VertexArray {
+public class GL20VertexArray extends VertexArray {
 	private final VertexArrayExtension extension;
 	private int[] attributeSizes;
 	private int[] attributeTypes;
 	private boolean[] attributeNormalizing;
 
-	public OpenGL20VertexArray() {
+	public GL20VertexArray() {
 		final ContextCapabilities capabilities = GLContext.getCapabilities();
 		if (capabilities.GL_ARB_vertex_array_object) {
 			extension = VertexArrayExtension.ARB;
@@ -116,7 +116,7 @@ public class OpenGL20VertexArray extends VertexArray {
 		// Update state
 		super.create();
 		// Check for errors
-		RenderUtil.checkForOpenGLError();
+		LWJGLUtil.checkForOpenGLError();
 	}
 
 	@Override
@@ -151,7 +151,7 @@ public class OpenGL20VertexArray extends VertexArray {
 		}
 		super.destroy();
 		// Check for errors
-		RenderUtil.checkForOpenGLError();
+		LWJGLUtil.checkForOpenGLError();
 	}
 
 	@Override
@@ -187,7 +187,7 @@ public class OpenGL20VertexArray extends VertexArray {
 			GL20.glDisableVertexAttribArray(i);
 		}
 		// Check for errors
-		RenderUtil.checkForOpenGLError();
+		LWJGLUtil.checkForOpenGLError();
 	}
 
 	@Override

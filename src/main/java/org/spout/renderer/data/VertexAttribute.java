@@ -38,7 +38,6 @@ import gnu.trove.list.TDoubleList;
 import gnu.trove.list.TFloatList;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.TShortList;
-
 import org.spout.renderer.gl.GL;
 
 /**

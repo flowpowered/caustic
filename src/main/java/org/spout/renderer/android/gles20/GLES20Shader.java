@@ -24,21 +24,20 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.gl20;
+package org.spout.renderer.android.gles20;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
+import android.opengl.GLES20;
 
 import org.spout.renderer.GLVersion;
+import org.spout.renderer.android.AndroidUtil;
 import org.spout.renderer.gl.Shader;
-import org.spout.renderer.util.RenderUtil;
 
 /**
- * An OpenGL 2.0 implementation of {@link Shader}.
+ * An OpenGL 2.0 implementation of {@link org.spout.renderer.gl.Shader}.
  *
- * @see Shader
+ * @see org.spout.renderer.gl.Shader
  */
-public class OpenGL20Shader extends Shader {
+public class GLES20Shader extends Shader {
 	@Override
 	public void create() {
 		if (isCreated()) {
@@ -51,19 +50,21 @@ public class OpenGL20Shader extends Shader {
 			throw new IllegalStateException("Shader type has not been set");
 		}
 		// Create a shader for the type
-		final int id = GL20.glCreateShader(type.getGLConstant());
+		final int id = GLES20.glCreateShader(type.getGLConstant());
 		// Upload the source
-		GL20.glShaderSource(id, source);
+		GLES20.glShaderSource(id, source.toString());
 		// Compile the shader
-		GL20.glCompileShader(id);
+		GLES20.glCompileShader(id);
 		// Get the shader compile status property, check it's false and fail if that's the case
-		if (GL20.glGetShaderi(id, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
-			throw new IllegalStateException("OPEN GL ERROR: Could not compile shader\n" + GL20.glGetShaderInfoLog(id, 1000));
+		int[] param = new int[1];
+		GLES20.glGetShaderiv(id, GLES20.GL_COMPILE_STATUS, param, 0);
+		if (param[0] == GLES20.GL_FALSE) {
+			throw new IllegalStateException("OPEN GL ERROR: Could not compile shader\n" + GLES20.glGetShaderInfoLog(id));
 		}
 		this.id = id;
 		super.create();
 		// Check for errors
-		RenderUtil.checkForOpenGLError();
+		AndroidUtil.checkForOpenGLError();
 	}
 
 	@Override
@@ -72,14 +73,14 @@ public class OpenGL20Shader extends Shader {
 			throw new IllegalStateException("Shader has not been created yet");
 		}
 		// Delete the shader
-		GL20.glDeleteShader(id);
+		GLES20.glDeleteShader(id);
 		super.destroy();
 		// Check for errors
-		RenderUtil.checkForOpenGLError();
+		AndroidUtil.checkForOpenGLError();
 	}
 
 	@Override
 	public GLVersion getGLVersion() {
-		return GLVersion.GL20;
+		return GLVersion.GLES20;
 	}
 }

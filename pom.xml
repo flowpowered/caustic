@@ -21,6 +21,7 @@
 	<!-- Build properties -->
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<android.version>4.2</android.version>
 		<buildNumber>0</buildNumber>
 		<ciSystem>unknown</ciSystem>
 		<commit>unknown</commit>
@@ -111,6 +112,12 @@
 			<groupId>org.lwjgl.lwjgl</groupId>
 			<artifactId>lwjgl_util</artifactId>
 			<version>2.9.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google.android</groupId>
+			<artifactId>android</artifactId>
+			<version>${android.version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -239,6 +246,11 @@
 				<executions>
 					<execution>
 						<configuration>
+							<artifactSet>
+								<excludes>
+									<exclude>com.google.android:*</exclude>
+								</excludes>
+							</artifactSet>
 							<minimizeJar>true</minimizeJar>
 							<filters>
 								<filter>

@@ -24,20 +24,20 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.gl30;
+package org.spout.renderer.lwjgl.gl30;
 
 import org.lwjgl.opengl.GL30;
 
 import org.spout.renderer.GLVersion;
 import org.spout.renderer.gl.RenderBuffer;
-import org.spout.renderer.util.RenderUtil;
+import org.spout.renderer.lwjgl.LWJGLUtil;
 
 /**
  * An OpenGL 3.0 implementation of {@link RenderBuffer}.
  *
  * @see RenderBuffer
  */
-public class OpenGL30RenderBuffer extends RenderBuffer {
+public class GL30RenderBuffer extends RenderBuffer {
 	@Override
 	public void create() {
 		if (format == null) {
@@ -59,7 +59,7 @@ public class OpenGL30RenderBuffer extends RenderBuffer {
 		// Update the state
 		super.create();
 		// Check for errors
-		RenderUtil.checkForOpenGLError();
+		LWJGLUtil.checkForOpenGLError();
 	}
 
 	@Override
@@ -71,7 +71,7 @@ public class OpenGL30RenderBuffer extends RenderBuffer {
 		// Update state
 		super.destroy();
 		// Check for errors
-		RenderUtil.checkForOpenGLError();
+		LWJGLUtil.checkForOpenGLError();
 	}
 
 	@Override
@@ -79,7 +79,7 @@ public class OpenGL30RenderBuffer extends RenderBuffer {
 		checkCreated();
 		GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, id);
 		// Check for errors
-		RenderUtil.checkForOpenGLError();
+		LWJGLUtil.checkForOpenGLError();
 	}
 
 	@Override
@@ -87,7 +87,7 @@ public class OpenGL30RenderBuffer extends RenderBuffer {
 		checkCreated();
 		GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, 0);
 		// Check for errors
-		RenderUtil.checkForOpenGLError();
+		LWJGLUtil.checkForOpenGLError();
 	}
 
 	@Override

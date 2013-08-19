@@ -24,30 +24,26 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.gl20;
+package org.spout.renderer.android.gles20;
 
-import org.lwjgl.opengl.EXTFramebufferObject;
-import org.lwjgl.opengl.GLContext;
+import android.opengl.GLES20;
 
 import org.spout.renderer.GLVersion;
+import org.spout.renderer.android.AndroidUtil;
 import org.spout.renderer.gl.RenderBuffer;
-import org.spout.renderer.util.RenderUtil;
 
 /**
- * An OpenGL 2.0 implementation of {@link RenderBuffer} using EXT.
+ * An OpenGL 2.0 implementation of {@link org.spout.renderer.gl.RenderBuffer} using EXT.
  *
- * @see RenderBuffer
+ * @see org.spout.renderer.gl.RenderBuffer
  */
-public class OpenGL20RenderBuffer extends RenderBuffer {
+public class GLES20RenderBuffer extends RenderBuffer {
 	/**
 	 * Constructs a new render buffer for OpenGL 2.0. If no EXT extension for render buffers is available, an exception is thrown.
 	 *
 	 * @throws UnsupportedOperationException If the hardware doesn't support EXT render buffers.
 	 */
-	public OpenGL20RenderBuffer() {
-		if (!GLContext.getCapabilities().GL_EXT_framebuffer_object) {
-			throw new UnsupportedOperationException("Render buffers are not supported by this hardware");
-		}
+	public GLES20RenderBuffer() {
 	}
 
 	@Override
@@ -62,44 +58,46 @@ public class OpenGL20RenderBuffer extends RenderBuffer {
 			throw new IllegalStateException("Height has not been set");
 		}
 		// Generate and bind the render buffer
-		id = EXTFramebufferObject.glGenRenderbuffersEXT();
-		EXTFramebufferObject.glBindRenderbufferEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, id);
+		int[] bufferId = new int[1];
+		GLES20.glGenRenderbuffers(1, bufferId, 0);
+		id = bufferId[0];
+		GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, id);
 		// Set the storage format and size
-		EXTFramebufferObject.glRenderbufferStorageEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, format.getGLConstant(), width, height);
+		GLES20.glRenderbufferStorage(GLES20.GL_RENDERBUFFER, format.getGLConstant(), width, height);
 		// Unbind the render buffer
-		EXTFramebufferObject.glBindRenderbufferEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, 0);
+		GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, 0);
 		// Update the state
 		super.create();
 		// Check for errors
-		RenderUtil.checkForOpenGLError();
+		AndroidUtil.checkForOpenGLError();
 	}
 
 	@Override
 	public void destroy() {
 		checkCreated();
 		// Unbind and delete the render buffer
-		EXTFramebufferObject.glBindRenderbufferEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, 0);
-		EXTFramebufferObject.glDeleteRenderbuffersEXT(id);
+		GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, 0);
+		GLES20.glDeleteRenderbuffers(1, new int[]{id}, 0);
 		// Update state
 		super.destroy();
 		// Check for errors
-		RenderUtil.checkForOpenGLError();
+		AndroidUtil.checkForOpenGLError();
 	}
 
 	@Override
 	public void bind() {
 		checkCreated();
-		EXTFramebufferObject.glBindRenderbufferEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, id);
+		GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, id);
 		// Check for errors
-		RenderUtil.checkForOpenGLError();
+		AndroidUtil.checkForOpenGLError();
 	}
 
 	@Override
 	public void unbind() {
 		checkCreated();
-		EXTFramebufferObject.glBindRenderbufferEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, 0);
+		GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, 0);
 		// Check for errors
-		RenderUtil.checkForOpenGLError();
+		AndroidUtil.checkForOpenGLError();
 	}
 
 	@Override

@@ -24,7 +24,7 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.gl20;
+package org.spout.renderer.lwjgl.gl20;
 
 import java.nio.IntBuffer;
 import java.util.Arrays;
@@ -45,24 +45,24 @@ import org.spout.renderer.GLVersion;
 import org.spout.renderer.gl.FrameBuffer;
 import org.spout.renderer.gl.RenderBuffer;
 import org.spout.renderer.gl.Texture;
-import org.spout.renderer.util.RenderUtil;
+import org.spout.renderer.lwjgl.LWJGLUtil;
 
 /**
  * An OpenGL 2.0 implementation of {@link FrameBuffer} using EXT.
  *
  * @see FrameBuffer
  */
-public class OpenGL20FrameBuffer extends FrameBuffer {
+public class GL20FrameBuffer extends FrameBuffer {
 	// The attached texture and render buffers
-	private final Map<AttachmentPoint, OpenGL20Texture> textures = new EnumMap<>(AttachmentPoint.class);
-	private final Map<AttachmentPoint, OpenGL20RenderBuffer> buffers = new EnumMap<>(AttachmentPoint.class);
+	private final Map<AttachmentPoint, GL20Texture> textures = new EnumMap<>(AttachmentPoint.class);
+	private final Map<AttachmentPoint, GL20RenderBuffer> buffers = new EnumMap<>(AttachmentPoint.class);
 
 	/**
 	 * Constructs a new frame buffer for OpenGL 2.0. If no EXT extension for frame buffers is available, an exception is thrown.
 	 *
 	 * @throws UnsupportedOperationException If the hardware doesn't support EXT frame buffers
 	 */
-	public OpenGL20FrameBuffer() {
+	public GL20FrameBuffer() {
 		if (!GLContext.getCapabilities().GL_EXT_framebuffer_object) {
 			throw new UnsupportedOperationException("Frame buffers are not supported by this hardware");
 		}
@@ -76,9 +76,9 @@ public class OpenGL20FrameBuffer extends FrameBuffer {
 		// Track the color attachments to output for later use
 		final TIntSet outputBuffers = new TIntHashSet();
 		// Attach the textures
-		for (Entry<AttachmentPoint, OpenGL20Texture> entry : textures.entrySet()) {
+		for (Entry<AttachmentPoint, GL20Texture> entry : textures.entrySet()) {
 			final AttachmentPoint point = entry.getKey();
-			final OpenGL20Texture texture = entry.getValue();
+			final GL20Texture texture = entry.getValue();
 			texture.checkCreated();
 			EXTFramebufferObject.glFramebufferTexture2DEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, point.getGLConstant(), GL11.GL_TEXTURE_2D, texture.getID(), 0);
 			if (point.isColor()) {
@@ -86,9 +86,9 @@ public class OpenGL20FrameBuffer extends FrameBuffer {
 			}
 		}
 		// Attach the render buffers
-		for (Entry<AttachmentPoint, OpenGL20RenderBuffer> entry : buffers.entrySet()) {
+		for (Entry<AttachmentPoint, GL20RenderBuffer> entry : buffers.entrySet()) {
 			final AttachmentPoint point = entry.getKey();
-			final OpenGL20RenderBuffer buffer = entry.getValue();
+			final GL20RenderBuffer buffer = entry.getValue();
 			buffer.checkCreated();
 			EXTFramebufferObject.glFramebufferRenderbufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, point.getGLConstant(), EXTFramebufferObject.GL_RENDERBUFFER_EXT, buffer.getID());
 			if (point.isColor()) {
@@ -119,7 +119,7 @@ public class OpenGL20FrameBuffer extends FrameBuffer {
 		// Update the state
 		super.create();
 		// Check for errors
-		RenderUtil.checkForOpenGLError();
+		LWJGLUtil.checkForOpenGLError();
 	}
 
 	@Override
@@ -134,7 +134,7 @@ public class OpenGL20FrameBuffer extends FrameBuffer {
 		// Update the state
 		super.destroy();
 		// Check for errors
-		RenderUtil.checkForOpenGLError();
+		LWJGLUtil.checkForOpenGLError();
 	}
 
 	@Override
@@ -142,7 +142,7 @@ public class OpenGL20FrameBuffer extends FrameBuffer {
 		checkCreated();
 		EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, id);
 		// Check for errors
-		RenderUtil.checkForOpenGLError();
+		LWJGLUtil.checkForOpenGLError();
 	}
 
 	@Override
@@ -150,21 +150,21 @@ public class OpenGL20FrameBuffer extends FrameBuffer {
 		checkCreated();
 		EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0);
 		// Check for errors
-		RenderUtil.checkForOpenGLError();
+		LWJGLUtil.checkForOpenGLError();
 	}
 
 	@Override
 	public void attach(AttachmentPoint point, Texture texture) {
-		RenderUtil.checkVersion(this, texture);
+		LWJGLUtil.checkVersion(this, texture);
 		buffers.remove(point);
-		textures.put(point, (OpenGL20Texture) texture);
+		textures.put(point, (GL20Texture) texture);
 	}
 
 	@Override
 	public void attach(AttachmentPoint point, RenderBuffer buffer) {
-		RenderUtil.checkVersion(this, buffer);
+		LWJGLUtil.checkVersion(this, buffer);
 		textures.remove(point);
-		buffers.put(point, (OpenGL20RenderBuffer) buffer);
+		buffers.put(point, (GL20RenderBuffer) buffer);
 	}
 
 	@Override

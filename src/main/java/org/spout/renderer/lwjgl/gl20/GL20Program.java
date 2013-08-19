@@ -24,7 +24,7 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.gl20;
+package org.spout.renderer.lwjgl.gl20;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -51,14 +51,14 @@ import org.spout.renderer.data.Uniform;
 import org.spout.renderer.data.UniformHolder;
 import org.spout.renderer.gl.Program;
 import org.spout.renderer.gl.Shader.ShaderType;
-import org.spout.renderer.util.RenderUtil;
+import org.spout.renderer.lwjgl.LWJGLUtil;
 
 /**
  * An OpenGL 2.0 implementation of {@link Program}.
  *
  * @see Program
  */
-public class OpenGL20Program extends Program {
+public class GL20Program extends Program {
 	// Map of the uniform names to their locations
 	private final TObjectIntMap<String> uniforms = new TObjectIntHashMap<>(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, -1);
 
@@ -109,7 +109,7 @@ public class OpenGL20Program extends Program {
 			uniforms.put(name, GL20.glGetUniformLocation(id, name));
 		}
 		super.create();
-		RenderUtil.checkForOpenGLError();
+		LWJGLUtil.checkForOpenGLError();
 	}
 
 	@Override
@@ -118,14 +118,14 @@ public class OpenGL20Program extends Program {
 		GL20.glDeleteProgram(id);
 		uniforms.clear();
 		super.destroy();
-		RenderUtil.checkForOpenGLError();
+		LWJGLUtil.checkForOpenGLError();
 	}
 
 	@Override
 	public void bind() {
 		checkCreated();
 		GL20.glUseProgram(id);
-		RenderUtil.checkForOpenGLError();
+		LWJGLUtil.checkForOpenGLError();
 	}
 
 	@Override
@@ -165,7 +165,7 @@ public class OpenGL20Program extends Program {
 			return;
 		}
 		GL20.glUniform1i(uniforms.get(name), b ? 1 : 0);
-		RenderUtil.checkForOpenGLError();
+		LWJGLUtil.checkForOpenGLError();
 	}
 
 	@Override
@@ -175,7 +175,7 @@ public class OpenGL20Program extends Program {
 			return;
 		}
 		GL20.glUniform1i(uniforms.get(name), i);
-		RenderUtil.checkForOpenGLError();
+		LWJGLUtil.checkForOpenGLError();
 	}
 
 	@Override
@@ -185,7 +185,7 @@ public class OpenGL20Program extends Program {
 			return;
 		}
 		GL20.glUniform1f(uniforms.get(name), f);
-		RenderUtil.checkForOpenGLError();
+		LWJGLUtil.checkForOpenGLError();
 	}
 
 	@Override
@@ -195,7 +195,7 @@ public class OpenGL20Program extends Program {
 			return;
 		}
 		GL20.glUniform2f(uniforms.get(name), v.getX(), v.getY());
-		RenderUtil.checkForOpenGLError();
+		LWJGLUtil.checkForOpenGLError();
 	}
 
 	@Override
@@ -205,7 +205,7 @@ public class OpenGL20Program extends Program {
 			return;
 		}
 		GL20.glUniform3f(uniforms.get(name), v.getX(), v.getY(), v.getZ());
-		RenderUtil.checkForOpenGLError();
+		LWJGLUtil.checkForOpenGLError();
 	}
 
 	@Override
@@ -222,7 +222,7 @@ public class OpenGL20Program extends Program {
 		}
 		vectorBuffer.flip();
 		GL20.glUniform3(uniforms.get(name), vectorBuffer);
-		RenderUtil.checkForOpenGLError();
+		LWJGLUtil.checkForOpenGLError();
 	}
 
 	@Override
@@ -232,7 +232,7 @@ public class OpenGL20Program extends Program {
 			return;
 		}
 		GL20.glUniform4f(uniforms.get(name), v.getX(), v.getY(), v.getZ(), v.getW());
-		RenderUtil.checkForOpenGLError();
+		LWJGLUtil.checkForOpenGLError();
 	}
 
 	@Override
@@ -245,7 +245,7 @@ public class OpenGL20Program extends Program {
 		buffer.put(m.toArray(true));
 		buffer.flip();
 		GL20.glUniformMatrix2(uniforms.get(name), false, buffer);
-		RenderUtil.checkForOpenGLError();
+		LWJGLUtil.checkForOpenGLError();
 	}
 
 	@Override
@@ -258,7 +258,7 @@ public class OpenGL20Program extends Program {
 		buffer.put(m.toArray(true));
 		buffer.flip();
 		GL20.glUniformMatrix3(uniforms.get(name), false, buffer);
-		RenderUtil.checkForOpenGLError();
+		LWJGLUtil.checkForOpenGLError();
 	}
 
 	@Override
@@ -271,7 +271,7 @@ public class OpenGL20Program extends Program {
 		buffer.put(m.toArray(true));
 		buffer.flip();
 		GL20.glUniformMatrix4(uniforms.get(name), false, buffer);
-		RenderUtil.checkForOpenGLError();
+		LWJGLUtil.checkForOpenGLError();
 	}
 
 	@Override

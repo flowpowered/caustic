@@ -24,7 +24,7 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.gl20;
+package org.spout.renderer.lwjgl.gl20;
 
 import java.nio.ByteBuffer;
 
@@ -35,14 +35,14 @@ import org.lwjgl.util.glu.GLU;
 
 import org.spout.renderer.GLVersion;
 import org.spout.renderer.gl.Texture;
-import org.spout.renderer.util.RenderUtil;
+import org.spout.renderer.lwjgl.LWJGLUtil;
 
 /**
  * An OpenGL 2.0 implementation of {@link Texture}.
  *
  * @see Texture
  */
-public class OpenGL20Texture extends Texture {
+public class GL20Texture extends Texture {
 	@Override
 	public void create() {
 		// Get the context capabilities for the graphics hardware
@@ -70,7 +70,7 @@ public class OpenGL20Texture extends Texture {
 		// Update the state
 		super.create();
 		// Check for errors
-		RenderUtil.checkForOpenGLError();
+		LWJGLUtil.checkForOpenGLError();
 	}
 
 	/**
@@ -89,7 +89,7 @@ public class OpenGL20Texture extends Texture {
 			GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, internalFormat != null ? internalFormat.getGLConstant() : format.getGLConstant(), width, height, 0, format.getGLConstant(), type.getGLConstant(), buffer);
 		}
 		// Check for errors
-		RenderUtil.checkForOpenGLError();
+		LWJGLUtil.checkForOpenGLError();
 	}
 
 	@Override
@@ -102,7 +102,7 @@ public class OpenGL20Texture extends Texture {
 		// Reset the data
 		super.destroy();
 		// Check for errors
-		RenderUtil.checkForOpenGLError();
+		LWJGLUtil.checkForOpenGLError();
 	}
 
 	@Override
@@ -115,7 +115,7 @@ public class OpenGL20Texture extends Texture {
 		// Bind the texture
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
 		// Check for errors
-		RenderUtil.checkForOpenGLError();
+		LWJGLUtil.checkForOpenGLError();
 	}
 
 	@Override
@@ -124,7 +124,7 @@ public class OpenGL20Texture extends Texture {
 		// Unbind the texture
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 		// Check for errors
-		RenderUtil.checkForOpenGLError();
+		LWJGLUtil.checkForOpenGLError();
 	}
 
 	@Override

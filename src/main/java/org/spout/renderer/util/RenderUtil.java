@@ -45,43 +45,6 @@ import org.spout.renderer.gl.Texture.Format;
  * Utility methods for rendering.
  */
 public class RenderUtil {
-	private static boolean DEBUG = true;
-	
-	/**
-	 * Sets the caustic renderer in debug mode.
-	 * 
-	 * @param enabled If debug should be enabled
-	 */
-	public static void setDebugEnabled(boolean enabled) {
-		RenderUtil.DEBUG = enabled;
-	}
-
-	/**
-	 * Throws an exception if OpenGL reports an error.
-	 *
-	 * @throws OpenGLException If OpenGL reports an error
-	 */
-	public static void checkForOpenGLError() {
-		if (DEBUG) {
-			final int errorValue = GL11.glGetError();
-			if (errorValue != GL11.GL_NO_ERROR) {
-				throw new OpenGLException("OPEN GL ERROR: " + GLU.gluErrorString(errorValue));
-			}
-		}
-	}
-
-	/**
-	 * Checks if two OpenGL versioned object have the same version. Throws an exception if that's not the case.
-	 *
-	 * @param required The required version
-	 * @param object The object to check the version of
-	 * @throws IllegalStateException If the object versions to not match
-	 */
-	public static void checkVersion(GLVersioned required, GLVersioned object) {
-		if (required.getGLVersion() != object.getGLVersion()) {
-			throw new IllegalStateException("Version mismatch: expected " + required.getGLVersion() + ", got " + object.getGLVersion());
-		}
-	}
 
 	/**
 	 * Gets the {@link java.io.InputStream}'s data as a {@link ByteBuffer}. The image data reading is done according to the {@link org.spout.renderer.gl.Texture.Format}. The image size is stored in the

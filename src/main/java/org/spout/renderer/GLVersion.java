@@ -26,6 +26,13 @@
  */
 package org.spout.renderer;
 
+import org.spout.renderer.android.gles20.GLES20FrameBuffer;
+import org.spout.renderer.android.gles20.GLES20Program;
+import org.spout.renderer.android.gles20.GLES20RenderBuffer;
+import org.spout.renderer.android.gles20.GLES20Renderer;
+import org.spout.renderer.android.gles20.GLES20Shader;
+import org.spout.renderer.android.gles20.GLES20Texture;
+import org.spout.renderer.android.gles20.GLES20VertexArray;
 import org.spout.renderer.gl.FrameBuffer;
 import org.spout.renderer.gl.Program;
 import org.spout.renderer.gl.RenderBuffer;
@@ -33,26 +40,28 @@ import org.spout.renderer.gl.Renderer;
 import org.spout.renderer.gl.Shader;
 import org.spout.renderer.gl.Texture;
 import org.spout.renderer.gl.VertexArray;
-import org.spout.renderer.gl20.OpenGL20FrameBuffer;
-import org.spout.renderer.gl20.OpenGL20Program;
-import org.spout.renderer.gl20.OpenGL20RenderBuffer;
-import org.spout.renderer.gl20.OpenGL20Renderer;
-import org.spout.renderer.gl20.OpenGL20Shader;
-import org.spout.renderer.gl20.OpenGL20Texture;
-import org.spout.renderer.gl20.OpenGL20VertexArray;
-import org.spout.renderer.gl30.OpenGL30FrameBuffer;
-import org.spout.renderer.gl30.OpenGL30Program;
-import org.spout.renderer.gl30.OpenGL30RenderBuffer;
-import org.spout.renderer.gl30.OpenGL30Renderer;
-import org.spout.renderer.gl30.OpenGL30Texture;
-import org.spout.renderer.gl30.OpenGL30VertexArray;
+import org.spout.renderer.lwjgl.gl20.GL20FrameBuffer;
+import org.spout.renderer.lwjgl.gl20.GL20Program;
+import org.spout.renderer.lwjgl.gl20.GL20RenderBuffer;
+import org.spout.renderer.lwjgl.gl20.GL20Renderer;
+import org.spout.renderer.lwjgl.gl20.GL20Shader;
+import org.spout.renderer.lwjgl.gl20.GL20Texture;
+import org.spout.renderer.lwjgl.gl20.GL20VertexArray;
+import org.spout.renderer.lwjgl.gl30.GL30FrameBuffer;
+import org.spout.renderer.lwjgl.gl30.GL30Program;
+import org.spout.renderer.lwjgl.gl30.GL30RenderBuffer;
+import org.spout.renderer.lwjgl.gl30.GL30Renderer;
+import org.spout.renderer.lwjgl.gl30.GL30Texture;
+import org.spout.renderer.lwjgl.gl30.GL30VertexArray;
 
 /**
  * An enum of the supported OpenGL versions. Use this class to generate rendering objects compatible with the version.
  */
 public enum GLVersion {
 	GL20,
-	GL30;
+	GL30,
+	GLES20,
+	GLES30;
 
 	/**
 	 * Creates a new renderer for the version.
@@ -62,9 +71,11 @@ public enum GLVersion {
 	public Renderer createRenderer() {
 		switch (this) {
 			case GL20:
-				return new OpenGL20Renderer();
+				return new GL20Renderer();
 			case GL30:
-				return new OpenGL30Renderer();
+				return new GL30Renderer();
+			case GLES20:
+				return new GLES20Renderer();
 			default:
 				return null;
 		}
@@ -78,9 +89,11 @@ public enum GLVersion {
 	public VertexArray createVertexArray() {
 		switch (this) {
 			case GL20:
-				return new OpenGL20VertexArray();
+				return new GL20VertexArray();
 			case GL30:
-				return new OpenGL30VertexArray();
+				return new GL30VertexArray();
+			case GLES20:
+				return new GLES20VertexArray();
 			default:
 				return null;
 		}
@@ -94,9 +107,11 @@ public enum GLVersion {
 	public Program createProgram() {
 		switch (this) {
 			case GL20:
-				return new OpenGL20Program();
+				return new GL20Program();
 			case GL30:
-				return new OpenGL30Program();
+				return new GL30Program();
+			case GLES20:
+				return new GLES20Program();
 			default:
 				return null;
 		}
@@ -111,7 +126,10 @@ public enum GLVersion {
 		switch (this) {
 			case GL20:
 			case GL30:
-				return new OpenGL20Shader();
+				return new GL20Shader();
+			case GLES20:
+			case GLES30:
+				return new GLES20Shader();
 			default:
 				return null;
 		}
@@ -125,9 +143,11 @@ public enum GLVersion {
 	public Texture createTexture() {
 		switch (this) {
 			case GL20:
-				return new OpenGL20Texture();
+				return new GL20Texture();
 			case GL30:
-				return new OpenGL30Texture();
+				return new GL30Texture();
+			case GLES20:
+				return new GLES20Texture();
 			default:
 				return null;
 		}
@@ -141,9 +161,11 @@ public enum GLVersion {
 	public FrameBuffer createFrameBuffer() {
 		switch (this) {
 			case GL20:
-				return new OpenGL20FrameBuffer();
+				return new GL20FrameBuffer();
 			case GL30:
-				return new OpenGL30FrameBuffer();
+				return new GL30FrameBuffer();
+			case GLES20:
+				return new GLES20FrameBuffer();
 			default:
 				return null;
 		}
@@ -157,9 +179,11 @@ public enum GLVersion {
 	public RenderBuffer createRenderBuffer() {
 		switch (this) {
 			case GL20:
-				return new OpenGL20RenderBuffer();
+				return new GL20RenderBuffer();
 			case GL30:
-				return new OpenGL30RenderBuffer();
+				return new GL30RenderBuffer();
+			case GLES20:
+				return new GLES20RenderBuffer();
 			default:
 				return null;
 		}

@@ -24,33 +24,23 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.gl30;
+package org.spout.renderer.lwjgl.gl30;
 
-import java.nio.ByteBuffer;
-
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.ContextAttribs;
 
 import org.spout.renderer.GLVersion;
-import org.spout.renderer.gl20.OpenGL20Texture;
-import org.spout.renderer.util.RenderUtil;
+import org.spout.renderer.gl.Renderer;
+import org.spout.renderer.lwjgl.gl20.GL20Renderer;
 
 /**
- * An OpenGL 3.0 implementation of {@link org.spout.renderer.gl.Texture}.
+ * An OpenGL 3.0 implementation of {@link Renderer}.
  *
- * @see org.spout.renderer.gl.Texture
+ * @see Renderer
  */
-public class OpenGL30Texture extends OpenGL20Texture {
+public class GL30Renderer extends GL20Renderer {
 	@Override
-	protected void uploadTexture(ByteBuffer buffer, int width, int height) {
-		// Upload the texture
-		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, internalFormat != null ? internalFormat.getGLConstant() : format.getGLConstant(), width, height, 0, format.getGLConstant(), GL11.GL_UNSIGNED_BYTE, buffer);
-		// Generate mipmaps if necessary
-		if (minFilter.needsMipMaps() && buffer != null) {
-			GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
-		}
-		// Check for errors
-		RenderUtil.checkForOpenGLError();
+	protected ContextAttribs createContextAttributes() {
+		return new ContextAttribs(3, 2).withProfileCore(true);
 	}
 
 	@Override

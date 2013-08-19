@@ -24,97 +24,81 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.gl20;
+package org.spout.renderer.android.gles20;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import org.lwjgl.LWJGLException;
-import org.lwjgl.opengl.ContextAttribs;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.PixelFormat;
-
+import android.opengl.GLES20;
 import org.spout.math.matrix.Matrix4;
 import org.spout.renderer.GLVersion;
 import org.spout.renderer.Material;
 import org.spout.renderer.Model;
-import org.spout.renderer.data.RenderList;
+import org.spout.renderer.android.AndroidUtil;
 import org.spout.renderer.data.Color;
+import org.spout.renderer.data.RenderList;
 import org.spout.renderer.gl.FrameBuffer;
 import org.spout.renderer.gl.Program;
 import org.spout.renderer.gl.Renderer;
-import org.spout.renderer.util.RenderUtil;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * An OpenGL 2.0 implementation of {@link Renderer}.
+ * An OpenGL 2.0 implementation of {@link org.spout.renderer.gl.Renderer}.
  *
- * @see Renderer
+ * @see org.spout.renderer.gl.Renderer
  */
-public class OpenGL20Renderer extends Renderer {
+public class GLES20Renderer extends Renderer {
 	@Override
 	public void create() {
 		if (isCreated()) {
 			throw new IllegalStateException("Renderer has already been created");
 		}
-		// Attempt to create the display
-		try {
-			Display.setDisplayMode(new DisplayMode(windowWidth, windowHeight));
-			Display.create(new PixelFormat().withSamples(MSAA), createContextAttributes());
-		} catch (LWJGLException ex) {
-			throw new RuntimeException(ex);
-		}
+		// TODO: Attempt to create the display
+		/*
+		Display.setDisplayMode(new DisplayMode(windowWidth, windowHeight));
+		Display.create(new PixelFormat().withSamples(MSAA), createContextAttributes());
 		// Set the title
 		Display.setTitle(windowTitle);
+		*/
 		// Set the view port to the window
-		GL11.glViewport(0, 0, windowWidth, windowHeight);
+		GLES20.glViewport(0, 0, windowWidth, windowHeight);
 		// Set the alpha blending function for transparency
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
 		// Check for errors
-		RenderUtil.checkForOpenGLError();
+		AndroidUtil.checkForOpenGLError();
 		// Update the state
 		super.create();
-	}
-
-	/**
-	 * Created new context attributes for the version.
-	 *
-	 * @return The context attributes
-	 */
-	protected ContextAttribs createContextAttributes() {
-		return new ContextAttribs(2, 1);
 	}
 
 	@Override
 	public void destroy() {
 		checkCreated();
 		// Display goes after else there's no context in which to check for an error
-		RenderUtil.checkForOpenGLError();
-		Display.destroy();
+		AndroidUtil.checkForOpenGLError();
+		// TODO: Destroy the display
+		// Display.destroy();
 		super.destroy();
 	}
 
 	@Override
 	public void setClearColor(Color color) {
 		color = color.normalize();
-		GL11.glClearColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+		GLES20.glClearColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 		// Check for errors
-		RenderUtil.checkForOpenGLError();
+		AndroidUtil.checkForOpenGLError();
 	}
 
 	@Override
 	public void enable(Capability capability) {
-		GL11.glEnable(capability.getGLConstant());
+		GLES20.glEnable(capability.getGLConstant());
 		// Check for errors
-		RenderUtil.checkForOpenGLError();
+		AndroidUtil.checkForOpenGLError();
 	}
 
 	@Override
 	public void disable(Capability capability) {
-		GL11.glDisable(capability.getGLConstant());
+		GLES20.glDisable(capability.getGLConstant());
 		// Check for errors
-		RenderUtil.checkForOpenGLError();
+		AndroidUtil.checkForOpenGLError();
 	}
 
 	@Override
@@ -126,7 +110,7 @@ public class OpenGL20Renderer extends Renderer {
 	public void render() {
 		checkCreated();
 		// Clear the last render on the screen buffer
-		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+		GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 		// Keep track of all cleared frame buffers so we don't clear one twice
 		final Set<FrameBuffer> clearedFrameBuffers = new HashSet<>();
 		// Render all the created models
@@ -142,7 +126,7 @@ public class OpenGL20Renderer extends Renderer {
 				frameBuffer.bind();
 				if (!clearedFrameBuffers.contains(frameBuffer)) {
 					// Clear the last render on the frame buffer
-					GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+					GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 					clearedFrameBuffers.add(frameBuffer);
 				}
 			}
@@ -174,13 +158,14 @@ public class OpenGL20Renderer extends Renderer {
 			}
 		}
 		// Check for errors
-		RenderUtil.checkForOpenGLError();
+		AndroidUtil.checkForOpenGLError();
 		// Update the display
-		Display.update();
+
+		// TODO: updated the display: Display.update();
 	}
 
 	@Override
 	public GLVersion getGLVersion() {
-		return GLVersion.GL20;
+		return GLVersion.GLES20;
 	}
 }

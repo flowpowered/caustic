@@ -24,62 +24,67 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.gl30;
+package org.spout.renderer.android.gles20;
 
-import java.nio.IntBuffer;
+import android.opengl.GLES20;
+
+import gnu.trove.set.TIntSet;
+import gnu.trove.set.hash.TIntHashSet;
+
+import org.spout.renderer.GLVersion;
+import org.spout.renderer.android.AndroidUtil;
+import org.spout.renderer.gl.FrameBuffer;
+import org.spout.renderer.gl.RenderBuffer;
+import org.spout.renderer.gl.Texture;
+
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import gnu.trove.set.TIntSet;
-import gnu.trove.set.hash.TIntHashSet;
-
-import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
-import org.lwjgl.opengl.GL32;
-
-import org.spout.renderer.GLVersion;
-import org.spout.renderer.gl.FrameBuffer;
-import org.spout.renderer.gl.RenderBuffer;
-import org.spout.renderer.gl.Texture;
-import org.spout.renderer.util.RenderUtil;
-
 /**
- * An OpenGL 3.0 implementation of {@link FrameBuffer}.
+ * An OpenGL 2.0 implementation of {@link org.spout.renderer.gl.FrameBuffer} using EXT.
  *
- * @see FrameBuffer
+ * @see org.spout.renderer.gl.FrameBuffer
  */
-public class OpenGL30FrameBuffer extends FrameBuffer {
+public class GLES20FrameBuffer extends FrameBuffer {
 	// The attached texture and render buffers
-	private final Map<AttachmentPoint, OpenGL30Texture> textures = new EnumMap<>(AttachmentPoint.class);
-	private final Map<AttachmentPoint, OpenGL30RenderBuffer> buffers = new EnumMap<>(AttachmentPoint.class);
+	private final Map<AttachmentPoint, GLES20Texture> textures = new EnumMap<>(AttachmentPoint.class);
+	private final Map<AttachmentPoint, GLES20RenderBuffer> buffers = new EnumMap<>(AttachmentPoint.class);
+
+	private int[] bufferId;
+	/**
+	 * Constructs a new frame buffer for OpenGL 2.0ES.
+	 */
+	public GLES20FrameBuffer() {
+	}
 
 	@Override
 	public void create() {
 		// Generate and bind the frame buffer
-		id = GL30.glGenFramebuffers();
-		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, id);
+		GLES20.glGenFramebuffers(1, this.bufferId, 0);
+		this.id = bufferId[0];
+		GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, id);
 		// Track the color attachments to output for later use
 		final TIntSet outputBuffers = new TIntHashSet();
 		// Attach the textures
-		for (Entry<AttachmentPoint, OpenGL30Texture> entry : textures.entrySet()) {
+		for (Entry<AttachmentPoint, GLES20Texture> entry : textures.entrySet()) {
 			final AttachmentPoint point = entry.getKey();
-			final OpenGL30Texture texture = entry.getValue();
+			final GLES20Texture texture = entry.getValue();
 			texture.checkCreated();
-			GL32.glFramebufferTexture(GL30.GL_FRAMEBUFFER, point.getGLConstant(), texture.getID(), 0);
+			GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, point.getGLConstant(), GLES20.GL_TEXTURE_2D, texture.getID(), 0);
 			if (point.isColor()) {
 				outputBuffers.add(point.getGLConstant());
 			}
 		}
 		// Attach the render buffers
-		for (Entry<AttachmentPoint, OpenGL30RenderBuffer> entry : buffers.entrySet()) {
+		for (Entry<AttachmentPoint, GLES20RenderBuffer> entry : buffers.entrySet()) {
 			final AttachmentPoint point = entry.getKey();
-			final OpenGL30RenderBuffer buffer = entry.getValue();
+			final GLES20RenderBuffer buffer = entry.getValue();
 			buffer.checkCreated();
-			GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER, point.getGLConstant(), GL30.GL_RENDERBUFFER, buffer.getID());
+			GLES20.glFramebufferRenderbuffer(GLES20.GL_FRAMEBUFFER, point.getGLConstant(), GLES20.GL_RENDERBUFFER, buffer.getID());
 			if (point.isColor()) {
 				outputBuffers.add(point.getGLConstant());
 			}
@@ -87,88 +92,79 @@ public class OpenGL30FrameBuffer extends FrameBuffer {
 		// Set the output to the proper buffers
 		if (outputBuffers.isEmpty()) {
 			// No color to output
-			GL20.glDrawBuffers(GL11.GL_NONE);
+			// TODO: Fix draw call for mobile: GLES20.glDrawBuffers(GL.GL_NONE);
 		} else {
 			// Keep track of the buffers to output
-			final IntBuffer buffer = BufferUtils.createIntBuffer(outputBuffers.size());
+			final ByteBuffer buffer = ByteBuffer.allocateDirect(outputBuffers.size()).order(ByteOrder.nativeOrder());
 			final int[] outputBuffersArray = outputBuffers.toArray();
 			// Sorting the array ensures that attachments are in order n, n + 1, n + 2...
 			// This is important!
 			Arrays.sort(outputBuffersArray);
-			buffer.put(outputBuffersArray);
+			for (int val : outputBuffersArray) {
+				buffer.putInt(val);
+			}
 			buffer.flip();
-			GL20.glDrawBuffers(buffer);
+			// TODO: Fix draw call for mobile: GLES20.glDrawBuffers(buffer);
 		}
 		// Check for success
-		if (GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER) != GL30.GL_FRAMEBUFFER_COMPLETE) {
+		if (GLES20.glCheckFramebufferStatus(GLES20.GL_FRAMEBUFFER) != GLES20.GL_FRAMEBUFFER_COMPLETE) {
 			throw new IllegalStateException("Failed to create the frame buffer");
 		}
 		// Unbind the frame buffer
-		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
+		GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
 		// Update the state
 		super.create();
 		// Check for errors
-		RenderUtil.checkForOpenGLError();
+		AndroidUtil.checkForOpenGLError();
 	}
 
 	@Override
 	public void destroy() {
 		checkCreated();
 		// Unbind and delete the frame buffer
-		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
-		GL30.glDeleteFramebuffers(id);
-		// Destroy the textures and buffers
-		for (OpenGL30Texture texture : textures.values()) {
-			if (texture.isCreated()) {
-				texture.destroy();
-			}
-		}
-		for (OpenGL30RenderBuffer buffer : buffers.values()) {
-			if (buffer.isCreated()) {
-				buffer.destroy();
-			}
-		}
+		GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+		GLES20.glDeleteFramebuffers(1, new int[] {id}, 0);
 		// Release some resources
 		textures.clear();
 		buffers.clear();
 		// Update the state
 		super.destroy();
 		// Check for errors
-		RenderUtil.checkForOpenGLError();
+		AndroidUtil.checkForOpenGLError();
 	}
 
 	@Override
 	public void bind() {
 		checkCreated();
-		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, id);
+		GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, id);
 		// Check for errors
-		RenderUtil.checkForOpenGLError();
+		AndroidUtil.checkForOpenGLError();
 	}
 
 	@Override
 	public void unbind() {
 		checkCreated();
-		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
+		GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
 		// Check for errors
-		RenderUtil.checkForOpenGLError();
+		AndroidUtil.checkForOpenGLError();
 	}
 
 	@Override
 	public void attach(AttachmentPoint point, Texture texture) {
-		RenderUtil.checkVersion(this, texture);
+		AndroidUtil.checkVersion(this, texture);
 		buffers.remove(point);
-		textures.put(point, (OpenGL30Texture) texture);
+		textures.put(point, (GLES20Texture) texture);
 	}
 
 	@Override
 	public void attach(AttachmentPoint point, RenderBuffer buffer) {
-		RenderUtil.checkVersion(this, buffer);
+		AndroidUtil.checkVersion(this, buffer);
 		textures.remove(point);
-		buffers.put(point, (OpenGL30RenderBuffer) buffer);
+		buffers.put(point, (GLES20RenderBuffer) buffer);
 	}
 
 	@Override
 	public GLVersion getGLVersion() {
-		return GLVersion.GL30;
+		return GLVersion.GL20;
 	}
 }
