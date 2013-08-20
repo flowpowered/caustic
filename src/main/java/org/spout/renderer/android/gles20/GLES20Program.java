@@ -47,6 +47,7 @@ import org.spout.renderer.gl.Shader.ShaderType;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.Collections;
 import java.util.Set;
 
@@ -87,26 +88,22 @@ public class GLES20Program extends Program {
 		}
 		// Link program
 		GLES20.glLinkProgram(id);
-		// TODO: Check program link status
-		/*
-		if (GLES20.glGetProgrami(id, GLES20.GL_LINK_STATUS) == GL.GL_FALSE) {
-			throw new IllegalStateException("Program could not be linked\n" + GLES20.glGetProgramInfoLog(id, 1000));
+		int[] param = new int[1];
+		GLES20.glGetProgramiv(id, GLES20.GL_LINK_STATUS, param, 0);
+		if (param[0] == GLES20.GL_FALSE) {
+			throw new IllegalStateException("Program could not be linked\n" + GLES20.glGetProgramInfoLog(id));
 		}
-		*/
+
 		// Validate program
 		GLES20.glValidateProgram(id);
 		// Load uniforms
 		int[] params = new int[1];
 		GLES20.glGetProgramiv(id, GLES20.GL_ACTIVE_UNIFORMS, params, 0);
 		for (int i = 0; i < params[0]; i++) {
-			final ByteBuffer nameBuffer = ByteBuffer.allocateDirect(256).order(ByteOrder.nativeOrder());
-			// TODO: fix dumping uniform names
-			// GLES20.glGetActiveUniform(id, i, IntBuffer.allocate(1), BufferUtils.createIntBuffer(1), BufferUtils.createIntBuffer(1), nameBuffer);
-			nameBuffer.rewind();
-			final byte[] nameBytes = new byte[256];
-			nameBuffer.get(nameBytes);
+			byte nameByte = 0;
+			GLES20.glGetActiveUniform(id, i, 1, IntBuffer.allocate(1), IntBuffer.allocate(1), IntBuffer.allocate(1), nameByte);
 			// Simplify array names
-			final String name = new String(nameBytes).trim().replaceFirst("\\[\\d+\\]", "");
+			final String name = new String(new byte[] {nameByte}).trim().replaceFirst("\\[\\d+\\]", "");
 			uniforms.put(name, GLES20.glGetUniformLocation(id, name));
 		}
 		super.create();
@@ -224,7 +221,6 @@ public class GLES20Program extends Program {
 			count++;
 		}
 		vectorBuffer.flip();
-		// TODO: fix index
 		GLES20.glUniform3fv(uniforms.get(name), count, vectorBuffer);
 		AndroidUtil.checkForOpenGLError();
 	}
