@@ -42,7 +42,7 @@ import org.spout.renderer.Model;
 import org.spout.renderer.data.Uniform.Matrix4Uniform;
 import org.spout.renderer.gl.FrameBuffer;
 import org.spout.renderer.gl.Program;
-import org.spout.renderer.gl.Renderer.Capability;
+import org.spout.renderer.gl.Capability;
 
 /**
  * Represents a named list of models for rendering. The list shares the same camera and a set of uniforms. Optionally, they may share a frame buffer for the render output. A render list can be

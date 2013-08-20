@@ -41,6 +41,7 @@ import org.spout.renderer.Material;
 import org.spout.renderer.Model;
 import org.spout.renderer.data.RenderList;
 import org.spout.renderer.data.Color;
+import org.spout.renderer.gl.Capability;
 import org.spout.renderer.gl.FrameBuffer;
 import org.spout.renderer.gl.Program;
 import org.spout.renderer.gl.Renderer;
@@ -62,7 +63,7 @@ public class GL20Renderer extends Renderer {
 			Display.setDisplayMode(new DisplayMode(this.windowWidth, this.windowHeight));
 			Display.create(new PixelFormat().withSamples(this.msaa), createContextAttributes());
 		} catch (LWJGLException ex) {
-			throw new RuntimeException(ex);
+			throw new IllegalStateException("Unable to create OpenGL context: " + ex.getMessage());
 		}
 		// Set the title
 		Display.setTitle(this.windowTitle);

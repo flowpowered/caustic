@@ -31,7 +31,7 @@ import org.lwjgl.opengl.OpenGLException;
 import org.lwjgl.util.glu.GLU;
 import org.spout.renderer.GLVersioned;
 
-public class LWJGLUtil {
+public final class LWJGLUtil {
 	private LWJGLUtil() { }
 
 	private static boolean debug = true;

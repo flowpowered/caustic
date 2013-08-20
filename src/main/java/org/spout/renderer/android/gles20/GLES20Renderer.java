@@ -34,6 +34,7 @@ import org.spout.renderer.Model;
 import org.spout.renderer.android.AndroidUtil;
 import org.spout.renderer.data.Color;
 import org.spout.renderer.data.RenderList;
+import org.spout.renderer.gl.Capability;
 import org.spout.renderer.gl.FrameBuffer;
 import org.spout.renderer.gl.Program;
 import org.spout.renderer.gl.Renderer;

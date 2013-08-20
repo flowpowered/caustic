@@ -31,7 +31,7 @@ import android.opengl.GLU;
 
 import org.spout.renderer.GLVersioned;
 
-public class AndroidUtil {
+public final class AndroidUtil {
 	private AndroidUtil() { }
 
 	private static boolean debug = true;

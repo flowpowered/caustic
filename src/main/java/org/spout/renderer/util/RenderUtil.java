@@ -67,7 +67,8 @@ import org.spout.renderer.lwjgl.gl30.GL30VertexArray;
 /**
  * Utility methods for rendering.
  */
-public class RenderUtil {
+public final class RenderUtil {
+	private RenderUtil() { }
 
 	/**
 	 * Gets the {@link java.io.InputStream}'s data as a {@link ByteBuffer}. The image data reading is done according to the {@link org.spout.renderer.gl.Texture.Format}. The image size is stored in the

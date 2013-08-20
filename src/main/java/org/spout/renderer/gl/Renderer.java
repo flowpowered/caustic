@@ -244,28 +244,4 @@ public abstract class Renderer extends Creatable implements GLVersioned {
 	public UniformHolder getUniforms() {
 		return uniforms;
 	}
-
-	/**
-	 * An enum of the renderer capabilities.
-	 */
-	public static enum Capability {
-		BLEND(0xBE2), // GL11.GL_BLEND
-		CULL_FACE(0xB44), // GL11.GL_CULL_FACE
-		DEPTH_CLAMP(0x864F), // GL32.GL_DEPTH_CLAMP
-		DEPTH_TEST(0xB71); // GL11.GL_DEPTH_TEST
-		private final int glConstant;
-
-		private Capability(int glConstant) {
-			this.glConstant = glConstant;
-		}
-
-		/**
-		 * Returns the OpenGL constant associated to the capability.
-		 *
-		 * @return The OpenGL constant
-		 */
-		public int getGLConstant() {
-			return glConstant;
-		}
-	}
 }

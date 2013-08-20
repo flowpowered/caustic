@@ -42,7 +42,9 @@ import org.spout.renderer.data.VertexData;
  * A static loading class for standard .obj model files. This class will load positions, normals can texture coordinates. Missing normals are not calculated. Normals are expected to be of unit length.
  * Models should be triangulated.
  */
-public class ObjFileLoader {
+public final class ObjFileLoader {
+	private ObjFileLoader() { }
+
 	private static final String COMPONENT_SEPARATOR = " ";
 	private static final String INDEX_SEPARATOR = "/";
 	private static final String POSITION_LIST_PREFIX = "v";
