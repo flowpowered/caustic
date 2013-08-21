@@ -36,7 +36,7 @@ import android.opengl.GLSurfaceView;
 
 import org.spout.math.matrix.Matrix4;
 import org.spout.renderer.Material;
-import org.spout.renderer.Model;
+import org.spout.renderer.model.Model;
 import org.spout.renderer.android.AndroidUtil;
 import org.spout.renderer.data.Color;
 import org.spout.renderer.data.RenderList;

@@ -24,22 +24,20 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.util;
-
-import org.spout.renderer.Model;
+package org.spout.renderer.model;
 
 /**
- * Represents an instance of another model. Model instancing can be used to reduce the amount of vertex data on the GPU, by reusing the same geometry for multiple models. To use this class, simply
- * construct a new instance using the model to instance (the main model), create it, and add it to the renderer. This class should work with any model type as long as it has been implemented
- * correctly. Note that the vertex array and material are shared amongst the main model and all of its instances. Any changes to these will be reflected across all models.
+ * Represents an instance of another string model.
+ *
+ * @see InstancedModel
  */
-public class InstancedModel extends Model {
+public class InstancedStringModel extends StringModel {
 	/**
 	 * Constructs a new instanced model from the main model.
 	 *
 	 * @param main The main model
 	 */
-	public InstancedModel(Model main) {
+	public InstancedStringModel(StringModel main) {
 		super(main);
 	}
 }

@@ -24,7 +24,7 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.util;
+package org.spout.renderer.model;
 
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -53,7 +53,6 @@ import org.spout.math.GenericMath;
 import org.spout.math.vector.Vector2;
 import org.spout.renderer.GLVersioned.GLVersion;
 import org.spout.renderer.Material;
-import org.spout.renderer.Model;
 import org.spout.renderer.data.Uniform.ColorUniform;
 import org.spout.renderer.data.Uniform.Matrix4Uniform;
 import org.spout.renderer.data.Uniform.Vector2Uniform;
@@ -70,6 +69,7 @@ import org.spout.renderer.gl.Texture;
 import org.spout.renderer.gl.Texture.FilterMode;
 import org.spout.renderer.gl.Texture.Format;
 import org.spout.renderer.gl.VertexArray;
+import org.spout.renderer.util.CausticUtil;
 
 /**
  * A model for rendering strings with a desired font. This model will work with both OpenGL versions. To render a string, set it with {@link #setString(String)}. Glyphs in the string that have not
@@ -92,7 +92,7 @@ public class StringModel extends Model {
 	private final TIntObjectMap<Color> colorIndices = new TIntObjectHashMap<>();
 
 	/**
-	 * Constructs a new string model from the provided one. {@link org.spout.renderer.Model#Model()} defines the copied information in the {@link Model} class. For the string model, the glyph indexes,
+	 * Constructs a new string model from the provided one. {@link Model#Model()} defines the copied information in the {@link Model} class. For the string model, the glyph indexes,
 	 * offsets, padding and line heights are copied. The string and color information remain empty.
 	 *
 	 * @param model The model to derive this one from

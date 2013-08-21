@@ -38,7 +38,7 @@ import java.util.Set;
 
 import org.spout.math.matrix.Matrix4;
 import org.spout.renderer.Camera;
-import org.spout.renderer.Model;
+import org.spout.renderer.model.Model;
 import org.spout.renderer.data.Uniform.Matrix4Uniform;
 import org.spout.renderer.gl.FrameBuffer;
 import org.spout.renderer.gl.Program;
