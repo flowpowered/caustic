@@ -32,6 +32,10 @@ import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.DoubleBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
 
 import org.spout.renderer.GLVersioned.GLVersion;
 import org.spout.renderer.android.gles20.GLES20FrameBuffer;
@@ -42,6 +46,7 @@ import org.spout.renderer.android.gles20.GLES20Shader;
 import org.spout.renderer.android.gles20.GLES20Texture;
 import org.spout.renderer.android.gles20.GLES20VertexArray;
 import org.spout.renderer.data.Color;
+import org.spout.renderer.data.VertexAttribute.DataType;
 import org.spout.renderer.gl.FrameBuffer;
 import org.spout.renderer.gl.Program;
 import org.spout.renderer.gl.RenderBuffer;
@@ -67,8 +72,9 @@ import org.spout.renderer.lwjgl.gl30.GL30VertexArray;
 /**
  * Utility methods for rendering.
  */
-public final class RenderUtil {
-	private RenderUtil() { }
+public final class CausticUtil {
+	private CausticUtil() {
+	}
 
 	/**
 	 * Gets the {@link java.io.InputStream}'s data as a {@link ByteBuffer}. The image data reading is done according to the {@link org.spout.renderer.gl.Texture.Format}. The image size is stored in the
@@ -112,7 +118,7 @@ public final class RenderUtil {
 	 * @param height the height of the image
 	 */
 	public static ByteBuffer getImageData(int[] pixels, Format format, int width, int height) {
-		final ByteBuffer data = ByteBuffer.allocateDirect(width * height * format.getComponentCount()).order(ByteOrder.nativeOrder());
+		final ByteBuffer data = CausticUtil.createByteBuffer(width * height * format.getComponentCount());
 		for (int y = height - 1; y >= 0; y--) {
 			for (int x = 0; x < width; x++) {
 				final int pixel = pixels[x + y * width];
@@ -145,6 +151,56 @@ public final class RenderUtil {
 		} else {
 			return new java.awt.Color((int) c.getRed(), (int) c.getGreen(), (int) c.getBlue(), (int) c.getAlpha());
 		}
+	}
+
+	/**
+	 * Creates a byte buffer of the desired capacity.
+	 *
+	 * @param capacity The capacity
+	 * @return The byte buffer
+	 */
+	public static ByteBuffer createByteBuffer(int capacity) {
+		return ByteBuffer.allocateDirect(capacity * DataType.BYTE.getByteSize()).order(ByteOrder.nativeOrder());
+	}
+
+	/**
+	 * Creates a short buffer of the desired capacity.
+	 *
+	 * @param capacity The capacity
+	 * @return The short buffer
+	 */
+	public static ShortBuffer createShortBuffer(int capacity) {
+		return createByteBuffer(capacity * DataType.SHORT.getByteSize()).asShortBuffer();
+	}
+
+	/**
+	 * Creates a int buffer of the desired capacity.
+	 *
+	 * @param capacity The capacity
+	 * @return The int buffer
+	 */
+	public static IntBuffer createIntBuffer(int capacity) {
+		return createByteBuffer(capacity * DataType.INT.getByteSize()).asIntBuffer();
+	}
+
+	/**
+	 * Creates a double buffer of the desired capacity.
+	 *
+	 * @param capacity The capacity
+	 * @return The double buffer
+	 */
+	public static FloatBuffer createFloatBuffer(int capacity) {
+		return createByteBuffer(capacity * DataType.FLOAT.getByteSize()).asFloatBuffer();
+	}
+
+	/**
+	 * Creates a float buffer of the desired capacity.
+	 *
+	 * @param capacity The capacity
+	 * @return The float buffer
+	 */
+	public static DoubleBuffer createDoubleBuffer(int capacity) {
+		return createByteBuffer(capacity * DataType.DOUBLE.getByteSize()).asDoubleBuffer();
 	}
 
 	/**

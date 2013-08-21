@@ -27,7 +27,6 @@
 package org.spout.renderer.data;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.Collections;
 import java.util.Set;
 
@@ -41,6 +40,7 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 
 import org.spout.renderer.data.VertexAttribute.DataType;
+import org.spout.renderer.util.CausticUtil;
 
 /**
  * Represents a vertex data. A vertex is a collection of attributes, most often attached to a point in space. This class is a data structure which groups together collections of primitives to
@@ -78,7 +78,7 @@ public class VertexData {
 	 * @return A buffer of the indices
 	 */
 	public ByteBuffer getIndicesBuffer() {
-		final ByteBuffer buffer = ByteBuffer.allocateDirect(indices.size() * DataType.INT.getByteSize()).order(ByteOrder.nativeOrder());
+		final ByteBuffer buffer = CausticUtil.createByteBuffer(indices.size() * DataType.INT.getByteSize());
 		for (int i = 0; i < indices.size(); i++) {
 			buffer.putInt(indices.get(i));
 		}

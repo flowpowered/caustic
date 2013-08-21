@@ -36,7 +36,6 @@ import gnu.trove.iterator.TObjectIntIterator;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
@@ -51,6 +50,7 @@ import org.spout.renderer.data.UniformHolder;
 import org.spout.renderer.gl.Program;
 import org.spout.renderer.gl.Shader.ShaderType;
 import org.spout.renderer.lwjgl.LWJGLUtil;
+import org.spout.renderer.util.CausticUtil;
 
 /**
  * An OpenGL 2.0 implementation of {@link Program}.
@@ -98,8 +98,8 @@ public class GL20Program extends Program {
 		// Load uniforms
 		final int uniformCount = GL20.glGetProgrami(id, GL20.GL_ACTIVE_UNIFORMS);
 		for (int i = 0; i < uniformCount; i++) {
-			final ByteBuffer nameBuffer = BufferUtils.createByteBuffer(256);
-			GL20.glGetActiveUniform(id, i, BufferUtils.createIntBuffer(1), BufferUtils.createIntBuffer(1), BufferUtils.createIntBuffer(1), nameBuffer);
+			final ByteBuffer nameBuffer = CausticUtil.createByteBuffer(256);
+			GL20.glGetActiveUniform(id, i, CausticUtil.createIntBuffer(1), CausticUtil.createIntBuffer(1), CausticUtil.createIntBuffer(1), nameBuffer);
 			nameBuffer.rewind();
 			final byte[] nameBytes = new byte[256];
 			nameBuffer.get(nameBytes);
@@ -213,7 +213,7 @@ public class GL20Program extends Program {
 		if (!uniforms.containsKey(name)) {
 			return;
 		}
-		final FloatBuffer vectorBuffer = BufferUtils.createFloatBuffer(vs.length * 3);
+		final FloatBuffer vectorBuffer = CausticUtil.createFloatBuffer(vs.length * 3);
 		for (Vector3 v : vs) {
 			vectorBuffer.put(v.getX());
 			vectorBuffer.put(v.getY());
@@ -240,7 +240,7 @@ public class GL20Program extends Program {
 		if (!uniforms.containsKey(name)) {
 			return;
 		}
-		final FloatBuffer buffer = BufferUtils.createFloatBuffer(4);
+		final FloatBuffer buffer = CausticUtil.createFloatBuffer(4);
 		buffer.put(m.toArray(true));
 		buffer.flip();
 		GL20.glUniformMatrix2(uniforms.get(name), false, buffer);
@@ -253,7 +253,7 @@ public class GL20Program extends Program {
 		if (!uniforms.containsKey(name)) {
 			return;
 		}
-		final FloatBuffer buffer = BufferUtils.createFloatBuffer(9);
+		final FloatBuffer buffer = CausticUtil.createFloatBuffer(9);
 		buffer.put(m.toArray(true));
 		buffer.flip();
 		GL20.glUniformMatrix3(uniforms.get(name), false, buffer);
@@ -266,7 +266,7 @@ public class GL20Program extends Program {
 		if (!uniforms.containsKey(name)) {
 			return;
 		}
-		final FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
+		final FloatBuffer buffer = CausticUtil.createFloatBuffer(16);
 		buffer.put(m.toArray(true));
 		buffer.flip();
 		GL20.glUniformMatrix4(uniforms.get(name), false, buffer);

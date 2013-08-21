@@ -35,7 +35,6 @@ import java.util.Map.Entry;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
 
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
@@ -45,6 +44,7 @@ import org.spout.renderer.gl.FrameBuffer;
 import org.spout.renderer.gl.RenderBuffer;
 import org.spout.renderer.gl.Texture;
 import org.spout.renderer.lwjgl.LWJGLUtil;
+import org.spout.renderer.util.CausticUtil;
 
 /**
  * An OpenGL 3.0 implementation of {@link FrameBuffer}.
@@ -89,7 +89,7 @@ public class GL30FrameBuffer extends FrameBuffer {
 			GL20.glDrawBuffers(GL11.GL_NONE);
 		} else {
 			// Keep track of the buffers to output
-			final IntBuffer buffer = BufferUtils.createIntBuffer(outputBuffers.size());
+			final IntBuffer buffer = CausticUtil.createIntBuffer(outputBuffers.size());
 			final int[] outputBuffersArray = outputBuffers.toArray();
 			// Sorting the array ensures that attachments are in order n, n + 1, n + 2...
 			// This is important!

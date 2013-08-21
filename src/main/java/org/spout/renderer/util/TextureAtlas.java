@@ -56,7 +56,7 @@ public class TextureAtlas {
 	public void attachTo(Texture texture) {
 		final int width = image.getWidth();
 		final int height = image.getHeight();
-		texture.setImageData(RenderUtil.getImageData(image, Format.RGBA), width, height);
+		texture.setImageData(CausticUtil.getImageData(image, Format.RGBA), width, height);
 	}
 
 	/**

@@ -303,14 +303,14 @@ public class StringModel extends Model {
 		positionAttribute.setData(positions);
 		textureCoordsAttribute.setData(textureCoords);
 		// Set the vertex data in the model
-		final VertexArray vertexArray = RenderUtil.createVertexArray(glVersion);
+		final VertexArray vertexArray = CausticUtil.createVertexArray(glVersion);
 		vertexArray.setData(data);
 		vertexArray.create();
 		return vertexArray;
 	}
 
 	private Texture generateTexture(GLVersion glVersion, CharSequence glyphs, TCharIntMap glyphWidths, Font font, int width, int height) {
-		final Texture texture = RenderUtil.createTexture(glVersion);
+		final Texture texture = CausticUtil.createTexture(glVersion);
 		// Create an image for the texture
 		final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		final Graphics graphics = image.getGraphics();
@@ -331,7 +331,7 @@ public class StringModel extends Model {
 		graphics.dispose();
 		// Generate the texture
 		texture.setFormat(Format.RGBA);
-		texture.setImageData((ByteBuffer) RenderUtil.getImageData(image, Format.RGBA).flip(), image.getWidth(), image.getHeight());
+		texture.setImageData((ByteBuffer) CausticUtil.getImageData(image, Format.RGBA).flip(), image.getWidth(), image.getHeight());
 		texture.setMagFilter(FilterMode.LINEAR);
 		texture.setMinFilter(FilterMode.LINEAR);
 		texture.create();
@@ -339,14 +339,14 @@ public class StringModel extends Model {
 	}
 
 	private Material generateMaterial(GLVersion glVersion) {
-		final Program program = RenderUtil.createProgram(glVersion);
+		final Program program = CausticUtil.createProgram(glVersion);
 		final String shaderPath = "/shaders/" + glVersion.toString().toLowerCase() + "/";
-		final Shader vertShader = RenderUtil.createShader(glVersion);
+		final Shader vertShader = CausticUtil.createShader(glVersion);
 		vertShader.setSource(StringModel.class.getResourceAsStream(shaderPath + "font.vert"));
 		vertShader.setType(ShaderType.VERTEX);
 		vertShader.create();
 		program.addShader(vertShader);
-		final Shader fragShader = RenderUtil.createShader(glVersion);
+		final Shader fragShader = CausticUtil.createShader(glVersion);
 		fragShader.setSource(StringModel.class.getResourceAsStream(shaderPath + "font.frag"));
 		fragShader.setType(ShaderType.FRAGMENT);
 		fragShader.create();

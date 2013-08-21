@@ -26,11 +26,17 @@
  */
 package org.spout.renderer.android.gles20;
 
-import android.opengl.GLES20;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.util.Collections;
+import java.util.Set;
+
 import gnu.trove.impl.Constants;
 import gnu.trove.iterator.TObjectIntIterator;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
+
+import android.opengl.GLES20;
 
 import org.spout.math.matrix.Matrix2;
 import org.spout.math.matrix.Matrix3;
@@ -43,13 +49,7 @@ import org.spout.renderer.data.Uniform;
 import org.spout.renderer.data.UniformHolder;
 import org.spout.renderer.gl.Program;
 import org.spout.renderer.gl.Shader.ShaderType;
-
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-import java.util.Collections;
-import java.util.Set;
+import org.spout.renderer.util.CausticUtil;
 
 /**
  * An OpenGL 2.0 implementation of {@link org.spout.renderer.gl.Program}.
@@ -213,7 +213,7 @@ public class GLES20Program extends Program {
 			return;
 		}
 		int count = 0;
-		final FloatBuffer vectorBuffer = ByteBuffer.allocateDirect(vs.length * 3).order(ByteOrder.nativeOrder()).asFloatBuffer();
+		final FloatBuffer vectorBuffer = CausticUtil.createFloatBuffer(vs.length * 3);
 		for (Vector3 v : vs) {
 			vectorBuffer.put(v.getX());
 			vectorBuffer.put(v.getY());
@@ -241,7 +241,7 @@ public class GLES20Program extends Program {
 		if (!uniforms.containsKey(name)) {
 			return;
 		}
-		final FloatBuffer buffer = ByteBuffer.allocateDirect(4).order(ByteOrder.nativeOrder()).asFloatBuffer();
+		final FloatBuffer buffer = CausticUtil.createFloatBuffer(4);
 		buffer.put(m.toArray(true));
 		buffer.flip();
 		GLES20.glUniformMatrix2fv(uniforms.get(name), 1, false, buffer);
@@ -254,7 +254,7 @@ public class GLES20Program extends Program {
 		if (!uniforms.containsKey(name)) {
 			return;
 		}
-		final FloatBuffer buffer = ByteBuffer.allocateDirect(9).order(ByteOrder.nativeOrder()).asFloatBuffer();
+		final FloatBuffer buffer = CausticUtil.createFloatBuffer(9);
 		buffer.put(m.toArray(true));
 		buffer.flip();
 		GLES20.glUniformMatrix3fv(uniforms.get(name), 1, false, buffer);
@@ -267,7 +267,7 @@ public class GLES20Program extends Program {
 		if (!uniforms.containsKey(name)) {
 			return;
 		}
-		final FloatBuffer buffer = ByteBuffer.allocateDirect(16).order(ByteOrder.nativeOrder()).asFloatBuffer();
+		final FloatBuffer buffer = CausticUtil.createFloatBuffer(16);
 		buffer.put(m.toArray(true));
 		buffer.flip();
 		GLES20.glUniformMatrix4fv(uniforms.get(name), 1, false, buffer);

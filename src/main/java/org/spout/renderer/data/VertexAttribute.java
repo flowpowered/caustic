@@ -27,7 +27,6 @@
 package org.spout.renderer.data;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
 import gnu.trove.iterator.TDoubleIterator;
 import gnu.trove.iterator.TFloatIterator;
@@ -38,6 +37,8 @@ import gnu.trove.list.TDoubleList;
 import gnu.trove.list.TFloatList;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.TShortList;
+
+import org.spout.renderer.util.CausticUtil;
 
 /**
  * Represents a vertex attribute. It has a name, a data type, a size (the number of components) and data.
@@ -120,7 +121,7 @@ public class VertexAttribute implements Cloneable {
 		if (this.buffer == null) {
 			throw new IllegalStateException("ByteBuffer must have data before it is ready for use.");
 		}
-		final ByteBuffer copy = ByteBuffer.allocateDirect(buffer.capacity()).order(ByteOrder.nativeOrder());
+		final ByteBuffer copy = CausticUtil.createByteBuffer(buffer.capacity());
 		buffer.rewind();
 		copy.put(buffer);
 		copy.flip();
@@ -134,7 +135,7 @@ public class VertexAttribute implements Cloneable {
 	 */
 	public void setData(ByteBuffer buffer) {
 		buffer.rewind();
-		this.buffer = ByteBuffer.allocateDirect(buffer.capacity()).order(ByteOrder.nativeOrder());
+		this.buffer = CausticUtil.createByteBuffer(buffer.capacity());
 		this.buffer.put(buffer);
 	}
 
@@ -144,7 +145,7 @@ public class VertexAttribute implements Cloneable {
 	 * @param list to set
 	 */
 	public void setData(TByteList list) {
-		this.buffer = ByteBuffer.allocateDirect(list.size()).order(ByteOrder.nativeOrder());
+		this.buffer = CausticUtil.createByteBuffer(list.size());
 		this.buffer.put(list.toArray());
 	}
 
@@ -154,7 +155,7 @@ public class VertexAttribute implements Cloneable {
 	 * @param list to set
 	 */
 	public void setData(TShortList list) {
-		this.buffer = ByteBuffer.allocateDirect(list.size() * DataType.SHORT.getByteSize()).order(ByteOrder.nativeOrder());
+		this.buffer = CausticUtil.createByteBuffer(list.size() * DataType.SHORT.getByteSize());
 		final TShortIterator iterator = list.iterator();
 		while (iterator.hasNext()) {
 			buffer.putShort(iterator.next());
@@ -167,7 +168,7 @@ public class VertexAttribute implements Cloneable {
 	 * @param list to set
 	 */
 	public void setData(TIntList list) {
-		this.buffer = ByteBuffer.allocateDirect(list.size() * DataType.INT.getByteSize()).order(ByteOrder.nativeOrder());
+		this.buffer = CausticUtil.createByteBuffer(list.size() * DataType.INT.getByteSize());
 		final TIntIterator iterator = list.iterator();
 		while (iterator.hasNext()) {
 			buffer.putInt(iterator.next());
@@ -180,7 +181,7 @@ public class VertexAttribute implements Cloneable {
 	 * @param list to set
 	 */
 	public void setData(TFloatList list) {
-		this.buffer = ByteBuffer.allocateDirect(list.size() * DataType.FLOAT.getByteSize()).order(ByteOrder.nativeOrder());
+		this.buffer = CausticUtil.createByteBuffer(list.size() * DataType.FLOAT.getByteSize());
 		final TFloatIterator iterator = list.iterator();
 		while (iterator.hasNext()) {
 			buffer.putFloat(iterator.next());
@@ -194,7 +195,7 @@ public class VertexAttribute implements Cloneable {
 	 * @param list to set
 	 */
 	public void setData(TDoubleList list) {
-		this.buffer = ByteBuffer.allocateDirect(list.size() * DataType.DOUBLE.getByteSize()).order(ByteOrder.nativeOrder());
+		this.buffer = CausticUtil.createByteBuffer(list.size() * DataType.DOUBLE.getByteSize());
 		final TDoubleIterator iterator = list.iterator();
 		while (iterator.hasNext()) {
 			buffer.putDouble(iterator.next());

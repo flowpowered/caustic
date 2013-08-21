@@ -26,22 +26,22 @@
  */
 package org.spout.renderer.android.gles20;
 
-import android.opengl.GLES20;
+import java.nio.IntBuffer;
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
+
+import android.opengl.GLES20;
 
 import org.spout.renderer.android.AndroidUtil;
 import org.spout.renderer.gl.FrameBuffer;
 import org.spout.renderer.gl.RenderBuffer;
 import org.spout.renderer.gl.Texture;
-
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.Map.Entry;
+import org.spout.renderer.util.CausticUtil;
 
 /**
  * An OpenGL 2.0 implementation of {@link org.spout.renderer.gl.FrameBuffer} using EXT.
@@ -94,13 +94,13 @@ public class GLES20FrameBuffer extends FrameBuffer {
 			// TODO: Fix draw call for mobile: GLES20.glDrawBuffers(GL.GL_NONE);
 		} else {
 			// Keep track of the buffers to output
-			final ByteBuffer buffer = ByteBuffer.allocateDirect(outputBuffers.size()).order(ByteOrder.nativeOrder());
+			final IntBuffer buffer = CausticUtil.createIntBuffer(outputBuffers.size());
 			final int[] outputBuffersArray = outputBuffers.toArray();
 			// Sorting the array ensures that attachments are in order n, n + 1, n + 2...
 			// This is important!
 			Arrays.sort(outputBuffersArray);
 			for (int val : outputBuffersArray) {
-				buffer.putInt(val);
+				buffer.put(val);
 			}
 			buffer.flip();
 			// TODO: Fix draw call for mobile: GLES20.glDrawBuffers(buffer);
