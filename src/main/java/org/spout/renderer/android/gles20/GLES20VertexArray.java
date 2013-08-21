@@ -34,8 +34,8 @@ import org.spout.renderer.data.VertexAttribute.DataType;
 import org.spout.renderer.gl.VertexArray;
 
 /**
- * An OpenGL 2.0 implementation of {@link org.spout.renderer.gl.VertexArray}. <p/> Vertex arrays will be used if the ARB or APPLE extension is supported by the hardware. Else, since core OpenGL doesn't support them until
- * 3.0, the vertex attributes will have to be redefined on each render call.
+ * An OpenGLES 2.0 implementation of {@link org.spout.renderer.gl.VertexArray}. <p/> Vertex arrays will be used if the ARB or APPLE extension is supported by the hardware. Else, since core OpenGL
+ * doesn't support them until 3.0, the vertex attributes will have to be redefined on each render call.
  *
  * @see org.spout.renderer.gl.VertexArray
  */
@@ -43,9 +43,6 @@ public class GLES20VertexArray extends VertexArray {
 	private int[] attributeSizes;
 	private int[] attributeTypes;
 	private boolean[] attributeNormalizing;
-
-	public GLES20VertexArray() {
-	}
 
 	@Override
 	public void create() {
@@ -102,12 +99,11 @@ public class GLES20VertexArray extends VertexArray {
 		GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
 		// Unbind and delete indices buffer
 		GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, 0);
-		GLES20.glDeleteBuffers(1, new int[] {indicesBufferID}, 0);
+		GLES20.glDeleteBuffers(1, new int[]{indicesBufferID}, 0);
 		// Delete the attribute buffers
 		for (int i = 0; i < attributeBufferIDs.length; i++) {
 			// Disable the attribute
 			GLES20.glDisableVertexAttribArray(i);
-
 		}
 		GLES20.glDeleteBuffers(attributeBufferIDs.length, attributeBufferIDs, 1);
 		// Delete the attribute properties
@@ -124,10 +120,10 @@ public class GLES20VertexArray extends VertexArray {
 		checkCreated();
 		// Enable the vertex attributes
 		for (int i = 0; i < attributeBufferIDs.length; i++) {
-				// Bind the buffer
-				GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, attributeBufferIDs[i]);
-				// Define the attribute
-				GLES20.glVertexAttribPointer(i, attributeSizes[i], attributeTypes[i], attributeNormalizing[i], 0, 0);
+			// Bind the buffer
+			GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, attributeBufferIDs[i]);
+			// Define the attribute
+			GLES20.glVertexAttribPointer(i, attributeSizes[i], attributeTypes[i], attributeNormalizing[i], 0, 0);
 			// Enable it
 			GLES20.glEnableVertexAttribArray(i);
 		}

@@ -24,26 +24,60 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer;
+package org.spout.renderer.lwjgl.gl30;
+
+import org.spout.renderer.gl.FrameBuffer;
+import org.spout.renderer.gl.GLFactory;
+import org.spout.renderer.gl.Program;
+import org.spout.renderer.gl.RenderBuffer;
+import org.spout.renderer.gl.Renderer;
+import org.spout.renderer.gl.Shader;
+import org.spout.renderer.gl.Texture;
+import org.spout.renderer.gl.VertexArray;
 
 /**
- * Represents an object that has an OpenGL version associated to it.
+ * An OpenGL 3.0 implementation of {@link GLFactory}.
+ *
+ * @see GLFactory
  */
-public interface GLVersioned {
-	/**
-	 * Returns the OpenGL version associated to this object.
-	 *
-	 * @return The OpenGL version
-	 */
-	GLVersion getGLVersion();
+public class GL30GLFactory implements GLFactory {
+	@Override
+	public FrameBuffer createFrameBuffer() {
+		return new GL30FrameBuffer();
+	}
 
-	/**
-	 * An enum of the supported OpenGL versions. Use this class to generate rendering objects compatible with the version.
-	 */
-	public static enum GLVersion {
-		GL20,
-		GL30,
-		GLES20,
-		GLES30
+	@Override
+	public Program createProgram() {
+		return new GL30Program();
+	}
+
+	@Override
+	public RenderBuffer createRenderBuffer() {
+		return new GL30RenderBuffer();
+	}
+
+	@Override
+	public Renderer createRenderer() {
+		return new GL30Renderer();
+	}
+
+	@Override
+	public Shader createShader() {
+		return new GL30Shader();
+	}
+
+	@Override
+	public Texture createTexture() {
+		return new GL30Texture();
+	}
+
+	@Override
+	public VertexArray createVertexArray() {
+		return new GL30VertexArray();
+	}
+
+	@Override
+	public GLVersion getGLVersion() {
+		return GLVersion.GL30;
 	}
 }

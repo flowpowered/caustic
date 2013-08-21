@@ -24,26 +24,15 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer;
+package org.spout.renderer.lwjgl.gl30;
+
+import org.spout.renderer.lwjgl.gl20.GL20Shader;
 
 /**
- * Represents an object that has an OpenGL version associated to it.
+ * An OpenGL 3.0 implementation of {@link org.spout.renderer.gl.Shader}.
+ *
+ * @see org.spout.renderer.gl.Shader
  */
-public interface GLVersioned {
-	/**
-	 * Returns the OpenGL version associated to this object.
-	 *
-	 * @return The OpenGL version
-	 */
-	GLVersion getGLVersion();
-
-	/**
-	 * An enum of the supported OpenGL versions. Use this class to generate rendering objects compatible with the version.
-	 */
-	public static enum GLVersion {
-		GL20,
-		GL30,
-		GLES20,
-		GLES30
-	}
+public class GL30Shader extends GL20Shader {
+	// TODO: add GL30 specific stuff
 }

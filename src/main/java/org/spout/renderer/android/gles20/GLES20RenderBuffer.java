@@ -32,7 +32,7 @@ import org.spout.renderer.android.AndroidUtil;
 import org.spout.renderer.gl.RenderBuffer;
 
 /**
- * An OpenGL 2.0 implementation of {@link org.spout.renderer.gl.RenderBuffer} using EXT.
+ * An OpenGLES 2.0 implementation of {@link org.spout.renderer.gl.RenderBuffer} using EXT.
  *
  * @see org.spout.renderer.gl.RenderBuffer
  */

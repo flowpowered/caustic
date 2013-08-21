@@ -62,6 +62,7 @@ import org.spout.renderer.data.VertexAttribute;
 import org.spout.renderer.data.VertexAttribute.DataType;
 import org.spout.renderer.data.VertexData;
 import org.spout.renderer.data.Color;
+import org.spout.renderer.gl.GLFactory;
 import org.spout.renderer.gl.Program;
 import org.spout.renderer.gl.Shader;
 import org.spout.renderer.gl.Shader.ShaderType;
@@ -106,15 +107,15 @@ public class StringModel extends Model {
 	}
 
 	/**
-	 * Creates a new string model, from the OpenGL version, the glyphs to support, the font to render with and the window width (used to get scale for the model).
+	 * Creates a new string model, from the OpenGL factory, the glyphs to support, the font to render with and the window width (used to get scale for the model).
 	 *
-	 * @param glVersion The OpenGL version
+	 * @param factory The OpenGL factory
 	 * @param glyphs The glyphs
 	 * @param font The font
 	 * @param windowWidth The window with
 	 */
-	public StringModel(GLVersion glVersion, CharSequence glyphs, Font font, int windowWidth) {
-		if (glVersion == null) {
+	public StringModel(GLFactory factory, CharSequence glyphs, Font font, int windowWidth) {
+		if (factory == null) {
 			throw new IllegalStateException("GL version cannot be null");
 		}
 		if (glyphs == null) {
@@ -146,17 +147,17 @@ public class StringModel extends Model {
 		// Create the texture
 		final int width = (int) Math.ceil(size.getWidth()) + glyphs.length() * glyphPadding * 2;
 		final int height = (int) Math.ceil(size.getHeight());
-		final Texture texture = generateTexture(glVersion, glyphs, widths, font, width, height);
+		final Texture texture = generateTexture(factory, glyphs, widths, font, width, height);
 		// Set the normalized glyph padding, needs to be subtracted to the initial glyph offset
 		worldGlyphPadding = (float) glyphPadding / windowWidth;
 		// Set the line height, for new lines
 		worldLineHeight = (float) fontMetrics.getHeight() / windowWidth;
 		// Create the material
-		final Material material = generateMaterial(glVersion);
+		final Material material = generateMaterial(factory);
 		material.addTexture(0, texture);
 		setMaterial(material);
 		// Create the model mesh
-		final VertexArray vertexArray = generateMesh(glVersion, glyphs, windowWidth, widths, width, height);
+		final VertexArray vertexArray = generateMesh(factory, glyphs, windowWidth, widths, width, height);
 		// Only render one glyph per render call
 		vertexArray.setIndicesCount(GLYPH_INDEX_COUNT);
 		// Set the vertex array
@@ -260,7 +261,7 @@ public class StringModel extends Model {
 		return rawString;
 	}
 
-	private VertexArray generateMesh(GLVersion glVersion, CharSequence glyphs, int windowWidth, TCharIntMap glyphWidths, int textureWidth, int textureHeight) {
+	private VertexArray generateMesh(GLFactory factory, CharSequence glyphs, int windowWidth, TCharIntMap glyphWidths, int textureWidth, int textureHeight) {
 		final VertexData data = new VertexData();
 		// Add the positions and texture coordinates attributes
 		final VertexAttribute positionAttribute = new VertexAttribute("positions", DataType.FLOAT, 2);
@@ -303,14 +304,14 @@ public class StringModel extends Model {
 		positionAttribute.setData(positions);
 		textureCoordsAttribute.setData(textureCoords);
 		// Set the vertex data in the model
-		final VertexArray vertexArray = CausticUtil.createVertexArray(glVersion);
+		final VertexArray vertexArray = factory.createVertexArray();
 		vertexArray.setData(data);
 		vertexArray.create();
 		return vertexArray;
 	}
 
-	private Texture generateTexture(GLVersion glVersion, CharSequence glyphs, TCharIntMap glyphWidths, Font font, int width, int height) {
-		final Texture texture = CausticUtil.createTexture(glVersion);
+	private Texture generateTexture(GLFactory factory, CharSequence glyphs, TCharIntMap glyphWidths, Font font, int width, int height) {
+		final Texture texture = factory.createTexture();
 		// Create an image for the texture
 		final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		final Graphics graphics = image.getGraphics();
@@ -338,20 +339,21 @@ public class StringModel extends Model {
 		return texture;
 	}
 
-	private Material generateMaterial(GLVersion glVersion) {
-		final Program program = CausticUtil.createProgram(glVersion);
-		final String shaderPath = "/shaders/" + glVersion.toString().toLowerCase() + "/";
-		final Shader vertShader = CausticUtil.createShader(glVersion);
+	private Material generateMaterial(GLFactory factory) {
+		final Program program = factory.createProgram();
+		final GLVersion version = factory.getGLVersion();
+		final String shaderPath = "/shaders/" + version.toString().toLowerCase() + "/";
+		final Shader vertShader = factory.createShader();
 		vertShader.setSource(StringModel.class.getResourceAsStream(shaderPath + "font.vert"));
 		vertShader.setType(ShaderType.VERTEX);
 		vertShader.create();
 		program.addShader(vertShader);
-		final Shader fragShader = CausticUtil.createShader(glVersion);
+		final Shader fragShader = factory.createShader();
 		fragShader.setSource(StringModel.class.getResourceAsStream(shaderPath + "font.frag"));
 		fragShader.setType(ShaderType.FRAGMENT);
 		fragShader.create();
 		program.addShader(fragShader);
-		if (glVersion == GLVersion.GL20 || glVersion == GLVersion.GLES20) {
+		if (version == GLVersion.GL20 || version == GLVersion.GLES20) {
 			program.addAttributeLayout("position", 0);
 			program.addAttributeLayout("textureCoords", 1);
 		}

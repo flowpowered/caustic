@@ -44,7 +44,7 @@ import org.spout.renderer.gl.Texture;
 import org.spout.renderer.util.CausticUtil;
 
 /**
- * An OpenGL 2.0 implementation of {@link org.spout.renderer.gl.FrameBuffer} using EXT.
+ * An OpenGLES 2.0 implementation of {@link org.spout.renderer.gl.FrameBuffer} using EXT.
  *
  * @see org.spout.renderer.gl.FrameBuffer
  */

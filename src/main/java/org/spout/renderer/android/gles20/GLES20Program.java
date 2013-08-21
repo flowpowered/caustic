@@ -52,7 +52,7 @@ import org.spout.renderer.gl.Shader.ShaderType;
 import org.spout.renderer.util.CausticUtil;
 
 /**
- * An OpenGL 2.0 implementation of {@link org.spout.renderer.gl.Program}.
+ * An OpenGLES 2.0 implementation of {@link org.spout.renderer.gl.Program}.
  *
  * @see org.spout.renderer.gl.Program
  */

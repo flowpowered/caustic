@@ -26,15 +26,15 @@
  */
 package org.spout.renderer.android.gles20;
 
+import java.nio.ByteBuffer;
+
 import android.opengl.GLES20;
 
 import org.spout.renderer.android.AndroidUtil;
 import org.spout.renderer.gl.Texture;
 
-import java.nio.ByteBuffer;
-
 /**
- * An OpenGL 2.0 implementation of {@link org.spout.renderer.gl.Texture}.
+ * An OpenGLES 2.0 implementation of {@link org.spout.renderer.gl.Texture}.
  *
  * @see org.spout.renderer.gl.Texture
  */

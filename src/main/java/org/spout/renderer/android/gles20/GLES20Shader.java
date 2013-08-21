@@ -32,7 +32,7 @@ import org.spout.renderer.android.AndroidUtil;
 import org.spout.renderer.gl.Shader;
 
 /**
- * An OpenGL 2.0 implementation of {@link org.spout.renderer.gl.Shader}.
+ * An OpenGLES 2.0 implementation of {@link org.spout.renderer.gl.Shader}.
  *
  * @see org.spout.renderer.gl.Shader
  */

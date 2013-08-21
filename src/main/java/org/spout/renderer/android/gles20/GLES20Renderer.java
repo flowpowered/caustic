@@ -26,8 +26,14 @@
  */
 package org.spout.renderer.android.gles20;
 
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
+import java.util.HashSet;
+import java.util.Set;
+
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
+
 import org.spout.math.matrix.Matrix4;
 import org.spout.renderer.Material;
 import org.spout.renderer.Model;
@@ -39,13 +45,8 @@ import org.spout.renderer.gl.FrameBuffer;
 import org.spout.renderer.gl.Program;
 import org.spout.renderer.gl.Renderer;
 
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
-import java.util.HashSet;
-import java.util.Set;
-
 /**
- * An OpenGL 2.0 implementation of {@link org.spout.renderer.gl.Renderer}.
+ * An OpenGLES 2.0 implementation of {@link org.spout.renderer.gl.Renderer}.
  *
  * @see org.spout.renderer.gl.Renderer
  */

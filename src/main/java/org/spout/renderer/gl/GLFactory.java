@@ -24,26 +24,60 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer;
+package org.spout.renderer.gl;
+
+import org.spout.renderer.GLVersioned;
 
 /**
- * Represents an object that has an OpenGL version associated to it.
+ * A factory for generating OpenGL objects of the correct version.
  */
-public interface GLVersioned {
+public interface GLFactory extends GLVersioned {
 	/**
-	 * Returns the OpenGL version associated to this object.
+	 * Creates a new frame buffer.
 	 *
-	 * @return The OpenGL version
+	 * @return A new frame buffer
 	 */
-	GLVersion getGLVersion();
+	FrameBuffer createFrameBuffer();
 
 	/**
-	 * An enum of the supported OpenGL versions. Use this class to generate rendering objects compatible with the version.
+	 * Creates a new program.
+	 *
+	 * @return A new program
 	 */
-	public static enum GLVersion {
-		GL20,
-		GL30,
-		GLES20,
-		GLES30
-	}
+	Program createProgram();
+
+	/**
+	 * Creates a new render buffer.
+	 *
+	 * @return A new render buffer
+	 */
+	RenderBuffer createRenderBuffer();
+
+	/**
+	 * Creates a new renderer.
+	 *
+	 * @return A new renderer
+	 */
+	Renderer createRenderer();
+
+	/**
+	 * Creates a new shader.
+	 *
+	 * @return A new shader
+	 */
+	Shader createShader();
+
+	/**
+	 * Creates a new texture.
+	 *
+	 * @return A new texture
+	 */
+	Texture createTexture();
+
+	/**
+	 * Creates a new vertex array.
+	 *
+	 * @return A new vertex array
+	 */
+	VertexArray createVertexArray();
 }
