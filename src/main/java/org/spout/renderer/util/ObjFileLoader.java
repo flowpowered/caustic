@@ -34,16 +34,15 @@ import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TFloatArrayList;
 import gnu.trove.list.array.TIntArrayList;
 
-import org.spout.renderer.data.VertexAttribute;
-import org.spout.renderer.data.VertexAttribute.DataType;
-import org.spout.renderer.data.VertexData;
+import org.spout.math.vector.Vector3;
 
 /**
  * A static loading class for standard .obj model files. This class will load positions, normals can texture coordinates. Missing normals are not calculated. Normals are expected to be of unit length.
  * Models should be triangulated.
  */
 public final class ObjFileLoader {
-	private ObjFileLoader() { }
+	private ObjFileLoader() {
+	}
 
 	private static final String COMPONENT_SEPARATOR = " ";
 	private static final String INDEX_SEPARATOR = "/";
@@ -53,37 +52,24 @@ public final class ObjFileLoader {
 	private static final String INDEX_LIST_PREFIX = "f";
 
 	/**
-	 * Loads a .obj file, storing the data in the VertexData. Position attributes will be added with the name "positions", normals with "normals" and texture coordinate with "textureCoords", in this
-	 * order. After loading, the input stream will be closed.
+	 * Loads a .obj file, storing the data in the provided lists. After loading, the input stream will be closed.The number of components for each attribute is returned in a Vector3, x being the number
+	 * of position components, y the number of texture coord components and z the number of normal components. Note that normal and/or texture coord attributes might be missing from the .obj file. If
+	 * this is the case, their lists will be empty. The indices are stored in the indices list.
 	 *
 	 * @param stream The input stream for the .obj file
-	 * @return The vertex data, filed with the loaded vertices
+	 * @param positions The list in which to store the positions
+	 * @param textureCoords The list in which to store the texture coords
+	 * @param normals The list in which to store the normals
+	 * @param indices The list in which to store the indices
+	 * @return A Vector3 containing, in order, the number of components for the positions, texture coords and normals
 	 * @throws MalformedObjFileException If any errors occur during loading
 	 */
-	public static VertexData load(InputStream stream) {
-		return load(null, stream);
-	}
-
-	/**
-	 * Loads a .obj file, storing the data in the VertexData. Position attributes will be added with the name "positions", normals with "normals" and texture coordinate with "textureCoords", in this
-	 * order. If destination is null, a new one is created and returned. After loading, the input stream will be closed.
-	 *
-	 * @param destination The destination for the vertex data. Can be null
-	 * @param stream The input stream for the .obj file
-	 * @return The vertex data, filed with the loaded vertices
-	 * @throws MalformedObjFileException If any errors occur during loading
-	 */
-	public static VertexData load(VertexData destination, InputStream stream) {
-		if (destination == null) {
-			destination = new VertexData();
-		}
-		final TFloatList positionComponents = new TFloatArrayList();
+	public static Vector3 load(InputStream stream, TFloatList positions, TFloatList textureCoords, TFloatList normals, TIntList indices) {
 		int positionSize = -1;
-		final TFloatList textureCoordComponents = new TFloatArrayList();
+		final TFloatList rawTextureCoords = new TFloatArrayList();
 		int textureCoordSize = -1;
-		final TFloatList normalComponents = new TFloatArrayList();
+		final TFloatList rawNormalComponents = new TFloatArrayList();
 		int normalSize = -1;
-		final TIntList positionIndices = new TIntArrayList();
 		final TIntList textureCoordIndices = new TIntArrayList();
 		final TIntList normalIndices = new TIntArrayList();
 		String line = null;
@@ -91,75 +77,61 @@ public final class ObjFileLoader {
 			while (scanner.hasNextLine()) {
 				line = scanner.nextLine();
 				if (line.startsWith(POSITION_LIST_PREFIX + COMPONENT_SEPARATOR)) {
-					parseComponents(positionComponents, line);
+					parseComponents(positions, line);
 					if (positionSize == -1) {
-						positionSize = positionComponents.size();
+						positionSize = positions.size();
 					}
 				} else if (line.startsWith(TEXTURE_LIST_PREFIX + COMPONENT_SEPARATOR)) {
-					parseComponents(textureCoordComponents, line);
+					parseComponents(rawTextureCoords, line);
 					if (textureCoordSize == -1) {
-						textureCoordSize = textureCoordComponents.size();
+						textureCoordSize = rawTextureCoords.size();
 					}
 				} else if (line.startsWith(NORMAL_LIST_PREFIX + COMPONENT_SEPARATOR)) {
-					parseComponents(normalComponents, line);
+					parseComponents(rawNormalComponents, line);
 					if (normalSize == -1) {
-						normalSize = normalComponents.size();
+						normalSize = rawNormalComponents.size();
 					}
 				} else if (line.startsWith(INDEX_LIST_PREFIX + COMPONENT_SEPARATOR)) {
-					parseIndices(positionIndices, textureCoordIndices, normalIndices, line);
+					parseIndices(indices, textureCoordIndices, normalIndices, line);
 				}
 			}
 			line = null;
-			final VertexAttribute positionAttribute = new VertexAttribute("positions", DataType.FLOAT, positionSize);
-			destination.addAttribute(0, positionAttribute);
-			final TFloatList textureCoords;
-			final TFloatList normals;
-			final VertexAttribute textureCoordsAttribute;
-			final VertexAttribute normalAttribute;
-			if (!textureCoordIndices.isEmpty() && !textureCoordComponents.isEmpty()) {
-				textureCoordsAttribute = new VertexAttribute("textureCoords", DataType.FLOAT, textureCoordSize);
-				destination.addAttribute(2, textureCoordsAttribute);
-				textureCoords = new TFloatArrayList();
-				textureCoords.fill(0, positionComponents.size() / positionSize * textureCoordSize, 0);
+			final boolean hasTextureCoords;
+			final boolean hasNormals;
+			if (!textureCoordIndices.isEmpty() && !rawTextureCoords.isEmpty()) {
+				textureCoords.fill(0, positions.size() / positionSize * textureCoordSize, 0);
+				hasTextureCoords = true;
 			} else {
-				textureCoords = null;
-				textureCoordsAttribute = null;
+				hasTextureCoords = false;
 			}
-			if (!normalIndices.isEmpty() && !normalComponents.isEmpty()) {
-				normalAttribute = new VertexAttribute("normals", DataType.FLOAT, normalSize);
-				destination.addAttribute(1, normalAttribute);
-				normals = new TFloatArrayList();
-				normals.fill(0, positionComponents.size() / positionSize * normalSize, 0);
+			if (!normalIndices.isEmpty() && !rawNormalComponents.isEmpty()) {
+				normals.fill(0, positions.size() / positionSize * normalSize, 0);
+				hasNormals = true;
 			} else {
-				normals = null;
-				normalAttribute = null;
+				hasNormals = false;
 			}
-			destination.getIndices().addAll(positionIndices);
-			positionAttribute.setData(positionComponents);
-			if (textureCoords != null) {
+			if (hasTextureCoords) {
 				for (int i = 0; i < textureCoordIndices.size(); i++) {
 					final int textureCoordIndex = textureCoordIndices.get(i) * textureCoordSize;
-					final int positionIndex = positionIndices.get(i) * textureCoordSize;
+					final int positionIndex = indices.get(i) * textureCoordSize;
 					for (int ii = 0; ii < textureCoordSize; ii++) {
-						textureCoords.set(positionIndex + ii, textureCoordComponents.get(textureCoordIndex + ii));
+						textureCoords.set(positionIndex + ii, rawTextureCoords.get(textureCoordIndex + ii));
 					}
 				}
-				textureCoordsAttribute.setData(textureCoords);
 			}
-			if (normals != null) {
+			if (hasNormals) {
 				for (int i = 0; i < normalIndices.size(); i++) {
 					final int normalIndex = normalIndices.get(i) * normalSize;
-					final int positionIndex = positionIndices.get(i) * normalSize;
+					final int positionIndex = indices.get(i) * normalSize;
 					for (int ii = 0; ii < normalSize; ii++) {
-						normals.set(positionIndex + ii, normalComponents.get(normalIndex + ii));
+						normals.set(positionIndex + ii, rawNormalComponents.get(normalIndex + ii));
 					}
 				}
-				normalAttribute.setData(normals);
 			}
 		} catch (Exception ex) {
 			throw new MalformedObjFileException(line, ex);
 		}
-		return destination;
+		return new Vector3(positionSize, textureCoordSize, normalSize).max(0, 0, 0);
 	}
 
 	private static void parseComponents(TFloatList destination, String line) {
