@@ -246,12 +246,7 @@
 				<executions>
 					<execution>
 						<configuration>
-							<artifactSet>
-								<excludes>
-									<exclude>com.google.android:*</exclude>
-								</excludes>
-							</artifactSet>
-							<minimizeJar>true</minimizeJar>
+							<minimizeJar>false</minimizeJar>
 							<filters>
 								<filter>
 									<artifact>*:*</artifact>
