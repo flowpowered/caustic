@@ -44,6 +44,9 @@ public class GLES20VertexArray extends VertexArray {
 	private int[] attributeTypes;
 	private boolean[] attributeNormalizing;
 
+	protected GLES20VertexArray() {
+	}
+
 	@Override
 	public void create() {
 		if (isCreated()) {

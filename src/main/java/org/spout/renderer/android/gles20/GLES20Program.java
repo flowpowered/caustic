@@ -60,6 +60,9 @@ public class GLES20Program extends Program {
 	// Map of the uniform names to their locations
 	private final TObjectIntMap<String> uniforms = new TObjectIntHashMap<>(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, -1);
 
+	protected GLES20Program() {
+	}
+
 	@Override
 	public void create() {
 		if (isCreated()) {
@@ -103,7 +106,7 @@ public class GLES20Program extends Program {
 			byte nameByte = 0;
 			GLES20.glGetActiveUniform(id, i, 1, IntBuffer.allocate(1), IntBuffer.allocate(1), IntBuffer.allocate(1), nameByte);
 			// Simplify array names
-			final String name = new String(new byte[] {nameByte}).trim().replaceFirst("\\[\\d+\\]", "");
+			final String name = new String(new byte[]{nameByte}).trim().replaceFirst("\\[\\d+\\]", "");
 			uniforms.put(name, GLES20.glGetUniformLocation(id, name));
 		}
 		super.create();

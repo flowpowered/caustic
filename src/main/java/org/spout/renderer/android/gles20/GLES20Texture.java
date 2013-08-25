@@ -39,6 +39,9 @@ import org.spout.renderer.gl.Texture;
  * @see org.spout.renderer.gl.Texture
  */
 public class GLES20Texture extends Texture {
+	protected GLES20Texture() {
+	}
+
 	@Override
 	public void create() {
 		// Get the context capabilities for the graphics hardware
@@ -99,7 +102,7 @@ public class GLES20Texture extends Texture {
 		// Unbind the texture
 		GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
 		// Delete the texture
-		GLES20.glDeleteTextures(1, new int[] {id}, 0);
+		GLES20.glDeleteTextures(1, new int[]{id}, 0);
 		// Reset the data
 		super.destroy();
 		// Check for errors

@@ -32,10 +32,13 @@ import org.spout.renderer.lwjgl.gl20.GL20Renderer;
 
 /**
  * An OpenGL 3.0 implementation of {@link org.spout.renderer.gl.Renderer}.
- *
+ * <p/>
  * {@see Renderer}
  */
 public class GL30Renderer extends GL20Renderer {
+	protected GL30Renderer() {
+	}
+
 	@Override
 	protected ContextAttribs createContextAttributes() {
 		return new ContextAttribs(3, 2).withProfileCore(true);

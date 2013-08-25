@@ -37,6 +37,9 @@ import org.spout.renderer.gl.Shader;
  * @see org.spout.renderer.gl.Shader
  */
 public class GLES20Shader extends Shader {
+	protected GLES20Shader() {
+	}
+
 	@Override
 	public void create() {
 		if (isCreated()) {

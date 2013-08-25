@@ -53,6 +53,9 @@ import org.spout.renderer.lwjgl.LWJGLUtil;
  * @see Renderer
  */
 public class GL20Renderer extends Renderer {
+	protected GL20Renderer() {
+	}
+
 	@Override
 	public void create() {
 		if (isCreated()) {

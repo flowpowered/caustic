@@ -42,7 +42,7 @@ public class GLES20RenderBuffer extends RenderBuffer {
 	 *
 	 * @throws UnsupportedOperationException If the hardware doesn't support EXT render buffers.
 	 */
-	public GLES20RenderBuffer() {
+	protected GLES20RenderBuffer() {
 	}
 
 	@Override

@@ -26,6 +26,7 @@
  */
 package org.spout.renderer.android.gles20;
 
+import org.spout.renderer.GLImplementation;
 import org.spout.renderer.gl.FrameBuffer;
 import org.spout.renderer.gl.GLFactory;
 import org.spout.renderer.gl.Program;
@@ -41,6 +42,13 @@ import org.spout.renderer.gl.VertexArray;
  * @see GLFactory
  */
 public class GLES20GLFactory implements GLFactory {
+	static {
+		GLImplementation.register(GLVersion.GLES20, new GLES20GLFactory());
+	}
+
+	private GLES20GLFactory() {
+	}
+
 	@Override
 	public FrameBuffer createFrameBuffer() {
 		return new GLES20FrameBuffer();

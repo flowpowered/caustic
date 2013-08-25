@@ -37,6 +37,9 @@ import org.spout.renderer.lwjgl.LWJGLUtil;
  * @see RenderBuffer
  */
 public class GL30RenderBuffer extends RenderBuffer {
+	protected GL30RenderBuffer() {
+	}
+
 	@Override
 	public void create() {
 		if (format == null) {

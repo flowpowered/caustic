@@ -43,7 +43,7 @@ public class GL20RenderBuffer extends RenderBuffer {
 	 *
 	 * @throws UnsupportedOperationException If the hardware doesn't support EXT render buffers.
 	 */
-	public GL20RenderBuffer() {
+	protected GL20RenderBuffer() {
 		if (!GLContext.getCapabilities().GL_EXT_framebuffer_object) {
 			throw new UnsupportedOperationException("Render buffers are not supported by this hardware");
 		}

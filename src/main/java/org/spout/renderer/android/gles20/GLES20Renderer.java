@@ -51,6 +51,9 @@ import org.spout.renderer.gl.Renderer;
  * @see org.spout.renderer.gl.Renderer
  */
 public class GLES20Renderer extends Renderer implements GLSurfaceView.Renderer {
+	protected GLES20Renderer() {
+	}
+
 	@Override
 	public void create() {
 		if (isCreated()) {

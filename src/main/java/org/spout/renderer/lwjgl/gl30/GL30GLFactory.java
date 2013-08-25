@@ -26,6 +26,7 @@
  */
 package org.spout.renderer.lwjgl.gl30;
 
+import org.spout.renderer.GLImplementation;
 import org.spout.renderer.gl.FrameBuffer;
 import org.spout.renderer.gl.GLFactory;
 import org.spout.renderer.gl.Program;
@@ -41,6 +42,13 @@ import org.spout.renderer.gl.VertexArray;
  * @see GLFactory
  */
 public class GL30GLFactory implements GLFactory {
+	static {
+		GLImplementation.register(GLVersion.GL30, new GL30GLFactory());
+	}
+
+	private GL30GLFactory() {
+	}
+
 	@Override
 	public FrameBuffer createFrameBuffer() {
 		return new GL30FrameBuffer();

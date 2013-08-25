@@ -61,7 +61,7 @@ public class GL20FrameBuffer extends FrameBuffer {
 	 *
 	 * @throws UnsupportedOperationException If the hardware doesn't support EXT frame buffers
 	 */
-	public GL20FrameBuffer() {
+	protected GL20FrameBuffer() {
 		if (!GLContext.getCapabilities().GL_EXT_framebuffer_object) {
 			throw new UnsupportedOperationException("Frame buffers are not supported by this hardware");
 		}

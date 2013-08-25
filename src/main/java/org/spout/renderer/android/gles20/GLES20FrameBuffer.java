@@ -52,12 +52,12 @@ public class GLES20FrameBuffer extends FrameBuffer {
 	// The attached texture and render buffers
 	private final Map<AttachmentPoint, GLES20Texture> textures = new EnumMap<>(AttachmentPoint.class);
 	private final Map<AttachmentPoint, GLES20RenderBuffer> buffers = new EnumMap<>(AttachmentPoint.class);
-
 	private int[] bufferId;
+
 	/**
 	 * Constructs a new frame buffer for OpenGL 2.0ES.
 	 */
-	public GLES20FrameBuffer() {
+	protected GLES20FrameBuffer() {
 	}
 
 	@Override
@@ -122,7 +122,7 @@ public class GLES20FrameBuffer extends FrameBuffer {
 		checkCreated();
 		// Unbind and delete the frame buffer
 		GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
-		GLES20.glDeleteFramebuffers(1, new int[] {id}, 0);
+		GLES20.glDeleteFramebuffers(1, new int[]{id}, 0);
 		// Release some resources
 		textures.clear();
 		buffers.clear();

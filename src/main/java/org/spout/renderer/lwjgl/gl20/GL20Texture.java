@@ -42,6 +42,9 @@ import org.spout.renderer.lwjgl.LWJGLUtil;
  * @see Texture
  */
 public class GL20Texture extends Texture {
+	protected GL20Texture() {
+	}
+
 	@Override
 	public void create() {
 		// Get the context capabilities for the graphics hardware

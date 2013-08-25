@@ -61,6 +61,9 @@ public class GL20Program extends Program {
 	// Map of the uniform names to their locations
 	private final TObjectIntMap<String> uniforms = new TObjectIntHashMap<>(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, -1);
 
+	protected GL20Program() {
+	}
+
 	@Override
 	public void create() {
 		if (isCreated()) {

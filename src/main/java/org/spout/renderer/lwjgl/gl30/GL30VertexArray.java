@@ -43,6 +43,9 @@ import org.spout.renderer.lwjgl.LWJGLUtil;
  * @see VertexArray
  */
 public class GL30VertexArray extends VertexArray {
+	protected GL30VertexArray() {
+	}
+
 	@Override
 	public void create() {
 		if (isCreated()) {

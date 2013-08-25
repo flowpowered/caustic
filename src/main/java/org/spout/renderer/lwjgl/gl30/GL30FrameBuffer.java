@@ -56,6 +56,9 @@ public class GL30FrameBuffer extends FrameBuffer {
 	private final Map<AttachmentPoint, GL30Texture> textures = new EnumMap<>(AttachmentPoint.class);
 	private final Map<AttachmentPoint, GL30RenderBuffer> buffers = new EnumMap<>(AttachmentPoint.class);
 
+	protected GL30FrameBuffer() {
+	}
+
 	@Override
 	public void create() {
 		// Generate and bind the frame buffer
