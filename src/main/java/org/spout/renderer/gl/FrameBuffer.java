@@ -28,6 +28,7 @@ package org.spout.renderer.gl;
 
 import org.spout.renderer.Creatable;
 import org.spout.renderer.GLVersioned;
+import org.spout.renderer.util.Rectangle;
 
 /**
  * Represents an OpenGL frame buffer. A frame buffer can be assigned to a render list. When assigned, all models in the list will be rendered to the frame buffer, instead of the screen. This is meant
@@ -35,6 +36,7 @@ import org.spout.renderer.GLVersioned;
  */
 public abstract class FrameBuffer extends Creatable implements GLVersioned {
 	protected int id;
+	protected Rectangle viewPort = null;
 
 	@Override
 	public void destroy() {
@@ -67,6 +69,23 @@ public abstract class FrameBuffer extends Creatable implements GLVersioned {
 	 * @param buffer The render buffer
 	 */
 	public abstract void attach(AttachmentPoint point, RenderBuffer buffer);
+
+	public Rectangle getViewPort() {
+		return viewPort;
+	}
+
+	public boolean hasViewPort() {
+		return viewPort != null;
+	}
+
+	/**
+	 * Sets the view port to render too. If null, the renderer view port will be used.
+	 *
+	 * @param viewPort The view port rectangle
+	 */
+	public void setViewPort(Rectangle viewPort) {
+		this.viewPort = viewPort;
+	}
 
 	/**
 	 * Gets the ID for this frame buffer as assigned by OpenGL.

@@ -65,8 +65,9 @@ public class Model {
 	 * @param model The model to derive this one from
 	 */
 	protected Model(Model model) {
-		this(model.getVertexArray(), model.getMaterial());
-		uniforms.addAll(model.getUniforms());
+		this.vertexArray = model.getVertexArray();
+		this.material = model.getMaterial();
+		uniforms.addAll(model.uniforms);
 	}
 
 	/**
@@ -217,6 +218,15 @@ public class Model {
 	public void setScale(Vector3 scale) {
 		this.scale = scale;
 		updateMatrix = true;
+	}
+
+	/**
+	 * Returns an instance of this model. The model shares the same vertex array and material as the original one, but different position information and uniform holder.
+	 *
+	 * @return The instanced  model
+	 */
+	public Model getInstance() {
+		return new Model(this);
 	}
 
 	/**

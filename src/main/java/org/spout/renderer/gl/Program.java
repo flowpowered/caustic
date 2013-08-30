@@ -136,12 +136,20 @@ public abstract class Program extends Creatable implements GLVersioned {
 	public abstract void setUniform(String name, float f);
 
 	/**
-	 * Sets a uniform {@link org.spout.math.vector.Vector3} in the shader to the desired value.
+	 * Sets a uniform {@link org.spout.math.vector.Vector2} in the shader to the desired value.
 	 *
 	 * @param name The name of the uniform to set
 	 * @param v The vector value
 	 */
 	public abstract void setUniform(String name, Vector2 v);
+
+	/**
+	 * Sets a uniform {@link org.spout.math.vector.Vector2} array in the shader to the desired value.
+	 *
+	 * @param name The name of the uniform to set
+	 * @param vs The vector array value
+	 */
+	public abstract void setUniform(String name, Vector2[] vs);
 
 	/**
 	 * Sets a uniform {@link org.spout.math.vector.Vector3} in the shader to the desired value.
@@ -160,7 +168,7 @@ public abstract class Program extends Creatable implements GLVersioned {
 	public abstract void setUniform(String name, Vector3[] vs);
 
 	/**
-	 * Sets a uniform {@link org.spout.math.vector.Vector3} in the shader to the desired value.
+	 * Sets a uniform {@link org.spout.math.vector.Vector4} in the shader to the desired value.
 	 *
 	 * @param name The name of the uniform to set
 	 * @param v The vector value

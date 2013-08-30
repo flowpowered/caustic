@@ -101,6 +101,8 @@ public class GL30FrameBuffer extends FrameBuffer {
 			buffer.flip();
 			GL20.glDrawBuffers(buffer);
 		}
+		// Disable input buffers
+		GL11.glReadBuffer(GL11.GL_NONE);
 		// Check for success
 		if (GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER) != GL30.GL_FRAMEBUFFER_COMPLETE) {
 			throw new IllegalStateException("Failed to create the frame buffer");
@@ -150,6 +152,7 @@ public class GL30FrameBuffer extends FrameBuffer {
 	@Override
 	public void unbind() {
 		checkCreated();
+		// Bind the frame buffer
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
 		// Check for errors
 		LWJGLUtil.checkForOpenGLError();

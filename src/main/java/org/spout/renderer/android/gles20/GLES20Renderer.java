@@ -36,7 +36,6 @@ import android.opengl.GLSurfaceView;
 
 import org.spout.math.matrix.Matrix4;
 import org.spout.renderer.Material;
-import org.spout.renderer.model.Model;
 import org.spout.renderer.android.AndroidUtil;
 import org.spout.renderer.data.Color;
 import org.spout.renderer.data.RenderList;
@@ -44,6 +43,8 @@ import org.spout.renderer.gl.Capability;
 import org.spout.renderer.gl.FrameBuffer;
 import org.spout.renderer.gl.Program;
 import org.spout.renderer.gl.Renderer;
+import org.spout.renderer.model.Model;
+import org.spout.renderer.util.Rectangle;
 
 /**
  * An OpenGLES 2.0 implementation of {@link org.spout.renderer.gl.Renderer}.
@@ -66,8 +67,6 @@ public class GLES20Renderer extends Renderer implements GLSurfaceView.Renderer {
 		// Set the title
 		Display.setTitle(windowTitle);
 		*/
-		// Set the view port to the window
-		GLES20.glViewport(0, 0, windowWidth, windowHeight);
 		// Set the alpha blending function for transparency
 		GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
 		// Check for errors
@@ -120,6 +119,8 @@ public class GLES20Renderer extends Renderer implements GLSurfaceView.Renderer {
 		GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 		// Keep track of all cleared frame buffers so we don't clear one twice
 		final Set<FrameBuffer> clearedFrameBuffers = new HashSet<>();
+		// Set the default view port
+		GLES20.glViewport(0, 0, windowWidth, windowHeight);
 		// Render all the created models
 		for (RenderList renderList : renderLists) {
 			if (!renderList.isActive()) {
@@ -135,6 +136,11 @@ public class GLES20Renderer extends Renderer implements GLSurfaceView.Renderer {
 					// Clear the last render on the frame buffer
 					GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 					clearedFrameBuffers.add(frameBuffer);
+				}
+				// Set the view port if necessary
+				if (frameBuffer.hasViewPort()) {
+					final Rectangle viewPort = frameBuffer.getViewPort();
+					GLES20.glViewport(viewPort.getX(), viewPort.getY(), viewPort.getWidth(), viewPort.getHeight());
 				}
 			}
 			for (Model model : renderList) {
@@ -162,6 +168,10 @@ public class GLES20Renderer extends Renderer implements GLSurfaceView.Renderer {
 			}
 			if (frameBuffer != null) {
 				frameBuffer.unbind();
+				// Reset the view port if necessary
+				if (frameBuffer.hasViewPort()) {
+					GLES20.glViewport(0, 0, this.windowWidth, this.windowHeight);
+				}
 			}
 		}
 		// Check for errors

@@ -68,6 +68,13 @@ public class GLES20Texture extends Texture {
 			GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAX_ANISOTROPY, anisotropicFiltering);
 		}
 		*/
+		// TODO: Set the compare mode, if any
+		/*if (compareMode != null) {
+			// Note: GL14.GL_COMPARE_R_TO_TEXTURE and GL30.GL_COMPARE_REF_TO_TEXTURE are the same, just a different name
+			// No need for a different call in the GL30 implementation
+			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GL14.GL_TEXTURE_COMPARE_MODE, GL14.GL_COMPARE_R_TO_TEXTURE);
+			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GL14.GL_TEXTURE_COMPARE_FUNC, compareMode.getGLConstant());
+		}*/
 		// Unbind the texture
 		GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
 		// Update the state

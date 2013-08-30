@@ -31,6 +31,7 @@ import java.nio.ByteBuffer;
 import org.lwjgl.opengl.EXTTextureFilterAnisotropic;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL14;
 import org.lwjgl.util.glu.GLU;
 
 import org.spout.renderer.gl.Texture;
@@ -66,6 +67,13 @@ public class GL20Texture extends Texture {
 		// Set the anisotropic filtering value, if any
 		if (anisotropicFiltering > 0) {
 			GL11.glTexParameterf(GL11.GL_TEXTURE_2D, EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropicFiltering);
+		}
+		// Set the compare mode, if any
+		if (compareMode != null) {
+			// Note: GL14.GL_COMPARE_R_TO_TEXTURE and GL30.GL_COMPARE_REF_TO_TEXTURE are the same, just a different name
+			// No need for a different call in the GL30 implementation
+			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_COMPARE_MODE, GL14.GL_COMPARE_R_TO_TEXTURE);
+			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_COMPARE_FUNC, compareMode.getGLConstant());
 		}
 		// Unbind the texture
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);

@@ -29,9 +29,11 @@ package org.spout.renderer;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Level;
@@ -77,6 +79,10 @@ public final class GLImplementation {
 	 */
 	public static GLFactory get(GLVersion glVersion) {
 		return implementations.get(glVersion);
+	}
+
+	public static Set<GLVersion> getAvailableVersions() {
+		return Collections.unmodifiableSet(implementations.keySet());
 	}
 
 	private static void loadDefaults() {

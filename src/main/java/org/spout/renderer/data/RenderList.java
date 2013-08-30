@@ -54,12 +54,29 @@ import org.spout.renderer.gl.Capability;
 public class RenderList implements List<Model>, Comparable<RenderList> {
 	private final UniformHolder uniforms = new UniformHolder();
 	private final String name;
-	private final List<Model> models = new ArrayList<>();
+	private final List<Model> models;
 	private Camera camera;
 	private final int index;
 	private boolean active = true;
 	private final Set<Capability> capabilities = EnumSet.noneOf(Capability.class);
 	private FrameBuffer frameBuffer;
+
+	/**
+	 * Constructs a new render list from the provided one. The new render list will be a copy of the previous one, but will only share the model list.
+	 *
+	 * @param list The list to derive this one from
+	 * @param name The name of the new render list
+	 * @param index The index of the new render list
+	 */
+	protected RenderList(RenderList list, String name, int index) {
+		this.uniforms.addAll(list.uniforms);
+		this.name = name;
+		this.models = list.models;
+		this.camera = list.camera;
+		this.index = index;
+		this.capabilities.addAll(list.capabilities);
+		this.frameBuffer = list.frameBuffer;
+	}
 
 	/**
 	 * Creates a new render list from the name, the camera and the priority index.
@@ -72,6 +89,7 @@ public class RenderList implements List<Model>, Comparable<RenderList> {
 		this.name = name;
 		this.camera = camera;
 		this.index = index;
+		this.models = new ArrayList<>();
 		uniforms.add(new Matrix4Uniform("projectionMatrix", camera.getProjectionMatrix()));
 		uniforms.add(new Matrix4Uniform("viewMatrix", camera.getViewMatrix()));
 		uniforms.add(new Matrix4Uniform("normalMatrix", Matrix4.IDENTITY));
@@ -249,6 +267,18 @@ public class RenderList implements List<Model>, Comparable<RenderList> {
 		uniforms.getMatrix4("projectionMatrix").set(camera.getProjectionMatrix());
 		uniforms.getMatrix4("viewMatrix").set(camera.getViewMatrix());
 		program.upload(uniforms);
+	}
+
+	/**
+	 * Returns an instance of this model list. This instance will be a copy of the current list (with the exception of the name and index), but will only share the model list. Changes to models in the
+	 * main list or its instance will be reflected in both.
+	 *
+	 * @param name The name of the model list instance
+	 * @param index The index of the model list instance
+	 * @return The instanced render list
+	 */
+	public RenderList getInstance(String name, int index) {
+		return new RenderList(this, name, index);
 	}
 
 	@Override

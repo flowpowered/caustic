@@ -46,6 +46,7 @@ public abstract class Renderer extends Creatable implements GLVersioned {
 	// Window title
 	protected String windowTitle = "Caustic renderer";
 	// Window size
+	// TODO: update this to a view port
 	protected int windowWidth = 640;
 	protected int windowHeight = 480;
 	// MSAA value

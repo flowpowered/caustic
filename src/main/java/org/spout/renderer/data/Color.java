@@ -30,9 +30,10 @@ import org.spout.math.GenericMath;
 import org.spout.math.vector.Vector4;
 
 /**
- * Represents an immutable color with red, green and blue components, and an optional alpha component. When no alpha component is present, the return value is 255 (opaque). A color can be normalized (all
- * components have their value between 0 and 1) or not (components are in the range of 0 to 255).
+ * Represents an immutable color with red, green and blue components, and an optional alpha component. When no alpha component is present, the return value is 255 (opaque). A color can be normalized
+ * (all components have their value between 0 and 1) or not (components are in the range of 0 to 255).
  */
+// TODO: extending vector4 might not be that of a good idea because it's immutable and only vector4 objects are returned by the methods not overridden in this class, which can't be used directly
 public class Color extends Vector4 {
 	/**
 	 * The color white.
@@ -60,8 +61,7 @@ public class Color extends Vector4 {
 	}
 
 	/**
-	 * Constructs a new color from the color components as doubles. Alpha will be 255 (opaque).
-	 * Colors are assumed to be non-normalized.
+	 * Constructs a new color from the color components as doubles. Alpha will be 255 (opaque). Colors are assumed to be non-normalized.
 	 *
 	 * @param r The red component
 	 * @param g The green component
@@ -72,8 +72,7 @@ public class Color extends Vector4 {
 	}
 
 	/**
-	 * Constructs a new color from the color components as floats. Alpha will be 255 {opaque)
-	 * Colors are assumed to be non-normalized.
+	 * Constructs a new color from the color components as floats. Alpha will be 255 {opaque) Colors are assumed to be non-normalized.
 	 *
 	 * @param r The red component
 	 * @param g The green component
@@ -84,8 +83,8 @@ public class Color extends Vector4 {
 	}
 
 	/**
-	 * Constructs a new color from the components as doubles. Only accepts values in the range of 0 - 1 for normalized Colors, or 0 - 255 for non-normalized Colors. Values outside of these ranges
-	 * will cause an {@link IllegalArgumentException}.
+	 * Constructs a new color from the components as doubles. Only accepts values in the range of 0 - 1 for normalized Colors, or 0 - 255 for non-normalized Colors. Values outside of these ranges will
+	 * cause an {@link IllegalArgumentException}.
 	 *
 	 * @param r The red component
 	 * @param g The green component
@@ -97,8 +96,8 @@ public class Color extends Vector4 {
 	}
 
 	/**
-	 * Constructs a new color from the components as floats. Only accepts values in the range of 0 - 1 for normalized Colors, or 0 - 255 for non-normalized Colors. Values outside of these ranges
-	 * will cause an {@link IllegalArgumentException}.
+	 * Constructs a new color from the components as floats. Only accepts values in the range of 0 - 1 for normalized Colors, or 0 - 255 for non-normalized Colors. Values outside of these ranges will
+	 * cause an {@link IllegalArgumentException}.
 	 *
 	 * @param r The red component
 	 * @param g The green component
@@ -177,10 +176,9 @@ public class Color extends Vector4 {
 	}
 
 	/**
-	 * Converts the components of a color, as specified by the HSB model, to an equivalent set of values for the default RGB model.
-	 * The <code>saturation</code> and <code>brightness</code> components should be floating-point values between zero and one (numbers in the range 0.0-1.0).
-	 * The <code>hue</code> component can be any floating-point number.
-	 * 
+	 * Converts the components of a color, as specified by the HSB model, to an equivalent set of values for the default RGB model. The <code>saturation</code> and <code>brightness</code> components
+	 * should be floating-point values between zero and one (numbers in the range 0.0-1.0). The <code>hue</code> component can be any floating-point number.
+	 *
 	 * @param hue The hue component of the color
 	 * @param saturation The saturation of the color
 	 * @param brightness The brightness of the color

@@ -105,6 +105,8 @@ public class GLES20FrameBuffer extends FrameBuffer {
 			buffer.flip();
 			// TODO: Fix draw call for mobile: GLES20.glDrawBuffers(buffer);
 		}
+		// Disable input buffers
+		// TODO: Fix read call for mobile: glReadBuffer(GL_NONE);
 		// Check for success
 		if (GLES20.glCheckFramebufferStatus(GLES20.GL_FRAMEBUFFER) != GLES20.GL_FRAMEBUFFER_COMPLETE) {
 			throw new IllegalStateException("Failed to create the frame buffer");

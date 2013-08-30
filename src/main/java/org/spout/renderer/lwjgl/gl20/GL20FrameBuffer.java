@@ -109,8 +109,11 @@ public class GL20FrameBuffer extends FrameBuffer {
 			buffer.flip();
 			GL20.glDrawBuffers(buffer);
 		}
+		// Disable input buffers
+		GL11.glReadBuffer(GL11.GL_NONE);
 		// Check for success
 		if (EXTFramebufferObject.glCheckFramebufferStatusEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT) != EXTFramebufferObject.GL_FRAMEBUFFER_COMPLETE_EXT) {
+			System.out.println(Integer.toHexString(EXTFramebufferObject.glCheckFramebufferStatusEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT)));
 			throw new IllegalStateException("Failed to create the frame buffer");
 		}
 		// Unbind the frame buffer
@@ -139,6 +142,7 @@ public class GL20FrameBuffer extends FrameBuffer {
 	@Override
 	public void bind() {
 		checkCreated();
+		// Bind the frame buffer
 		EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, id);
 		// Check for errors
 		LWJGLUtil.checkForOpenGLError();

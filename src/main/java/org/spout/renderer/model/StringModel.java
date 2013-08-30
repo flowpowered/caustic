@@ -82,8 +82,8 @@ import org.spout.renderer.util.CausticUtil;
 public class StringModel extends Model {
 	private static final int GLYPH_INDEX_COUNT = 6;
 	private static final Pattern COLOR_PATTERN = Pattern.compile("#[a-fA-F\\d]{1,8}");
-	private final TCharIntMap glyphIndexes = new TCharIntHashMap(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, (char) 0, -1);
-	private final TCharFloatMap glyphOffsets = new TCharFloatHashMap();
+	private final TCharIntMap glyphIndexes;
+	private final TCharFloatMap glyphOffsets;
 	private final int glyphPadding;
 	private final float worldGlyphPadding;
 	private final float worldLineHeight;
@@ -92,15 +92,15 @@ public class StringModel extends Model {
 	private final TIntObjectMap<Color> colorIndices = new TIntObjectHashMap<>();
 
 	/**
-	 * Constructs a new string model from the provided one. {@link Model#Model()} defines the copied information in the {@link Model} class. For the string model, the glyph indexes,
-	 * offsets, padding and line heights are copied. The string and color information remain empty.
+	 * Constructs a new string model from the provided one. {@link Model#Model()} defines the reused and copied information in the {@link Model} class. For the string model, the glyph indexes, offsets,
+	 * padding and line heights are reused. The string and color information remain empty.
 	 *
 	 * @param model The model to derive this one from
 	 */
 	protected StringModel(StringModel model) {
 		super(model);
-		this.glyphIndexes.putAll(model.glyphIndexes);
-		this.glyphOffsets.putAll(model.glyphOffsets);
+		this.glyphIndexes = model.glyphIndexes;
+		this.glyphOffsets = model.glyphOffsets;
 		this.glyphPadding = model.glyphPadding;
 		this.worldGlyphPadding = model.worldGlyphPadding;
 		this.worldLineHeight = model.worldLineHeight;
@@ -115,6 +115,7 @@ public class StringModel extends Model {
 	 * @param windowWidth The window with
 	 */
 	public StringModel(GLFactory factory, CharSequence glyphs, Font font, int windowWidth) {
+		super();
 		if (factory == null) {
 			throw new IllegalStateException("GL version cannot be null");
 		}
@@ -127,6 +128,10 @@ public class StringModel extends Model {
 		if (windowWidth <= 0) {
 			throw new IllegalStateException("The window width must be greater than zero");
 		}
+		// Stores the first vertex index for each glyph
+		glyphIndexes = new TCharIntHashMap(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, (char) 0, -1);
+		// Stores the offset (width) of each glyph
+		glyphOffsets = new TCharFloatHashMap();
 		// Create temporary graphics, font metrics and render context
 		final Graphics graphics = new BufferedImage(1, 1, BufferedImage.TYPE_4BYTE_ABGR).getGraphics();
 		graphics.setFont(font);
@@ -259,6 +264,16 @@ public class StringModel extends Model {
 	 */
 	public String getString() {
 		return rawString;
+	}
+
+	/**
+	 * Returns an instance of this string model. The model shares the same glyphs as the original one, but different position information and uniform holder.
+	 *
+	 * @return The instanced string model
+	 */
+	@Override
+	public StringModel getInstance() {
+		return new StringModel(this);
 	}
 
 	private VertexArray generateMesh(GLFactory factory, CharSequence glyphs, int windowWidth, TCharIntMap glyphWidths, int textureWidth, int textureHeight) {

@@ -27,7 +27,6 @@
 package org.spout.renderer.util;
 
 import javax.imageio.ImageIO;
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -64,7 +63,7 @@ public final class CausticUtil {
 	public static ByteBuffer getImageData(InputStream source, Format format, Rectangle size) {
 		try {
 			final BufferedImage image = ImageIO.read(source);
-			size.setRect(0, 0, image.getWidth(), image.getHeight());
+			size.setSize(image.getWidth(), image.getHeight());
 			return getImageData(image, format);
 		} catch (Exception ex) {
 			throw new IllegalStateException("Unreadable texture image data", ex);

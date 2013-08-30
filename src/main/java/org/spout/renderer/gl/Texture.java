@@ -48,7 +48,10 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	// Minimisation and magnification modes
 	protected FilterMode minFilter = FilterMode.NEAREST;
 	protected FilterMode magFilter = FilterMode.NEAREST;
+	// Anisotropic filtering
 	protected float anisotropicFiltering = 0;
+	// Compare modes for PCF
+	protected CompareMode compareMode = null;
 	// The texture image data
 	protected ByteBuffer imageData;
 	// Texture image dimensions
@@ -179,6 +182,15 @@ public abstract class Texture extends Creatable implements GLVersioned {
 			throw new IllegalArgumentException("Mimpmap filters cannot be used for texture magnification");
 		}
 		this.magFilter = magFilter;
+	}
+
+	/**
+	 * Sets the compare mode. If null, this feature is deactivated. Used this for PCF with shadow samplers.
+	 *
+	 * @param compareMode The compare mode
+	 */
+	public void setCompareMode(CompareMode compareMode) {
+		this.compareMode = compareMode;
 	}
 
 	/**
@@ -393,6 +405,31 @@ public abstract class Texture extends Creatable implements GLVersioned {
 		public boolean needsMipMaps() {
 			return this == NEAREST_MIPMAP_NEAREST || this == LINEAR_MIPMAP_NEAREST
 					|| this == NEAREST_MIPMAP_LINEAR || this == LINEAR_MIPMAP_LINEAR;
+		}
+	}
+
+	public static enum CompareMode {
+		LEQUAL(0x203), // GL11.GL_LEQUAL
+		GEQUAL(0x206), // GL11.GL_GEQUAL
+		LESS(0x201), // GL11.GL_LESS
+		GREATER(0x204), // GL11.GL_GREATER
+		EQUAL(0x202), // GL11.GL_EQUAL
+		NOTEQUAL(0x205), // GL11.GL_NOTEQUAL
+		ALWAYS(0x206), // GL11.GL_ALWAYS
+		NEVER(0x200); // GL11.GL_NEVER
+		private final int glConstant;
+
+		private CompareMode(int glConstant) {
+			this.glConstant = glConstant;
+		}
+
+		/**
+		 * Gets the OpenGL constant for this texture filter.
+		 *
+		 * @return The OpenGL Constant
+		 */
+		public int getGLConstant() {
+			return glConstant;
 		}
 	}
 }

@@ -201,6 +201,22 @@ public class GL20Program extends Program {
 	}
 
 	@Override
+	public void setUniform(String name, Vector2[] vs) {
+		checkCreated();
+		if (!uniforms.containsKey(name)) {
+			return;
+		}
+		final FloatBuffer vectorBuffer = CausticUtil.createFloatBuffer(vs.length * 2);
+		for (Vector2 v : vs) {
+			vectorBuffer.put(v.getX());
+			vectorBuffer.put(v.getY());
+		}
+		vectorBuffer.flip();
+		GL20.glUniform2(uniforms.get(name), vectorBuffer);
+		LWJGLUtil.checkForOpenGLError();
+	}
+
+	@Override
 	public void setUniform(String name, Vector3 v) {
 		checkCreated();
 		if (!uniforms.containsKey(name)) {

@@ -200,6 +200,24 @@ public class GLES20Program extends Program {
 	}
 
 	@Override
+	public void setUniform(String name, Vector2[] vs) {
+		checkCreated();
+		if (!uniforms.containsKey(name)) {
+			return;
+		}
+		int count = 0;
+		final FloatBuffer vectorBuffer = CausticUtil.createFloatBuffer(vs.length * 2);
+		for (Vector2 v : vs) {
+			vectorBuffer.put(v.getX());
+			vectorBuffer.put(v.getY());
+			count++;
+		}
+		vectorBuffer.flip();
+		GLES20.glUniform2fv(uniforms.get(name), count, vectorBuffer);
+		AndroidUtil.checkForOpenGLError();
+	}
+
+	@Override
 	public void setUniform(String name, Vector3 v) {
 		checkCreated();
 		if (!uniforms.containsKey(name)) {

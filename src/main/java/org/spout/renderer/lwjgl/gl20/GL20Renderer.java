@@ -46,6 +46,7 @@ import org.spout.renderer.gl.FrameBuffer;
 import org.spout.renderer.gl.Program;
 import org.spout.renderer.gl.Renderer;
 import org.spout.renderer.lwjgl.LWJGLUtil;
+import org.spout.renderer.util.Rectangle;
 
 /**
  * An OpenGL 2.0 implementation of {@link Renderer}.
@@ -70,8 +71,6 @@ public class GL20Renderer extends Renderer {
 		}
 		// Set the title
 		Display.setTitle(this.windowTitle);
-		// Set the view port to the window
-		GL11.glViewport(0, 0, this.windowWidth, this.windowHeight);
 		// Set the alpha blending function for transparency
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		// Check for errors
@@ -132,6 +131,8 @@ public class GL20Renderer extends Renderer {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		// Keep track of all cleared frame buffers so we don't clear one twice
 		final Set<FrameBuffer> clearedFrameBuffers = new HashSet<>();
+		// Set the default view port
+		GL11.glViewport(0, 0, this.windowWidth, this.windowHeight);
 		// Render all the created models
 		for (RenderList renderList : renderLists) {
 			if (!renderList.isActive()) {
@@ -147,6 +148,11 @@ public class GL20Renderer extends Renderer {
 					// Clear the last render on the frame buffer
 					GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 					clearedFrameBuffers.add(frameBuffer);
+				}
+				// Set the view port if necessary
+				if (frameBuffer.hasViewPort()) {
+					final Rectangle viewPort = frameBuffer.getViewPort();
+					GL11.glViewport(viewPort.getX(), viewPort.getY(), viewPort.getWidth(), viewPort.getHeight());
 				}
 			}
 			for (Model model : renderList) {
@@ -174,6 +180,10 @@ public class GL20Renderer extends Renderer {
 			}
 			if (frameBuffer != null) {
 				frameBuffer.unbind();
+				// Reset the view port if necessary
+				if (frameBuffer.hasViewPort()) {
+					GL11.glViewport(0, 0, this.windowWidth, this.windowHeight);
+				}
 			}
 		}
 		// Check for errors
