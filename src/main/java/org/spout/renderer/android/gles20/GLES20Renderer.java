@@ -28,9 +28,16 @@ package org.spout.renderer.android.gles20;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.ShortBuffer;
 import java.util.HashSet;
 import java.util.Set;
 
+import android.graphics.Bitmap;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 
@@ -44,6 +51,7 @@ import org.spout.renderer.gl.FrameBuffer;
 import org.spout.renderer.gl.Program;
 import org.spout.renderer.gl.Renderer;
 import org.spout.renderer.model.Model;
+import org.spout.renderer.util.CausticUtil;
 import org.spout.renderer.util.Rectangle;
 
 /**
@@ -98,6 +106,27 @@ public class GLES20Renderer extends Renderer implements GLSurfaceView.Renderer {
 		GLES20.glEnable(capability.getGLConstant());
 		// Check for errors
 		AndroidUtil.checkForOpenGLError();
+	}
+
+	@Override
+	public void dumpScreenshot(OutputStream stream) throws IOException {
+		// TODO get width and height of context
+		final int width = 1920;
+		final int height = 1080;
+		final int totalSize = width * height;
+		ByteBuffer buffer = CausticUtil.createByteBuffer(width * height * 3);
+
+		GLES20.glReadPixels(0, 0, width, height, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, buffer);
+		short sdata[] = new short[totalSize];
+		for (int i = 0; i < totalSize; ++i) {
+			//BGR-565 to RGB-565
+			short v = sdata[i];
+			sdata[i] = (short) (((v&0x1f) << 11) | (v&0x7e0) | ((v&0xf800) >> 11));
+		}
+
+		Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+		bitmap.copyPixelsFromBuffer(ShortBuffer.wrap(sdata));
+		bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
 	}
 
 	@Override

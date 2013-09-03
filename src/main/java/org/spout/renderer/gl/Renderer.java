@@ -26,6 +26,8 @@
  */
 package org.spout.renderer.gl;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -245,4 +247,10 @@ public abstract class Renderer extends Creatable implements GLVersioned {
 	public UniformHolder getUniforms() {
 		return uniforms;
 	}
+
+	/**
+	 * Dumps a Screenshot to the specified OutputStream.
+	 * @param stream
+	 */
+	public abstract void dumpScreenshot(OutputStream stream) throws IOException;
 }

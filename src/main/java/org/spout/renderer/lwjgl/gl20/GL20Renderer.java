@@ -26,6 +26,11 @@
  */
 package org.spout.renderer.lwjgl.gl20;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -46,7 +51,10 @@ import org.spout.renderer.gl.FrameBuffer;
 import org.spout.renderer.gl.Program;
 import org.spout.renderer.gl.Renderer;
 import org.spout.renderer.lwjgl.LWJGLUtil;
+import org.spout.renderer.util.CausticUtil;
 import org.spout.renderer.util.Rectangle;
+
+import javax.imageio.ImageIO;
 
 /**
  * An OpenGL 2.0 implementation of {@link Renderer}.
@@ -110,6 +118,28 @@ public class GL20Renderer extends Renderer {
 		GL11.glEnable(capability.getGLConstant());
 		// Check for errors
 		LWJGLUtil.checkForOpenGLError();
+	}
+
+	@Override
+	public void dumpScreenshot(OutputStream stream) throws IOException {
+		final DisplayMode mode = Display.getDisplayMode();
+		final int width = mode.getWidth();
+		final int height = mode.getHeight();
+		final ByteBuffer buffer = CausticUtil.createByteBuffer(width * height * 3);
+		GL11.glReadBuffer(GL11.GL_FRONT);
+		GL11.glReadPixels(0, 0, width, height, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, buffer);
+		final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
+		final byte[] data = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				final int srcIndex = (x + y * width) * 3;
+				final int destIndex = (x + (height - y - 1) * width) * 3;
+				data[destIndex + 2] = buffer.get(srcIndex);
+				data[destIndex + 1] = buffer.get(srcIndex + 1);
+				data[destIndex] = buffer.get(srcIndex + 2);
+			}
+		}
+		ImageIO.write(image, "PNG", stream);
 	}
 
 	@Override
