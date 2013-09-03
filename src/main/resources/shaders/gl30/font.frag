@@ -1,3 +1,5 @@
+// $texture_layout: diffuse = 0
+
 #version 330
 
 in vec2 textureUV;

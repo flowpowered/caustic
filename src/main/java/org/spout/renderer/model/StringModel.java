@@ -368,11 +368,6 @@ public class StringModel extends Model {
 		fragShader.setType(ShaderType.FRAGMENT);
 		fragShader.create();
 		program.addShader(fragShader);
-		if (version == GLVersion.GL20 || version == GLVersion.GLES20) {
-			program.addAttributeLayout("position", 0);
-			program.addAttributeLayout("textureCoords", 1);
-		}
-		program.addTextureLayout("diffuse", 0);
 		program.create();
 		return new Material(program);
 	}

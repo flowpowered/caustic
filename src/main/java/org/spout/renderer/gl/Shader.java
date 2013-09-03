@@ -31,7 +31,9 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.TObjectIntMap;
+import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 
 import org.spout.renderer.Creatable;
@@ -41,11 +43,15 @@ import org.spout.renderer.GLVersioned;
  * Represents an OpenGL shader. The shader source and type must be set with {@link #setSource(java.io.InputStream)} and {@link #setType(Shader.ShaderType)} respectively before it can be created.
  */
 public abstract class Shader extends Creatable implements GLVersioned {
-	private static final Pattern ATTRIBUTE_LAYOUT_TOKEN_PATTERN = Pattern.compile("\\$attrib_layout *: *(\\w+) *\\= *(\\d+)");
+	private static final char TOKEN_SYMBOL = '$';
+	private static final String ATTRIBUTE_LAYOUT_TOKEN = "attrib_layout";
+	private static final String TEXTURE_LAYOUT_TOKEN = "texture_layout";
+	private static final Pattern LAYOUT_TOKEN_PATTERN = Pattern.compile("\\" + TOKEN_SYMBOL + "(" + ATTRIBUTE_LAYOUT_TOKEN + "|" + TEXTURE_LAYOUT_TOKEN + ") *: *(\\w+) *= *(\\d+)");
 	protected int id;
 	protected CharSequence source;
 	protected ShaderType type;
 	private TObjectIntMap<String> attributeLayouts;
+	private TIntObjectMap<String> textureLayouts;
 
 	@Override
 	public void create() {
@@ -59,6 +65,7 @@ public abstract class Shader extends Creatable implements GLVersioned {
 		id = 0;
 		type = null;
 		attributeLayouts = null;
+		textureLayouts = null;
 		super.destroy();
 	}
 
@@ -95,16 +102,24 @@ public abstract class Shader extends Creatable implements GLVersioned {
 	 */
 	public void setSource(CharSequence source) {
 		this.source = source;
-		// Look for attribute layout tokens
-		// This replaces the GL30 "layout(location = x)" feature missing from GL20
+		// Look for layout tokens
+		// This replaces the GL30 "layout(location = x)" and GL42 "layout(binding = x) features missing from GL20
 		final String[] lines = source.toString().split("\n");
 		for (String line : lines) {
-			final Matcher matcher = ATTRIBUTE_LAYOUT_TOKEN_PATTERN.matcher(line);
+			final Matcher matcher = LAYOUT_TOKEN_PATTERN.matcher(line);
 			while (matcher.find()) {
-				if (attributeLayouts == null) {
-					attributeLayouts = new TObjectIntHashMap<>();
+				final String token = matcher.group(1);
+				if (token.equals(ATTRIBUTE_LAYOUT_TOKEN)) {
+					if (attributeLayouts == null) {
+						attributeLayouts = new TObjectIntHashMap<>();
+					}
+					attributeLayouts.put(matcher.group(2), Integer.parseInt(matcher.group(3)));
+				} else if (token.equals(TEXTURE_LAYOUT_TOKEN)) {
+					if (textureLayouts == null) {
+						textureLayouts = new TIntObjectHashMap<>();
+					}
+					textureLayouts.put(Integer.parseInt(matcher.group(3)), matcher.group(2));
 				}
-				attributeLayouts.put(matcher.group(1), Integer.parseInt(matcher.group(2)));
 			}
 		}
 	}
@@ -134,6 +149,15 @@ public abstract class Shader extends Creatable implements GLVersioned {
 	 */
 	protected TObjectIntMap<String> getAttributeLayouts() {
 		return attributeLayouts;
+	}
+
+	/**
+	 * Returns the texture layouts parsed from the tokens in the shader source.
+	 *
+	 * @return A map of the texture name to the layout index.
+	 */
+	protected TIntObjectMap<String> getTextureLayouts() {
+		return textureLayouts;
 	}
 
 	/**

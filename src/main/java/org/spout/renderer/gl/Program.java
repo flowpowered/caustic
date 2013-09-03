@@ -240,6 +240,12 @@ public abstract class Program extends Creatable implements GLVersioned {
 			}
 			attributeLayouts.putAll(shader.getAttributeLayouts());
 		}
+		if (shader.getTextureLayouts() != null) {
+			if (textureLayouts == null) {
+				textureLayouts = new TIntObjectHashMap<>();
+			}
+			textureLayouts.putAll(shader.getTextureLayouts());
+		}
 	}
 
 	/**
