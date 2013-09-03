@@ -28,6 +28,11 @@ package org.spout.renderer.gl;
 
 import java.io.InputStream;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import gnu.trove.map.TObjectIntMap;
+import gnu.trove.map.hash.TObjectIntHashMap;
 
 import org.spout.renderer.Creatable;
 import org.spout.renderer.GLVersioned;
@@ -36,9 +41,11 @@ import org.spout.renderer.GLVersioned;
  * Represents an OpenGL shader. The shader source and type must be set with {@link #setSource(java.io.InputStream)} and {@link #setType(Shader.ShaderType)} respectively before it can be created.
  */
 public abstract class Shader extends Creatable implements GLVersioned {
+	private static final Pattern ATTRIBUTE_LAYOUT_TOKEN_PATTERN = Pattern.compile("\\$attrib_layout *: *(\\w+) *\\= *(\\d+)");
 	protected int id;
 	protected CharSequence source;
 	protected ShaderType type;
+	private TObjectIntMap<String> attributeLayouts;
 
 	@Override
 	public void create() {
@@ -51,6 +58,7 @@ public abstract class Shader extends Creatable implements GLVersioned {
 	public void destroy() {
 		id = 0;
 		type = null;
+		attributeLayouts = null;
 		super.destroy();
 	}
 
@@ -87,6 +95,18 @@ public abstract class Shader extends Creatable implements GLVersioned {
 	 */
 	public void setSource(CharSequence source) {
 		this.source = source;
+		// Look for attribute layout tokens
+		// This replaces the GL30 "layout(location = x)" feature missing from GL20
+		final String[] lines = source.toString().split("\n");
+		for (String line : lines) {
+			final Matcher matcher = ATTRIBUTE_LAYOUT_TOKEN_PATTERN.matcher(line);
+			while (matcher.find()) {
+				if (attributeLayouts == null) {
+					attributeLayouts = new TObjectIntHashMap<>();
+				}
+				attributeLayouts.put(matcher.group(1), Integer.parseInt(matcher.group(2)));
+			}
+		}
 	}
 
 	/**
@@ -105,6 +125,15 @@ public abstract class Shader extends Creatable implements GLVersioned {
 	 */
 	public ShaderType getType() {
 		return type;
+	}
+
+	/**
+	 * Returns the attribute layouts parsed from the tokens in the shader source.
+	 *
+	 * @return A map of the attribute name to the layout index.
+	 */
+	protected TObjectIntMap<String> getAttributeLayouts() {
+		return attributeLayouts;
 	}
 
 	/**

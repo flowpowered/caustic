@@ -26,6 +26,8 @@
  */
 package org.spout.renderer.gl;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
@@ -232,6 +234,12 @@ public abstract class Program extends Creatable implements GLVersioned {
 	 */
 	public void addShader(Shader shader) {
 		shaders.put(shader.getType(), shader);
+		if (shader.getAttributeLayouts() != null) {
+			if (attributeLayouts == null) {
+				attributeLayouts = new TObjectIntHashMap<>();
+			}
+			attributeLayouts.putAll(shader.getAttributeLayouts());
+		}
 	}
 
 	/**
@@ -242,6 +250,15 @@ public abstract class Program extends Creatable implements GLVersioned {
 	 */
 	public Shader getShader(ShaderType type) {
 		return shaders.get(type);
+	}
+
+	/**
+	 * Returns all the shaders in this program.
+	 *
+	 * @return An unmodifiable collection of all the shaders in this program
+	 */
+	public Collection<Shader> getShaders() {
+		return Collections.unmodifiableCollection(shaders.values());
 	}
 
 	/**

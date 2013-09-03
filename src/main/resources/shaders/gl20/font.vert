@@ -1,3 +1,6 @@
+// $attrib_layout: position = 0
+// $attrib_layout: textureCoords = 1
+
 #version 120
 
 attribute vec2 position;
