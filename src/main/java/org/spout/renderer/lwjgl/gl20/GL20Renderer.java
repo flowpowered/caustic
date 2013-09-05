@@ -121,19 +121,6 @@ public class GL20Renderer extends Renderer {
 		GL11.glReadBuffer(GL11.GL_FRONT);
 		GL11.glReadPixels(0, 0, windowWidth, windowHeight, format.getGLConstant(), GL11.GL_UNSIGNED_BYTE, buffer);
 		return buffer;
-
-		/*final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
-		final byte[] data = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
-				final int srcIndex = (x + y * width) * 3;
-				final int destIndex = (x + (height - y - 1) * width) * 3;
-				data[destIndex + 2] = buffer.get(srcIndex);
-				data[destIndex + 1] = buffer.get(srcIndex + 1);
-				data[destIndex] = buffer.get(srcIndex + 2);
-			}
-		}
-		ImageIO.write(image, "PNG", stream);*/
 	}
 
 	@Override
