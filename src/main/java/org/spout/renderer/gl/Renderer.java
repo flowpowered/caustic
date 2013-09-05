@@ -39,6 +39,7 @@ import org.spout.renderer.data.Color;
 import org.spout.renderer.data.RenderList;
 import org.spout.renderer.data.UniformHolder;
 import org.spout.renderer.gl.Texture.Format;
+import org.spout.renderer.util.Rectangle;
 
 /**
  * Represents an OpenGL renderer. Creating the renderer also created the OpenGL context, and so must be done before any other OpenGL object. To add models to render, add them to a render list, then
@@ -48,9 +49,7 @@ public abstract class Renderer extends Creatable implements GLVersioned {
 	// Window title
 	protected String windowTitle = "Caustic renderer";
 	// Window size
-	// TODO: update this to a view port
-	protected int windowWidth = 640;
-	protected int windowHeight = 480;
+	protected final Rectangle viewPort = new Rectangle();
 	// MSAA value
 	protected int msaa = 0;
 	// Properties
@@ -193,16 +192,7 @@ public abstract class Renderer extends Creatable implements GLVersioned {
 	 * @return The window width
 	 */
 	public int getWindowWidth() {
-		return windowWidth;
-	}
-
-	/**
-	 * Sets the window width.
-	 *
-	 * @param width The window width
-	 */
-	public void setWindowWidth(int width) {
-		windowWidth = width;
+		return viewPort.getWidth();
 	}
 
 	/**
@@ -211,27 +201,25 @@ public abstract class Renderer extends Creatable implements GLVersioned {
 	 * @return The window height
 	 */
 	public int getWindowHeight() {
-		return windowHeight;
+		return viewPort.getHeight();
 	}
 
 	/**
-	 * Sets the window height.
+	 * Returns the window view port, which is the dimensions and position of the window.
 	 *
-	 * @param height The window height
+	 * @return The view port
 	 */
-	public void setWindowHeight(int height) {
-		windowHeight = height;
+	public Rectangle getViewPort() {
+		return viewPort;
 	}
 
 	/**
-	 * Sets the window size parameters.
+	 * Sets the window view port, which is the dimensions and position of the window.
 	 *
-	 * @param windowWidth The window width
-	 * @param windowHeight the window height
+	 * @param viewPort The view port
 	 */
-	public void setWindowSize(int windowWidth, int windowHeight) {
-		setWindowWidth(windowWidth);
-		setWindowHeight(windowHeight);
+	public void setViewPort(Rectangle viewPort) {
+		this.viewPort.set(viewPort);
 	}
 
 	/**

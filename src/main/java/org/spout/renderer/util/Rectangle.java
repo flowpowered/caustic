@@ -171,4 +171,22 @@ public class Rectangle {
 		setPosition(x, y);
 		setSize(width, height);
 	}
+
+	/**
+	 * Sets the rectangle to be an exact copy of the provided one.
+	 *
+	 * @param rectangle The rectangle to copy
+	 */
+	public void set(Rectangle rectangle) {
+		set(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
+	}
+
+	/**
+	 * Returns the area of the rectangle.
+	 *
+	 * @return The rectangle area
+	 */
+	public int getArea() {
+		return width * height;
+	}
 }

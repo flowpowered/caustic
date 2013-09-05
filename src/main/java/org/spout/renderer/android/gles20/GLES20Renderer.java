@@ -65,7 +65,7 @@ public class GLES20Renderer extends Renderer implements GLSurfaceView.Renderer {
 		}
 		// TODO: Attempt to create the display
 		/*
-		Display.setDisplayMode(new DisplayMode(windowWidth, windowHeight));
+		Display.setDisplayMode(new DisplayMode(viewPort.getWidth(), viewPort.getHeight()));
 		Display.create(new PixelFormat().withSamples(MSAA), createContextAttributes());
 		// Set the title
 		Display.setTitle(windowTitle);
@@ -105,8 +105,8 @@ public class GLES20Renderer extends Renderer implements GLSurfaceView.Renderer {
 
 	@Override
 	public ByteBuffer readCurrentFrame(Format format) {
-		ByteBuffer buffer = CausticUtil.createByteBuffer(windowWidth * windowHeight * 3);
-		GLES20.glReadPixels(0, 0, windowWidth, windowHeight, format.getGLConstant(), GLES20.GL_UNSIGNED_BYTE, buffer);
+		ByteBuffer buffer = CausticUtil.createByteBuffer(viewPort.getArea() * 3);
+		GLES20.glReadPixels(viewPort.getX(), viewPort.getY(), viewPort.getWidth(), viewPort.getHeight(), format.getGLConstant(), GLES20.GL_UNSIGNED_BYTE, buffer);
 		// Check for errors
 		AndroidUtil.checkForGLESError();
 		return buffer;
@@ -132,7 +132,7 @@ public class GLES20Renderer extends Renderer implements GLSurfaceView.Renderer {
 		// Keep track of all cleared frame buffers so we don't clear one twice
 		final Set<FrameBuffer> clearedFrameBuffers = new HashSet<>();
 		// Set the default view port
-		GLES20.glViewport(0, 0, windowWidth, windowHeight);
+		GLES20.glViewport(viewPort.getX(), viewPort.getY(), viewPort.getWidth(), viewPort.getHeight());
 		// Render all the created models
 		for (RenderList renderList : renderLists) {
 			if (!renderList.isActive()) {
@@ -182,7 +182,7 @@ public class GLES20Renderer extends Renderer implements GLSurfaceView.Renderer {
 				frameBuffer.unbind();
 				// Reset the view port if necessary
 				if (frameBuffer.hasViewPort()) {
-					GLES20.glViewport(0, 0, this.windowWidth, this.windowHeight);
+					GLES20.glViewport(viewPort.getX(), viewPort.getY(), viewPort.getWidth(), viewPort.getHeight());
 				}
 			}
 		}

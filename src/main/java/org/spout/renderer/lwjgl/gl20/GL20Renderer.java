@@ -67,7 +67,7 @@ public class GL20Renderer extends Renderer {
 		}
 		// Attempt to create the display
 		try {
-			Display.setDisplayMode(new DisplayMode(this.windowWidth, this.windowHeight));
+			Display.setDisplayMode(new DisplayMode(viewPort.getWidth(), viewPort.getHeight()));
 			Display.create(new PixelFormat().withSamples(this.msaa), createContextAttributes());
 		} catch (LWJGLException ex) {
 			throw new IllegalStateException("Unable to create OpenGL context: " + ex.getMessage());
@@ -117,9 +117,9 @@ public class GL20Renderer extends Renderer {
 
 	@Override
 	public ByteBuffer readCurrentFrame(Format format) {
-		final ByteBuffer buffer = CausticUtil.createByteBuffer(windowWidth * windowHeight * 3);
+		final ByteBuffer buffer = CausticUtil.createByteBuffer(viewPort.getArea() * 3);
 		GL11.glReadBuffer(GL11.GL_FRONT);
-		GL11.glReadPixels(0, 0, windowWidth, windowHeight, format.getGLConstant(), GL11.GL_UNSIGNED_BYTE, buffer);
+		GL11.glReadPixels(viewPort.getX(), viewPort.getY(), viewPort.getWidth(), viewPort.getHeight(), format.getGLConstant(), GL11.GL_UNSIGNED_BYTE, buffer);
 		return buffer;
 	}
 
@@ -143,7 +143,7 @@ public class GL20Renderer extends Renderer {
 		// Keep track of all cleared frame buffers so we don't clear one twice
 		final Set<FrameBuffer> clearedFrameBuffers = new HashSet<>();
 		// Set the default view port
-		GL11.glViewport(0, 0, this.windowWidth, this.windowHeight);
+		GL11.glViewport(viewPort.getX(), viewPort.getY(), viewPort.getWidth(), viewPort.getHeight());
 		// Render all the created models
 		for (RenderList renderList : renderLists) {
 			if (!renderList.isActive()) {
@@ -193,7 +193,7 @@ public class GL20Renderer extends Renderer {
 				frameBuffer.unbind();
 				// Reset the view port if necessary
 				if (frameBuffer.hasViewPort()) {
-					GL11.glViewport(0, 0, this.windowWidth, this.windowHeight);
+					GL11.glViewport(viewPort.getX(), viewPort.getY(), viewPort.getWidth(), viewPort.getHeight());
 				}
 			}
 		}
