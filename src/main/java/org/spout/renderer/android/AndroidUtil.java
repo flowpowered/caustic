@@ -32,7 +32,8 @@ import android.opengl.GLU;
 import org.spout.renderer.GLVersioned;
 
 public final class AndroidUtil {
-	private AndroidUtil() { }
+	private AndroidUtil() {
+	}
 
 	private static boolean debug = true;
 
@@ -48,13 +49,13 @@ public final class AndroidUtil {
 	/**
 	 * Throws an exception if OpenGL reports an error.
 	 *
-	 * @throws org.lwjgl.opengl.OpenGLException If OpenGL reports an error
+	 * @throws org.spout.renderer.android.AndroidUtil.GLESException If OpenGL reports an error
 	 */
-	public static void checkForOpenGLError() {
+	public static void checkForGLESError() {
 		if (debug) {
 			final int errorValue = GLES20.glGetError();
 			if (errorValue != GLES20.GL_NO_ERROR) {
-				throw new AndroidGLException("OPEN GL ERROR: " + GLU.gluErrorString(errorValue));
+				throw new GLESException("OPEN GL ERROR: " + GLU.gluErrorString(errorValue));
 			}
 		}
 	}
@@ -72,9 +73,16 @@ public final class AndroidUtil {
 		}
 	}
 
-	public static class AndroidGLException extends RuntimeException {
-
-		public AndroidGLException(String message) {
+	/**
+	 * An exception throw when a GLES exception occurs on Android.
+	 */
+	public static class GLESException extends RuntimeException {
+		/**
+		 * Constructs a new Android GLES exception from the message.
+		 *
+		 * @param message The error message
+		 */
+		public GLESException(String message) {
 			super(message);
 		}
 	}

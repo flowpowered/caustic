@@ -121,7 +121,7 @@ public class GL20FrameBuffer extends FrameBuffer {
 		// Update the state
 		super.create();
 		// Check for errors
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
@@ -136,7 +136,7 @@ public class GL20FrameBuffer extends FrameBuffer {
 		// Update the state
 		super.destroy();
 		// Check for errors
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
@@ -145,7 +145,7 @@ public class GL20FrameBuffer extends FrameBuffer {
 		// Bind the frame buffer
 		EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, id);
 		// Check for errors
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
@@ -153,7 +153,7 @@ public class GL20FrameBuffer extends FrameBuffer {
 		checkCreated();
 		EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0);
 		// Check for errors
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override

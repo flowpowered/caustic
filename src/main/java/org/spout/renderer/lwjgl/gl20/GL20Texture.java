@@ -80,7 +80,7 @@ public class GL20Texture extends Texture {
 		// Update the state
 		super.create();
 		// Check for errors
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	/**
@@ -99,7 +99,7 @@ public class GL20Texture extends Texture {
 			GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, internalFormat != null ? internalFormat.getGLConstant() : format.getGLConstant(), width, height, 0, format.getGLConstant(), type.getGLConstant(), buffer);
 		}
 		// Check for errors
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
@@ -112,7 +112,7 @@ public class GL20Texture extends Texture {
 		// Reset the data
 		super.destroy();
 		// Check for errors
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
@@ -125,7 +125,7 @@ public class GL20Texture extends Texture {
 		// Bind the texture
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
 		// Check for errors
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
@@ -134,7 +134,7 @@ public class GL20Texture extends Texture {
 		// Unbind the texture
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 		// Check for errors
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override

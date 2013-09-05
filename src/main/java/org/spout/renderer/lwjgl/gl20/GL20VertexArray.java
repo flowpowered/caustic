@@ -115,7 +115,7 @@ public class GL20VertexArray extends VertexArray {
 		// Update state
 		super.create();
 		// Check for errors
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
@@ -150,7 +150,7 @@ public class GL20VertexArray extends VertexArray {
 		}
 		super.destroy();
 		// Check for errors
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
@@ -186,7 +186,7 @@ public class GL20VertexArray extends VertexArray {
 			GL20.glDisableVertexAttribArray(i);
 		}
 		// Check for errors
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override

@@ -70,7 +70,7 @@ public class GL20RenderBuffer extends RenderBuffer {
 		// Update the state
 		super.create();
 		// Check for errors
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
@@ -82,7 +82,7 @@ public class GL20RenderBuffer extends RenderBuffer {
 		// Update state
 		super.destroy();
 		// Check for errors
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
@@ -90,7 +90,7 @@ public class GL20RenderBuffer extends RenderBuffer {
 		checkCreated();
 		EXTFramebufferObject.glBindRenderbufferEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, id);
 		// Check for errors
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
@@ -98,7 +98,7 @@ public class GL20RenderBuffer extends RenderBuffer {
 		checkCreated();
 		EXTFramebufferObject.glBindRenderbufferEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, 0);
 		// Check for errors
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override

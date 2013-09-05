@@ -26,8 +26,7 @@
  */
 package org.spout.renderer.gl;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,6 +38,7 @@ import org.spout.renderer.GLVersioned;
 import org.spout.renderer.data.Color;
 import org.spout.renderer.data.RenderList;
 import org.spout.renderer.data.UniformHolder;
+import org.spout.renderer.gl.Texture.Format;
 
 /**
  * Represents an OpenGL renderer. Creating the renderer also created the OpenGL context, and so must be done before any other OpenGL object. To add models to render, add them to a render list, then
@@ -102,6 +102,13 @@ public abstract class Renderer extends Creatable implements GLVersioned {
 	 * @param capability The capability to enable
 	 */
 	protected abstract void enable(Capability capability);
+
+	/**
+	 * Reads the current frame pixels and returns it as a byte buffer of the desired format. The size of the returned image data is the same as the current window dimensions.
+	 *
+	 * @return The byte buffer containing the pixel data, according to the provided format
+	 */
+	public abstract ByteBuffer readCurrentFrame(Format format);
 
 	/**
 	 * Sets the renderer capabilities to only the provided ones.
@@ -247,10 +254,4 @@ public abstract class Renderer extends Creatable implements GLVersioned {
 	public UniformHolder getUniforms() {
 		return uniforms;
 	}
-
-	/**
-	 * Dumps a Screenshot to the specified OutputStream.
-	 * @param stream
-	 */
-	public abstract void dumpScreenshot(OutputStream stream) throws IOException;
 }

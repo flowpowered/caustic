@@ -92,7 +92,7 @@ public class GLES20VertexArray extends VertexArray {
 		// Update state
 		super.create();
 		// Check for errors
-		AndroidUtil.checkForOpenGLError();
+		AndroidUtil.checkForGLESError();
 	}
 
 	@Override
@@ -115,7 +115,7 @@ public class GLES20VertexArray extends VertexArray {
 		attributeNormalizing = null;
 		super.destroy();
 		// Check for errors
-		AndroidUtil.checkForOpenGLError();
+		AndroidUtil.checkForGLESError();
 	}
 
 	@Override
@@ -143,7 +143,7 @@ public class GLES20VertexArray extends VertexArray {
 			GLES20.glDisableVertexAttribArray(i);
 		}
 		// Check for errors
-		AndroidUtil.checkForOpenGLError();
+		AndroidUtil.checkForGLESError();
 	}
 
 	@Override

@@ -65,7 +65,7 @@ public class GL20Shader extends Shader {
 		this.id = id;
 		super.create();
 		// Check for errors
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
@@ -77,7 +77,7 @@ public class GL20Shader extends Shader {
 		GL20.glDeleteShader(id);
 		super.destroy();
 		// Check for errors
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override

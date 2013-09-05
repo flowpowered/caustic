@@ -26,10 +26,6 @@
  */
 package org.spout.renderer.lwjgl.gl20;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.HashSet;
 import java.util.Set;
@@ -43,18 +39,17 @@ import org.lwjgl.opengl.PixelFormat;
 
 import org.spout.math.matrix.Matrix4;
 import org.spout.renderer.Material;
-import org.spout.renderer.model.Model;
-import org.spout.renderer.data.RenderList;
 import org.spout.renderer.data.Color;
+import org.spout.renderer.data.RenderList;
 import org.spout.renderer.gl.Capability;
 import org.spout.renderer.gl.FrameBuffer;
 import org.spout.renderer.gl.Program;
 import org.spout.renderer.gl.Renderer;
+import org.spout.renderer.gl.Texture.Format;
 import org.spout.renderer.lwjgl.LWJGLUtil;
+import org.spout.renderer.model.Model;
 import org.spout.renderer.util.CausticUtil;
 import org.spout.renderer.util.Rectangle;
-
-import javax.imageio.ImageIO;
 
 /**
  * An OpenGL 2.0 implementation of {@link Renderer}.
@@ -82,7 +77,7 @@ public class GL20Renderer extends Renderer {
 		// Set the alpha blending function for transparency
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		// Check for errors
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 		// Update the state
 		super.create();
 	}
@@ -100,7 +95,7 @@ public class GL20Renderer extends Renderer {
 	public void destroy() {
 		checkCreated();
 		// Display goes after else there's no context in which to check for an error
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 		Display.destroy();
 		super.destroy();
 	}
@@ -110,25 +105,24 @@ public class GL20Renderer extends Renderer {
 		Color normC = color.normalize();
 		GL11.glClearColor(normC.getRed(), normC.getGreen(), normC.getBlue(), normC.getAlpha());
 		// Check for errors
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
 	public void enable(Capability capability) {
 		GL11.glEnable(capability.getGLConstant());
 		// Check for errors
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
-	public void dumpScreenshot(OutputStream stream) throws IOException {
-		final DisplayMode mode = Display.getDisplayMode();
-		final int width = mode.getWidth();
-		final int height = mode.getHeight();
-		final ByteBuffer buffer = CausticUtil.createByteBuffer(width * height * 3);
+	public ByteBuffer readCurrentFrame(Format format) {
+		final ByteBuffer buffer = CausticUtil.createByteBuffer(windowWidth * windowHeight * 3);
 		GL11.glReadBuffer(GL11.GL_FRONT);
-		GL11.glReadPixels(0, 0, width, height, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, buffer);
-		final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
+		GL11.glReadPixels(0, 0, windowWidth, windowHeight, format.getGLConstant(), GL11.GL_UNSIGNED_BYTE, buffer);
+		return buffer;
+
+		/*final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
 		final byte[] data = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
@@ -139,14 +133,14 @@ public class GL20Renderer extends Renderer {
 				data[destIndex] = buffer.get(srcIndex + 2);
 			}
 		}
-		ImageIO.write(image, "PNG", stream);
+		ImageIO.write(image, "PNG", stream);*/
 	}
 
 	@Override
 	public void disable(Capability capability) {
 		GL11.glDisable(capability.getGLConstant());
 		// Check for errors
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
@@ -217,7 +211,7 @@ public class GL20Renderer extends Renderer {
 			}
 		}
 		// Check for errors
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 		// Update the display
 		Display.update();
 	}

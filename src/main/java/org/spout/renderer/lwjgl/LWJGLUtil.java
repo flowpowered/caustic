@@ -27,12 +27,13 @@
 package org.spout.renderer.lwjgl;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.OpenGLException;
 import org.lwjgl.util.glu.GLU;
+
 import org.spout.renderer.GLVersioned;
 
 public final class LWJGLUtil {
-	private LWJGLUtil() { }
+	private LWJGLUtil() {
+	}
 
 	private static boolean debug = true;
 
@@ -48,13 +49,13 @@ public final class LWJGLUtil {
 	/**
 	 * Throws an exception if OpenGL reports an error.
 	 *
-	 * @throws org.lwjgl.opengl.OpenGLException If OpenGL reports an error
+	 * @throws GLException If OpenGL reports an error
 	 */
-	public static void checkForOpenGLError() {
+	public static void checkForGLError() {
 		if (debug) {
 			final int errorValue = GL11.glGetError();
 			if (errorValue != GL11.GL_NO_ERROR) {
-				throw new OpenGLException("OPEN GL ERROR: " + GLU.gluErrorString(errorValue));
+				throw new GLException("GL ERROR: " + GLU.gluErrorString(errorValue));
 			}
 		}
 	}
@@ -69,6 +70,20 @@ public final class LWJGLUtil {
 	public static void checkVersion(GLVersioned required, GLVersioned object) {
 		if (required.getGLVersion() != object.getGLVersion()) {
 			throw new IllegalStateException("Version mismatch: expected " + required.getGLVersion() + ", got " + object.getGLVersion());
+		}
+	}
+
+	/**
+	 * An exception throw when a GL exception occurs on Android.
+	 */
+	public static class GLException extends RuntimeException {
+		/**
+		 * Constructs a new Android GL exception from the message.
+		 *
+		 * @param message The error message
+		 */
+		public GLException(String message) {
+			super(message);
 		}
 	}
 }

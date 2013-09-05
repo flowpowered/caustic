@@ -52,7 +52,7 @@ public class GL30Texture extends GL20Texture {
 			GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
 		}
 		// Check for errors
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override

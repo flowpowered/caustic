@@ -110,7 +110,7 @@ public class GLES20Program extends Program {
 			uniforms.put(name, GLES20.glGetUniformLocation(id, name));
 		}
 		super.create();
-		AndroidUtil.checkForOpenGLError();
+		AndroidUtil.checkForGLESError();
 	}
 
 	@Override
@@ -119,14 +119,14 @@ public class GLES20Program extends Program {
 		GLES20.glDeleteProgram(id);
 		uniforms.clear();
 		super.destroy();
-		AndroidUtil.checkForOpenGLError();
+		AndroidUtil.checkForGLESError();
 	}
 
 	@Override
 	public void bind() {
 		checkCreated();
 		GLES20.glUseProgram(id);
-		AndroidUtil.checkForOpenGLError();
+		AndroidUtil.checkForGLESError();
 	}
 
 	@Override
@@ -166,7 +166,7 @@ public class GLES20Program extends Program {
 			return;
 		}
 		GLES20.glUniform1i(uniforms.get(name), b ? 1 : 0);
-		AndroidUtil.checkForOpenGLError();
+		AndroidUtil.checkForGLESError();
 	}
 
 	@Override
@@ -176,7 +176,7 @@ public class GLES20Program extends Program {
 			return;
 		}
 		GLES20.glUniform1i(uniforms.get(name), i);
-		AndroidUtil.checkForOpenGLError();
+		AndroidUtil.checkForGLESError();
 	}
 
 	@Override
@@ -186,7 +186,7 @@ public class GLES20Program extends Program {
 			return;
 		}
 		GLES20.glUniform1f(uniforms.get(name), f);
-		AndroidUtil.checkForOpenGLError();
+		AndroidUtil.checkForGLESError();
 	}
 
 	@Override
@@ -196,7 +196,7 @@ public class GLES20Program extends Program {
 			return;
 		}
 		GLES20.glUniform2f(uniforms.get(name), v.getX(), v.getY());
-		AndroidUtil.checkForOpenGLError();
+		AndroidUtil.checkForGLESError();
 	}
 
 	@Override
@@ -214,7 +214,7 @@ public class GLES20Program extends Program {
 		}
 		vectorBuffer.flip();
 		GLES20.glUniform2fv(uniforms.get(name), count, vectorBuffer);
-		AndroidUtil.checkForOpenGLError();
+		AndroidUtil.checkForGLESError();
 	}
 
 	@Override
@@ -224,7 +224,7 @@ public class GLES20Program extends Program {
 			return;
 		}
 		GLES20.glUniform3f(uniforms.get(name), v.getX(), v.getY(), v.getZ());
-		AndroidUtil.checkForOpenGLError();
+		AndroidUtil.checkForGLESError();
 	}
 
 	@Override
@@ -243,7 +243,7 @@ public class GLES20Program extends Program {
 		}
 		vectorBuffer.flip();
 		GLES20.glUniform3fv(uniforms.get(name), count, vectorBuffer);
-		AndroidUtil.checkForOpenGLError();
+		AndroidUtil.checkForGLESError();
 	}
 
 	@Override
@@ -253,7 +253,7 @@ public class GLES20Program extends Program {
 			return;
 		}
 		GLES20.glUniform4f(uniforms.get(name), v.getX(), v.getY(), v.getZ(), v.getW());
-		AndroidUtil.checkForOpenGLError();
+		AndroidUtil.checkForGLESError();
 	}
 
 	@Override
@@ -266,7 +266,7 @@ public class GLES20Program extends Program {
 		buffer.put(m.toArray(true));
 		buffer.flip();
 		GLES20.glUniformMatrix2fv(uniforms.get(name), 1, false, buffer);
-		AndroidUtil.checkForOpenGLError();
+		AndroidUtil.checkForGLESError();
 	}
 
 	@Override
@@ -279,7 +279,7 @@ public class GLES20Program extends Program {
 		buffer.put(m.toArray(true));
 		buffer.flip();
 		GLES20.glUniformMatrix3fv(uniforms.get(name), 1, false, buffer);
-		AndroidUtil.checkForOpenGLError();
+		AndroidUtil.checkForGLESError();
 	}
 
 	@Override
@@ -292,7 +292,7 @@ public class GLES20Program extends Program {
 		buffer.put(m.toArray(true));
 		buffer.flip();
 		GLES20.glUniformMatrix4fv(uniforms.get(name), 1, false, buffer);
-		AndroidUtil.checkForOpenGLError();
+		AndroidUtil.checkForGLESError();
 	}
 
 	@Override

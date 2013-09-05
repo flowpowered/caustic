@@ -68,7 +68,7 @@ public class GLES20RenderBuffer extends RenderBuffer {
 		// Update the state
 		super.create();
 		// Check for errors
-		AndroidUtil.checkForOpenGLError();
+		AndroidUtil.checkForGLESError();
 	}
 
 	@Override
@@ -80,7 +80,7 @@ public class GLES20RenderBuffer extends RenderBuffer {
 		// Update state
 		super.destroy();
 		// Check for errors
-		AndroidUtil.checkForOpenGLError();
+		AndroidUtil.checkForGLESError();
 	}
 
 	@Override
@@ -88,7 +88,7 @@ public class GLES20RenderBuffer extends RenderBuffer {
 		checkCreated();
 		GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, id);
 		// Check for errors
-		AndroidUtil.checkForOpenGLError();
+		AndroidUtil.checkForGLESError();
 	}
 
 	@Override
@@ -96,7 +96,7 @@ public class GLES20RenderBuffer extends RenderBuffer {
 		checkCreated();
 		GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, 0);
 		// Check for errors
-		AndroidUtil.checkForOpenGLError();
+		AndroidUtil.checkForGLESError();
 	}
 
 	@Override

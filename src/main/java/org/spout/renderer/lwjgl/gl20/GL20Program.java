@@ -111,7 +111,7 @@ public class GL20Program extends Program {
 			uniforms.put(name, GL20.glGetUniformLocation(id, name));
 		}
 		super.create();
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
@@ -120,14 +120,14 @@ public class GL20Program extends Program {
 		GL20.glDeleteProgram(id);
 		uniforms.clear();
 		super.destroy();
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
 	public void bind() {
 		checkCreated();
 		GL20.glUseProgram(id);
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
@@ -167,7 +167,7 @@ public class GL20Program extends Program {
 			return;
 		}
 		GL20.glUniform1i(uniforms.get(name), b ? 1 : 0);
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
@@ -177,7 +177,7 @@ public class GL20Program extends Program {
 			return;
 		}
 		GL20.glUniform1i(uniforms.get(name), i);
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
@@ -187,7 +187,7 @@ public class GL20Program extends Program {
 			return;
 		}
 		GL20.glUniform1f(uniforms.get(name), f);
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
@@ -197,7 +197,7 @@ public class GL20Program extends Program {
 			return;
 		}
 		GL20.glUniform2f(uniforms.get(name), v.getX(), v.getY());
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
@@ -213,7 +213,7 @@ public class GL20Program extends Program {
 		}
 		vectorBuffer.flip();
 		GL20.glUniform2(uniforms.get(name), vectorBuffer);
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
@@ -223,7 +223,7 @@ public class GL20Program extends Program {
 			return;
 		}
 		GL20.glUniform3f(uniforms.get(name), v.getX(), v.getY(), v.getZ());
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
@@ -240,7 +240,7 @@ public class GL20Program extends Program {
 		}
 		vectorBuffer.flip();
 		GL20.glUniform3(uniforms.get(name), vectorBuffer);
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
@@ -250,7 +250,7 @@ public class GL20Program extends Program {
 			return;
 		}
 		GL20.glUniform4f(uniforms.get(name), v.getX(), v.getY(), v.getZ(), v.getW());
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
@@ -263,7 +263,7 @@ public class GL20Program extends Program {
 		buffer.put(m.toArray(true));
 		buffer.flip();
 		GL20.glUniformMatrix2(uniforms.get(name), false, buffer);
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
@@ -276,7 +276,7 @@ public class GL20Program extends Program {
 		buffer.put(m.toArray(true));
 		buffer.flip();
 		GL20.glUniformMatrix3(uniforms.get(name), false, buffer);
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
@@ -289,7 +289,7 @@ public class GL20Program extends Program {
 		buffer.put(m.toArray(true));
 		buffer.flip();
 		GL20.glUniformMatrix4(uniforms.get(name), false, buffer);
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override

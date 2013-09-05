@@ -112,7 +112,7 @@ public class GL30FrameBuffer extends FrameBuffer {
 		// Update the state
 		super.create();
 		// Check for errors
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
@@ -138,7 +138,7 @@ public class GL30FrameBuffer extends FrameBuffer {
 		// Update the state
 		super.destroy();
 		// Check for errors
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
@@ -146,7 +146,7 @@ public class GL30FrameBuffer extends FrameBuffer {
 		checkCreated();
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, id);
 		// Check for errors
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
@@ -155,7 +155,7 @@ public class GL30FrameBuffer extends FrameBuffer {
 		// Bind the frame buffer
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
 		// Check for errors
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override

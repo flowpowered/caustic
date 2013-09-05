@@ -66,7 +66,7 @@ public class GLES20Shader extends Shader {
 		this.id = id;
 		super.create();
 		// Check for errors
-		AndroidUtil.checkForOpenGLError();
+		AndroidUtil.checkForGLESError();
 	}
 
 	@Override
@@ -78,7 +78,7 @@ public class GLES20Shader extends Shader {
 		GLES20.glDeleteShader(id);
 		super.destroy();
 		// Check for errors
-		AndroidUtil.checkForOpenGLError();
+		AndroidUtil.checkForGLESError();
 	}
 
 	@Override

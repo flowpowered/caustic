@@ -89,7 +89,7 @@ public class GL30VertexArray extends VertexArray {
 		// Update state
 		super.create();
 		// Check for errors
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
@@ -112,7 +112,7 @@ public class GL30VertexArray extends VertexArray {
 		GL30.glDeleteVertexArrays(id);
 		super.destroy();
 		// Check for errors
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
@@ -135,7 +135,7 @@ public class GL30VertexArray extends VertexArray {
 		}
 		GL30.glBindVertexArray(0);
 		// Check for errors
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override

@@ -116,7 +116,7 @@ public class GLES20FrameBuffer extends FrameBuffer {
 		// Update the state
 		super.create();
 		// Check for errors
-		AndroidUtil.checkForOpenGLError();
+		AndroidUtil.checkForGLESError();
 	}
 
 	@Override
@@ -131,7 +131,7 @@ public class GLES20FrameBuffer extends FrameBuffer {
 		// Update the state
 		super.destroy();
 		// Check for errors
-		AndroidUtil.checkForOpenGLError();
+		AndroidUtil.checkForGLESError();
 	}
 
 	@Override
@@ -139,7 +139,7 @@ public class GLES20FrameBuffer extends FrameBuffer {
 		checkCreated();
 		GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, id);
 		// Check for errors
-		AndroidUtil.checkForOpenGLError();
+		AndroidUtil.checkForGLESError();
 	}
 
 	@Override
@@ -147,7 +147,7 @@ public class GLES20FrameBuffer extends FrameBuffer {
 		checkCreated();
 		GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
 		// Check for errors
-		AndroidUtil.checkForOpenGLError();
+		AndroidUtil.checkForGLESError();
 	}
 
 	@Override

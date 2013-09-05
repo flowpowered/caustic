@@ -61,7 +61,7 @@ public class GL30RenderBuffer extends RenderBuffer {
 		// Update the state
 		super.create();
 		// Check for errors
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
@@ -73,7 +73,7 @@ public class GL30RenderBuffer extends RenderBuffer {
 		// Update state
 		super.destroy();
 		// Check for errors
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
@@ -81,7 +81,7 @@ public class GL30RenderBuffer extends RenderBuffer {
 		checkCreated();
 		GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, id);
 		// Check for errors
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
@@ -89,7 +89,7 @@ public class GL30RenderBuffer extends RenderBuffer {
 		checkCreated();
 		GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, 0);
 		// Check for errors
-		LWJGLUtil.checkForOpenGLError();
+		LWJGLUtil.checkForGLError();
 	}
 
 	@Override
