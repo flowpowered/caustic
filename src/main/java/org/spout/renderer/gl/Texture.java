@@ -207,6 +207,33 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	}
 
 	/**
+	 * Returns the image data. After creation is over, it returns null.
+	 *
+	 * @return The image data
+	 */
+	public ByteBuffer getImageData() {
+		return imageData;
+	}
+
+	/**
+	 * Returns the width of the image.
+	 *
+	 * @return The image width
+	 */
+	public int getWidth() {
+		return width;
+	}
+
+	/**
+	 * Returns the height of the image.
+	 *
+	 * @return The image height
+	 */
+	public int getHeight() {
+		return height;
+	}
+
+	/**
 	 * An enum of texture component formats.
 	 */
 	public static enum Format {
