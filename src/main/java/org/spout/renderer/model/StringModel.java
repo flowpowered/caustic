@@ -51,8 +51,8 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 
 import org.spout.math.GenericMath;
 import org.spout.math.vector.Vector2;
-import org.spout.renderer.GLVersioned.GLVersion;
 import org.spout.renderer.Material;
+import org.spout.renderer.data.Color;
 import org.spout.renderer.data.Uniform.ColorUniform;
 import org.spout.renderer.data.Uniform.Matrix4Uniform;
 import org.spout.renderer.data.Uniform.Vector2Uniform;
@@ -60,11 +60,8 @@ import org.spout.renderer.data.UniformHolder;
 import org.spout.renderer.data.VertexAttribute;
 import org.spout.renderer.data.VertexAttribute.DataType;
 import org.spout.renderer.data.VertexData;
-import org.spout.renderer.data.Color;
 import org.spout.renderer.gl.GLFactory;
 import org.spout.renderer.gl.Program;
-import org.spout.renderer.gl.Shader;
-import org.spout.renderer.gl.Shader.ShaderType;
 import org.spout.renderer.gl.Texture;
 import org.spout.renderer.gl.Texture.FilterMode;
 import org.spout.renderer.gl.Texture.Format;
@@ -107,14 +104,15 @@ public class StringModel extends Model {
 	}
 
 	/**
-	 * Creates a new string model, from the OpenGL factory, the glyphs to support, the font to render with and the window width (used to get scale for the model).
+	 * Creates a new string model, from the OpenGL factory, the font shader program, the glyphs to support, the font to render with and the window width (used to get scale for the model).
 	 *
 	 * @param factory The OpenGL factory
+	 * @param fontProgram The program of shaders responsible to for rendering the font
 	 * @param glyphs The glyphs
 	 * @param font The font
 	 * @param windowWidth The window with
 	 */
-	public StringModel(GLFactory factory, CharSequence glyphs, Font font, int windowWidth) {
+	public StringModel(GLFactory factory, Program fontProgram, CharSequence glyphs, Font font, int windowWidth) {
 		super();
 		if (factory == null) {
 			throw new IllegalStateException("GL version cannot be null");
@@ -158,7 +156,7 @@ public class StringModel extends Model {
 		// Set the line height, for new lines
 		worldLineHeight = (float) fontMetrics.getHeight() / windowWidth;
 		// Create the material
-		final Material material = generateMaterial(factory);
+		final Material material = new Material(fontProgram);
 		material.addTexture(0, texture);
 		setMaterial(material);
 		// Create the model mesh
@@ -352,24 +350,6 @@ public class StringModel extends Model {
 		texture.setMinFilter(FilterMode.LINEAR);
 		texture.create();
 		return texture;
-	}
-
-	private Material generateMaterial(GLFactory factory) {
-		final Program program = factory.createProgram();
-		final GLVersion version = factory.getGLVersion();
-		final String shaderPath = "/shaders/" + version.toString().toLowerCase() + "/";
-		final Shader vertShader = factory.createShader();
-		vertShader.setSource(StringModel.class.getResourceAsStream(shaderPath + "font.vert"));
-		vertShader.setType(ShaderType.VERTEX);
-		vertShader.create();
-		program.addShader(vertShader);
-		final Shader fragShader = factory.createShader();
-		fragShader.setSource(StringModel.class.getResourceAsStream(shaderPath + "font.frag"));
-		fragShader.setType(ShaderType.FRAGMENT);
-		fragShader.create();
-		program.addShader(fragShader);
-		program.create();
-		return new Material(program);
 	}
 
 	private static void add(TFloatList list, float... f) {
