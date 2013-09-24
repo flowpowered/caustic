@@ -228,6 +228,7 @@ public class VertexAttribute implements Cloneable {
 		UNSIGNED_SHORT(0x1403, 2, true), // GL11.GL_UNSIGNED_SHORT
 		INT(0x1404, 4, true), // GL11.GL_INT
 		UNSIGNED_INT(0x1405, 4, true), // GL11.GL_UNSIGNED_INT
+		HALF_FLOAT(0x140B, 2, false), // GL30.GL_HALF_FLOAT
 		FLOAT(0x1406, 4, false), // GL11.GL_FLOAT
 		DOUBLE(0x140A, 8, false); // GL11.GL_DOUBLE
 		private final int glConstant;
