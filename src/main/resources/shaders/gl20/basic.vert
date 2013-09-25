@@ -1,3 +1,5 @@
+// $shader_type: vertex
+
 // $attrib_layout: position = 0
 
 #version 120

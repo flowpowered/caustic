@@ -44,6 +44,8 @@ import org.spout.renderer.GLVersioned;
  */
 public abstract class Shader extends Creatable implements GLVersioned {
 	private static final char TOKEN_SYMBOL = '$';
+	private static final String SHADER_TYPE_TOKEN = "shader_type";
+	private static final Pattern SHADER_TYPE_TOKEN_PATTERN = Pattern.compile("\\" + TOKEN_SYMBOL + SHADER_TYPE_TOKEN + " *: *(\\w+)");
 	private static final String ATTRIBUTE_LAYOUT_TOKEN = "attrib_layout";
 	private static final String TEXTURE_LAYOUT_TOKEN = "texture_layout";
 	private static final Pattern LAYOUT_TOKEN_PATTERN = Pattern.compile("\\" + TOKEN_SYMBOL + "(" + ATTRIBUTE_LAYOUT_TOKEN + "|" + TEXTURE_LAYOUT_TOKEN + ") *: *(\\w+) *= *(\\d+)");
@@ -103,10 +105,19 @@ public abstract class Shader extends Creatable implements GLVersioned {
 	public void setSource(CharSequence source) {
 		this.source = source;
 		// Look for layout tokens
-		// This replaces the GL30 "layout(location = x)" and GL42 "layout(binding = x) features missing from GL20
+		// Used for setting the shader type automatically.
+		// Also replaces the GL30 "layout(location = x)" and GL42 "layout(binding = x) features missing from GL20 and/or GL30
 		final String[] lines = source.toString().split("\n");
 		for (String line : lines) {
-			final Matcher matcher = LAYOUT_TOKEN_PATTERN.matcher(line);
+			Matcher matcher = SHADER_TYPE_TOKEN_PATTERN.matcher(line);
+			while (matcher.find()) {
+				try {
+					type = ShaderType.valueOf(matcher.group(1).toUpperCase());
+				} catch (IllegalArgumentException ex) {
+					throw new IllegalArgumentException("Unknown shader type token value", ex);
+				}
+			}
+			matcher = LAYOUT_TOKEN_PATTERN.matcher(line);
 			while (matcher.find()) {
 				final String token = matcher.group(1);
 				if (token.equals(ATTRIBUTE_LAYOUT_TOKEN)) {

@@ -1,3 +1,5 @@
+// $shader_type: fragment
+
 // $texture_layout: diffuse = 0
 
 #version 330

@@ -1,3 +1,5 @@
+// $shader_type: fragment
+
 #version 120
 
 void main() {

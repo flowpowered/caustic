@@ -1,3 +1,5 @@
+// $shader_type: fragment
+
 #version 330
 
 out vec4 outputColor;

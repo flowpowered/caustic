@@ -1,3 +1,5 @@
+// $shader_type: vertex
+
 #version 330
 
 layout(location = 0) in vec3 position;
