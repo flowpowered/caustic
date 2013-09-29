@@ -26,9 +26,12 @@
  */
 package org.spout.renderer.gl;
 
+import java.util.EnumMap;
+import java.util.Map;
+
 import org.spout.renderer.Creatable;
 import org.spout.renderer.GLVersioned;
-import org.spout.renderer.util.Rectangle;
+import org.spout.renderer.util.CausticUtil;
 
 /**
  * Represents an OpenGL frame buffer. A frame buffer can be assigned to a render list. When assigned, all models in the list will be rendered to the frame buffer, instead of the screen. This is meant
@@ -36,7 +39,9 @@ import org.spout.renderer.util.Rectangle;
  */
 public abstract class FrameBuffer extends Creatable implements GLVersioned {
 	protected int id;
-	protected Rectangle viewPort = null;
+	// The attached texture and render buffers
+	protected final Map<AttachmentPoint, Texture> textures = new EnumMap<>(AttachmentPoint.class);
+	protected final Map<AttachmentPoint, RenderBuffer> buffers = new EnumMap<>(AttachmentPoint.class);
 
 	@Override
 	public void destroy() {
@@ -60,7 +65,11 @@ public abstract class FrameBuffer extends Creatable implements GLVersioned {
 	 * @param point The attachment point
 	 * @param texture The texture to attach
 	 */
-	public abstract void attach(AttachmentPoint point, Texture texture);
+	public void attach(AttachmentPoint point, Texture texture) {
+		CausticUtil.checkVersion(this, texture);
+		buffers.remove(point);
+		textures.put(point, texture);
+	}
 
 	/**
 	 * Attaches the render buffer to the attachment point
@@ -68,23 +77,10 @@ public abstract class FrameBuffer extends Creatable implements GLVersioned {
 	 * @param point The attachment point
 	 * @param buffer The render buffer
 	 */
-	public abstract void attach(AttachmentPoint point, RenderBuffer buffer);
-
-	public Rectangle getViewPort() {
-		return viewPort;
-	}
-
-	public boolean hasViewPort() {
-		return viewPort != null;
-	}
-
-	/**
-	 * Sets the view port to render too. If null, the renderer view port will be used.
-	 *
-	 * @param viewPort The view port rectangle
-	 */
-	public void setViewPort(Rectangle viewPort) {
-		this.viewPort = viewPort;
+	public void attach(AttachmentPoint point, RenderBuffer buffer) {
+		CausticUtil.checkVersion(this, buffer);
+		textures.remove(point);
+		buffers.put(point, buffer);
 	}
 
 	/**

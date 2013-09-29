@@ -26,6 +26,8 @@
  */
 package org.spout.renderer;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
@@ -38,7 +40,11 @@ import org.spout.renderer.gl.Texture;
  * Represents an OpenGL material. Materials are assigned to models, and these can share the same material. The material provides the shader program to use when rendering the models, the texture for
  * each unit (if any) and a set of uniforms that will be constant for all models using the material.
  */
-public class Material {
+public class Material implements Comparable<Material> {
+	// Reflects the current available ID
+	private static final AtomicInteger ID_COUNTER = new AtomicInteger();
+	// private ID for batching models per material for rendering
+	private final int id = ID_COUNTER.getAndIncrement();
 	// Shader program
 	private Program program;
 	// Textures by unit
@@ -168,5 +174,10 @@ public class Material {
 	 */
 	public UniformHolder getUniforms() {
 		return uniforms;
+	}
+
+	@Override
+	public int compareTo(Material that) {
+		return this.id - that.id;
 	}
 }

@@ -26,6 +26,8 @@
  */
 package org.spout.renderer.util;
 
+import org.spout.math.vector.Vector2;
+
 /**
  * A simple mutable rectangle object, positioned in 2D space.
  */
@@ -43,11 +45,30 @@ public class Rectangle {
 	/**
 	 * Constructs a new rectangle at (0, 0) of the desired width and height.
 	 *
+	 * @param size The (width, height) vector
+	 */
+	public Rectangle(Vector2 size) {
+		this(size.getFloorX(), size.getFloorY());
+	}
+
+	/**
+	 * Constructs a new rectangle at (0, 0) of the desired width and height.
+	 *
 	 * @param width The desired width
 	 * @param height The desired height
 	 */
 	public Rectangle(int width, int height) {
 		this(0, 0, width, height);
+	}
+
+	/**
+	 * Constructs a new rectangle of the desired dimension at the desired location.
+	 *
+	 * @param position The (x, y) vector
+	 * @param size The (width, height) vector
+	 */
+	public Rectangle(Vector2 position, Vector2 size) {
+		this(position.getFloorX(), position.getFloorY(), size.getFloorX(), size.getFloorY());
 	}
 
 	/**

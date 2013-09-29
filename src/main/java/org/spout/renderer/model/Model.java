@@ -30,7 +30,6 @@ import org.spout.math.imaginary.Quaternion;
 import org.spout.math.matrix.Matrix4;
 import org.spout.math.vector.Vector3;
 import org.spout.renderer.Material;
-import org.spout.renderer.data.Uniform.Matrix4Uniform;
 import org.spout.renderer.data.UniformHolder;
 import org.spout.renderer.gl.VertexArray;
 
@@ -38,7 +37,7 @@ import org.spout.renderer.gl.VertexArray;
  * Represents a model. Each model has it's own position and rotation and set of uniforms. The vertex array provides the vertex data (mesh), while the material provides uniforms and textures for the
  * shader.
  */
-public class Model {
+public class Model implements Comparable<Model> {
 	// Vertex array
 	private VertexArray vertexArray;
 	// Material
@@ -53,10 +52,9 @@ public class Model {
 	private final UniformHolder uniforms = new UniformHolder();
 
 	/**
-	 * Constructs a new model without a vertex array or a material.
+	 * An empty constructor for child classes only.
 	 */
 	protected Model() {
-		uniforms.add(new Matrix4Uniform("modelMatrix", getMatrix()));
 	}
 
 	/**
@@ -86,14 +84,12 @@ public class Model {
 		vertexArray.checkCreated();
 		this.vertexArray = vertexArray;
 		this.material = material;
-		uniforms.add(new Matrix4Uniform("modelMatrix", getMatrix()));
 	}
 
 	/**
 	 * Uploads the model's uniforms to its material's program.
 	 */
 	public void uploadUniforms() {
-		uniforms.getMatrix4("modelMatrix").set(getMatrix());
 		material.getProgram().upload(uniforms);
 	}
 
@@ -236,5 +232,10 @@ public class Model {
 	 */
 	public UniformHolder getUniforms() {
 		return uniforms;
+	}
+
+	@Override
+	public int compareTo(Model that) {
+		return material.compareTo(that.material);
 	}
 }

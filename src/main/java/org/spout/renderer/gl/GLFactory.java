@@ -54,11 +54,11 @@ public interface GLFactory extends GLVersioned {
 	RenderBuffer createRenderBuffer();
 
 	/**
-	 * Creates a new renderer.
+	 * Creates a new context.
 	 *
-	 * @return A new renderer
+	 * @return A new context
 	 */
-	Renderer createRenderer();
+	Context createContext();
 
 	/**
 	 * Creates a new shader.

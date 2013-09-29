@@ -29,8 +29,6 @@ package org.spout.renderer.android;
 import android.opengl.GLES20;
 import android.opengl.GLU;
 
-import org.spout.renderer.GLVersioned;
-
 public final class AndroidUtil {
 	private AndroidUtil() {
 	}
@@ -57,19 +55,6 @@ public final class AndroidUtil {
 			if (errorValue != GLES20.GL_NO_ERROR) {
 				throw new GLESException("OPEN GL ERROR: " + GLU.gluErrorString(errorValue));
 			}
-		}
-	}
-
-	/**
-	 * Checks if two OpenGL versioned object have the same version. Throws an exception if that's not the case.
-	 *
-	 * @param required The required version
-	 * @param object The object to check the version of
-	 * @throws IllegalStateException If the object versions to not match
-	 */
-	public static void checkVersion(GLVersioned required, GLVersioned object) {
-		if (required.getGLVersion() != object.getGLVersion()) {
-			throw new IllegalStateException("Version mismatch: expected " + required.getGLVersion() + ", got " + object.getGLVersion());
 		}
 	}
 

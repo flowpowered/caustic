@@ -31,7 +31,7 @@ import org.spout.renderer.gl.FrameBuffer;
 import org.spout.renderer.gl.GLFactory;
 import org.spout.renderer.gl.Program;
 import org.spout.renderer.gl.RenderBuffer;
-import org.spout.renderer.gl.Renderer;
+import org.spout.renderer.gl.Context;
 import org.spout.renderer.gl.Shader;
 import org.spout.renderer.gl.Texture;
 import org.spout.renderer.gl.VertexArray;
@@ -65,8 +65,8 @@ public class GLES20GLFactory implements GLFactory {
 	}
 
 	@Override
-	public Renderer createRenderer() {
-		return new GLES20Renderer();
+	public Context createContext() {
+		return new GLES20Context();
 	}
 
 	@Override

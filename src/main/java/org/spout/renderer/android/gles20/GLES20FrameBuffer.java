@@ -28,8 +28,6 @@ package org.spout.renderer.android.gles20;
 
 import java.nio.IntBuffer;
 import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import gnu.trove.set.TIntSet;
@@ -49,9 +47,6 @@ import org.spout.renderer.util.CausticUtil;
  * @see org.spout.renderer.gl.FrameBuffer
  */
 public class GLES20FrameBuffer extends FrameBuffer {
-	// The attached texture and render buffers
-	private final Map<AttachmentPoint, GLES20Texture> textures = new EnumMap<>(AttachmentPoint.class);
-	private final Map<AttachmentPoint, GLES20RenderBuffer> buffers = new EnumMap<>(AttachmentPoint.class);
 	private int[] bufferId;
 
 	/**
@@ -69,9 +64,9 @@ public class GLES20FrameBuffer extends FrameBuffer {
 		// Track the color attachments to output for later use
 		final TIntSet outputBuffers = new TIntHashSet();
 		// Attach the textures
-		for (Entry<AttachmentPoint, GLES20Texture> entry : textures.entrySet()) {
+		for (Entry<AttachmentPoint, Texture> entry : textures.entrySet()) {
 			final AttachmentPoint point = entry.getKey();
-			final GLES20Texture texture = entry.getValue();
+			final Texture texture = entry.getValue();
 			texture.checkCreated();
 			GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, point.getGLConstant(), GLES20.GL_TEXTURE_2D, texture.getID(), 0);
 			if (point.isColor()) {
@@ -79,9 +74,9 @@ public class GLES20FrameBuffer extends FrameBuffer {
 			}
 		}
 		// Attach the render buffers
-		for (Entry<AttachmentPoint, GLES20RenderBuffer> entry : buffers.entrySet()) {
+		for (Entry<AttachmentPoint, RenderBuffer> entry : buffers.entrySet()) {
 			final AttachmentPoint point = entry.getKey();
-			final GLES20RenderBuffer buffer = entry.getValue();
+			final RenderBuffer buffer = entry.getValue();
 			buffer.checkCreated();
 			GLES20.glFramebufferRenderbuffer(GLES20.GL_FRAMEBUFFER, point.getGLConstant(), GLES20.GL_RENDERBUFFER, buffer.getID());
 			if (point.isColor()) {
@@ -148,20 +143,6 @@ public class GLES20FrameBuffer extends FrameBuffer {
 		GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
 		// Check for errors
 		AndroidUtil.checkForGLESError();
-	}
-
-	@Override
-	public void attach(AttachmentPoint point, Texture texture) {
-		AndroidUtil.checkVersion(this, texture);
-		buffers.remove(point);
-		textures.put(point, (GLES20Texture) texture);
-	}
-
-	@Override
-	public void attach(AttachmentPoint point, RenderBuffer buffer) {
-		AndroidUtil.checkVersion(this, buffer);
-		textures.remove(point);
-		buffers.put(point, (GLES20RenderBuffer) buffer);
 	}
 
 	@Override

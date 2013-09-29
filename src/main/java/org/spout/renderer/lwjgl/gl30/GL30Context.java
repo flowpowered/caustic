@@ -24,28 +24,28 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.gl;
+package org.spout.renderer.lwjgl.gl30;
+
+import org.lwjgl.opengl.ContextAttribs;
+
+import org.spout.renderer.lwjgl.gl20.GL20Context;
 
 /**
- * An enum of the renderer capabilities.
+ * An OpenGL 3.0 implementation of {@link org.spout.renderer.gl.Context}.
+ * <p/>
+ * {@see Context}
  */
-public enum Capability {
-	BLEND(0xBE2), // GL11.GL_BLEND
-	CULL_FACE(0xB44), // GL11.GL_CULL_FACE
-	DEPTH_CLAMP(0x864F), // GL32.GL_DEPTH_CLAMP
-	DEPTH_TEST(0xB71); // GL11.GL_DEPTH_TEST
-	private final int glConstant;
-
-	private Capability(int glConstant) {
-		this.glConstant = glConstant;
+public class GL30Context extends GL20Context {
+	protected GL30Context() {
 	}
 
-	/**
-	 * Returns the OpenGL constant associated to the capability.
-	 *
-	 * @return The OpenGL constant
-	 */
-	public int getGLConstant() {
-		return glConstant;
+	@Override
+	protected ContextAttribs createContextAttributes() {
+		return new ContextAttribs(3, 2).withProfileCore(true);
+	}
+
+	@Override
+	public GLVersion getGLVersion() {
+		return GLVersion.GL30;
 	}
 }

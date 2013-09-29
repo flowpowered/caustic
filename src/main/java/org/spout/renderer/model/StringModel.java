@@ -53,10 +53,6 @@ import org.spout.math.GenericMath;
 import org.spout.math.vector.Vector2;
 import org.spout.renderer.Material;
 import org.spout.renderer.data.Color;
-import org.spout.renderer.data.Uniform.ColorUniform;
-import org.spout.renderer.data.Uniform.Matrix4Uniform;
-import org.spout.renderer.data.Uniform.Vector2Uniform;
-import org.spout.renderer.data.UniformHolder;
 import org.spout.renderer.data.VertexAttribute;
 import org.spout.renderer.data.VertexAttribute.DataType;
 import org.spout.renderer.data.VertexData;
@@ -89,8 +85,7 @@ public class StringModel extends Model {
 	private final TIntObjectMap<Color> colorIndices = new TIntObjectHashMap<>();
 
 	/**
-	 * Constructs a new string model from the provided one. {@link Model#Model()} defines the reused and copied information in the {@link Model} class. For the string model, the glyph indexes, offsets,
-	 * padding and line heights are reused. The string and color information remain empty.
+	 * Constructs a new string model from the provided one. The glyph indexes, offsets, padding and line heights are reused. The string and color information remain empty.
 	 *
 	 * @param model The model to derive this one from
 	 */
@@ -113,7 +108,6 @@ public class StringModel extends Model {
 	 * @param windowWidth The window with
 	 */
 	public StringModel(GLFactory factory, Program fontProgram, CharSequence glyphs, Font font, int windowWidth) {
-		super();
 		if (factory == null) {
 			throw new IllegalStateException("GL version cannot be null");
 		}
@@ -165,29 +159,13 @@ public class StringModel extends Model {
 		vertexArray.setIndicesCount(GLYPH_INDEX_COUNT);
 		// Set the vertex array
 		setVertexArray(vertexArray);
-		// Add a uniform for the glyph position offset
-		final UniformHolder uniforms = getUniforms();
-		uniforms.add(new Vector2Uniform("glyphOffset", Vector2.ZERO));
-		// Add a uniform for the font color
-		uniforms.add(new ColorUniform("fontColor", Color.WHITE));
-	}
-
-	@Override
-	public void uploadUniforms() {
-		final Matrix4Uniform modelMatrixUniform = getUniforms().getMatrix4("modelMatrix");
-		modelMatrixUniform.set(getMatrix());
-		getMaterial().getProgram().upload(modelMatrixUniform);
 	}
 
 	@Override
 	public void render() {
 		final Program program = getMaterial().getProgram();
-		final UniformHolder uniforms = getUniforms();
-		final ColorUniform colorUniform = uniforms.getColor("fontColor");
-		colorUniform.set(Color.WHITE);
-		program.upload(colorUniform);
+		program.setUniform("fontColor", Color.WHITE);
 		final VertexArray vertexArray = getVertexArray();
-		final Vector2Uniform glyphOffset = uniforms.getVector2("glyphOffset");
 		// Remove the padding for the first glyph
 		Vector2 offset = new Vector2(-worldGlyphPadding, 0);
 		final char[] glyphs = string.toCharArray();
@@ -202,8 +180,7 @@ public class StringModel extends Model {
 			final Color color = colorIndices.get(i);
 			if (color != null) {
 				// Upload the color
-				colorUniform.set(color);
-				program.upload(colorUniform);
+				program.setUniform("fontColor", Color.WHITE);
 			}
 			// Get the glyph start index
 			final int glyphIndex = glyphIndexes.get(glyph);
@@ -214,8 +191,7 @@ public class StringModel extends Model {
 			// Set rendering indices offset for the glyph
 			vertexArray.setIndicesOffset(glyphIndex);
 			// Offset the glyph in the string
-			glyphOffset.set(offset);
-			program.upload(glyphOffset);
+			program.setUniform("glyphOffset", offset);
 			// Offset for the next glyph
 			offset = offset.add(glyphOffsets.get(glyph), 0);
 			// Render the model

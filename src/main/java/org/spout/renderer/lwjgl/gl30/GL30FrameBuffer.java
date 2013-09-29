@@ -28,8 +28,6 @@ package org.spout.renderer.lwjgl.gl30;
 
 import java.nio.IntBuffer;
 import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import gnu.trove.set.TIntSet;
@@ -52,10 +50,6 @@ import org.spout.renderer.util.CausticUtil;
  * @see FrameBuffer
  */
 public class GL30FrameBuffer extends FrameBuffer {
-	// The attached texture and render buffers
-	private final Map<AttachmentPoint, GL30Texture> textures = new EnumMap<>(AttachmentPoint.class);
-	private final Map<AttachmentPoint, GL30RenderBuffer> buffers = new EnumMap<>(AttachmentPoint.class);
-
 	protected GL30FrameBuffer() {
 	}
 
@@ -67,9 +61,9 @@ public class GL30FrameBuffer extends FrameBuffer {
 		// Track the color attachments to output for later use
 		final TIntSet outputBuffers = new TIntHashSet();
 		// Attach the textures
-		for (Entry<AttachmentPoint, GL30Texture> entry : textures.entrySet()) {
+		for (Entry<AttachmentPoint, Texture> entry : textures.entrySet()) {
 			final AttachmentPoint point = entry.getKey();
-			final GL30Texture texture = entry.getValue();
+			final Texture texture = entry.getValue();
 			texture.checkCreated();
 			GL32.glFramebufferTexture(GL30.GL_FRAMEBUFFER, point.getGLConstant(), texture.getID(), 0);
 			if (point.isColor()) {
@@ -77,9 +71,9 @@ public class GL30FrameBuffer extends FrameBuffer {
 			}
 		}
 		// Attach the render buffers
-		for (Entry<AttachmentPoint, GL30RenderBuffer> entry : buffers.entrySet()) {
+		for (Entry<AttachmentPoint, RenderBuffer> entry : buffers.entrySet()) {
 			final AttachmentPoint point = entry.getKey();
-			final GL30RenderBuffer buffer = entry.getValue();
+			final RenderBuffer buffer = entry.getValue();
 			buffer.checkCreated();
 			GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER, point.getGLConstant(), GL30.GL_RENDERBUFFER, buffer.getID());
 			if (point.isColor()) {
@@ -121,17 +115,6 @@ public class GL30FrameBuffer extends FrameBuffer {
 		// Unbind and delete the frame buffer
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
 		GL30.glDeleteFramebuffers(id);
-		// Destroy the textures and buffers
-		for (GL30Texture texture : textures.values()) {
-			if (texture.isCreated()) {
-				texture.destroy();
-			}
-		}
-		for (GL30RenderBuffer buffer : buffers.values()) {
-			if (buffer.isCreated()) {
-				buffer.destroy();
-			}
-		}
 		// Release some resources
 		textures.clear();
 		buffers.clear();
@@ -156,20 +139,6 @@ public class GL30FrameBuffer extends FrameBuffer {
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
 		// Check for errors
 		LWJGLUtil.checkForGLError();
-	}
-
-	@Override
-	public void attach(AttachmentPoint point, Texture texture) {
-		LWJGLUtil.checkVersion(this, texture);
-		buffers.remove(point);
-		textures.put(point, (GL30Texture) texture);
-	}
-
-	@Override
-	public void attach(AttachmentPoint point, RenderBuffer buffer) {
-		LWJGLUtil.checkVersion(this, buffer);
-		textures.remove(point);
-		buffers.put(point, (GL30RenderBuffer) buffer);
 	}
 
 	@Override

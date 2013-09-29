@@ -28,8 +28,6 @@ package org.spout.renderer.lwjgl.gl20;
 
 import java.nio.IntBuffer;
 import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import gnu.trove.set.TIntSet;
@@ -52,9 +50,6 @@ import org.spout.renderer.util.CausticUtil;
  * @see FrameBuffer
  */
 public class GL20FrameBuffer extends FrameBuffer {
-	// The attached texture and render buffers
-	private final Map<AttachmentPoint, GL20Texture> textures = new EnumMap<>(AttachmentPoint.class);
-	private final Map<AttachmentPoint, GL20RenderBuffer> buffers = new EnumMap<>(AttachmentPoint.class);
 
 	/**
 	 * Constructs a new frame buffer for OpenGL 2.0. If no EXT extension for frame buffers is available, an exception is thrown.
@@ -75,9 +70,9 @@ public class GL20FrameBuffer extends FrameBuffer {
 		// Track the color attachments to output for later use
 		final TIntSet outputBuffers = new TIntHashSet();
 		// Attach the textures
-		for (Entry<AttachmentPoint, GL20Texture> entry : textures.entrySet()) {
+		for (Entry<AttachmentPoint, Texture> entry : textures.entrySet()) {
 			final AttachmentPoint point = entry.getKey();
-			final GL20Texture texture = entry.getValue();
+			final Texture texture = entry.getValue();
 			texture.checkCreated();
 			EXTFramebufferObject.glFramebufferTexture2DEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, point.getGLConstant(), GL11.GL_TEXTURE_2D, texture.getID(), 0);
 			if (point.isColor()) {
@@ -85,9 +80,9 @@ public class GL20FrameBuffer extends FrameBuffer {
 			}
 		}
 		// Attach the render buffers
-		for (Entry<AttachmentPoint, GL20RenderBuffer> entry : buffers.entrySet()) {
+		for (Entry<AttachmentPoint, RenderBuffer> entry : buffers.entrySet()) {
 			final AttachmentPoint point = entry.getKey();
-			final GL20RenderBuffer buffer = entry.getValue();
+			final RenderBuffer buffer = entry.getValue();
 			buffer.checkCreated();
 			EXTFramebufferObject.glFramebufferRenderbufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, point.getGLConstant(), EXTFramebufferObject.GL_RENDERBUFFER_EXT, buffer.getID());
 			if (point.isColor()) {
@@ -154,20 +149,6 @@ public class GL20FrameBuffer extends FrameBuffer {
 		EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0);
 		// Check for errors
 		LWJGLUtil.checkForGLError();
-	}
-
-	@Override
-	public void attach(AttachmentPoint point, Texture texture) {
-		LWJGLUtil.checkVersion(this, texture);
-		buffers.remove(point);
-		textures.put(point, (GL20Texture) texture);
-	}
-
-	@Override
-	public void attach(AttachmentPoint point, RenderBuffer buffer) {
-		LWJGLUtil.checkVersion(this, buffer);
-		textures.remove(point);
-		buffers.put(point, (GL20RenderBuffer) buffer);
 	}
 
 	@Override
