@@ -111,6 +111,9 @@ public class StringModel extends Model {
 		if (factory == null) {
 			throw new IllegalStateException("GL version cannot be null");
 		}
+		if (fontProgram == null) {
+			throw new IllegalStateException("Font program cannot be null");
+		}
 		if (glyphs == null) {
 			throw new IllegalStateException("Glyphs cannot be null");
 		}
@@ -180,7 +183,7 @@ public class StringModel extends Model {
 			final Color color = colorIndices.get(i);
 			if (color != null) {
 				// Upload the color
-				program.setUniform("fontColor", Color.WHITE);
+				program.setUniform("fontColor", color);
 			}
 			// Get the glyph start index
 			final int glyphIndex = glyphIndexes.get(glyph);
