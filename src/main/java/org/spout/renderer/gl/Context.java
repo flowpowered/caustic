@@ -30,7 +30,7 @@ import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
-import org.spout.math.vector.Vector2;
+import org.spout.math.vector.Vector2f;
 import org.spout.renderer.Camera;
 import org.spout.renderer.Creatable;
 import org.spout.renderer.GLVersioned;
@@ -47,7 +47,7 @@ public abstract class Context extends Creatable implements GLVersioned {
 	// Window title
 	protected String windowTitle = "Caustic";
 	// Window size
-	protected Vector2 windowSize;
+	protected Vector2f windowSize;
 	// MSAA value
 	protected int msaa = 0;
 	// Properties
@@ -164,7 +164,7 @@ public abstract class Context extends Creatable implements GLVersioned {
 	 * @param height The height
 	 */
 	public void setWindowSize(int width, int height) {
-		setWindowSize(new Vector2(width, height));
+		setWindowSize(new Vector2f(width, height));
 	}
 
 	/**
@@ -172,7 +172,7 @@ public abstract class Context extends Creatable implements GLVersioned {
 	 *
 	 * @param windowSize The window size (floored)
 	 */
-	public void setWindowSize(Vector2 windowSize) {
+	public void setWindowSize(Vector2f windowSize) {
 		this.windowSize = windowSize;
 	}
 
@@ -199,7 +199,7 @@ public abstract class Context extends Creatable implements GLVersioned {
 	 *
 	 * @return The window size
 	 */
-	public Vector2 getWindowSize() {
+	public Vector2f getWindowSize() {
 		return windowSize;
 	}
 

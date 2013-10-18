@@ -26,12 +26,12 @@
  */
 package org.spout.renderer.data;
 
-import org.spout.math.matrix.Matrix2;
-import org.spout.math.matrix.Matrix3;
-import org.spout.math.matrix.Matrix4;
-import org.spout.math.vector.Vector2;
-import org.spout.math.vector.Vector3;
-import org.spout.math.vector.Vector4;
+import org.spout.math.matrix.Matrix2f;
+import org.spout.math.matrix.Matrix3f;
+import org.spout.math.matrix.Matrix4f;
+import org.spout.math.vector.Vector2f;
+import org.spout.math.vector.Vector3f;
+import org.spout.math.vector.Vector4f;
 import org.spout.renderer.gl.Program;
 
 /**
@@ -187,7 +187,7 @@ public abstract class Uniform {
 	 * Represents a uniform with a vector2 value.
 	 */
 	public static class Vector2Uniform extends Uniform {
-		private Vector2 value;
+		private Vector2f value;
 
 		/**
 		 * Constructs a new vector2 uniform from the name and the value.
@@ -195,7 +195,7 @@ public abstract class Uniform {
 		 * @param name The name of the uniform
 		 * @param value Its value
 		 */
-		public Vector2Uniform(String name, Vector2 value) {
+		public Vector2Uniform(String name, Vector2f value) {
 			super(name);
 			this.value = value;
 		}
@@ -210,7 +210,7 @@ public abstract class Uniform {
 		 *
 		 * @return The value
 		 */
-		public Vector2 get() {
+		public Vector2f get() {
 			return value;
 		}
 
@@ -219,7 +219,7 @@ public abstract class Uniform {
 		 *
 		 * @param value The value
 		 */
-		public void set(Vector2 value) {
+		public void set(Vector2f value) {
 			this.value = value;
 		}
 	}
@@ -228,7 +228,7 @@ public abstract class Uniform {
 	 * Represents a uniform with a vector2 array value.
 	 */
 	public static class Vector2ArrayUniform extends Uniform {
-		private Vector2[] value;
+		private Vector2f[] value;
 
 		/**
 		 * Constructs a new vector2 array uniform from the name and the value.
@@ -236,9 +236,9 @@ public abstract class Uniform {
 		 * @param name The name of the uniform
 		 * @param value Its value
 		 */
-		public Vector2ArrayUniform(String name, Vector2[] value) {
+		public Vector2ArrayUniform(String name, Vector2f[] value) {
 			super(name);
-			this.value = new Vector2[value.length];
+			this.value = new Vector2f[value.length];
 			System.arraycopy(value, 0, this.value, 0, value.length);
 		}
 
@@ -252,7 +252,7 @@ public abstract class Uniform {
 		 *
 		 * @return The value
 		 */
-		public Vector2[] get() {
+		public Vector2f[] get() {
 			return value;
 		}
 
@@ -261,8 +261,8 @@ public abstract class Uniform {
 		 *
 		 * @param value The value
 		 */
-		public void set(Vector2[] value) {
-			this.value = new Vector2[value.length];
+		public void set(Vector2f[] value) {
+			this.value = new Vector2f[value.length];
 			System.arraycopy(value, 0, this.value, 0, value.length);
 		}
 	}
@@ -271,7 +271,7 @@ public abstract class Uniform {
 	 * Represents a uniform with a vector3 value.
 	 */
 	public static class Vector3Uniform extends Uniform {
-		private Vector3 value;
+		private Vector3f value;
 
 		/**
 		 * Constructs a new vector3 uniform from the name and the value.
@@ -279,7 +279,7 @@ public abstract class Uniform {
 		 * @param name The name of the uniform
 		 * @param value Its value
 		 */
-		public Vector3Uniform(String name, Vector3 value) {
+		public Vector3Uniform(String name, Vector3f value) {
 			super(name);
 			this.value = value;
 		}
@@ -294,7 +294,7 @@ public abstract class Uniform {
 		 *
 		 * @return The value
 		 */
-		public Vector3 get() {
+		public Vector3f get() {
 			return value;
 		}
 
@@ -303,7 +303,7 @@ public abstract class Uniform {
 		 *
 		 * @param value The value
 		 */
-		public void set(Vector3 value) {
+		public void set(Vector3f value) {
 			this.value = value;
 		}
 	}
@@ -312,7 +312,7 @@ public abstract class Uniform {
 	 * Represents a uniform with a vector3 array value.
 	 */
 	public static class Vector3ArrayUniform extends Uniform {
-		private Vector3[] value;
+		private Vector3f[] value;
 
 		/**
 		 * Constructs a new vector3 array uniform from the name and the value.
@@ -320,9 +320,9 @@ public abstract class Uniform {
 		 * @param name The name of the uniform
 		 * @param value Its value
 		 */
-		public Vector3ArrayUniform(String name, Vector3[] value) {
+		public Vector3ArrayUniform(String name, Vector3f[] value) {
 			super(name);
-			this.value = new Vector3[value.length];
+			this.value = new Vector3f[value.length];
 			System.arraycopy(value, 0, this.value, 0, value.length);
 		}
 
@@ -336,7 +336,7 @@ public abstract class Uniform {
 		 *
 		 * @return The value
 		 */
-		public Vector3[] get() {
+		public Vector3f[] get() {
 			return value;
 		}
 
@@ -345,8 +345,8 @@ public abstract class Uniform {
 		 *
 		 * @param value The value
 		 */
-		public void set(Vector3[] value) {
-			this.value = new Vector3[value.length];
+		public void set(Vector3f[] value) {
+			this.value = new Vector3f[value.length];
 			System.arraycopy(value, 0, this.value, 0, value.length);
 		}
 	}
@@ -355,7 +355,7 @@ public abstract class Uniform {
 	 * Represents a uniform with a vector4 value.
 	 */
 	public static class Vector4Uniform extends Uniform {
-		private Vector4 value;
+		private Vector4f value;
 
 		/**
 		 * Constructs a new vector4 uniform from the name and the value.
@@ -363,7 +363,7 @@ public abstract class Uniform {
 		 * @param name The name of the uniform
 		 * @param value Its value
 		 */
-		public Vector4Uniform(String name, Vector4 value) {
+		public Vector4Uniform(String name, Vector4f value) {
 			super(name);
 			this.value = value;
 		}
@@ -378,7 +378,7 @@ public abstract class Uniform {
 		 *
 		 * @return The value
 		 */
-		public Vector4 get() {
+		public Vector4f get() {
 			return value;
 		}
 
@@ -387,7 +387,7 @@ public abstract class Uniform {
 		 *
 		 * @param value The value
 		 */
-		public void set(Vector4 value) {
+		public void set(Vector4f value) {
 			this.value = value;
 		}
 	}
@@ -396,7 +396,7 @@ public abstract class Uniform {
 	 * Represents a uniform with a matrix2 value.
 	 */
 	public static class Matrix2Uniform extends Uniform {
-		private Matrix2 value;
+		private Matrix2f value;
 
 		/**
 		 * Constructs a new matrix2 uniform from the name and the value.
@@ -404,7 +404,7 @@ public abstract class Uniform {
 		 * @param name The name of the uniform
 		 * @param value Its value
 		 */
-		public Matrix2Uniform(String name, Matrix2 value) {
+		public Matrix2Uniform(String name, Matrix2f value) {
 			super(name);
 			this.value = value;
 		}
@@ -419,7 +419,7 @@ public abstract class Uniform {
 		 *
 		 * @return The value
 		 */
-		public Matrix2 get() {
+		public Matrix2f get() {
 			return value;
 		}
 
@@ -428,7 +428,7 @@ public abstract class Uniform {
 		 *
 		 * @param value The value
 		 */
-		public void set(Matrix2 value) {
+		public void set(Matrix2f value) {
 			this.value = value;
 		}
 	}
@@ -437,7 +437,7 @@ public abstract class Uniform {
 	 * Represents a uniform with a boolean matrix3.
 	 */
 	public static class Matrix3Uniform extends Uniform {
-		private Matrix3 value;
+		private Matrix3f value;
 
 		/**
 		 * Constructs a new matrix3 uniform from the name and the value.
@@ -445,7 +445,7 @@ public abstract class Uniform {
 		 * @param name The name of the uniform
 		 * @param value Its value
 		 */
-		public Matrix3Uniform(String name, Matrix3 value) {
+		public Matrix3Uniform(String name, Matrix3f value) {
 			super(name);
 			this.value = value;
 		}
@@ -460,7 +460,7 @@ public abstract class Uniform {
 		 *
 		 * @return The value
 		 */
-		public Matrix3 get() {
+		public Matrix3f get() {
 			return value;
 		}
 
@@ -469,7 +469,7 @@ public abstract class Uniform {
 		 *
 		 * @param value The value
 		 */
-		public void set(Matrix3 value) {
+		public void set(Matrix3f value) {
 			this.value = value;
 		}
 	}
@@ -478,7 +478,7 @@ public abstract class Uniform {
 	 * Represents a uniform with a matrix4 value.
 	 */
 	public static class Matrix4Uniform extends Uniform {
-		private Matrix4 value;
+		private Matrix4f value;
 
 		/**
 		 * Constructs a new matrix4 uniform from the name and the value.
@@ -486,7 +486,7 @@ public abstract class Uniform {
 		 * @param name The name of the uniform
 		 * @param value Its value
 		 */
-		public Matrix4Uniform(String name, Matrix4 value) {
+		public Matrix4Uniform(String name, Matrix4f value) {
 			super(name);
 			this.value = value;
 		}
@@ -501,7 +501,7 @@ public abstract class Uniform {
 		 *
 		 * @return The value
 		 */
-		public Matrix4 get() {
+		public Matrix4f get() {
 			return value;
 		}
 
@@ -510,7 +510,7 @@ public abstract class Uniform {
 		 *
 		 * @param value The value
 		 */
-		public void set(Matrix4 value) {
+		public void set(Matrix4f value) {
 			this.value = value;
 		}
 	}

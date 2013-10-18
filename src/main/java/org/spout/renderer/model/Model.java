@@ -26,9 +26,9 @@
  */
 package org.spout.renderer.model;
 
-import org.spout.math.imaginary.Quaternion;
-import org.spout.math.matrix.Matrix4;
-import org.spout.math.vector.Vector3;
+import org.spout.math.imaginary.Quaternionf;
+import org.spout.math.matrix.Matrix4f;
+import org.spout.math.vector.Vector3f;
 import org.spout.renderer.Material;
 import org.spout.renderer.data.UniformHolder;
 import org.spout.renderer.gl.VertexArray;
@@ -43,10 +43,10 @@ public class Model implements Comparable<Model> {
 	// Material
 	private Material material;
 	// Position and rotation properties
-	private Vector3 position = new Vector3(0, 0, 0);
-	private Vector3 scale = new Vector3(1, 1, 1);
-	private Quaternion rotation = new Quaternion();
-	private Matrix4 matrix = new Matrix4();
+	private Vector3f position = new Vector3f(0, 0, 0);
+	private Vector3f scale = new Vector3f(1, 1, 1);
+	private Quaternionf rotation = new Quaternionf();
+	private Matrix4f matrix = new Matrix4f();
 	private boolean updateMatrix = true;
 	// Model uniforms
 	private final UniformHolder uniforms = new UniformHolder();
@@ -151,9 +151,9 @@ public class Model implements Comparable<Model> {
 	 *
 	 * @return The transformation matrix
 	 */
-	public Matrix4 getMatrix() {
+	public Matrix4f getMatrix() {
 		if (updateMatrix) {
-			matrix = Matrix4.createScaling(scale.toVector4(1)).rotate(rotation).translate(position);
+			matrix = Matrix4f.createScaling(scale.toVector4(1)).rotate(rotation).translate(position);
 			updateMatrix = false;
 		}
 		return matrix;
@@ -164,7 +164,7 @@ public class Model implements Comparable<Model> {
 	 *
 	 * @return The model position
 	 */
-	public Vector3 getPosition() {
+	public Vector3f getPosition() {
 		return position;
 	}
 
@@ -173,7 +173,7 @@ public class Model implements Comparable<Model> {
 	 *
 	 * @param position The model position
 	 */
-	public void setPosition(Vector3 position) {
+	public void setPosition(Vector3f position) {
 		this.position = position;
 		updateMatrix = true;
 	}
@@ -183,7 +183,7 @@ public class Model implements Comparable<Model> {
 	 *
 	 * @return The model rotation
 	 */
-	public Quaternion getRotation() {
+	public Quaternionf getRotation() {
 		return rotation;
 	}
 
@@ -192,7 +192,7 @@ public class Model implements Comparable<Model> {
 	 *
 	 * @param rotation The model rotation
 	 */
-	public void setRotation(Quaternion rotation) {
+	public void setRotation(Quaternionf rotation) {
 		this.rotation = rotation;
 		updateMatrix = true;
 	}
@@ -202,7 +202,7 @@ public class Model implements Comparable<Model> {
 	 *
 	 * @return The model scale
 	 */
-	public Vector3 getScale() {
+	public Vector3f getScale() {
 		return scale;
 	}
 
@@ -211,7 +211,7 @@ public class Model implements Comparable<Model> {
 	 *
 	 * @param scale The model scale
 	 */
-	public void setScale(Vector3 scale) {
+	public void setScale(Vector3f scale) {
 		this.scale = scale;
 		updateMatrix = true;
 	}

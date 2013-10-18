@@ -26,20 +26,20 @@
  */
 package org.spout.renderer;
 
-import org.spout.math.imaginary.Quaternion;
-import org.spout.math.matrix.Matrix4;
-import org.spout.math.matrix.MatrixN;
-import org.spout.math.vector.Vector3;
+import org.spout.math.imaginary.Quaternionf;
+import org.spout.math.matrix.Matrix4f;
+import org.spout.math.matrix.MatrixNf;
+import org.spout.math.vector.Vector3f;
 
 /**
  * Represents a camera with a projection, position and rotation, for rendering purposes.
  */
 public class Camera {
-	private Matrix4 projection = new Matrix4();
-	private Vector3 position = new Vector3(0, 0, 0);
-	private Quaternion rotation = new Quaternion();
-	private Matrix4 rotationMatrixInverse = new Matrix4();
-	private Matrix4 matrix = new Matrix4();
+	private Matrix4f projection = new Matrix4f();
+	private Vector3f position = new Vector3f(0, 0, 0);
+	private Quaternionf rotation = new Quaternionf();
+	private Matrix4f rotationMatrixInverse = new Matrix4f();
+	private Matrix4f matrix = new Matrix4f();
 	private boolean updateMatrix = true;
 
 	/**
@@ -47,7 +47,7 @@ public class Camera {
 	 *
 	 * @param projection The projection matrix
 	 */
-	public Camera(Matrix4 projection) {
+	public Camera(Matrix4f projection) {
 		this.projection = projection;
 	}
 
@@ -56,7 +56,7 @@ public class Camera {
 	 *
 	 * @return The perspective projection matrix
 	 */
-	public Matrix4 getProjectionMatrix() {
+	public Matrix4f getProjectionMatrix() {
 		return projection;
 	}
 
@@ -65,11 +65,11 @@ public class Camera {
 	 *
 	 * @return The view matrix
 	 */
-	public Matrix4 getViewMatrix() {
+	public Matrix4f getViewMatrix() {
 		if (updateMatrix) {
-			final Matrix4 rotationMatrix = Matrix4.createRotation(rotation.invert());
+			final Matrix4f rotationMatrix = Matrix4f.createRotation(rotation.invert());
 			rotationMatrixInverse = rotationMatrix.invert();
-			matrix = rotationMatrix.mul(Matrix4.createTranslation(position.negate()));
+			matrix = rotationMatrix.mul(Matrix4f.createTranslation(position.negate()));
 			updateMatrix = false;
 		}
 		return matrix;
@@ -80,7 +80,7 @@ public class Camera {
 	 *
 	 * @return The camera position
 	 */
-	public Vector3 getPosition() {
+	public Vector3f getPosition() {
 		return position;
 	}
 
@@ -89,7 +89,7 @@ public class Camera {
 	 *
 	 * @param position The camera position
 	 */
-	public void setPosition(Vector3 position) {
+	public void setPosition(Vector3f position) {
 		this.position = position;
 		updateMatrix = true;
 	}
@@ -99,7 +99,7 @@ public class Camera {
 	 *
 	 * @return The camera rotation
 	 */
-	public Quaternion getRotation() {
+	public Quaternionf getRotation() {
 		return rotation;
 	}
 
@@ -108,7 +108,7 @@ public class Camera {
 	 *
 	 * @param rotation The camera rotation
 	 */
-	public void setRotation(Quaternion rotation) {
+	public void setRotation(Quaternionf rotation) {
 		this.rotation = rotation;
 		updateMatrix = true;
 	}
@@ -118,8 +118,8 @@ public class Camera {
 	 *
 	 * @return The camera's right direction vector
 	 */
-	public Vector3 getRight() {
-		return toCamera(new Vector3(-1, 0, 0));
+	public Vector3f getRight() {
+		return toCamera(new Vector3f(-1, 0, 0));
 	}
 
 	/**
@@ -127,8 +127,8 @@ public class Camera {
 	 *
 	 * @return The camera's up direction vector
 	 */
-	public Vector3 getUp() {
-		return toCamera(new Vector3(0, 1, 0));
+	public Vector3f getUp() {
+		return toCamera(new Vector3f(0, 1, 0));
 	}
 
 	/**
@@ -136,11 +136,11 @@ public class Camera {
 	 *
 	 * @return The camera's forward direction vector
 	 */
-	public Vector3 getForward() {
-		return toCamera(new Vector3(0, 0, -1));
+	public Vector3f getForward() {
+		return toCamera(new Vector3f(0, 0, -1));
 	}
 
-	private Vector3 toCamera(Vector3 v) {
+	private Vector3f toCamera(Vector3f v) {
 		if (rotationMatrixInverse != null) {
 			return rotationMatrixInverse.transform(v.toVector4(1)).toVector3();
 		}
@@ -161,7 +161,7 @@ public class Camera {
 		if (near == 0) {
 			throw new IllegalArgumentException("Near cannot be zero");
 		}
-		final MatrixN m = MatrixN.createPerspective(4, fieldOfView, (float) windowWidth / windowHeight, near, far);
+		final MatrixNf m = MatrixNf.createPerspective(4, fieldOfView, (float) windowWidth / windowHeight, near, far);
 		// TODO: fix me in Math
 		m.set(3, 3, 0);
 		return new Camera(m.toMatrix4());
@@ -182,6 +182,6 @@ public class Camera {
 		if (near == 0) {
 			throw new IllegalArgumentException("Near cannot be zero");
 		}
-		return new Camera(Matrix4.createOrthographic(right, left, top, bottom, near, far));
+		return new Camera(Matrix4f.createOrthographic(right, left, top, bottom, near, far));
 	}
 }
