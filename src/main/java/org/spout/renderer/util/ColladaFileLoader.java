@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -44,13 +45,14 @@ import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TFloatArrayList;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import org.spout.math.vector.Vector3;
+import org.spout.math.vector.Vector3f;
 
 /**
  * A static loading class for the COLLADA file format (.dae). This class has the capability to load mesh data such as positions, texture coordinates, and normals.
@@ -90,7 +92,7 @@ public final class ColladaFileLoader {
 	 * @param indices list to store indices
 	 * @return vec3 the sizes of each component
 	 */
-	public static Vector3 loadMesh(InputStream in, TFloatList positions, TFloatList textureCoords, TFloatList normals, TIntList indices) {
+	public static Vector3f loadMesh(InputStream in, TFloatList positions, TFloatList textureCoords, TFloatList normals, TIntList indices) {
 		try {
 			// load the doc into memory
 			final DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
@@ -127,20 +129,23 @@ public final class ColladaFileLoader {
 			final TFloatList rawNormals = new TFloatArrayList();
 
 			// load the position data
-			if (!semanticMap.containsKey(SEMANTIC_POSITION))
+			if (!semanticMap.containsKey(SEMANTIC_POSITION)) {
 				throw new MalformedColladaFileException("Collada file is missing position data.");
+			}
 			loadSources(getElementById(doc, semanticMap.get(SEMANTIC_POSITION).substring(1)), positions);
 			// make sure we got some positions
-			if (positions.isEmpty())
+			if (positions.isEmpty()) {
 				throw new MalformedColladaFileException("Positions source cannot be empty.");
+			}
 
 			// load the texcoords
 			if (!semanticMap.containsKey(SEMANTIC_TEXCOORD)) {
 				logger.warning("Collada file is missing texture coordinates.");
 			} else {
 				loadSources(getElementById(doc, semanticMap.get(SEMANTIC_TEXCOORD).substring(1)), rawTextureCoords);
-				if (rawTextureCoords.isEmpty())
+				if (rawTextureCoords.isEmpty()) {
 					logger.warning("Texture coordinates source is empty.");
+				}
 			}
 
 			// load the normals
@@ -148,8 +153,9 @@ public final class ColladaFileLoader {
 				logger.warning("Collada file is missing normals.");
 			} else {
 				loadSources(getElementById(doc, semanticMap.get(SEMANTIC_NORMAL).substring(1)), rawNormals);
-				if (rawNormals.isEmpty())
+				if (rawNormals.isEmpty()) {
 					logger.warning("Normals source is empty.");
+				}
 			}
 
 			// load the indices
@@ -172,19 +178,23 @@ public final class ColladaFileLoader {
 		final int texcoordSize = textureCoords.isEmpty() ? 0 : STEP_TEXCOORD;
 		final int normalSize = normals.isEmpty() ? 0 : STEP_NORMAL;
 
-		return new Vector3(vertSize, texcoordSize, normalSize);
+		return new Vector3f(vertSize, texcoordSize, normalSize);
 	}
 
 	private static void loadIndices(int[] rawIndices, TObjectIntMap<String> offsets, TIntList indices,
-							 TFloatList rawTextureCoords, TFloatList textureCoords,
-							 TFloatList rawNormals, TFloatList normals) {
+			TFloatList rawTextureCoords, TFloatList textureCoords,
+			TFloatList rawNormals, TFloatList normals) {
 		final int positionOffset = offsets.get(SEMANTIC_VERTEX);
 		final int texcoordOffset = offsets.get(SEMANTIC_TEXCOORD);
 		final int normalOffset = offsets.get(SEMANTIC_NORMAL);
 		final int components = texcoordOffset == -1 ? normalOffset == -1 ? 1 : 2 : 3;
 
-		if (texcoordOffset != -1) textureCoords.fill(0, rawTextureCoords.size(), 0);
-		if (normalOffset != -1) normals.fill(0, rawNormals.size(), 0);
+		if (texcoordOffset != -1) {
+			textureCoords.fill(0, rawTextureCoords.size(), 0);
+		}
+		if (normalOffset != -1) {
+			normals.fill(0, rawNormals.size(), 0);
+		}
 
 		for (int i = 0; i < rawIndices.length; i += components) {
 			int positionIndex = rawIndices[i + positionOffset];
@@ -235,12 +245,15 @@ public final class ColladaFileLoader {
 		NodeList nodes = parent.getChildNodes();
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Node node = nodes.item(i);
-			if (!node.getNodeName().equals(ELEMENT_INPUT))
+			if (!node.getNodeName().equals(ELEMENT_INPUT)) {
 				continue;
+			}
 			Element input = (Element) node;
 			String semantic = input.getAttribute(ATTRIBUTE_SEMANTIC);
 			sources.put(semantic, input.getAttribute(ATTRIBUTE_SOURCE));
-			if (offsets != null) offsets.put(semantic, Integer.parseInt(input.getAttribute(ATTRIBUTE_OFFSET)));
+			if (offsets != null) {
+				offsets.put(semantic, Integer.parseInt(input.getAttribute(ATTRIBUTE_OFFSET)));
+			}
 		}
 	}
 

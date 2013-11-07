@@ -37,12 +37,12 @@ import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 
-import org.spout.math.matrix.Matrix2;
-import org.spout.math.matrix.Matrix3;
-import org.spout.math.matrix.Matrix4;
-import org.spout.math.vector.Vector2;
-import org.spout.math.vector.Vector3;
-import org.spout.math.vector.Vector4;
+import org.spout.math.matrix.Matrix2f;
+import org.spout.math.matrix.Matrix3f;
+import org.spout.math.matrix.Matrix4f;
+import org.spout.math.vector.Vector2f;
+import org.spout.math.vector.Vector3f;
+import org.spout.math.vector.Vector4f;
 import org.spout.renderer.Creatable;
 import org.spout.renderer.GLVersioned;
 import org.spout.renderer.data.Color;
@@ -138,68 +138,68 @@ public abstract class Program extends Creatable implements GLVersioned {
 	public abstract void setUniform(String name, float f);
 
 	/**
-	 * Sets a uniform {@link org.spout.math.vector.Vector2} in the shader to the desired value.
+	 * Sets a uniform {@link org.spout.math.vector.Vector2f} in the shader to the desired value.
 	 *
 	 * @param name The name of the uniform to set
 	 * @param v The vector value
 	 */
-	public abstract void setUniform(String name, Vector2 v);
+	public abstract void setUniform(String name, Vector2f v);
 
 	/**
-	 * Sets a uniform {@link org.spout.math.vector.Vector2} array in the shader to the desired value.
+	 * Sets a uniform {@link org.spout.math.vector.Vector2f} array in the shader to the desired value.
 	 *
 	 * @param name The name of the uniform to set
 	 * @param vs The vector array value
 	 */
-	public abstract void setUniform(String name, Vector2[] vs);
+	public abstract void setUniform(String name, Vector2f[] vs);
 
 	/**
-	 * Sets a uniform {@link org.spout.math.vector.Vector3} in the shader to the desired value.
+	 * Sets a uniform {@link org.spout.math.vector.Vector3f} in the shader to the desired value.
 	 *
 	 * @param name The name of the uniform to set
 	 * @param v The vector value
 	 */
-	public abstract void setUniform(String name, Vector3 v);
+	public abstract void setUniform(String name, Vector3f v);
 
 	/**
-	 * Sets a uniform {@link org.spout.math.vector.Vector3} array in the shader to the desired value.
+	 * Sets a uniform {@link org.spout.math.vector.Vector3f} array in the shader to the desired value.
 	 *
 	 * @param name The name of the uniform to set
 	 * @param vs The vector array value
 	 */
-	public abstract void setUniform(String name, Vector3[] vs);
+	public abstract void setUniform(String name, Vector3f[] vs);
 
 	/**
-	 * Sets a uniform {@link org.spout.math.vector.Vector4} in the shader to the desired value.
+	 * Sets a uniform {@link org.spout.math.vector.Vector4f} in the shader to the desired value.
 	 *
 	 * @param name The name of the uniform to set
 	 * @param v The vector value
 	 */
-	public abstract void setUniform(String name, Vector4 v);
+	public abstract void setUniform(String name, Vector4f v);
 
 	/**
-	 * Sets a uniform {@link org.spout.math.matrix.Matrix4} in the shader to the desired value.
+	 * Sets a uniform {@link org.spout.math.matrix.Matrix4f} in the shader to the desired value.
 	 *
 	 * @param name The name of the uniform to set
 	 * @param m The matrix value
 	 */
-	public abstract void setUniform(String name, Matrix2 m);
+	public abstract void setUniform(String name, Matrix2f m);
 
 	/**
-	 * Sets a uniform {@link org.spout.math.matrix.Matrix4} in the shader to the desired value.
+	 * Sets a uniform {@link org.spout.math.matrix.Matrix4f} in the shader to the desired value.
 	 *
 	 * @param name The name of the uniform to set
 	 * @param m The matrix value
 	 */
-	public abstract void setUniform(String name, Matrix3 m);
+	public abstract void setUniform(String name, Matrix3f m);
 
 	/**
-	 * Sets a uniform {@link org.spout.math.matrix.Matrix4} in the shader to the desired value.
+	 * Sets a uniform {@link org.spout.math.matrix.Matrix4f} in the shader to the desired value.
 	 *
 	 * @param name The name of the uniform to set
 	 * @param m The matrix value
 	 */
-	public abstract void setUniform(String name, Matrix4 m);
+	public abstract void setUniform(String name, Matrix4f m);
 
 	/**
 	 * Sets a uniform {@link java.awt.Color} in the shader to the desired value.
@@ -208,7 +208,7 @@ public abstract class Program extends Creatable implements GLVersioned {
 	 * @param c The color value
 	 */
 	public void setUniform(String name, Color c) {
-		setUniform(name, (Vector4) c.normalize());
+		setUniform(name, (Vector4f) c.normalize());
 	}
 
 	/**

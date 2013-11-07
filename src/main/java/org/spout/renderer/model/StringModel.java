@@ -50,7 +50,7 @@ import gnu.trove.map.hash.TCharIntHashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
 import org.spout.math.GenericMath;
-import org.spout.math.vector.Vector2;
+import org.spout.math.vector.Vector2f;
 import org.spout.renderer.Material;
 import org.spout.renderer.data.Color;
 import org.spout.renderer.data.VertexAttribute;
@@ -170,13 +170,13 @@ public class StringModel extends Model {
 		program.setUniform("fontColor", Color.WHITE);
 		final VertexArray vertexArray = getVertexArray();
 		// Remove the padding for the first glyph
-		Vector2 offset = new Vector2(-worldGlyphPadding, 0);
+		Vector2f offset = new Vector2f(-worldGlyphPadding, 0);
 		final char[] glyphs = string.toCharArray();
 		for (int i = 0; i < glyphs.length; i++) {
 			final char glyph = glyphs[i];
 			// Move the glyph offset to the next line for the new line character
 			if (glyph == '\n') {
-				offset = new Vector2(-worldGlyphPadding, offset.getY() - worldLineHeight);
+				offset = new Vector2f(-worldGlyphPadding, offset.getY() - worldLineHeight);
 				continue;
 			}
 			// Look for a color code
@@ -272,7 +272,7 @@ public class StringModel extends Model {
 		|\ |
 		| \|
 		0--2
-	 	*/
+		 */
 		float x = 0;
 		int index = 0;
 		int renderIndex = 0;

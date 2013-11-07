@@ -34,7 +34,7 @@ import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TFloatArrayList;
 import gnu.trove.list.array.TIntArrayList;
 
-import org.spout.math.vector.Vector3;
+import org.spout.math.vector.Vector3f;
 
 /**
  * A static loading class for standard .obj model files. This class will load positions, normals can texture coordinates. Missing normals are not calculated. Normals are expected to be of unit length.
@@ -64,7 +64,7 @@ public final class ObjFileLoader {
 	 * @return A Vector3 containing, in order, the number of components for the positions, texture coords and normals
 	 * @throws MalformedObjFileException If any errors occur during loading
 	 */
-	public static Vector3 load(InputStream stream, TFloatList positions, TFloatList textureCoords, TFloatList normals, TIntList indices) {
+	public static Vector3f load(InputStream stream, TFloatList positions, TFloatList textureCoords, TFloatList normals, TIntList indices) {
 		int positionSize = -1;
 		final TFloatList rawTextureCoords = new TFloatArrayList();
 		int textureCoordSize = -1;
@@ -131,7 +131,7 @@ public final class ObjFileLoader {
 		} catch (Exception ex) {
 			throw new MalformedObjFileException(line, ex);
 		}
-		return new Vector3(positionSize, textureCoordSize, normalSize).max(0, 0, 0);
+		return new Vector3f(positionSize, textureCoordSize, normalSize).max(0, 0, 0);
 	}
 
 	private static void parseComponents(TFloatList destination, String line) {

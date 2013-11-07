@@ -38,12 +38,12 @@ import gnu.trove.map.hash.TObjectIntHashMap;
 
 import android.opengl.GLES20;
 
-import org.spout.math.matrix.Matrix2;
-import org.spout.math.matrix.Matrix3;
-import org.spout.math.matrix.Matrix4;
-import org.spout.math.vector.Vector2;
-import org.spout.math.vector.Vector3;
-import org.spout.math.vector.Vector4;
+import org.spout.math.matrix.Matrix2f;
+import org.spout.math.matrix.Matrix3f;
+import org.spout.math.matrix.Matrix4f;
+import org.spout.math.vector.Vector2f;
+import org.spout.math.vector.Vector3f;
+import org.spout.math.vector.Vector4f;
 import org.spout.renderer.android.AndroidUtil;
 import org.spout.renderer.data.Uniform;
 import org.spout.renderer.data.UniformHolder;
@@ -190,7 +190,7 @@ public class GLES20Program extends Program {
 	}
 
 	@Override
-	public void setUniform(String name, Vector2 v) {
+	public void setUniform(String name, Vector2f v) {
 		checkCreated();
 		if (!uniforms.containsKey(name)) {
 			return;
@@ -200,14 +200,14 @@ public class GLES20Program extends Program {
 	}
 
 	@Override
-	public void setUniform(String name, Vector2[] vs) {
+	public void setUniform(String name, Vector2f[] vs) {
 		checkCreated();
 		if (!uniforms.containsKey(name)) {
 			return;
 		}
 		int count = 0;
 		final FloatBuffer vectorBuffer = CausticUtil.createFloatBuffer(vs.length * 2);
-		for (Vector2 v : vs) {
+		for (Vector2f v : vs) {
 			vectorBuffer.put(v.getX());
 			vectorBuffer.put(v.getY());
 			count++;
@@ -218,7 +218,7 @@ public class GLES20Program extends Program {
 	}
 
 	@Override
-	public void setUniform(String name, Vector3 v) {
+	public void setUniform(String name, Vector3f v) {
 		checkCreated();
 		if (!uniforms.containsKey(name)) {
 			return;
@@ -228,14 +228,14 @@ public class GLES20Program extends Program {
 	}
 
 	@Override
-	public void setUniform(String name, Vector3[] vs) {
+	public void setUniform(String name, Vector3f[] vs) {
 		checkCreated();
 		if (!uniforms.containsKey(name)) {
 			return;
 		}
 		int count = 0;
 		final FloatBuffer vectorBuffer = CausticUtil.createFloatBuffer(vs.length * 3);
-		for (Vector3 v : vs) {
+		for (Vector3f v : vs) {
 			vectorBuffer.put(v.getX());
 			vectorBuffer.put(v.getY());
 			vectorBuffer.put(v.getZ());
@@ -247,7 +247,7 @@ public class GLES20Program extends Program {
 	}
 
 	@Override
-	public void setUniform(String name, Vector4 v) {
+	public void setUniform(String name, Vector4f v) {
 		checkCreated();
 		if (!uniforms.containsKey(name)) {
 			return;
@@ -257,7 +257,7 @@ public class GLES20Program extends Program {
 	}
 
 	@Override
-	public void setUniform(String name, Matrix2 m) {
+	public void setUniform(String name, Matrix2f m) {
 		checkCreated();
 		if (!uniforms.containsKey(name)) {
 			return;
@@ -270,7 +270,7 @@ public class GLES20Program extends Program {
 	}
 
 	@Override
-	public void setUniform(String name, Matrix3 m) {
+	public void setUniform(String name, Matrix3f m) {
 		checkCreated();
 		if (!uniforms.containsKey(name)) {
 			return;
@@ -283,7 +283,7 @@ public class GLES20Program extends Program {
 	}
 
 	@Override
-	public void setUniform(String name, Matrix4 m) {
+	public void setUniform(String name, Matrix4f m) {
 		checkCreated();
 		if (!uniforms.containsKey(name)) {
 			return;

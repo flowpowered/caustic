@@ -27,14 +27,14 @@
 package org.spout.renderer.data;
 
 import org.spout.math.GenericMath;
-import org.spout.math.vector.Vector4;
+import org.spout.math.vector.Vector4f;
 
 /**
  * Represents an immutable color with red, green and blue components, and an optional alpha component. When no alpha component is present, the return value is 255 (opaque). A color can be normalized
  * (all components have their value between 0 and 1) or not (components are in the range of 0 to 255).
  */
 // TODO: extending vector4 might not be that of a good idea because it's immutable and only vector4 objects are returned by the methods not overridden in this class, which can't be used directly
-public class Color extends Vector4 {
+public class Color extends Vector4f {
 	/**
 	 * The color white.
 	 */
