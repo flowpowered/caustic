@@ -95,7 +95,35 @@ public abstract class Context extends Creatable implements GLVersioned {
 	 */
 	public abstract void enableCapability(Capability capability);
 
-	/**
+    /**
+     * Enables or disables writing into the depth buffer.
+     *
+     * @param enabled Whether or not to write into the depth buffer.
+     */
+    public abstract void setDepthMask(boolean enabled);
+
+    /**
+     * Sets the blending functions for the source and destination buffers, for all buffers. Blending must be enabled with {@link #enableCapability(org.spout.renderer.gl.Context.Capability)}.
+     *
+     * @param source The source function
+     * @param destination The destination function
+     */
+    public void setBlendingFunctions(BlendFunction source, BlendFunction destination) {
+        setBlendingFunctions(-1, source, destination);
+    }
+
+    /**
+     * Sets the blending functions for the source and destination buffer at the index. Blending must be enabled with {@link #enableCapability(org.spout.renderer.gl.Context.Capability)}.
+     * <p/>
+     * Support for specifying the buffer index is only available in GL40.
+     *
+     * @param bufferIndex The index of the target buffer
+     * @param source The source function
+     * @param destination The destination function
+     */
+    public abstract void setBlendingFunctions(int bufferIndex, BlendFunction source, BlendFunction destination);
+
+    /**
 	 * Sets the render view port, which is the dimensions and position of the frame inside the window.
 	 *
 	 * @param viewPort The view port
@@ -247,4 +275,43 @@ public abstract class Context extends Creatable implements GLVersioned {
 			return glConstant;
 		}
 	}
+
+    /**
+     * An enum of the blending functions.
+     */
+    public static enum BlendFunction {
+        GL_ZERO(0x0), // GL11.GL_ZERO
+        GL_ONE(0x1), // GL11.GL_ONE
+        GL_SRC_COLOR(0x300), // GL11.GL_SRC_COLOR
+        GL_ONE_MINUS_SRC_COLOR(0x301), // GL11.GL_ONE_MINUS_SRC_COLOR
+        GL_DST_COLOR(0x306), // GL11.GL_DST_COLOR
+        GL_ONE_MINUS_DST_COLOR(0x307), // GL11.GL_ONE_MINUS_DST_COLOR
+        GL_SRC_ALPHA(0x302), // GL11.GL_SRC_ALPHA
+        GL_ONE_MINUS_SRC_ALPHA(0x303), // GL11.GL_ONE_MINUS_SRC_ALPHA
+        GL_DST_ALPHA(0x304), // GL11.GL_DST_ALPHA
+        GL_ONE_MINUS_DST_ALPHA(0x305), // GL11.GL_ONE_MINUS_DST_ALPHA
+        GL_CONSTANT_COLOR(0x8001), // GL11.GL_CONSTANT_COLOR
+        GL_ONE_MINUS_CONSTANT_COLOR(0x8002), // GL11.GL_ONE_MINUS_CONSTANT_COLOR
+        GL_CONSTANT_ALPHA(0x8003), // GL11.GL_CONSTANT_ALPHA
+        GL_ONE_MINUS_CONSTANT_ALPHA(0x8004), // GL11.GL_ONE_MINUS_CONSTANT_ALPHA
+        GL_SRC_ALPHA_SATURATE(0x308), // GL11.GL_SRC_ALPHA_SATURATE
+        GL_SRC1_COLOR(0x88F9), // GL33.GL_SRC1_COLOR
+        GL_ONE_MINUS_SRC1_COLOR(0x88FA), // GL33.GL_ONE_MINUS_SRC1_COLOR
+        GL_SRC1_ALPHA(0x8589), // GL33.GL_SRC1_ALPHA
+        GL_ONE_MINUS_SRC1_ALPHA(0x88FB); // GL33.GL_ONE_MINUS_SRC1_ALPHA
+        private final int glConstant;
+
+        private BlendFunction(int glConstant) {
+            this.glConstant = glConstant;
+        }
+
+        /**
+         * Returns the OpenGL constant associated to the blending function.
+         *
+         * @return The OpenGL constant
+         */
+        public int getGLConstant() {
+            return glConstant;
+        }
+    }
 }

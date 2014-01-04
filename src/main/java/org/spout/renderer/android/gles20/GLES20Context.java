@@ -109,7 +109,19 @@ public class GLES20Context extends Context implements GLSurfaceView.Renderer {
 		AndroidUtil.checkForGLESError();
 	}
 
-	@Override
+    @Override
+    public void setDepthMask(boolean enabled) {
+        GLES20.glDepthMask(enabled);
+        // Check for errors
+        AndroidUtil.checkForGLESError();
+    }
+
+    @Override
+    public void setBlendingFunctions(int bufferIndex, BlendFunction source, BlendFunction destination) {
+        GLES20.glBlendFunc(source.getGLConstant(), destination.getGLConstant());
+    }
+
+    @Override
 	public void setViewPort(Rectangle viewPort) {
 		GLES20.glViewport(viewPort.getX(), viewPort.getY(), viewPort.getWidth(), viewPort.getHeight());
 		// Check for errors

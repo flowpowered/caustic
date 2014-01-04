@@ -67,8 +67,6 @@ public class GL20Context extends Context {
 		Display.setTitle(this.windowTitle);
 		// Set the default view port
 		GL11.glViewport(0, 0, windowSize.getFloorX(), windowSize.getFloorY());
-		// Set the alpha blending function for transparency
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		// Check for errors
 		LWJGLUtil.checkForGLError();
 		// Update the state
@@ -121,7 +119,19 @@ public class GL20Context extends Context {
 		LWJGLUtil.checkForGLError();
 	}
 
-	@Override
+    @Override
+    public void setDepthMask(boolean enabled) {
+        GL11.glDepthMask(enabled);
+        // Check for errors
+        LWJGLUtil.checkForGLError();
+    }
+
+    @Override
+    public void setBlendingFunctions(int bufferIndex, BlendFunction source, BlendFunction destination) {
+        GL11.glBlendFunc(source.getGLConstant(), destination.getGLConstant());
+    }
+
+    @Override
 	public void setViewPort(Rectangle viewPort) {
 		GL11.glViewport(viewPort.getX(), viewPort.getY(), viewPort.getWidth(), viewPort.getHeight());
 		// Check for errors

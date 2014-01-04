@@ -33,13 +33,16 @@ import org.spout.renderer.Action.ClearBufferAction;
 import org.spout.renderer.Action.DisableCapabilitiesAction;
 import org.spout.renderer.Action.EnableCapabilitiesAction;
 import org.spout.renderer.Action.RenderModelsAction;
+import org.spout.renderer.Action.SetBlendingFunctions;
 import org.spout.renderer.Action.SetCameraAction;
 import org.spout.renderer.Action.SetClearColorAction;
+import org.spout.renderer.Action.SetDepthMaskAction;
 import org.spout.renderer.Action.SetViewPortAction;
 import org.spout.renderer.Action.UnbindFrameBufferAction;
 import org.spout.renderer.Action.UpdateDisplayAction;
 import org.spout.renderer.data.Color;
 import org.spout.renderer.gl.Context;
+import org.spout.renderer.gl.Context.BlendFunction;
 import org.spout.renderer.gl.Context.Capability;
 import org.spout.renderer.gl.FrameBuffer;
 import org.spout.renderer.model.Model;
@@ -159,7 +162,34 @@ public class Pipeline {
 			return doAction(new SetCameraAction(camera));
 		}
 
-		/**
+        /**
+         * Builds the next action in the chain. The action enables the depth mask.
+         *
+         * @return The builder itself, for chained calls
+         */
+        public PipelineBuilder enableDepthMask() {
+            return doAction(new SetDepthMaskAction(true));
+        }
+
+        /**
+         * Builds the next action in the chain. The action disables the depth mask.
+         *
+         * @return The builder itself, for chained calls
+         */
+        public PipelineBuilder disableDepthMask() {
+            return doAction(new SetDepthMaskAction(false));
+        }
+
+        /**
+         * Builds the next action in the chain. The sets the blending functions.
+         *
+         * @return The builder itself, for chained calls
+         */
+        public PipelineBuilder setBlendingFunctions(BlendFunction source, BlendFunction destination) {
+            return doAction(new SetBlendingFunctions(source, destination));
+        }
+
+        /**
 		 * Builds the next action in the chain. The actions renders the model list. The models will be reordered to be grouped by material. This reordering is done via a stable sort ({@link
 		 * java.util.Collections#sort(java.util.List)}) so that models with the same materials are not reordered. This grouping improves performance by reducing the amount of rendering calls.
 		 *

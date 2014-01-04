@@ -31,6 +31,7 @@ import java.util.List;
 
 import org.spout.renderer.data.Color;
 import org.spout.renderer.gl.Context;
+import org.spout.renderer.gl.Context.BlendFunction;
 import org.spout.renderer.gl.Context.Capability;
 import org.spout.renderer.gl.FrameBuffer;
 import org.spout.renderer.gl.Program;
@@ -239,7 +240,51 @@ public abstract class Action {
 		}
 	}
 
-	/**
+    /**
+     * An action that enables the depth mask.
+     */
+    public static class SetDepthMaskAction extends Action {
+        private boolean value;
+
+        /**
+         * Constructs a new depth mask setting action with the desired depth mask status.
+         *
+         * @param value The depth mask status
+         */
+        public SetDepthMaskAction(boolean value) {
+            this.value = value;
+        }
+
+        @Override
+        public void execute(Context context) {
+            context.setDepthMask(value);
+        }
+    }
+
+    /**
+     * An action that set the blending functions.
+     */
+    public static class SetBlendingFunctions extends Action {
+        private BlendFunction source, destination;
+
+        /**
+         * Constructs a new blending function setting action with the desired source and destination blending functions.
+         *
+         * @param source The source blending function
+         * @param destination The destination blending function
+         */
+        public SetBlendingFunctions(BlendFunction source, BlendFunction destination) {
+            this.source = source;
+            this.destination = destination;
+        }
+
+        @Override
+        public void execute(Context context) {
+            context.setBlendingFunctions(source, destination);
+        }
+    }
+
+    /**
 	 * An action that renders the models to the bound buffer. The models will be reordered to be grouped by material. This reordering is done via a stable sort ({@link
 	 * java.util.Collections#sort(java.util.List)}) so that models with the same materials are not reordered. This grouping improves performance by reducing the amount of rendering calls.
 	 */
