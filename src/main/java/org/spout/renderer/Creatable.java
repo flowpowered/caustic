@@ -30,6 +30,8 @@ package org.spout.renderer;
  * Represents a resource that can be created and destroyed.
  */
 public abstract class Creatable {
+    //private static final AtomicInteger createdCount = new AtomicInteger(0);
+    //private static final AtomicInteger destroyedCount = new AtomicInteger(0);
 	private boolean created = false;
 
 	/**
@@ -37,6 +39,8 @@ public abstract class Creatable {
 	 */
 	public void create() {
 		created = true;
+        //final int count = createdCount.incrementAndGet();
+        //System.out.println(count - destroyedCount.get());
 	}
 
 	/**
@@ -44,6 +48,8 @@ public abstract class Creatable {
 	 */
 	public void destroy() {
 		created = false;
+        //final int count = destroyedCount.incrementAndGet();
+        //System.out.println(createdCount.get() - count);
 	}
 
 	/**

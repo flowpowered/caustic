@@ -60,7 +60,16 @@ public class Camera {
 		return projection;
 	}
 
-	/**
+    /**
+     * Sets the perspective projection matrix.
+     *
+     * @param projection The perspective projection matrix
+     */
+    public void setProjection(Matrix4f projection) {
+        this.projection = projection;
+    }
+
+    /**
 	 * Returns the view matrix, which is the transformation matrix for the position and rotation.
 	 *
 	 * @return The view matrix

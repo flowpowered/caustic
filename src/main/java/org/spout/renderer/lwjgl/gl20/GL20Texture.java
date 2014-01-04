@@ -27,6 +27,7 @@
 package org.spout.renderer.lwjgl.gl20;
 
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 
 import org.lwjgl.opengl.EXTTextureFilterAnisotropic;
 import org.lwjgl.opengl.GL11;
@@ -36,6 +37,7 @@ import org.lwjgl.util.glu.GLU;
 
 import org.spout.renderer.gl.Texture;
 import org.spout.renderer.lwjgl.LWJGLUtil;
+import org.spout.renderer.util.CausticUtil;
 
 /**
  * An OpenGL 2.0 implementation of {@link Texture}.
@@ -75,6 +77,10 @@ public class GL20Texture extends Texture {
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_COMPARE_MODE, GL14.GL_COMPARE_R_TO_TEXTURE);
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_COMPARE_FUNC, compareMode.getGLConstant());
 		}
+        // Set the border color, if any
+        if (borderColor != null) {
+            GL11.glTexParameter(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_BORDER_COLOR, (FloatBuffer) CausticUtil.createFloatBuffer(4).put(borderColor.toArray()).flip());
+        }
 		// Unbind the texture
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 		// Update the state

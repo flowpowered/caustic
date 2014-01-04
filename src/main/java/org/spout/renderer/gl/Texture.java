@@ -30,6 +30,7 @@ import java.nio.ByteBuffer;
 
 import org.spout.renderer.Creatable;
 import org.spout.renderer.GLVersioned;
+import org.spout.renderer.data.Color;
 import org.spout.renderer.data.VertexAttribute.DataType;
 
 /**
@@ -52,6 +53,8 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	protected float anisotropicFiltering = 0;
 	// Compare modes for PCF
 	protected CompareMode compareMode = null;
+    // Border color when sampling outside the textures for certain wrap modes
+    protected Color borderColor = null;
 	// The texture image data
 	protected ByteBuffer imageData;
 	// Texture image dimensions
@@ -185,7 +188,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
 	}
 
 	/**
-	 * Sets the compare mode. If null, this feature is deactivated. Used this for PCF with shadow samplers.
+	 * Sets the compare mode. If null, this feature is deactivated. Use this for PCF with shadow samplers.
 	 *
 	 * @param compareMode The compare mode
 	 */
@@ -193,7 +196,16 @@ public abstract class Texture extends Creatable implements GLVersioned {
 		this.compareMode = compareMode;
 	}
 
-	/**
+    /**
+     * Sets the border color. If null, the default OpenGL border color is used.
+     *
+     * @param borderColor The border color
+     */
+    public void setBorderColor(Color borderColor) {
+        this.borderColor = borderColor;
+    }
+
+    /**
 	 * Sets the texture's image data. The image data reading is done according the the set {@link org.spout.renderer.gl.Texture.Format}.
 	 *
 	 * @param imageData The image data

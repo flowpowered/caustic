@@ -75,6 +75,10 @@ public class GLES20Texture extends Texture {
 			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GL14.GL_TEXTURE_COMPARE_MODE, GL14.GL_COMPARE_R_TO_TEXTURE);
 			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GL14.GL_TEXTURE_COMPARE_FUNC, compareMode.getGLConstant());
 		}*/
+        // TODO: Set the border color, if any
+        /*if (borderColor != null) {
+            GL11.glTexParameter(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_BORDER_COLOR, (FloatBuffer) CausticUtil.createFloatBuffer(4).put(borderColor.toArray()).flip());
+        }*/
 		// Unbind the texture
 		GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
 		// Update the state
