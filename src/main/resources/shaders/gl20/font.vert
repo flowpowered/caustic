@@ -10,6 +10,7 @@ attribute vec2 textureCoords;
 
 varying vec2 textureUV;
 
+uniform float pixelSize;
 uniform mat4 modelMatrix;
 uniform vec2 glyphOffset;
 uniform mat4 viewMatrix;
@@ -18,5 +19,5 @@ uniform mat4 projectionMatrix;
 void main() {
     textureUV = textureCoords;
 
-    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position + glyphOffset, 0, 1);
+    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position * pixelSize + glyphOffset, 0, 1);
 }

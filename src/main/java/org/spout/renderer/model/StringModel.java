@@ -78,8 +78,8 @@ public class StringModel extends Model {
 	private final TCharIntMap glyphIndexes;
 	private final TCharFloatMap glyphOffsets;
 	private final int glyphPadding;
-	private final float worldGlyphPadding;
-	private final float worldLineHeight;
+	private final float lineHeight;
+    private float pixelSize;
 	private String rawString;
 	private String string;
 	private final TIntObjectMap<Color> colorIndices = new TIntObjectHashMap<>();
@@ -94,8 +94,8 @@ public class StringModel extends Model {
 		this.glyphIndexes = model.glyphIndexes;
 		this.glyphOffsets = model.glyphOffsets;
 		this.glyphPadding = model.glyphPadding;
-		this.worldGlyphPadding = model.worldGlyphPadding;
-		this.worldLineHeight = model.worldLineHeight;
+		this.lineHeight = model.lineHeight;
+        this.pixelSize = model.pixelSize;
 	}
 
 	/**
@@ -127,6 +127,8 @@ public class StringModel extends Model {
 		glyphIndexes = new TCharIntHashMap(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, (char) 0, -1);
 		// Stores the offset (width) of each glyph
 		glyphOffsets = new TCharFloatHashMap();
+        // Size of a pixel in screen coordinates
+        pixelSize = 1f / windowWidth;
 		// Create temporary graphics, font metrics and render context
 		final Graphics graphics = new BufferedImage(1, 1, BufferedImage.TYPE_4BYTE_ABGR).getGraphics();
 		graphics.setFont(font);
@@ -148,16 +150,14 @@ public class StringModel extends Model {
 		final int width = (int) Math.ceil(size.getWidth()) + glyphs.length() * glyphPadding * 2;
 		final int height = (int) Math.ceil(size.getHeight());
 		final Texture texture = generateTexture(factory, glyphs, widths, font, width, height);
-		// Set the normalized glyph padding, needs to be subtracted to the initial glyph offset
-		worldGlyphPadding = (float) glyphPadding / windowWidth;
 		// Set the line height, for new lines
-		worldLineHeight = (float) fontMetrics.getHeight() / windowWidth;
+		lineHeight = fontMetrics.getHeight();
 		// Create the material
 		final Material material = new Material(fontProgram);
 		material.addTexture(0, texture);
 		setMaterial(material);
 		// Create the model mesh
-		final VertexArray vertexArray = generateMesh(factory, glyphs, windowWidth, widths, width, height);
+		final VertexArray vertexArray = generateMesh(factory, glyphs, widths, width, height);
 		// Only render one glyph per render call
 		vertexArray.setIndicesCount(GLYPH_INDEX_COUNT);
 		// Set the vertex array
@@ -168,15 +168,16 @@ public class StringModel extends Model {
 	public void render() {
 		final Program program = getMaterial().getProgram();
 		program.setUniform("fontColor", Color.WHITE);
+        program.setUniform("pixelSize", pixelSize);
 		final VertexArray vertexArray = getVertexArray();
 		// Remove the padding for the first glyph
-		Vector2f offset = new Vector2f(-worldGlyphPadding, 0);
+		Vector2f offset = new Vector2f(-glyphPadding * pixelSize, 0);
 		final char[] glyphs = string.toCharArray();
 		for (int i = 0; i < glyphs.length; i++) {
 			final char glyph = glyphs[i];
 			// Move the glyph offset to the next line for the new line character
 			if (glyph == '\n') {
-				offset = new Vector2f(-worldGlyphPadding, offset.getY() - worldLineHeight);
+				offset = new Vector2f(-glyphPadding * pixelSize, offset.getY() - lineHeight * pixelSize);
 				continue;
 			}
 			// Look for a color code
@@ -196,7 +197,7 @@ public class StringModel extends Model {
 			// Offset the glyph in the string
 			program.setUniform("glyphOffset", offset);
 			// Offset for the next glyph
-			offset = offset.add(glyphOffsets.get(glyph), 0);
+			offset = offset.add(glyphOffsets.get(glyph) * pixelSize, 0);
 			// Render the model
 			vertexArray.draw();
 		}
@@ -243,6 +244,18 @@ public class StringModel extends Model {
 		return rawString;
 	}
 
+    /**
+     * Sets the width of the window, used to ensure that the font pixels match up with the display pixels.
+     *
+     * @param width The window width
+     */
+    public void setWindowWidth(int width) {
+        if (width <= 0) {
+            throw new IllegalStateException("The window width must be greater than zero");
+        }
+        pixelSize = 1f / width;
+    }
+
 	/**
 	 * Returns an instance of this string model. The model shares the same glyphs as the original one, but different position information and uniform holder.
 	 *
@@ -253,7 +266,7 @@ public class StringModel extends Model {
 		return new StringModel(this);
 	}
 
-	private VertexArray generateMesh(GLFactory factory, CharSequence glyphs, int windowWidth, TCharIntMap glyphWidths, int textureWidth, int textureHeight) {
+	private VertexArray generateMesh(GLFactory factory, CharSequence glyphs, TCharIntMap glyphWidths, int textureWidth, int textureHeight) {
 		final VertexData data = new VertexData();
 		// Add the positions and texture coordinates attributes
 		final VertexAttribute positionAttribute = new VertexAttribute("positions", DataType.FLOAT, 2);
@@ -276,21 +289,19 @@ public class StringModel extends Model {
 		float x = 0;
 		int index = 0;
 		int renderIndex = 0;
-		final float glyphHeight = (float) textureHeight / windowWidth;
-		for (int i = 0; i < glyphs.length(); i++) {
+        for (int i = 0; i < glyphs.length(); i++) {
 			final char glyph = glyphs.charAt(i);
 			final int glyphWidth = glyphWidths.get(glyph);
 			float paddedGlyphWidth = glyphWidth + glyphPadding * 2;
-			add(positions, 0, 0, 0, glyphHeight);
+			add(positions, 0, 0, 0, textureHeight);
 			add(textureCoords, x, 0, x, 1);
 			x += paddedGlyphWidth / textureWidth;
-			paddedGlyphWidth /= windowWidth;
-			add(positions, paddedGlyphWidth, 0, paddedGlyphWidth, glyphHeight);
+			add(positions, paddedGlyphWidth, 0, paddedGlyphWidth, textureHeight);
 			add(textureCoords, x, 0, x, 1);
 			add(indices, index, index + 2, index + 1, index + 2, index + 3, index + 1);
 			index += 4;
 			glyphIndexes.put(glyph, renderIndex);
-			glyphOffsets.put(glyph, (float) glyphWidth / windowWidth);
+			glyphOffsets.put(glyph, glyphWidth);
 			renderIndex += 6;
 		}
 		positionAttribute.setData(positions);
