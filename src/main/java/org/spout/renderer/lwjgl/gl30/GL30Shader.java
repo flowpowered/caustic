@@ -34,7 +34,7 @@ import org.spout.renderer.lwjgl.gl20.GL20Shader;
  * @see org.spout.renderer.gl.Shader
  */
 public class GL30Shader extends GL20Shader {
-	protected GL30Shader() {
-	}
-	// TODO: add GL30 specific stuff
+    protected GL30Shader() {
+    }
+    // TODO: add GL30 specific stuff
 }

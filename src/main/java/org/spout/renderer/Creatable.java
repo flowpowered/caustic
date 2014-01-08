@@ -32,43 +32,43 @@ package org.spout.renderer;
 public abstract class Creatable {
     //private static final AtomicInteger createdCount = new AtomicInteger(0);
     //private static final AtomicInteger destroyedCount = new AtomicInteger(0);
-	private boolean created = false;
+    private boolean created = false;
 
-	/**
-	 * Creates the resources. It can now be used.
-	 */
-	public void create() {
-		created = true;
+    /**
+     * Creates the resources. It can now be used.
+     */
+    public void create() {
+        created = true;
         //final int count = createdCount.incrementAndGet();
         //System.out.println(count - destroyedCount.get());
-	}
+    }
 
-	/**
-	 * Releases the resource. It can not longer be used.
-	 */
-	public void destroy() {
-		created = false;
+    /**
+     * Releases the resource. It can not longer be used.
+     */
+    public void destroy() {
+        created = false;
         //final int count = destroyedCount.incrementAndGet();
         //System.out.println(createdCount.get() - count);
-	}
+    }
 
-	/**
-	 * Returns true if the resource was created and is ready for use, false if otherwise.
-	 *
-	 * @return Whether or not the resource has been created
-	 */
-	public boolean isCreated() {
-		return created;
-	}
+    /**
+     * Returns true if the resource was created and is ready for use, false if otherwise.
+     *
+     * @return Whether or not the resource has been created
+     */
+    public boolean isCreated() {
+        return created;
+    }
 
-	/**
-	 * Throws an exception is the resource hasn't been created yet.
-	 *
-	 * @throws IllegalStateException if the resource hasn't been created
-	 */
-	public void checkCreated() {
-		if (!isCreated()) {
-			throw new IllegalStateException("Resource has not been created yet");
-		}
-	}
+    /**
+     * Throws an exception is the resource hasn't been created yet.
+     *
+     * @throws IllegalStateException if the resource hasn't been created
+     */
+    public void checkCreated() {
+        if (!isCreated()) {
+            throw new IllegalStateException("Resource has not been created yet");
+        }
+    }
 }

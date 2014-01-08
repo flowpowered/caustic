@@ -32,80 +32,80 @@ import org.spout.renderer.gl.Texture.Format;
 
 /**
  * Represents an OpenGL render buffer. A render buffer can be used as a faster alternative to a texture in a frame buffer when its rendering output doesn't need to be read. The storage format, width
- * and height dimensions need to be set with {@link #setFormat(org.spout.renderer.gl.Texture.Format)}, {@link #setWidth(int)} and {@link #setHeight(int)} respectively before the render buffer can
- * be created.
+ * and height dimensions need to be set with {@link #setFormat(org.spout.renderer.gl.Texture.Format)}, {@link #setWidth(int)} and {@link #setHeight(int)} respectively before the render buffer can be
+ * created.
  */
 public abstract class RenderBuffer extends Creatable implements GLVersioned {
-	protected int id;
-	// The render buffer storage format
-	protected Format format;
-	// The storage dimensions
-	protected int width = -1;
-	protected int height = -1;
+    protected int id;
+    // The render buffer storage format
+    protected Format format;
+    // The storage dimensions
+    protected int width = -1;
+    protected int height = -1;
 
-	@Override
-	public void destroy() {
-		id = 0;
-		super.destroy();
-	}
+    @Override
+    public void destroy() {
+        id = 0;
+        super.destroy();
+    }
 
-	/**
-	 * Binds the render buffer to the OpenGL context.
-	 */
-	public abstract void bind();
+    /**
+     * Binds the render buffer to the OpenGL context.
+     */
+    public abstract void bind();
 
-	/**
-	 * Unbinds the render buffer from the OpenGL context.
-	 */
-	public abstract void unbind();
+    /**
+     * Unbinds the render buffer from the OpenGL context.
+     */
+    public abstract void unbind();
 
-	/**
-	 * Sets the render buffer storage format.
-	 *
-	 * @param format The storage format, cannot be null
-	 */
-	public void setFormat(Format format) {
-		if (format == null) {
-			throw new IllegalArgumentException("Format cannot be null");
-		}
-		this.format = format;
-	}
+    /**
+     * Sets the render buffer storage format.
+     *
+     * @param format The storage format, cannot be null
+     */
+    public void setFormat(Format format) {
+        if (format == null) {
+            throw new IllegalArgumentException("Format cannot be null");
+        }
+        this.format = format;
+    }
 
-	/**
-	 * Sets the render buffer storage size.
-	 *
-	 * @param width The width
-	 * @param height The height
-	 */
-	public void setSize(int width, int height) {
-		setWidth(width);
-		setHeight(height);
-	}
+    /**
+     * Sets the render buffer storage size.
+     *
+     * @param width The width
+     * @param height The height
+     */
+    public void setSize(int width, int height) {
+        setWidth(width);
+        setHeight(height);
+    }
 
-	/**
-	 * Sets the render buffer storage The.
-	 *
-	 * @param width The width
-	 */
-	public void setWidth(int width) {
-		this.width = width;
-	}
+    /**
+     * Sets the render buffer storage The.
+     *
+     * @param width The width
+     */
+    public void setWidth(int width) {
+        this.width = width;
+    }
 
-	/**
-	 * Sets the render buffer storage height.
-	 *
-	 * @param height The height
-	 */
-	public void setHeight(int height) {
-		this.height = height;
-	}
+    /**
+     * Sets the render buffer storage height.
+     *
+     * @param height The height
+     */
+    public void setHeight(int height) {
+        this.height = height;
+    }
 
-	/**
-	 * Gets the ID for this render buffer as assigned by OpenGL.
-	 *
-	 * @return The ID
-	 */
-	public int getID() {
-		return id;
-	}
+    /**
+     * Gets the ID for this render buffer as assigned by OpenGL.
+     *
+     * @return The ID
+     */
+    public int getID() {
+        return id;
+    }
 }

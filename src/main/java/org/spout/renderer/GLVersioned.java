@@ -30,20 +30,20 @@ package org.spout.renderer;
  * Represents an object that has an OpenGL version associated to it.
  */
 public interface GLVersioned {
-	/**
-	 * Returns the OpenGL version associated to this object.
-	 *
-	 * @return The OpenGL version
-	 */
-	GLVersion getGLVersion();
+    /**
+     * Returns the OpenGL version associated to this object.
+     *
+     * @return The OpenGL version
+     */
+    GLVersion getGLVersion();
 
-	/**
-	 * An enum of the supported OpenGL versions. Use this class to generate rendering objects compatible with the version.
-	 */
-	public static enum GLVersion {
-		GL20,
-		GL30,
-		GLES20,
-		GLES30
-	}
+    /**
+     * An enum of the supported OpenGL versions. Use this class to generate rendering objects compatible with the version.
+     */
+    public static enum GLVersion {
+        GL20,
+        GL30,
+        GLES20,
+        GLES30
+    }
 }

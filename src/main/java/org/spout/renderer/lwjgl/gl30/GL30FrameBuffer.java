@@ -50,99 +50,99 @@ import org.spout.renderer.util.CausticUtil;
  * @see FrameBuffer
  */
 public class GL30FrameBuffer extends FrameBuffer {
-	protected GL30FrameBuffer() {
-	}
+    protected GL30FrameBuffer() {
+    }
 
-	@Override
-	public void create() {
-		// Generate and bind the frame buffer
-		id = GL30.glGenFramebuffers();
-		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, id);
-		// Track the color attachments to output for later use
-		final TIntSet outputBuffers = new TIntHashSet();
-		// Attach the textures
-		for (Entry<AttachmentPoint, Texture> entry : textures.entrySet()) {
-			final AttachmentPoint point = entry.getKey();
-			final Texture texture = entry.getValue();
-			texture.checkCreated();
-			GL32.glFramebufferTexture(GL30.GL_FRAMEBUFFER, point.getGLConstant(), texture.getID(), 0);
-			if (point.isColor()) {
-				outputBuffers.add(point.getGLConstant());
-			}
-		}
-		// Attach the render buffers
-		for (Entry<AttachmentPoint, RenderBuffer> entry : buffers.entrySet()) {
-			final AttachmentPoint point = entry.getKey();
-			final RenderBuffer buffer = entry.getValue();
-			buffer.checkCreated();
-			GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER, point.getGLConstant(), GL30.GL_RENDERBUFFER, buffer.getID());
-			if (point.isColor()) {
-				outputBuffers.add(point.getGLConstant());
-			}
-		}
-		// Set the output to the proper buffers
-		if (outputBuffers.isEmpty()) {
-			// No color to output
-			GL20.glDrawBuffers(GL11.GL_NONE);
-		} else {
-			// Keep track of the buffers to output
-			final IntBuffer buffer = CausticUtil.createIntBuffer(outputBuffers.size());
-			final int[] outputBuffersArray = outputBuffers.toArray();
-			// Sorting the array ensures that attachments are in order n, n + 1, n + 2...
-			// This is important!
-			Arrays.sort(outputBuffersArray);
-			buffer.put(outputBuffersArray);
-			buffer.flip();
-			GL20.glDrawBuffers(buffer);
-		}
-		// Disable input buffers
-		GL11.glReadBuffer(GL11.GL_NONE);
-		// Check for success
-		if (GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER) != GL30.GL_FRAMEBUFFER_COMPLETE) {
-			throw new IllegalStateException("Failed to create the frame buffer");
-		}
-		// Unbind the frame buffer
-		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
-		// Update the state
-		super.create();
-		// Check for errors
-		LWJGLUtil.checkForGLError();
-	}
+    @Override
+    public void create() {
+        // Generate and bind the frame buffer
+        id = GL30.glGenFramebuffers();
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, id);
+        // Track the color attachments to output for later use
+        final TIntSet outputBuffers = new TIntHashSet();
+        // Attach the textures
+        for (Entry<AttachmentPoint, Texture> entry : textures.entrySet()) {
+            final AttachmentPoint point = entry.getKey();
+            final Texture texture = entry.getValue();
+            texture.checkCreated();
+            GL32.glFramebufferTexture(GL30.GL_FRAMEBUFFER, point.getGLConstant(), texture.getID(), 0);
+            if (point.isColor()) {
+                outputBuffers.add(point.getGLConstant());
+            }
+        }
+        // Attach the render buffers
+        for (Entry<AttachmentPoint, RenderBuffer> entry : buffers.entrySet()) {
+            final AttachmentPoint point = entry.getKey();
+            final RenderBuffer buffer = entry.getValue();
+            buffer.checkCreated();
+            GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER, point.getGLConstant(), GL30.GL_RENDERBUFFER, buffer.getID());
+            if (point.isColor()) {
+                outputBuffers.add(point.getGLConstant());
+            }
+        }
+        // Set the output to the proper buffers
+        if (outputBuffers.isEmpty()) {
+            // No color to output
+            GL20.glDrawBuffers(GL11.GL_NONE);
+        } else {
+            // Keep track of the buffers to output
+            final IntBuffer buffer = CausticUtil.createIntBuffer(outputBuffers.size());
+            final int[] outputBuffersArray = outputBuffers.toArray();
+            // Sorting the array ensures that attachments are in order n, n + 1, n + 2...
+            // This is important!
+            Arrays.sort(outputBuffersArray);
+            buffer.put(outputBuffersArray);
+            buffer.flip();
+            GL20.glDrawBuffers(buffer);
+        }
+        // Disable input buffers
+        GL11.glReadBuffer(GL11.GL_NONE);
+        // Check for success
+        if (GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER) != GL30.GL_FRAMEBUFFER_COMPLETE) {
+            throw new IllegalStateException("Failed to create the frame buffer");
+        }
+        // Unbind the frame buffer
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
+        // Update the state
+        super.create();
+        // Check for errors
+        LWJGLUtil.checkForGLError();
+    }
 
-	@Override
-	public void destroy() {
-		checkCreated();
-		// Unbind and delete the frame buffer
-		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
-		GL30.glDeleteFramebuffers(id);
-		// Release some resources
-		textures.clear();
-		buffers.clear();
-		// Update the state
-		super.destroy();
-		// Check for errors
-		LWJGLUtil.checkForGLError();
-	}
+    @Override
+    public void destroy() {
+        checkCreated();
+        // Unbind and delete the frame buffer
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
+        GL30.glDeleteFramebuffers(id);
+        // Release some resources
+        textures.clear();
+        buffers.clear();
+        // Update the state
+        super.destroy();
+        // Check for errors
+        LWJGLUtil.checkForGLError();
+    }
 
-	@Override
-	public void bind() {
-		checkCreated();
-		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, id);
-		// Check for errors
-		LWJGLUtil.checkForGLError();
-	}
+    @Override
+    public void bind() {
+        checkCreated();
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, id);
+        // Check for errors
+        LWJGLUtil.checkForGLError();
+    }
 
-	@Override
-	public void unbind() {
-		checkCreated();
-		// Bind the frame buffer
-		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
-		// Check for errors
-		LWJGLUtil.checkForGLError();
-	}
+    @Override
+    public void unbind() {
+        checkCreated();
+        // Bind the frame buffer
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
+        // Check for errors
+        LWJGLUtil.checkForGLError();
+    }
 
-	@Override
-	public GLVersion getGLVersion() {
-		return GLVersion.GL30;
-	}
+    @Override
+    public GLVersion getGLVersion() {
+        return GLVersion.GL30;
+    }
 }

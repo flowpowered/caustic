@@ -44,56 +44,56 @@ import org.spout.renderer.util.Rectangle;
  * Represents an OpenGL context. Creating context must be done before any other OpenGL object.
  */
 public abstract class Context extends Creatable implements GLVersioned {
-	// Window title
-	protected String windowTitle = "Caustic";
-	// Window size
-	protected Vector2f windowSize;
-	// MSAA value
-	protected int msaa = 0;
-	// Properties
-	protected final Set<Capability> capabilities = EnumSet.noneOf(Capability.class);
-	// Context uniforms
-	protected final UniformHolder uniforms = new UniformHolder();
-	// Camera
-	protected Camera camera;
+    // Window title
+    protected String windowTitle = "Caustic";
+    // Window size
+    protected Vector2f windowSize;
+    // MSAA value
+    protected int msaa = 0;
+    // Properties
+    protected final Set<Capability> capabilities = EnumSet.noneOf(Capability.class);
+    // Context uniforms
+    protected final UniformHolder uniforms = new UniformHolder();
+    // Camera
+    protected Camera camera;
 
-	@Override
-	public void destroy() {
-		capabilities.clear();
-		uniforms.clear();
-		super.destroy();
-	}
+    @Override
+    public void destroy() {
+        capabilities.clear();
+        uniforms.clear();
+        super.destroy();
+    }
 
-	/**
-	 * Updates the display with the current front (screen) buffer.
-	 */
-	public abstract void updateDisplay();
+    /**
+     * Updates the display with the current front (screen) buffer.
+     */
+    public abstract void updateDisplay();
 
-	/**
-	 * Sets the renderer buffer clear color. This can be interpreted as the background color.
-	 *
-	 * @param color The clear color
-	 */
-	public abstract void setClearColor(Color color);
+    /**
+     * Sets the renderer buffer clear color. This can be interpreted as the background color.
+     *
+     * @param color The clear color
+     */
+    public abstract void setClearColor(Color color);
 
-	/**
-	 * Clears the currently bound buffer (either a frame buffer, or the front (screen) buffer if none are bound).
-	 */
-	public abstract void clearCurrentBuffer();
+    /**
+     * Clears the currently bound buffer (either a frame buffer, or the front (screen) buffer if none are bound).
+     */
+    public abstract void clearCurrentBuffer();
 
-	/**
-	 * Disables the capability.
-	 *
-	 * @param capability The capability to disable
-	 */
-	public abstract void disableCapability(Capability capability);
+    /**
+     * Disables the capability.
+     *
+     * @param capability The capability to disable
+     */
+    public abstract void disableCapability(Capability capability);
 
-	/**
-	 * Enables the capability.
-	 *
-	 * @param capability The capability to enable
-	 */
-	public abstract void enableCapability(Capability capability);
+    /**
+     * Enables the capability.
+     *
+     * @param capability The capability to enable
+     */
+    public abstract void enableCapability(Capability capability);
 
     /**
      * Enables or disables writing into the depth buffer.
@@ -124,157 +124,157 @@ public abstract class Context extends Creatable implements GLVersioned {
     public abstract void setBlendingFunctions(int bufferIndex, BlendFunction source, BlendFunction destination);
 
     /**
-	 * Sets the render view port, which is the dimensions and position of the frame inside the window.
-	 *
-	 * @param viewPort The view port
-	 */
-	public abstract void setViewPort(Rectangle viewPort);
+     * Sets the render view port, which is the dimensions and position of the frame inside the window.
+     *
+     * @param viewPort The view port
+     */
+    public abstract void setViewPort(Rectangle viewPort);
 
-	/**
-	 * Reads the current frame pixels and returns it as a byte buffer of the desired format. The size of the returned image data is the same as the current window dimensions.
-	 *
-	 * @param size The size of the frame to read
-	 * @param format The image format to return
-	 * @return The byte buffer containing the pixel data, according to the provided format
-	 */
-	public abstract ByteBuffer readCurrentFrame(Rectangle size, Format format);
+    /**
+     * Reads the current frame pixels and returns it as a byte buffer of the desired format. The size of the returned image data is the same as the current window dimensions.
+     *
+     * @param size The size of the frame to read
+     * @param format The image format to return
+     * @return The byte buffer containing the pixel data, according to the provided format
+     */
+    public abstract ByteBuffer readCurrentFrame(Rectangle size, Format format);
 
-	/**
-	 * Uploads the renderer uniforms to the desired program.
-	 *
-	 * @param program The program to upload to
-	 */
-	public void uploadUniforms(Program program) {
-		CausticUtil.checkVersion(this, program);
-		program.upload(uniforms);
-	}
+    /**
+     * Uploads the renderer uniforms to the desired program.
+     *
+     * @param program The program to upload to
+     */
+    public void uploadUniforms(Program program) {
+        CausticUtil.checkVersion(this, program);
+        program.upload(uniforms);
+    }
 
-	/**
-	 * Sets the render camera. Will be use for all subsequent render calls, until changed again.
-	 *
-	 * @param camera The camera to use
-	 */
-	public void setCamera(Camera camera) {
-		this.camera = camera;
-	}
+    /**
+     * Sets the render camera. Will be use for all subsequent render calls, until changed again.
+     *
+     * @param camera The camera to use
+     */
+    public void setCamera(Camera camera) {
+        this.camera = camera;
+    }
 
-	/**
-	 * Returns the current renderer camera.
-	 *
-	 * @return The camera
-	 */
-	public Camera getCamera() {
-		return camera;
-	}
+    /**
+     * Returns the current renderer camera.
+     *
+     * @return The camera
+     */
+    public Camera getCamera() {
+        return camera;
+    }
 
-	/**
-	 * Returns the window title.
-	 *
-	 * @return The window title
-	 */
-	public String setWindowTitle() {
-		return windowTitle;
-	}
+    /**
+     * Returns the window title.
+     *
+     * @return The window title
+     */
+    public String setWindowTitle() {
+        return windowTitle;
+    }
 
-	/**
-	 * Sets the window title to the desired one.
-	 *
-	 * @param title The window title
-	 */
-	public void setWindowTitle(String title) {
-		this.windowTitle = title;
-	}
+    /**
+     * Sets the window title to the desired one.
+     *
+     * @param title The window title
+     */
+    public void setWindowTitle(String title) {
+        this.windowTitle = title;
+    }
 
-	/**
-	 * Sets the window size.
-	 *
-	 * @param width The width
-	 * @param height The height
-	 */
-	public void setWindowSize(int width, int height) {
-		setWindowSize(new Vector2f(width, height));
-	}
+    /**
+     * Sets the window size.
+     *
+     * @param width The width
+     * @param height The height
+     */
+    public void setWindowSize(int width, int height) {
+        setWindowSize(new Vector2f(width, height));
+    }
 
-	/**
-	 * Sets the window size.
-	 *
-	 * @param windowSize The window size (floored)
-	 */
-	public void setWindowSize(Vector2f windowSize) {
-		this.windowSize = windowSize;
-	}
+    /**
+     * Sets the window size.
+     *
+     * @param windowSize The window size (floored)
+     */
+    public void setWindowSize(Vector2f windowSize) {
+        this.windowSize = windowSize;
+    }
 
-	/**
-	 * Returns the window width.
-	 *
-	 * @return The window width
-	 */
-	public int getWindowWidth() {
-		return windowSize.getFloorX();
-	}
+    /**
+     * Returns the window width.
+     *
+     * @return The window width
+     */
+    public int getWindowWidth() {
+        return windowSize.getFloorX();
+    }
 
-	/**
-	 * Returns the window height.
-	 *
-	 * @return The window height
-	 */
-	public int getWindowHeight() {
-		return windowSize.getFloorY();
-	}
+    /**
+     * Returns the window height.
+     *
+     * @return The window height
+     */
+    public int getWindowHeight() {
+        return windowSize.getFloorY();
+    }
 
-	/**
-	 * Returns the window size, which is the dimensions of the window.
-	 *
-	 * @return The window size
-	 */
-	public Vector2f getWindowSize() {
-		return windowSize;
-	}
+    /**
+     * Returns the window size, which is the dimensions of the window.
+     *
+     * @return The window size
+     */
+    public Vector2f getWindowSize() {
+        return windowSize;
+    }
 
-	/**
-	 * Sets the MSAA value. Must be greater or equal to zero. Zero means no MSAA.
-	 *
-	 * @param value The MSAA value, greater or equal to zero
-	 */
-	public void setMSAA(int value) {
-		if (value < 0) {
-			throw new IllegalArgumentException("MSAA value must be greater or equal to zero");
-		}
-		this.msaa = value;
-	}
+    /**
+     * Sets the MSAA value. Must be greater or equal to zero. Zero means no MSAA.
+     *
+     * @param value The MSAA value, greater or equal to zero
+     */
+    public void setMSAA(int value) {
+        if (value < 0) {
+            throw new IllegalArgumentException("MSAA value must be greater or equal to zero");
+        }
+        this.msaa = value;
+    }
 
-	/**
-	 * Returns the Uniforms for this renderer
-	 *
-	 * @return The renderer uniforms
-	 */
-	public UniformHolder getUniforms() {
-		return uniforms;
-	}
+    /**
+     * Returns the Uniforms for this renderer
+     *
+     * @return The renderer uniforms
+     */
+    public UniformHolder getUniforms() {
+        return uniforms;
+    }
 
-	/**
-	 * An enum of the renderer capabilities.
-	 */
-	public static enum Capability {
-		BLEND(0xBE2), // GL11.GL_BLEND
-		CULL_FACE(0xB44), // GL11.GL_CULL_FACE
-		DEPTH_CLAMP(0x864F), // GL32.GL_DEPTH_CLAMP
-		DEPTH_TEST(0xB71); // GL11.GL_DEPTH_TEST
-		private final int glConstant;
+    /**
+     * An enum of the renderer capabilities.
+     */
+    public static enum Capability {
+        BLEND(0xBE2), // GL11.GL_BLEND
+        CULL_FACE(0xB44), // GL11.GL_CULL_FACE
+        DEPTH_CLAMP(0x864F), // GL32.GL_DEPTH_CLAMP
+        DEPTH_TEST(0xB71); // GL11.GL_DEPTH_TEST
+        private final int glConstant;
 
-		private Capability(int glConstant) {
-			this.glConstant = glConstant;
-		}
+        private Capability(int glConstant) {
+            this.glConstant = glConstant;
+        }
 
-		/**
-		 * Returns the OpenGL constant associated to the capability.
-		 *
-		 * @return The OpenGL constant
-		 */
-		public int getGLConstant() {
-			return glConstant;
-		}
-	}
+        /**
+         * Returns the OpenGL constant associated to the capability.
+         *
+         * @return The OpenGL constant
+         */
+        public int getGLConstant() {
+            return glConstant;
+        }
+    }
 
     /**
      * An enum of the blending functions.

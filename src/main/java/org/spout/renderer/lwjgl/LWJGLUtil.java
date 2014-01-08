@@ -30,45 +30,45 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
 public final class LWJGLUtil {
-	private LWJGLUtil() {
-	}
+    private LWJGLUtil() {
+    }
 
-	private static boolean debug = true;
+    private static boolean debug = true;
 
-	/**
-	 * Sets the caustic renderer in debug mode.
-	 *
-	 * @param enabled If debug should be enabled
-	 */
-	public static void setDebugEnabled(boolean enabled) {
-		debug = enabled;
-	}
+    /**
+     * Sets the caustic renderer in debug mode.
+     *
+     * @param enabled If debug should be enabled
+     */
+    public static void setDebugEnabled(boolean enabled) {
+        debug = enabled;
+    }
 
-	/**
-	 * Throws an exception if OpenGL reports an error.
-	 *
-	 * @throws GLException If OpenGL reports an error
-	 */
-	public static void checkForGLError() {
-		if (debug) {
-			final int errorValue = GL11.glGetError();
-			if (errorValue != GL11.GL_NO_ERROR) {
-				throw new GLException("GL ERROR: " + GLU.gluErrorString(errorValue));
-			}
-		}
-	}
+    /**
+     * Throws an exception if OpenGL reports an error.
+     *
+     * @throws GLException If OpenGL reports an error
+     */
+    public static void checkForGLError() {
+        if (debug) {
+            final int errorValue = GL11.glGetError();
+            if (errorValue != GL11.GL_NO_ERROR) {
+                throw new GLException("GL ERROR: " + GLU.gluErrorString(errorValue));
+            }
+        }
+    }
 
-	/**
-	 * An exception throw when a GL exception occurs on Android.
-	 */
-	public static class GLException extends RuntimeException {
-		/**
-		 * Constructs a new Android GL exception from the message.
-		 *
-		 * @param message The error message
-		 */
-		public GLException(String message) {
-			super(message);
-		}
-	}
+    /**
+     * An exception throw when a GL exception occurs on Android.
+     */
+    public static class GLException extends RuntimeException {
+        /**
+         * Constructs a new Android GL exception from the message.
+         *
+         * @param message The error message
+         */
+        public GLException(String message) {
+            super(message);
+        }
+    }
 }

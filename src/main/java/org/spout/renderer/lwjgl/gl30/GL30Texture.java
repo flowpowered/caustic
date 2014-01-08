@@ -40,23 +40,23 @@ import org.spout.renderer.lwjgl.gl20.GL20Texture;
  * @see org.spout.renderer.gl.Texture
  */
 public class GL30Texture extends GL20Texture {
-	protected GL30Texture() {
-	}
+    protected GL30Texture() {
+    }
 
-	@Override
-	protected void uploadTexture(ByteBuffer buffer, int width, int height) {
-		// Upload the texture
-		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, internalFormat != null ? internalFormat.getGLConstant() : format.getGLConstant(), width, height, 0, format.getGLConstant(), GL11.GL_UNSIGNED_BYTE, buffer);
-		// Generate mipmaps if necessary
-		if (minFilter.needsMipMaps() && buffer != null) {
-			GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
-		}
-		// Check for errors
-		LWJGLUtil.checkForGLError();
-	}
+    @Override
+    protected void uploadTexture(ByteBuffer buffer, int width, int height) {
+        // Upload the texture
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, internalFormat != null ? internalFormat.getGLConstant() : format.getGLConstant(), width, height, 0, format.getGLConstant(), GL11.GL_UNSIGNED_BYTE, buffer);
+        // Generate mipmaps if necessary
+        if (minFilter.needsMipMaps() && buffer != null) {
+            GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
+        }
+        // Check for errors
+        LWJGLUtil.checkForGLError();
+    }
 
-	@Override
-	public GLVersion getGLVersion() {
-		return GLVersion.GL30;
-	}
+    @Override
+    public GLVersion getGLVersion() {
+        return GLVersion.GL30;
+    }
 }

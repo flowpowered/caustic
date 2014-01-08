@@ -48,76 +48,76 @@ import org.spout.renderer.util.Rectangle;
  * @see org.spout.renderer.gl.Context
  */
 public class GL20Context extends Context {
-	protected GL20Context() {
-	}
+    protected GL20Context() {
+    }
 
-	@Override
-	public void create() {
-		if (isCreated()) {
-			throw new IllegalStateException("Context has already been created");
-		}
-		// Attempt to create the display
-		try {
-			Display.setDisplayMode(new DisplayMode(windowSize.getFloorX(), windowSize.getFloorY()));
-			Display.create(new PixelFormat().withSamples(this.msaa), createContextAttributes());
-		} catch (LWJGLException ex) {
-			throw new IllegalStateException("Unable to create OpenGL context: " + ex.getMessage());
-		}
-		// Set the title
-		Display.setTitle(this.windowTitle);
-		// Set the default view port
-		GL11.glViewport(0, 0, windowSize.getFloorX(), windowSize.getFloorY());
-		// Check for errors
-		LWJGLUtil.checkForGLError();
-		// Update the state
-		super.create();
-	}
+    @Override
+    public void create() {
+        if (isCreated()) {
+            throw new IllegalStateException("Context has already been created");
+        }
+        // Attempt to create the display
+        try {
+            Display.setDisplayMode(new DisplayMode(windowSize.getFloorX(), windowSize.getFloorY()));
+            Display.create(new PixelFormat().withSamples(this.msaa), createContextAttributes());
+        } catch (LWJGLException ex) {
+            throw new IllegalStateException("Unable to create OpenGL context: " + ex.getMessage());
+        }
+        // Set the title
+        Display.setTitle(this.windowTitle);
+        // Set the default view port
+        GL11.glViewport(0, 0, windowSize.getFloorX(), windowSize.getFloorY());
+        // Check for errors
+        LWJGLUtil.checkForGLError();
+        // Update the state
+        super.create();
+    }
 
-	/**
-	 * Created new context attributes for the version.
-	 *
-	 * @return The context attributes
-	 */
-	protected ContextAttribs createContextAttributes() {
-		return new ContextAttribs(2, 1);
-	}
+    /**
+     * Created new context attributes for the version.
+     *
+     * @return The context attributes
+     */
+    protected ContextAttribs createContextAttributes() {
+        return new ContextAttribs(2, 1);
+    }
 
-	@Override
-	public void destroy() {
-		checkCreated();
-		// Display goes after else there's no context in which to check for an error
-		LWJGLUtil.checkForGLError();
-		Display.destroy();
-		super.destroy();
-	}
+    @Override
+    public void destroy() {
+        checkCreated();
+        // Display goes after else there's no context in which to check for an error
+        LWJGLUtil.checkForGLError();
+        Display.destroy();
+        super.destroy();
+    }
 
-	@Override
-	public void updateDisplay() {
-		checkCreated();
-		Display.update();
-	}
+    @Override
+    public void updateDisplay() {
+        checkCreated();
+        Display.update();
+    }
 
-	@Override
-	public void setClearColor(Color color) {
-		Color normC = color.normalize();
-		GL11.glClearColor(normC.getRed(), normC.getGreen(), normC.getBlue(), normC.getAlpha());
-		// Check for errors
-		LWJGLUtil.checkForGLError();
-	}
+    @Override
+    public void setClearColor(Color color) {
+        Color normC = color.normalize();
+        GL11.glClearColor(normC.getRed(), normC.getGreen(), normC.getBlue(), normC.getAlpha());
+        // Check for errors
+        LWJGLUtil.checkForGLError();
+    }
 
-	@Override
-	public void clearCurrentBuffer() {
-		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-		// Check for errors
-		LWJGLUtil.checkForGLError();
-	}
+    @Override
+    public void clearCurrentBuffer() {
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+        // Check for errors
+        LWJGLUtil.checkForGLError();
+    }
 
-	@Override
-	public void enableCapability(Capability capability) {
-		GL11.glEnable(capability.getGLConstant());
-		// Check for errors
-		LWJGLUtil.checkForGLError();
-	}
+    @Override
+    public void enableCapability(Capability capability) {
+        GL11.glEnable(capability.getGLConstant());
+        // Check for errors
+        LWJGLUtil.checkForGLError();
+    }
 
     @Override
     public void setDepthMask(boolean enabled) {
@@ -132,29 +132,29 @@ public class GL20Context extends Context {
     }
 
     @Override
-	public void setViewPort(Rectangle viewPort) {
-		GL11.glViewport(viewPort.getX(), viewPort.getY(), viewPort.getWidth(), viewPort.getHeight());
-		// Check for errors
-		LWJGLUtil.checkForGLError();
-	}
+    public void setViewPort(Rectangle viewPort) {
+        GL11.glViewport(viewPort.getX(), viewPort.getY(), viewPort.getWidth(), viewPort.getHeight());
+        // Check for errors
+        LWJGLUtil.checkForGLError();
+    }
 
-	@Override
-	public ByteBuffer readCurrentFrame(Rectangle size, Format format) {
-		final ByteBuffer buffer = CausticUtil.createByteBuffer(size.getArea() * 3);
-		GL11.glReadBuffer(GL11.GL_FRONT);
-		GL11.glReadPixels(size.getX(), size.getY(), size.getWidth(), size.getHeight(), format.getGLConstant(), GL11.GL_UNSIGNED_BYTE, buffer);
-		return buffer;
-	}
+    @Override
+    public ByteBuffer readCurrentFrame(Rectangle size, Format format) {
+        final ByteBuffer buffer = CausticUtil.createByteBuffer(size.getArea() * 3);
+        GL11.glReadBuffer(GL11.GL_FRONT);
+        GL11.glReadPixels(size.getX(), size.getY(), size.getWidth(), size.getHeight(), format.getGLConstant(), GL11.GL_UNSIGNED_BYTE, buffer);
+        return buffer;
+    }
 
-	@Override
-	public void disableCapability(Capability capability) {
-		GL11.glDisable(capability.getGLConstant());
-		// Check for errors
-		LWJGLUtil.checkForGLError();
-	}
+    @Override
+    public void disableCapability(Capability capability) {
+        GL11.glDisable(capability.getGLConstant());
+        // Check for errors
+        LWJGLUtil.checkForGLError();
+    }
 
-	@Override
-	public GLVersion getGLVersion() {
-		return GLVersion.GL20;
-	}
+    @Override
+    public GLVersion getGLVersion() {
+        return GLVersion.GL20;
+    }
 }

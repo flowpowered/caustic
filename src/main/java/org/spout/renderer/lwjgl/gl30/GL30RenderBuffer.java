@@ -37,63 +37,63 @@ import org.spout.renderer.lwjgl.LWJGLUtil;
  * @see RenderBuffer
  */
 public class GL30RenderBuffer extends RenderBuffer {
-	protected GL30RenderBuffer() {
-	}
+    protected GL30RenderBuffer() {
+    }
 
-	@Override
-	public void create() {
-		if (format == null) {
-			throw new IllegalStateException("Format has not been set");
-		}
-		if (width == -1) {
-			throw new IllegalStateException("Width has not been set");
-		}
-		if (height == -1) {
-			throw new IllegalStateException("Height has not been set");
-		}
-		// Generate and bind the render buffer
-		id = GL30.glGenRenderbuffers();
-		GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, id);
-		// Set the storage format and size
-		GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, format.getGLConstant(), width, height);
-		// Unbind the render buffer
-		GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, 0);
-		// Update the state
-		super.create();
-		// Check for errors
-		LWJGLUtil.checkForGLError();
-	}
+    @Override
+    public void create() {
+        if (format == null) {
+            throw new IllegalStateException("Format has not been set");
+        }
+        if (width == -1) {
+            throw new IllegalStateException("Width has not been set");
+        }
+        if (height == -1) {
+            throw new IllegalStateException("Height has not been set");
+        }
+        // Generate and bind the render buffer
+        id = GL30.glGenRenderbuffers();
+        GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, id);
+        // Set the storage format and size
+        GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, format.getGLConstant(), width, height);
+        // Unbind the render buffer
+        GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, 0);
+        // Update the state
+        super.create();
+        // Check for errors
+        LWJGLUtil.checkForGLError();
+    }
 
-	@Override
-	public void destroy() {
-		checkCreated();
-		// Unbind and delete the render buffer
-		GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, 0);
-		GL30.glDeleteRenderbuffers(id);
-		// Update state
-		super.destroy();
-		// Check for errors
-		LWJGLUtil.checkForGLError();
-	}
+    @Override
+    public void destroy() {
+        checkCreated();
+        // Unbind and delete the render buffer
+        GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, 0);
+        GL30.glDeleteRenderbuffers(id);
+        // Update state
+        super.destroy();
+        // Check for errors
+        LWJGLUtil.checkForGLError();
+    }
 
-	@Override
-	public void bind() {
-		checkCreated();
-		GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, id);
-		// Check for errors
-		LWJGLUtil.checkForGLError();
-	}
+    @Override
+    public void bind() {
+        checkCreated();
+        GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, id);
+        // Check for errors
+        LWJGLUtil.checkForGLError();
+    }
 
-	@Override
-	public void unbind() {
-		checkCreated();
-		GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, 0);
-		// Check for errors
-		LWJGLUtil.checkForGLError();
-	}
+    @Override
+    public void unbind() {
+        checkCreated();
+        GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, 0);
+        // Check for errors
+        LWJGLUtil.checkForGLError();
+    }
 
-	@Override
-	public GLVersion getGLVersion() {
-		return GLVersion.GL30;
-	}
+    @Override
+    public GLVersion getGLVersion() {
+        return GLVersion.GL30;
+    }
 }

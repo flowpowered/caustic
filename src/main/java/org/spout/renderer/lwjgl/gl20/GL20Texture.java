@@ -45,106 +45,106 @@ import org.spout.renderer.util.CausticUtil;
  * @see Texture
  */
 public class GL20Texture extends Texture {
-	protected GL20Texture() {
-	}
+    protected GL20Texture() {
+    }
 
-	@Override
-	public void create() {
-		// Get the context capabilities for the graphics hardware
-		//final ContextCapabilities contextCaps = GLContext.getCapabilities();
-		//if (!contextCaps.GL_ARB_texture_non_power_of_two && (!GenericMath.isPowerOfTwo(width) || !GenericMath.isPowerOfTwo(height))) {
-		//	TODO: Resize images. Also, this only really matters for mipmaps
-		//}
-		// Generate and bind the texture in the unit
-		id = GL11.glGenTextures();
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
-		// Upload the texture to the GPU
-		uploadTexture(imageData, width, height);
-		// Set the vertical and horizontal texture wraps (in the texture parameters)
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, wrapT.getGLConstant());
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, wrapS.getGLConstant());
-		// Set the min and max texture filters (in the texture parameters)
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, minFilter.getGLConstant());
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, magFilter.getGLConstant());
-		// Set the anisotropic filtering value, if any
-		if (anisotropicFiltering > 0) {
-			GL11.glTexParameterf(GL11.GL_TEXTURE_2D, EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropicFiltering);
-		}
-		// Set the compare mode, if any
-		if (compareMode != null) {
-			// Note: GL14.GL_COMPARE_R_TO_TEXTURE and GL30.GL_COMPARE_REF_TO_TEXTURE are the same, just a different name
-			// No need for a different call in the GL30 implementation
-			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_COMPARE_MODE, GL14.GL_COMPARE_R_TO_TEXTURE);
-			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_COMPARE_FUNC, compareMode.getGLConstant());
-		}
+    @Override
+    public void create() {
+        // Get the context capabilities for the graphics hardware
+        //final ContextCapabilities contextCaps = GLContext.getCapabilities();
+        //if (!contextCaps.GL_ARB_texture_non_power_of_two && (!GenericMath.isPowerOfTwo(width) || !GenericMath.isPowerOfTwo(height))) {
+        //	TODO: Resize images. Also, this only really matters for mipmaps
+        //}
+        // Generate and bind the texture in the unit
+        id = GL11.glGenTextures();
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
+        // Upload the texture to the GPU
+        uploadTexture(imageData, width, height);
+        // Set the vertical and horizontal texture wraps (in the texture parameters)
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, wrapT.getGLConstant());
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, wrapS.getGLConstant());
+        // Set the min and max texture filters (in the texture parameters)
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, minFilter.getGLConstant());
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, magFilter.getGLConstant());
+        // Set the anisotropic filtering value, if any
+        if (anisotropicFiltering > 0) {
+            GL11.glTexParameterf(GL11.GL_TEXTURE_2D, EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropicFiltering);
+        }
+        // Set the compare mode, if any
+        if (compareMode != null) {
+            // Note: GL14.GL_COMPARE_R_TO_TEXTURE and GL30.GL_COMPARE_REF_TO_TEXTURE are the same, just a different name
+            // No need for a different call in the GL30 implementation
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_COMPARE_MODE, GL14.GL_COMPARE_R_TO_TEXTURE);
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_COMPARE_FUNC, compareMode.getGLConstant());
+        }
         // Set the border color, if any
         if (borderColor != null) {
             GL11.glTexParameter(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_BORDER_COLOR, (FloatBuffer) CausticUtil.createFloatBuffer(4).put(borderColor.toArray()).flip());
         }
-		// Unbind the texture
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-		// Update the state
-		super.create();
-		// Check for errors
-		LWJGLUtil.checkForGLError();
-	}
+        // Unbind the texture
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+        // Update the state
+        super.create();
+        // Check for errors
+        LWJGLUtil.checkForGLError();
+    }
 
-	/**
-	 * Uploads the texture to the graphics card. This method has been separated from the create method for GL30 integrated mipmap support.
-	 *
-	 * @param buffer The buffer containing the image data
-	 * @param width The width of the image
-	 * @param height The height of the image
-	 */
-	protected void uploadTexture(ByteBuffer buffer, int width, int height) {
-		if (minFilter.needsMipMaps() && buffer != null) {
-			// Build mipmaps if using mip mapped filters
-			GLU.gluBuild2DMipmaps(GL11.GL_TEXTURE_2D, internalFormat != null ? internalFormat.getGLConstant() : format.getGLConstant(), width, height, format.getGLConstant(), type.getGLConstant(), buffer);
-		} else {
-			// Else just make it a normal texture
-			GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, internalFormat != null ? internalFormat.getGLConstant() : format.getGLConstant(), width, height, 0, format.getGLConstant(), type.getGLConstant(), buffer);
-		}
-		// Check for errors
-		LWJGLUtil.checkForGLError();
-	}
+    /**
+     * Uploads the texture to the graphics card. This method has been separated from the create method for GL30 integrated mipmap support.
+     *
+     * @param buffer The buffer containing the image data
+     * @param width The width of the image
+     * @param height The height of the image
+     */
+    protected void uploadTexture(ByteBuffer buffer, int width, int height) {
+        if (minFilter.needsMipMaps() && buffer != null) {
+            // Build mipmaps if using mip mapped filters
+            GLU.gluBuild2DMipmaps(GL11.GL_TEXTURE_2D, internalFormat != null ? internalFormat.getGLConstant() : format.getGLConstant(), width, height, format.getGLConstant(), type.getGLConstant(), buffer);
+        } else {
+            // Else just make it a normal texture
+            GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, internalFormat != null ? internalFormat.getGLConstant() : format.getGLConstant(), width, height, 0, format.getGLConstant(), type.getGLConstant(), buffer);
+        }
+        // Check for errors
+        LWJGLUtil.checkForGLError();
+    }
 
-	@Override
-	public void destroy() {
-		checkCreated();
-		// Unbind the texture
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-		// Delete the texture
-		GL11.glDeleteTextures(id);
-		// Reset the data
-		super.destroy();
-		// Check for errors
-		LWJGLUtil.checkForGLError();
-	}
+    @Override
+    public void destroy() {
+        checkCreated();
+        // Unbind the texture
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+        // Delete the texture
+        GL11.glDeleteTextures(id);
+        // Reset the data
+        super.destroy();
+        // Check for errors
+        LWJGLUtil.checkForGLError();
+    }
 
-	@Override
-	public void bind(int unit) {
-		checkCreated();
-		if (unit != -1) {
-			// Activate the texture unit
-			GL13.glActiveTexture(GL13.GL_TEXTURE0 + unit);
-		}
-		// Bind the texture
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
-		// Check for errors
-		LWJGLUtil.checkForGLError();
-	}
+    @Override
+    public void bind(int unit) {
+        checkCreated();
+        if (unit != -1) {
+            // Activate the texture unit
+            GL13.glActiveTexture(GL13.GL_TEXTURE0 + unit);
+        }
+        // Bind the texture
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
+        // Check for errors
+        LWJGLUtil.checkForGLError();
+    }
 
-	@Override
-	public void unbind() {
-		checkCreated();
-		// Unbind the texture
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-		// Check for errors
-		LWJGLUtil.checkForGLError();
-	}
+    @Override
+    public void unbind() {
+        checkCreated();
+        // Unbind the texture
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+        // Check for errors
+        LWJGLUtil.checkForGLError();
+    }
 
-	@Override
-	public GLVersion getGLVersion() {
-		return GLVersion.GL20;
-	}
+    @Override
+    public GLVersion getGLVersion() {
+        return GLVersion.GL20;
+    }
 }

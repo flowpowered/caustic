@@ -37,70 +37,70 @@ import org.spout.renderer.gl.RenderBuffer;
  * @see org.spout.renderer.gl.RenderBuffer
  */
 public class GLES20RenderBuffer extends RenderBuffer {
-	/**
-	 * Constructs a new render buffer for OpenGL 2.0. If no EXT extension for render buffers is available, an exception is thrown.
-	 *
-	 * @throws UnsupportedOperationException If the hardware doesn't support EXT render buffers.
-	 */
-	protected GLES20RenderBuffer() {
-	}
+    /**
+     * Constructs a new render buffer for OpenGL 2.0. If no EXT extension for render buffers is available, an exception is thrown.
+     *
+     * @throws UnsupportedOperationException If the hardware doesn't support EXT render buffers.
+     */
+    protected GLES20RenderBuffer() {
+    }
 
-	@Override
-	public void create() {
-		if (format == null) {
-			throw new IllegalStateException("Format has not been set");
-		}
-		if (width == -1) {
-			throw new IllegalStateException("Width has not been set");
-		}
-		if (height == -1) {
-			throw new IllegalStateException("Height has not been set");
-		}
-		// Generate and bind the render buffer
-		int[] bufferId = new int[1];
-		GLES20.glGenRenderbuffers(1, bufferId, 0);
-		id = bufferId[0];
-		GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, id);
-		// Set the storage format and size
-		GLES20.glRenderbufferStorage(GLES20.GL_RENDERBUFFER, format.getGLConstant(), width, height);
-		// Unbind the render buffer
-		GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, 0);
-		// Update the state
-		super.create();
-		// Check for errors
-		AndroidUtil.checkForGLESError();
-	}
+    @Override
+    public void create() {
+        if (format == null) {
+            throw new IllegalStateException("Format has not been set");
+        }
+        if (width == -1) {
+            throw new IllegalStateException("Width has not been set");
+        }
+        if (height == -1) {
+            throw new IllegalStateException("Height has not been set");
+        }
+        // Generate and bind the render buffer
+        int[] bufferId = new int[1];
+        GLES20.glGenRenderbuffers(1, bufferId, 0);
+        id = bufferId[0];
+        GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, id);
+        // Set the storage format and size
+        GLES20.glRenderbufferStorage(GLES20.GL_RENDERBUFFER, format.getGLConstant(), width, height);
+        // Unbind the render buffer
+        GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, 0);
+        // Update the state
+        super.create();
+        // Check for errors
+        AndroidUtil.checkForGLESError();
+    }
 
-	@Override
-	public void destroy() {
-		checkCreated();
-		// Unbind and delete the render buffer
-		GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, 0);
-		GLES20.glDeleteRenderbuffers(1, new int[]{id}, 0);
-		// Update state
-		super.destroy();
-		// Check for errors
-		AndroidUtil.checkForGLESError();
-	}
+    @Override
+    public void destroy() {
+        checkCreated();
+        // Unbind and delete the render buffer
+        GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, 0);
+        GLES20.glDeleteRenderbuffers(1, new int[]{id}, 0);
+        // Update state
+        super.destroy();
+        // Check for errors
+        AndroidUtil.checkForGLESError();
+    }
 
-	@Override
-	public void bind() {
-		checkCreated();
-		GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, id);
-		// Check for errors
-		AndroidUtil.checkForGLESError();
-	}
+    @Override
+    public void bind() {
+        checkCreated();
+        GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, id);
+        // Check for errors
+        AndroidUtil.checkForGLESError();
+    }
 
-	@Override
-	public void unbind() {
-		checkCreated();
-		GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, 0);
-		// Check for errors
-		AndroidUtil.checkForGLESError();
-	}
+    @Override
+    public void unbind() {
+        checkCreated();
+        GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, 0);
+        // Check for errors
+        AndroidUtil.checkForGLESError();
+    }
 
-	@Override
-	public GLVersion getGLVersion() {
-		return GLVersion.GLES20;
-	}
+    @Override
+    public GLVersion getGLVersion() {
+        return GLVersion.GLES20;
+    }
 }

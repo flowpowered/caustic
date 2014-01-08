@@ -38,97 +38,97 @@ import org.spout.renderer.util.CausticUtil;
  * for advanced rendering techniques such as shadow mapping and screen space ambient occlusion (SSAO).
  */
 public abstract class FrameBuffer extends Creatable implements GLVersioned {
-	protected int id;
-	// The attached texture and render buffers
-	protected final Map<AttachmentPoint, Texture> textures = new EnumMap<>(AttachmentPoint.class);
-	protected final Map<AttachmentPoint, RenderBuffer> buffers = new EnumMap<>(AttachmentPoint.class);
+    protected int id;
+    // The attached texture and render buffers
+    protected final Map<AttachmentPoint, Texture> textures = new EnumMap<>(AttachmentPoint.class);
+    protected final Map<AttachmentPoint, RenderBuffer> buffers = new EnumMap<>(AttachmentPoint.class);
 
-	@Override
-	public void destroy() {
-		id = 0;
-		super.destroy();
-	}
+    @Override
+    public void destroy() {
+        id = 0;
+        super.destroy();
+    }
 
-	/**
-	 * Binds the frame buffer to the OpenGL context.
-	 */
-	public abstract void bind();
+    /**
+     * Binds the frame buffer to the OpenGL context.
+     */
+    public abstract void bind();
 
-	/**
-	 * Unbinds the frame buffer from the OpenGL context.
-	 */
-	public abstract void unbind();
+    /**
+     * Unbinds the frame buffer from the OpenGL context.
+     */
+    public abstract void unbind();
 
-	/**
-	 * Attaches the texture to the frame buffer attachment point.
-	 *
-	 * @param point The attachment point
-	 * @param texture The texture to attach
-	 */
-	public void attach(AttachmentPoint point, Texture texture) {
-		CausticUtil.checkVersion(this, texture);
-		buffers.remove(point);
-		textures.put(point, texture);
-	}
+    /**
+     * Attaches the texture to the frame buffer attachment point.
+     *
+     * @param point The attachment point
+     * @param texture The texture to attach
+     */
+    public void attach(AttachmentPoint point, Texture texture) {
+        CausticUtil.checkVersion(this, texture);
+        buffers.remove(point);
+        textures.put(point, texture);
+    }
 
-	/**
-	 * Attaches the render buffer to the attachment point
-	 *
-	 * @param point The attachment point
-	 * @param buffer The render buffer
-	 */
-	public void attach(AttachmentPoint point, RenderBuffer buffer) {
-		CausticUtil.checkVersion(this, buffer);
-		textures.remove(point);
-		buffers.put(point, buffer);
-	}
+    /**
+     * Attaches the render buffer to the attachment point
+     *
+     * @param point The attachment point
+     * @param buffer The render buffer
+     */
+    public void attach(AttachmentPoint point, RenderBuffer buffer) {
+        CausticUtil.checkVersion(this, buffer);
+        textures.remove(point);
+        buffers.put(point, buffer);
+    }
 
-	/**
-	 * Gets the ID for this frame buffer as assigned by OpenGL.
-	 *
-	 * @return The ID
-	 */
-	public int getId() {
-		return id;
-	}
+    /**
+     * Gets the ID for this frame buffer as assigned by OpenGL.
+     *
+     * @return The ID
+     */
+    public int getId() {
+        return id;
+    }
 
-	/**
-	 * An enum of the possible frame buffer attachment points.
-	 */
-	public static enum AttachmentPoint {
-		// TODO: remove color from enum and support n color attachments
-		COLOR0(0x8CE0, true), // GL30.GL_COLOR_ATTACHMENT0
-		COLOR1(0x8CE1, true), // GL30.GL_COLOR_ATTACHMENT1
-		COLOR2(0x8CE2, true), // GL30.GL_COLOR_ATTACHMENT2
-		COLOR3(0x8CE3, true), // GL30.GL_COLOR_ATTACHMENT3
-		COLOR4(0x8CE4, true), // GL30.GL_COLOR_ATTACHMENT4
-		DEPTH(0x8D00, false), // GL30.GL_DEPTH_ATTACHMENT
-		STENCIL(0x8D20, false), // GL30.GL_STENCIL_ATTACHMENT
-		DEPTH_STENCIL(0x821A, false); // GL30.GL_DEPTH_STENCIL_ATTACHMENT
-		private final int glConstant;
-		private final boolean isColor;
+    /**
+     * An enum of the possible frame buffer attachment points.
+     */
+    public static enum AttachmentPoint {
+        // TODO: remove color from enum and support n color attachments
+        COLOR0(0x8CE0, true), // GL30.GL_COLOR_ATTACHMENT0
+        COLOR1(0x8CE1, true), // GL30.GL_COLOR_ATTACHMENT1
+        COLOR2(0x8CE2, true), // GL30.GL_COLOR_ATTACHMENT2
+        COLOR3(0x8CE3, true), // GL30.GL_COLOR_ATTACHMENT3
+        COLOR4(0x8CE4, true), // GL30.GL_COLOR_ATTACHMENT4
+        DEPTH(0x8D00, false), // GL30.GL_DEPTH_ATTACHMENT
+        STENCIL(0x8D20, false), // GL30.GL_STENCIL_ATTACHMENT
+        DEPTH_STENCIL(0x821A, false); // GL30.GL_DEPTH_STENCIL_ATTACHMENT
+        private final int glConstant;
+        private final boolean isColor;
 
-		private AttachmentPoint(int glConstant, boolean isColor) {
-			this.glConstant = glConstant;
-			this.isColor = isColor;
-		}
+        private AttachmentPoint(int glConstant, boolean isColor) {
+            this.glConstant = glConstant;
+            this.isColor = isColor;
+        }
 
-		/**
-		 * Gets the OpenGL constant for this attachment point.
-		 *
-		 * @return The OpenGL Constant
-		 */
-		public int getGLConstant() {
-			return glConstant;
-		}
+        /**
+         * Gets the OpenGL constant for this attachment point.
+         *
+         * @return The OpenGL Constant
+         */
+        public int getGLConstant() {
+            return glConstant;
+        }
 
-		/**
-		 * Returns true if the attachment point is a color attachment.
-		 *
-		 * @return Whether or not the attachment is a color attachment
-		 */
-		public boolean isColor() {
-			return isColor;
-		}
-	}
+        /**
+         * Returns true if the attachment point is a color attachment.
+         *
+         * @return Whether or not the attachment is a color attachment
+         */
+        public boolean isColor() {
+            return isColor;
+        }
+    }
 }

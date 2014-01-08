@@ -32,52 +32,52 @@ import org.spout.renderer.GLVersioned;
  * A factory for generating OpenGL objects of the correct version.
  */
 public interface GLFactory extends GLVersioned {
-	/**
-	 * Creates a new frame buffer.
-	 *
-	 * @return A new frame buffer
-	 */
-	FrameBuffer createFrameBuffer();
+    /**
+     * Creates a new frame buffer.
+     *
+     * @return A new frame buffer
+     */
+    FrameBuffer createFrameBuffer();
 
-	/**
-	 * Creates a new program.
-	 *
-	 * @return A new program
-	 */
-	Program createProgram();
+    /**
+     * Creates a new program.
+     *
+     * @return A new program
+     */
+    Program createProgram();
 
-	/**
-	 * Creates a new render buffer.
-	 *
-	 * @return A new render buffer
-	 */
-	RenderBuffer createRenderBuffer();
+    /**
+     * Creates a new render buffer.
+     *
+     * @return A new render buffer
+     */
+    RenderBuffer createRenderBuffer();
 
-	/**
-	 * Creates a new context.
-	 *
-	 * @return A new context
-	 */
-	Context createContext();
+    /**
+     * Creates a new context.
+     *
+     * @return A new context
+     */
+    Context createContext();
 
-	/**
-	 * Creates a new shader.
-	 *
-	 * @return A new shader
-	 */
-	Shader createShader();
+    /**
+     * Creates a new shader.
+     *
+     * @return A new shader
+     */
+    Shader createShader();
 
-	/**
-	 * Creates a new texture.
-	 *
-	 * @return A new texture
-	 */
-	Texture createTexture();
+    /**
+     * Creates a new texture.
+     *
+     * @return A new texture
+     */
+    Texture createTexture();
 
-	/**
-	 * Creates a new vertex array.
-	 *
-	 * @return A new vertex array
-	 */
-	VertexArray createVertexArray();
+    /**
+     * Creates a new vertex array.
+     *
+     * @return A new vertex array
+     */
+    VertexArray createVertexArray();
 }

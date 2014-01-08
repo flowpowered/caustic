@@ -38,163 +38,163 @@ import org.spout.renderer.data.VertexAttribute.DataType;
  * undefined content. This is mostly used for frame buffers.
  */
 public abstract class Texture extends Creatable implements GLVersioned {
-	protected int id = 0;
-	// The format
-	protected Format format = Format.RGB;
-	protected InternalFormat internalFormat = null;
-	protected DataType type = DataType.UNSIGNED_BYTE;
-	// Wrapping modes for s and t
-	protected WrapMode wrapT = WrapMode.REPEAT;
-	protected WrapMode wrapS = WrapMode.REPEAT;
-	// Minimisation and magnification modes
-	protected FilterMode minFilter = FilterMode.NEAREST;
-	protected FilterMode magFilter = FilterMode.NEAREST;
-	// Anisotropic filtering
-	protected float anisotropicFiltering = 0;
-	// Compare modes for PCF
-	protected CompareMode compareMode = null;
+    protected int id = 0;
+    // The format
+    protected Format format = Format.RGB;
+    protected InternalFormat internalFormat = null;
+    protected DataType type = DataType.UNSIGNED_BYTE;
+    // Wrapping modes for s and t
+    protected WrapMode wrapT = WrapMode.REPEAT;
+    protected WrapMode wrapS = WrapMode.REPEAT;
+    // Minimisation and magnification modes
+    protected FilterMode minFilter = FilterMode.NEAREST;
+    protected FilterMode magFilter = FilterMode.NEAREST;
+    // Anisotropic filtering
+    protected float anisotropicFiltering = 0;
+    // Compare modes for PCF
+    protected CompareMode compareMode = null;
     // Border color when sampling outside the textures for certain wrap modes
     protected Color borderColor = null;
-	// The texture image data
-	protected ByteBuffer imageData;
-	// Texture image dimensions
-	protected int width;
-	protected int height;
+    // The texture image data
+    protected ByteBuffer imageData;
+    // Texture image dimensions
+    protected int width;
+    protected int height;
 
-	@Override
-	public void create() {
-		imageData = null;
-		super.create();
-	}
+    @Override
+    public void create() {
+        imageData = null;
+        super.create();
+    }
 
-	@Override
-	public void destroy() {
-		id = 0;
-		super.destroy();
-	}
+    @Override
+    public void destroy() {
+        id = 0;
+        super.destroy();
+    }
 
-	/**
-	 * Binds the texture to the OpenGL context.
-	 *
-	 * @param unit The unit to bind the texture to, or -1 to just bind the texture
-	 */
-	public abstract void bind(int unit);
+    /**
+     * Binds the texture to the OpenGL context.
+     *
+     * @param unit The unit to bind the texture to, or -1 to just bind the texture
+     */
+    public abstract void bind(int unit);
 
-	/**
-	 * Unbinds the texture from the OpenGL context.
-	 */
-	public abstract void unbind();
+    /**
+     * Unbinds the texture from the OpenGL context.
+     */
+    public abstract void unbind();
 
-	/**
-	 * Gets the ID for this texture as assigned by OpenGL.
-	 *
-	 * @return The ID
-	 */
-	public int getID() {
-		return id;
-	}
+    /**
+     * Gets the ID for this texture as assigned by OpenGL.
+     *
+     * @return The ID
+     */
+    public int getID() {
+        return id;
+    }
 
-	/**
-	 * Sets the texture's format.
-	 *
-	 * @param format The format to set
-	 */
-	public void setFormat(Format format) {
-		if (format == null) {
-			throw new IllegalArgumentException("Format cannot be null");
-		}
-		this.format = format;
-	}
+    /**
+     * Sets the texture's format.
+     *
+     * @param format The format to set
+     */
+    public void setFormat(Format format) {
+        if (format == null) {
+            throw new IllegalArgumentException("Format cannot be null");
+        }
+        this.format = format;
+    }
 
-	/**
-	 * Sets the texture's internal format. Set to null to use the un-sized format instead.
-	 *
-	 * @param internalFormat The internal format to set
-	 */
-	public void setInternalFormat(InternalFormat internalFormat) {
-		this.internalFormat = internalFormat;
-	}
+    /**
+     * Sets the texture's internal format. Set to null to use the un-sized format instead.
+     *
+     * @param internalFormat The internal format to set
+     */
+    public void setInternalFormat(InternalFormat internalFormat) {
+        this.internalFormat = internalFormat;
+    }
 
-	/**
-	 * Sets the value for anisotropic filtering. A value smaller or equal to zero is considered as no filtering. Note that this is EXT based and might not be supported on all hardware.
-	 *
-	 * @param value The anisotropic filtering value
-	 */
-	public void setAnisotropicFiltering(float value) {
-		this.anisotropicFiltering = value;
-	}
+    /**
+     * Sets the value for anisotropic filtering. A value smaller or equal to zero is considered as no filtering. Note that this is EXT based and might not be supported on all hardware.
+     *
+     * @param value The anisotropic filtering value
+     */
+    public void setAnisotropicFiltering(float value) {
+        this.anisotropicFiltering = value;
+    }
 
-	/**
-	 * Sets the texture's data type.
-	 *
-	 * @param type The type to set
-	 */
-	public void setComponentType(DataType type) {
-		if (type == null) {
-			throw new IllegalArgumentException("Type cannot be null");
-		}
-		this.type = type;
-	}
+    /**
+     * Sets the texture's data type.
+     *
+     * @param type The type to set
+     */
+    public void setComponentType(DataType type) {
+        if (type == null) {
+            throw new IllegalArgumentException("Type cannot be null");
+        }
+        this.type = type;
+    }
 
-	/**
-	 * Sets the horizontal texture wrap.
-	 *
-	 * @param wrapS Horizontal texture wrap
-	 */
-	public void setWrapS(WrapMode wrapS) {
-		if (wrapS == null) {
-			throw new IllegalArgumentException("Wrap cannot be null");
-		}
-		this.wrapS = wrapS;
-	}
+    /**
+     * Sets the horizontal texture wrap.
+     *
+     * @param wrapS Horizontal texture wrap
+     */
+    public void setWrapS(WrapMode wrapS) {
+        if (wrapS == null) {
+            throw new IllegalArgumentException("Wrap cannot be null");
+        }
+        this.wrapS = wrapS;
+    }
 
-	/**
-	 * Sets the vertical texture wrap.
-	 *
-	 * @param wrapT Vertical texture wrap
-	 */
-	public void setWrapT(WrapMode wrapT) {
-		if (wrapT == null) {
-			throw new IllegalArgumentException("Wrap cannot be null");
-		}
-		this.wrapT = wrapT;
-	}
+    /**
+     * Sets the vertical texture wrap.
+     *
+     * @param wrapT Vertical texture wrap
+     */
+    public void setWrapT(WrapMode wrapT) {
+        if (wrapT == null) {
+            throw new IllegalArgumentException("Wrap cannot be null");
+        }
+        this.wrapT = wrapT;
+    }
 
-	/**
-	 * Sets the texture's min filter.
-	 *
-	 * @param minFilter The min filter
-	 */
-	public void setMinFilter(FilterMode minFilter) {
-		if (minFilter == null) {
-			throw new IllegalArgumentException("Filter cannot be null");
-		}
-		this.minFilter = minFilter;
-	}
+    /**
+     * Sets the texture's min filter.
+     *
+     * @param minFilter The min filter
+     */
+    public void setMinFilter(FilterMode minFilter) {
+        if (minFilter == null) {
+            throw new IllegalArgumentException("Filter cannot be null");
+        }
+        this.minFilter = minFilter;
+    }
 
-	/**
-	 * Sets the texture's mag filter. Filters that require mipmaps generation cannot be used here.
-	 *
-	 * @param magFilter The mag filter
-	 */
-	public void setMagFilter(FilterMode magFilter) {
-		if (magFilter == null) {
-			throw new IllegalArgumentException("Filter cannot be null");
-		}
-		if (magFilter.needsMipMaps()) {
-			throw new IllegalArgumentException("Mimpmap filters cannot be used for texture magnification");
-		}
-		this.magFilter = magFilter;
-	}
+    /**
+     * Sets the texture's mag filter. Filters that require mipmaps generation cannot be used here.
+     *
+     * @param magFilter The mag filter
+     */
+    public void setMagFilter(FilterMode magFilter) {
+        if (magFilter == null) {
+            throw new IllegalArgumentException("Filter cannot be null");
+        }
+        if (magFilter.needsMipMaps()) {
+            throw new IllegalArgumentException("Mimpmap filters cannot be used for texture magnification");
+        }
+        this.magFilter = magFilter;
+    }
 
-	/**
-	 * Sets the compare mode. If null, this feature is deactivated. Use this for PCF with shadow samplers.
-	 *
-	 * @param compareMode The compare mode
-	 */
-	public void setCompareMode(CompareMode compareMode) {
-		this.compareMode = compareMode;
-	}
+    /**
+     * Sets the compare mode. If null, this feature is deactivated. Use this for PCF with shadow samplers.
+     *
+     * @param compareMode The compare mode
+     */
+    public void setCompareMode(CompareMode compareMode) {
+        this.compareMode = compareMode;
+    }
 
     /**
      * Sets the border color. If null, the default OpenGL border color is used.
@@ -206,269 +206,269 @@ public abstract class Texture extends Creatable implements GLVersioned {
     }
 
     /**
-	 * Sets the texture's image data. The image data reading is done according the the set {@link org.spout.renderer.gl.Texture.Format}.
-	 *
-	 * @param imageData The image data
-	 * @param width The width of the image
-	 * @param height the height of the image
-	 */
-	public void setImageData(ByteBuffer imageData, int width, int height) {
-		this.imageData = imageData;
-		this.width = width;
-		this.height = height;
-	}
+     * Sets the texture's image data. The image data reading is done according the the set {@link org.spout.renderer.gl.Texture.Format}.
+     *
+     * @param imageData The image data
+     * @param width The width of the image
+     * @param height the height of the image
+     */
+    public void setImageData(ByteBuffer imageData, int width, int height) {
+        this.imageData = imageData;
+        this.width = width;
+        this.height = height;
+    }
 
-	/**
-	 * Returns the image data. After creation is over, it returns null.
-	 *
-	 * @return The image data
-	 */
-	public ByteBuffer getImageData() {
-		return imageData;
-	}
+    /**
+     * Returns the image data. After creation is over, it returns null.
+     *
+     * @return The image data
+     */
+    public ByteBuffer getImageData() {
+        return imageData;
+    }
 
-	/**
-	 * Returns the width of the image.
-	 *
-	 * @return The image width
-	 */
-	public int getWidth() {
-		return width;
-	}
+    /**
+     * Returns the width of the image.
+     *
+     * @return The image width
+     */
+    public int getWidth() {
+        return width;
+    }
 
-	/**
-	 * Returns the height of the image.
-	 *
-	 * @return The image height
-	 */
-	public int getHeight() {
-		return height;
-	}
+    /**
+     * Returns the height of the image.
+     *
+     * @return The image height
+     */
+    public int getHeight() {
+        return height;
+    }
 
-	/**
-	 * An enum of texture component formats.
-	 */
-	public static enum Format {
-		RED(0x1903, 1, true, false, false, false, false, false), // GL11.GL_RED
-		RGB(0x1907, 3, true, true, true, false, false, false), // GL11.GL_RGB
-		RGBA(0x1908, 4, true, true, true, true, false, false), // GL11.GL_RGBA
-		DEPTH(0x1902, 1, false, false, false, false, true, false), // GL11.GL_DEPTH_COMPONENT
-		RG(0x8227, 2, true, true, false, false, false, false), // GL30.GL_RG
-		DEPTH_STENCIL(0x84F9, 1, false, false, false, false, false, true); // GL30.GL_DEPTH_STENCIL
-		private final int glConstant;
-		private final int components;
-		private final boolean hasRed;
-		private final boolean hasGreen;
-		private final boolean hasBlue;
-		private final boolean hasAlpha;
-		private final boolean hasDepth;
-		private final boolean hasStencil;
+    /**
+     * An enum of texture component formats.
+     */
+    public static enum Format {
+        RED(0x1903, 1, true, false, false, false, false, false), // GL11.GL_RED
+        RGB(0x1907, 3, true, true, true, false, false, false), // GL11.GL_RGB
+        RGBA(0x1908, 4, true, true, true, true, false, false), // GL11.GL_RGBA
+        DEPTH(0x1902, 1, false, false, false, false, true, false), // GL11.GL_DEPTH_COMPONENT
+        RG(0x8227, 2, true, true, false, false, false, false), // GL30.GL_RG
+        DEPTH_STENCIL(0x84F9, 1, false, false, false, false, false, true); // GL30.GL_DEPTH_STENCIL
+        private final int glConstant;
+        private final int components;
+        private final boolean hasRed;
+        private final boolean hasGreen;
+        private final boolean hasBlue;
+        private final boolean hasAlpha;
+        private final boolean hasDepth;
+        private final boolean hasStencil;
 
-		private Format(int glConstant, int components, boolean hasRed, boolean hasGreen, boolean hasBlue, boolean hasAlpha, boolean hasDepth, boolean hasStencil) {
-			this.glConstant = glConstant;
-			this.components = components;
-			this.hasRed = hasRed;
-			this.hasGreen = hasGreen;
-			this.hasBlue = hasBlue;
-			this.hasAlpha = hasAlpha;
-			this.hasDepth = hasDepth;
-			this.hasStencil = hasStencil;
-		}
+        private Format(int glConstant, int components, boolean hasRed, boolean hasGreen, boolean hasBlue, boolean hasAlpha, boolean hasDepth, boolean hasStencil) {
+            this.glConstant = glConstant;
+            this.components = components;
+            this.hasRed = hasRed;
+            this.hasGreen = hasGreen;
+            this.hasBlue = hasBlue;
+            this.hasAlpha = hasAlpha;
+            this.hasDepth = hasDepth;
+            this.hasStencil = hasStencil;
+        }
 
-		/**
-		 * Gets the OpenGL constant for this format.
-		 *
-		 * @return The OpenGL Constant
-		 */
-		public int getGLConstant() {
-			return glConstant;
-		}
+        /**
+         * Gets the OpenGL constant for this format.
+         *
+         * @return The OpenGL Constant
+         */
+        public int getGLConstant() {
+            return glConstant;
+        }
 
-		/**
-		 * Returns the number of components in the format.
-		 *
-		 * @return The number of components
-		 */
-		public int getComponentCount() {
-			return components;
-		}
+        /**
+         * Returns the number of components in the format.
+         *
+         * @return The number of components
+         */
+        public int getComponentCount() {
+            return components;
+        }
 
-		/**
-		 * Returns true if this format has a red component.
-		 *
-		 * @return True if a red component is present
-		 */
-		public boolean hasRed() {
-			return hasRed;
-		}
+        /**
+         * Returns true if this format has a red component.
+         *
+         * @return True if a red component is present
+         */
+        public boolean hasRed() {
+            return hasRed;
+        }
 
-		/**
-		 * Returns true if this format has a green component.
-		 *
-		 * @return True if a green component is present
-		 */
-		public boolean hasGreen() {
-			return hasGreen;
-		}
+        /**
+         * Returns true if this format has a green component.
+         *
+         * @return True if a green component is present
+         */
+        public boolean hasGreen() {
+            return hasGreen;
+        }
 
-		/**
-		 * Returns true if this format has a blue component.
-		 *
-		 * @return True if a blue component is present
-		 */
-		public boolean hasBlue() {
-			return hasBlue;
-		}
+        /**
+         * Returns true if this format has a blue component.
+         *
+         * @return True if a blue component is present
+         */
+        public boolean hasBlue() {
+            return hasBlue;
+        }
 
-		/**
-		 * Returns true if this format has an alpha component.
-		 *
-		 * @return True if an alpha component is present
-		 */
-		public boolean hasAlpha() {
-			return hasAlpha;
-		}
+        /**
+         * Returns true if this format has an alpha component.
+         *
+         * @return True if an alpha component is present
+         */
+        public boolean hasAlpha() {
+            return hasAlpha;
+        }
 
-		/**
-		 * Returns true if this format has a depth component.
-		 *
-		 * @return True if a depth component is present
-		 */
-		public boolean hasDepth() {
-			return hasDepth;
-		}
+        /**
+         * Returns true if this format has a depth component.
+         *
+         * @return True if a depth component is present
+         */
+        public boolean hasDepth() {
+            return hasDepth;
+        }
 
-		/**
-		 * Returns true if this format has a stencil component.
-		 *
-		 * @return True if a stencil component is present
-		 */
-		public boolean hasStencil() {
-			return hasStencil;
-		}
-	}
+        /**
+         * Returns true if this format has a stencil component.
+         *
+         * @return True if a stencil component is present
+         */
+        public boolean hasStencil() {
+            return hasStencil;
+        }
+    }
 
-	/**
-	 * An enum of sized texture component formats.
-	 */
-	public static enum InternalFormat {
-		RGB8(0x8051), // GL11.GL_RGB8
-		RGBA8(0x8058), // GL11.GL_RGBA8
-		RGBA16(0x805B), // GL11.GL_RGBA16
-		DEPTH_COMPONENT16(0x81A5), // GL14.GL_DEPTH_COMPONENT16
-		DEPTH_COMPONENT24(0x81A6), // GL14.GL_DEPTH_COMPONENT24
-		DEPTH_COMPONENT32(0x81A7), // GL14.GL_DEPTH_COMPONENT32
-		R8(0x8229), // GL30.GL_R8
-		R16(0x822A), // GL30.GL_R16
-		RG8(0x822B), // GL30.GL_RG8
-		RG16(0x822C), // GL30.GL_RG16
-		R16F(0x822D), // GL30.GL_R16F
-		R32F(0x822E), // GL30.GL_R32F
-		RG16F(0x822F), // GL30.GL_RG16F
-		RG32F(0x8230), // GL30.GL_RG32F
-		RGBA32F(0x8814), // GL30.GL_RGBA32F
-		RGB32F(0x8815), // GL30.GL_RGB32F
-		RGBA16F(0x881A), // GL30.GL_RGBA16F
-		RGB16F(0x881B); // GL30.GL_RGB16F
-		private final int glConstant;
+    /**
+     * An enum of sized texture component formats.
+     */
+    public static enum InternalFormat {
+        RGB8(0x8051), // GL11.GL_RGB8
+        RGBA8(0x8058), // GL11.GL_RGBA8
+        RGBA16(0x805B), // GL11.GL_RGBA16
+        DEPTH_COMPONENT16(0x81A5), // GL14.GL_DEPTH_COMPONENT16
+        DEPTH_COMPONENT24(0x81A6), // GL14.GL_DEPTH_COMPONENT24
+        DEPTH_COMPONENT32(0x81A7), // GL14.GL_DEPTH_COMPONENT32
+        R8(0x8229), // GL30.GL_R8
+        R16(0x822A), // GL30.GL_R16
+        RG8(0x822B), // GL30.GL_RG8
+        RG16(0x822C), // GL30.GL_RG16
+        R16F(0x822D), // GL30.GL_R16F
+        R32F(0x822E), // GL30.GL_R32F
+        RG16F(0x822F), // GL30.GL_RG16F
+        RG32F(0x8230), // GL30.GL_RG32F
+        RGBA32F(0x8814), // GL30.GL_RGBA32F
+        RGB32F(0x8815), // GL30.GL_RGB32F
+        RGBA16F(0x881A), // GL30.GL_RGBA16F
+        RGB16F(0x881B); // GL30.GL_RGB16F
+        private final int glConstant;
 
-		private InternalFormat(int glConstant) {
-			this.glConstant = glConstant;
-		}
+        private InternalFormat(int glConstant) {
+            this.glConstant = glConstant;
+        }
 
-		/**
-		 * Gets the OpenGL constant for this internal format.
-		 *
-		 * @return The OpenGL Constant
-		 */
-		public int getGLConstant() {
-			return glConstant;
-		}
+        /**
+         * Gets the OpenGL constant for this internal format.
+         *
+         * @return The OpenGL Constant
+         */
+        public int getGLConstant() {
+            return glConstant;
+        }
 
-	}
+    }
 
-	/**
-	 * An enum for the texture wrapping modes.
-	 */
-	public static enum WrapMode {
-		REPEAT(0x2901), // GL11.GL_REPEAT
-		CLAMP_TO_EDGE(0x812F), // GL12.GL_CLAMP_TO_EDGE
-		CLAMP_TO_BORDER(0x812D), // GL13.GL_CLAMP_TO_BORDER
-		MIRRORED_REPEAT(0x8370); // GL14.GL_MIRRORED_REPEAT
-		private final int glConstant;
+    /**
+     * An enum for the texture wrapping modes.
+     */
+    public static enum WrapMode {
+        REPEAT(0x2901), // GL11.GL_REPEAT
+        CLAMP_TO_EDGE(0x812F), // GL12.GL_CLAMP_TO_EDGE
+        CLAMP_TO_BORDER(0x812D), // GL13.GL_CLAMP_TO_BORDER
+        MIRRORED_REPEAT(0x8370); // GL14.GL_MIRRORED_REPEAT
+        private final int glConstant;
 
-		private WrapMode(int glConstant) {
-			this.glConstant = glConstant;
-		}
+        private WrapMode(int glConstant) {
+            this.glConstant = glConstant;
+        }
 
-		/**
-		 * Gets the OpenGL constant for this texture wrap.
-		 *
-		 * @return The OpenGL Constant
-		 */
-		public int getGLConstant() {
-			return glConstant;
-		}
-	}
+        /**
+         * Gets the OpenGL constant for this texture wrap.
+         *
+         * @return The OpenGL Constant
+         */
+        public int getGLConstant() {
+            return glConstant;
+        }
+    }
 
-	/**
-	 * An enum for the texture filtering modes.
-	 */
-	public static enum FilterMode {
-		LINEAR(0x2601), // GL11.GL_LINEAR
-		NEAREST(0x2600), // GL11.GL_NEAREST
-		NEAREST_MIPMAP_NEAREST(0x2700), // GL11.GL_NEAREST_MIPMAP_NEAREST
-		LINEAR_MIPMAP_NEAREST(0x2701), //GL11.GL_LINEAR_MIPMAP_NEAREST
-		NEAREST_MIPMAP_LINEAR(0x2702), // GL11.GL_NEAREST_MIPMAP_LINEAR
-		LINEAR_MIPMAP_LINEAR(0x2703); // GL11.GL_LINEAR_MIPMAP_LINEAR
-		private final int glConstant;
+    /**
+     * An enum for the texture filtering modes.
+     */
+    public static enum FilterMode {
+        LINEAR(0x2601), // GL11.GL_LINEAR
+        NEAREST(0x2600), // GL11.GL_NEAREST
+        NEAREST_MIPMAP_NEAREST(0x2700), // GL11.GL_NEAREST_MIPMAP_NEAREST
+        LINEAR_MIPMAP_NEAREST(0x2701), //GL11.GL_LINEAR_MIPMAP_NEAREST
+        NEAREST_MIPMAP_LINEAR(0x2702), // GL11.GL_NEAREST_MIPMAP_LINEAR
+        LINEAR_MIPMAP_LINEAR(0x2703); // GL11.GL_LINEAR_MIPMAP_LINEAR
+        private final int glConstant;
 
-		private FilterMode(int glConstant) {
-			this.glConstant = glConstant;
-		}
+        private FilterMode(int glConstant) {
+            this.glConstant = glConstant;
+        }
 
-		/**
-		 * Gets the OpenGL constant for this texture filter.
-		 *
-		 * @return The OpenGL Constant
-		 */
-		public int getGLConstant() {
-			return glConstant;
-		}
+        /**
+         * Gets the OpenGL constant for this texture filter.
+         *
+         * @return The OpenGL Constant
+         */
+        public int getGLConstant() {
+            return glConstant;
+        }
 
-		/**
-		 * Returns true if the filtering mode required generation of mipmaps.
-		 *
-		 * @return Whether or not mipmaps are required
-		 */
-		public boolean needsMipMaps() {
-			return this == NEAREST_MIPMAP_NEAREST || this == LINEAR_MIPMAP_NEAREST
-					|| this == NEAREST_MIPMAP_LINEAR || this == LINEAR_MIPMAP_LINEAR;
-		}
-	}
+        /**
+         * Returns true if the filtering mode required generation of mipmaps.
+         *
+         * @return Whether or not mipmaps are required
+         */
+        public boolean needsMipMaps() {
+            return this == NEAREST_MIPMAP_NEAREST || this == LINEAR_MIPMAP_NEAREST
+                    || this == NEAREST_MIPMAP_LINEAR || this == LINEAR_MIPMAP_LINEAR;
+        }
+    }
 
-	public static enum CompareMode {
-		LEQUAL(0x203), // GL11.GL_LEQUAL
-		GEQUAL(0x206), // GL11.GL_GEQUAL
-		LESS(0x201), // GL11.GL_LESS
-		GREATER(0x204), // GL11.GL_GREATER
-		EQUAL(0x202), // GL11.GL_EQUAL
-		NOTEQUAL(0x205), // GL11.GL_NOTEQUAL
-		ALWAYS(0x206), // GL11.GL_ALWAYS
-		NEVER(0x200); // GL11.GL_NEVER
-		private final int glConstant;
+    public static enum CompareMode {
+        LEQUAL(0x203), // GL11.GL_LEQUAL
+        GEQUAL(0x206), // GL11.GL_GEQUAL
+        LESS(0x201), // GL11.GL_LESS
+        GREATER(0x204), // GL11.GL_GREATER
+        EQUAL(0x202), // GL11.GL_EQUAL
+        NOTEQUAL(0x205), // GL11.GL_NOTEQUAL
+        ALWAYS(0x206), // GL11.GL_ALWAYS
+        NEVER(0x200); // GL11.GL_NEVER
+        private final int glConstant;
 
-		private CompareMode(int glConstant) {
-			this.glConstant = glConstant;
-		}
+        private CompareMode(int glConstant) {
+            this.glConstant = glConstant;
+        }
 
-		/**
-		 * Gets the OpenGL constant for this texture filter.
-		 *
-		 * @return The OpenGL Constant
-		 */
-		public int getGLConstant() {
-			return glConstant;
-		}
-	}
+        /**
+         * Gets the OpenGL constant for this texture filter.
+         *
+         * @return The OpenGL Constant
+         */
+        public int getGLConstant() {
+            return glConstant;
+        }
+    }
 }

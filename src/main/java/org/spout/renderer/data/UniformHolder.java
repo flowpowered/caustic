@@ -45,215 +45,215 @@ import org.spout.renderer.data.Uniform.Vector4Uniform;
  * Represents a set of uniforms held by an object. Uniforms can be added, removed and modified.
  */
 public class UniformHolder implements Iterable<Uniform> {
-	private final Map<String, Uniform> uniforms = new HashMap<>();
+    private final Map<String, Uniform> uniforms = new HashMap<>();
 
-	/**
-	 * Adds a uniform to the holder.
-	 *
-	 * @param uniform The uniform to add
-	 */
-	public void add(Uniform uniform) {
-		uniforms.put(uniform.name, uniform);
-	}
+    /**
+     * Adds a uniform to the holder.
+     *
+     * @param uniform The uniform to add
+     */
+    public void add(Uniform uniform) {
+        uniforms.put(uniform.name, uniform);
+    }
 
-	/**
-	 * Adds all the uniforms to the holder.
-	 *
-	 * @param uniforms The uniforms to add
-	 */
-	public void addAll(UniformHolder uniforms) {
-		for (Uniform uniform : uniforms) {
-			add(uniform);
-		}
-	}
+    /**
+     * Adds all the uniforms to the holder.
+     *
+     * @param uniforms The uniforms to add
+     */
+    public void addAll(UniformHolder uniforms) {
+        for (Uniform uniform : uniforms) {
+            add(uniform);
+        }
+    }
 
-	/**
-	 * Returns true if the holder has a uniform with the provided name
-	 *
-	 * @param name The name to lookup
-	 * @return Whether or not this holder has a uniform with that name
-	 */
-	public boolean has(String name) {
-		return uniforms.containsKey(name);
-	}
+    /**
+     * Returns true if the holder has a uniform with the provided name
+     *
+     * @param name The name to lookup
+     * @return Whether or not this holder has a uniform with that name
+     */
+    public boolean has(String name) {
+        return uniforms.containsKey(name);
+    }
 
-	/**
-	 * Returns the uniform with the provided name, or null if non can be found.
-	 *
-	 * @param name The name to lookup
-	 * @return The uniform
-	 */
-	public Uniform get(String name) {
-		return uniforms.get(name);
-	}
+    /**
+     * Returns the uniform with the provided name, or null if non can be found.
+     *
+     * @param name The name to lookup
+     * @return The uniform
+     */
+    public Uniform get(String name) {
+        return uniforms.get(name);
+    }
 
-	/**
-	 * Returns a boolean uniform with the provided name, or null if non can be found, or if the found uniform is not of boolean type.
-	 *
-	 * @param name The name to lookup
-	 * @return The uniform
-	 */
-	public BooleanUniform getBoolean(String name) {
-		final Uniform uniform = get(name);
-		if (!(uniform instanceof BooleanUniform)) {
-			return null;
-		}
-		return (BooleanUniform) uniform;
-	}
+    /**
+     * Returns a boolean uniform with the provided name, or null if non can be found, or if the found uniform is not of boolean type.
+     *
+     * @param name The name to lookup
+     * @return The uniform
+     */
+    public BooleanUniform getBoolean(String name) {
+        final Uniform uniform = get(name);
+        if (!(uniform instanceof BooleanUniform)) {
+            return null;
+        }
+        return (BooleanUniform) uniform;
+    }
 
-	/**
-	 * Returns a int uniform with the provided name, or null if non can be found, or if the found uniform is not of int type.
-	 *
-	 * @param name The name to lookup
-	 * @return The uniform
-	 */
-	public IntUniform getInt(String name) {
-		final Uniform uniform = get(name);
-		if (!(uniform instanceof IntUniform)) {
-			return null;
-		}
-		return (IntUniform) uniform;
-	}
+    /**
+     * Returns a int uniform with the provided name, or null if non can be found, or if the found uniform is not of int type.
+     *
+     * @param name The name to lookup
+     * @return The uniform
+     */
+    public IntUniform getInt(String name) {
+        final Uniform uniform = get(name);
+        if (!(uniform instanceof IntUniform)) {
+            return null;
+        }
+        return (IntUniform) uniform;
+    }
 
-	/**
-	 * Returns a float uniform with the provided name, or null if non can be found, or if the found uniform is not of float type.
-	 *
-	 * @param name The name to lookup
-	 * @return The uniform
-	 */
-	public FloatUniform getFloat(String name) {
-		final Uniform uniform = get(name);
-		if (!(uniform instanceof FloatUniform)) {
-			return null;
-		}
-		return (FloatUniform) uniform;
-	}
+    /**
+     * Returns a float uniform with the provided name, or null if non can be found, or if the found uniform is not of float type.
+     *
+     * @param name The name to lookup
+     * @return The uniform
+     */
+    public FloatUniform getFloat(String name) {
+        final Uniform uniform = get(name);
+        if (!(uniform instanceof FloatUniform)) {
+            return null;
+        }
+        return (FloatUniform) uniform;
+    }
 
-	/**
-	 * Returns a vector2 uniform with the provided name, or null if non can be found, or if the found uniform is not of vector2 type.
-	 *
-	 * @param name The name to lookup
-	 * @return The uniform
-	 */
-	public Vector2Uniform getVector2(String name) {
-		final Uniform uniform = get(name);
-		if (!(uniform instanceof Vector2Uniform)) {
-			return null;
-		}
-		return (Vector2Uniform) uniform;
-	}
+    /**
+     * Returns a vector2 uniform with the provided name, or null if non can be found, or if the found uniform is not of vector2 type.
+     *
+     * @param name The name to lookup
+     * @return The uniform
+     */
+    public Vector2Uniform getVector2(String name) {
+        final Uniform uniform = get(name);
+        if (!(uniform instanceof Vector2Uniform)) {
+            return null;
+        }
+        return (Vector2Uniform) uniform;
+    }
 
-	/**
-	 * Returns a vector3 uniform with the provided name, or null if non can be found, or if the found uniform is not of vector3 type.
-	 *
-	 * @param name The name to lookup
-	 * @return The uniform
-	 */
-	public Vector3Uniform getVector3(String name) {
-		final Uniform uniform = get(name);
-		if (!(uniform instanceof Vector3Uniform)) {
-			return null;
-		}
-		return (Vector3Uniform) uniform;
-	}
+    /**
+     * Returns a vector3 uniform with the provided name, or null if non can be found, or if the found uniform is not of vector3 type.
+     *
+     * @param name The name to lookup
+     * @return The uniform
+     */
+    public Vector3Uniform getVector3(String name) {
+        final Uniform uniform = get(name);
+        if (!(uniform instanceof Vector3Uniform)) {
+            return null;
+        }
+        return (Vector3Uniform) uniform;
+    }
 
-	/**
-	 * Returns a vector4 uniform with the provided name, or null if non can be found, or if the found uniform is not of vector4 type.
-	 *
-	 * @param name The name to lookup
-	 * @return The uniform
-	 */
-	public Vector4Uniform getVector4(String name) {
-		final Uniform uniform = get(name);
-		if (!(uniform instanceof Vector4Uniform)) {
-			return null;
-		}
-		return (Vector4Uniform) uniform;
-	}
+    /**
+     * Returns a vector4 uniform with the provided name, or null if non can be found, or if the found uniform is not of vector4 type.
+     *
+     * @param name The name to lookup
+     * @return The uniform
+     */
+    public Vector4Uniform getVector4(String name) {
+        final Uniform uniform = get(name);
+        if (!(uniform instanceof Vector4Uniform)) {
+            return null;
+        }
+        return (Vector4Uniform) uniform;
+    }
 
-	/**
-	 * Returns a matrix2 uniform with the provided name, or null if non can be found, or if the found uniform is not of matrix2 type.
-	 *
-	 * @param name The name to lookup
-	 * @return The uniform
-	 */
-	public Matrix2Uniform getMatrix2(String name) {
-		final Uniform uniform = get(name);
-		if (!(uniform instanceof Matrix2Uniform)) {
-			return null;
-		}
-		return (Matrix2Uniform) uniform;
-	}
+    /**
+     * Returns a matrix2 uniform with the provided name, or null if non can be found, or if the found uniform is not of matrix2 type.
+     *
+     * @param name The name to lookup
+     * @return The uniform
+     */
+    public Matrix2Uniform getMatrix2(String name) {
+        final Uniform uniform = get(name);
+        if (!(uniform instanceof Matrix2Uniform)) {
+            return null;
+        }
+        return (Matrix2Uniform) uniform;
+    }
 
-	/**
-	 * Returns a matrix3 uniform with the provided name, or null if non can be found, or if the found uniform is not of matrix3 type.
-	 *
-	 * @param name The name to lookup
-	 * @return The uniform
-	 */
-	public Matrix3Uniform getMatrix3(String name) {
-		final Uniform uniform = get(name);
-		if (!(uniform instanceof Matrix3Uniform)) {
-			return null;
-		}
-		return (Matrix3Uniform) uniform;
-	}
+    /**
+     * Returns a matrix3 uniform with the provided name, or null if non can be found, or if the found uniform is not of matrix3 type.
+     *
+     * @param name The name to lookup
+     * @return The uniform
+     */
+    public Matrix3Uniform getMatrix3(String name) {
+        final Uniform uniform = get(name);
+        if (!(uniform instanceof Matrix3Uniform)) {
+            return null;
+        }
+        return (Matrix3Uniform) uniform;
+    }
 
-	/**
-	 * Returns a matrix4 uniform with the provided name, or null if non can be found, or if the found uniform is not of matrix4 type.
-	 *
-	 * @param name The name to lookup
-	 * @return The uniform
-	 */
-	public Matrix4Uniform getMatrix4(String name) {
-		final Uniform uniform = get(name);
-		if (!(uniform instanceof Matrix4Uniform)) {
-			return null;
-		}
-		return (Matrix4Uniform) uniform;
-	}
+    /**
+     * Returns a matrix4 uniform with the provided name, or null if non can be found, or if the found uniform is not of matrix4 type.
+     *
+     * @param name The name to lookup
+     * @return The uniform
+     */
+    public Matrix4Uniform getMatrix4(String name) {
+        final Uniform uniform = get(name);
+        if (!(uniform instanceof Matrix4Uniform)) {
+            return null;
+        }
+        return (Matrix4Uniform) uniform;
+    }
 
-	/**
-	 * Returns a color uniform with the provided name, or null if non can be found, or if the found uniform is not of color type.
-	 *
-	 * @param name The name to lookup
-	 * @return The uniform
-	 */
-	public ColorUniform getColor(String name) {
-		final Uniform uniform = get(name);
-		if (!(uniform instanceof ColorUniform)) {
-			return null;
-		}
-		return (ColorUniform) uniform;
-	}
+    /**
+     * Returns a color uniform with the provided name, or null if non can be found, or if the found uniform is not of color type.
+     *
+     * @param name The name to lookup
+     * @return The uniform
+     */
+    public ColorUniform getColor(String name) {
+        final Uniform uniform = get(name);
+        if (!(uniform instanceof ColorUniform)) {
+            return null;
+        }
+        return (ColorUniform) uniform;
+    }
 
-	/**
-	 * Remove the uniform from the holder, if present.
-	 *
-	 * @param uniform The uniform to remove
-	 */
-	public void remove(Uniform uniform) {
-		remove(uniform.getName());
-	}
+    /**
+     * Remove the uniform from the holder, if present.
+     *
+     * @param uniform The uniform to remove
+     */
+    public void remove(Uniform uniform) {
+        remove(uniform.getName());
+    }
 
-	/**
-	 * Remove the uniform from the holder with the provided name, if present.
-	 *
-	 * @param name The name of the uniform to remove
-	 */
-	public void remove(String name) {
-		uniforms.remove(name);
-	}
+    /**
+     * Remove the uniform from the holder with the provided name, if present.
+     *
+     * @param name The name of the uniform to remove
+     */
+    public void remove(String name) {
+        uniforms.remove(name);
+    }
 
-	/**
-	 * Removes all the uniforms.
-	 */
-	public void clear() {
-		uniforms.clear();
-	}
+    /**
+     * Removes all the uniforms.
+     */
+    public void clear() {
+        uniforms.clear();
+    }
 
-	@Override
-	public Iterator<Uniform> iterator() {
-		return uniforms.values().iterator();
-	}
+    @Override
+    public Iterator<Uniform> iterator() {
+        return uniforms.values().iterator();
+    }
 }

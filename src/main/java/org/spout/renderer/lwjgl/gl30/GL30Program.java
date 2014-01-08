@@ -34,13 +34,13 @@ import org.spout.renderer.lwjgl.gl20.GL20Program;
  * @see org.spout.renderer.gl.Program
  */
 public class GL30Program extends GL20Program {
-	// TODO: Support unsigned int scalars and vectors
+    // TODO: Support unsigned int scalars and vectors
 
-	protected GL30Program() {
-	}
+    protected GL30Program() {
+    }
 
-	@Override
-	public GLVersion getGLVersion() {
-		return GLVersion.GL30;
-	}
+    @Override
+    public GLVersion getGLVersion() {
+        return GLVersion.GL30;
+    }
 }

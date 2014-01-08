@@ -59,280 +59,280 @@ import org.spout.renderer.gl.Shader.ShaderType;
  * for assigning texture units to sampler uniforms.
  */
 public abstract class Program extends Creatable implements GLVersioned {
-	protected int id;
-	// Shaders
-	protected final Map<ShaderType, Shader> shaders = new EnumMap<>(ShaderType.class);
-	// Map of the attribute names to their vao index (optional for GL30 as they can be defined in the shader instead)
-	protected TObjectIntMap<String> attributeLayouts;
-	// Map of the texture units to their names. Only necessary if textures are used
-	protected TIntObjectMap<String> textureLayouts;
+    protected int id;
+    // Shaders
+    protected final Map<ShaderType, Shader> shaders = new EnumMap<>(ShaderType.class);
+    // Map of the attribute names to their vao index (optional for GL30 as they can be defined in the shader instead)
+    protected TObjectIntMap<String> attributeLayouts;
+    // Map of the texture units to their names. Only necessary if textures are used
+    protected TIntObjectMap<String> textureLayouts;
 
-	@Override
-	public void create() {
-		attributeLayouts = null;
-		super.create();
-	}
+    @Override
+    public void create() {
+        attributeLayouts = null;
+        super.create();
+    }
 
-	@Override
-	public void destroy() {
-		shaders.clear();
-		textureLayouts = null;
-		id = 0;
-		super.destroy();
-	}
+    @Override
+    public void destroy() {
+        shaders.clear();
+        textureLayouts = null;
+        id = 0;
+        super.destroy();
+    }
 
-	/**
-	 * Binds this program to the OpenGL context.
-	 */
-	public abstract void bind();
+    /**
+     * Binds this program to the OpenGL context.
+     */
+    public abstract void bind();
 
-	/**
-	 * Unbinds this program from the OpenGL context.
-	 */
-	public abstract void unbind();
+    /**
+     * Unbinds this program from the OpenGL context.
+     */
+    public abstract void unbind();
 
-	/**
-	 * Binds the texture unit to the shader uniform. The binding is done according to the texture layout, which must be set in the program for the textures that will be used before any binding can be
-	 * done.
-	 *
-	 * @param unit The unit to bind
-	 */
-	public abstract void bindTextureUniform(int unit);
+    /**
+     * Binds the texture unit to the shader uniform. The binding is done according to the texture layout, which must be set in the program for the textures that will be used before any binding can be
+     * done.
+     *
+     * @param unit The unit to bind
+     */
+    public abstract void bindTextureUniform(int unit);
 
-	/**
-	 * Uploads the uniform to this program.
-	 *
-	 * @param uniform The uniform to upload
-	 */
-	public abstract void upload(Uniform uniform);
+    /**
+     * Uploads the uniform to this program.
+     *
+     * @param uniform The uniform to upload
+     */
+    public abstract void upload(Uniform uniform);
 
-	/**
-	 * Uploads the uniforms to this program.
-	 *
-	 * @param uniforms The uniforms to upload
-	 */
-	public abstract void upload(UniformHolder uniforms);
+    /**
+     * Uploads the uniforms to this program.
+     *
+     * @param uniforms The uniforms to upload
+     */
+    public abstract void upload(UniformHolder uniforms);
 
-	/**
-	 * Sets a uniform boolean in the shader to the desired value.
-	 *
-	 * @param name The name of the uniform to set
-	 * @param b The boolean value
-	 */
-	public abstract void setUniform(String name, boolean b);
+    /**
+     * Sets a uniform boolean in the shader to the desired value.
+     *
+     * @param name The name of the uniform to set
+     * @param b The boolean value
+     */
+    public abstract void setUniform(String name, boolean b);
 
-	/**
-	 * Sets a uniform integer in the shader to the desired value.
-	 *
-	 * @param name The name of the uniform to set
-	 * @param i The integer value
-	 */
-	public abstract void setUniform(String name, int i);
+    /**
+     * Sets a uniform integer in the shader to the desired value.
+     *
+     * @param name The name of the uniform to set
+     * @param i The integer value
+     */
+    public abstract void setUniform(String name, int i);
 
-	/**
-	 * Sets a uniform float in the shader to the desired value.
-	 *
-	 * @param name The name of the uniform to set
-	 * @param f The float value
-	 */
-	public abstract void setUniform(String name, float f);
+    /**
+     * Sets a uniform float in the shader to the desired value.
+     *
+     * @param name The name of the uniform to set
+     * @param f The float value
+     */
+    public abstract void setUniform(String name, float f);
 
-	/**
-	 * Sets a uniform {@link org.spout.math.vector.Vector2f} in the shader to the desired value.
-	 *
-	 * @param name The name of the uniform to set
-	 * @param v The vector value
-	 */
-	public abstract void setUniform(String name, Vector2f v);
+    /**
+     * Sets a uniform {@link org.spout.math.vector.Vector2f} in the shader to the desired value.
+     *
+     * @param name The name of the uniform to set
+     * @param v The vector value
+     */
+    public abstract void setUniform(String name, Vector2f v);
 
-	/**
-	 * Sets a uniform {@link org.spout.math.vector.Vector2f} array in the shader to the desired value.
-	 *
-	 * @param name The name of the uniform to set
-	 * @param vs The vector array value
-	 */
-	public abstract void setUniform(String name, Vector2f[] vs);
+    /**
+     * Sets a uniform {@link org.spout.math.vector.Vector2f} array in the shader to the desired value.
+     *
+     * @param name The name of the uniform to set
+     * @param vs The vector array value
+     */
+    public abstract void setUniform(String name, Vector2f[] vs);
 
-	/**
-	 * Sets a uniform {@link org.spout.math.vector.Vector3f} in the shader to the desired value.
-	 *
-	 * @param name The name of the uniform to set
-	 * @param v The vector value
-	 */
-	public abstract void setUniform(String name, Vector3f v);
+    /**
+     * Sets a uniform {@link org.spout.math.vector.Vector3f} in the shader to the desired value.
+     *
+     * @param name The name of the uniform to set
+     * @param v The vector value
+     */
+    public abstract void setUniform(String name, Vector3f v);
 
-	/**
-	 * Sets a uniform {@link org.spout.math.vector.Vector3f} array in the shader to the desired value.
-	 *
-	 * @param name The name of the uniform to set
-	 * @param vs The vector array value
-	 */
-	public abstract void setUniform(String name, Vector3f[] vs);
+    /**
+     * Sets a uniform {@link org.spout.math.vector.Vector3f} array in the shader to the desired value.
+     *
+     * @param name The name of the uniform to set
+     * @param vs The vector array value
+     */
+    public abstract void setUniform(String name, Vector3f[] vs);
 
-	/**
-	 * Sets a uniform {@link org.spout.math.vector.Vector4f} in the shader to the desired value.
-	 *
-	 * @param name The name of the uniform to set
-	 * @param v The vector value
-	 */
-	public abstract void setUniform(String name, Vector4f v);
+    /**
+     * Sets a uniform {@link org.spout.math.vector.Vector4f} in the shader to the desired value.
+     *
+     * @param name The name of the uniform to set
+     * @param v The vector value
+     */
+    public abstract void setUniform(String name, Vector4f v);
 
-	/**
-	 * Sets a uniform {@link org.spout.math.matrix.Matrix4f} in the shader to the desired value.
-	 *
-	 * @param name The name of the uniform to set
-	 * @param m The matrix value
-	 */
-	public abstract void setUniform(String name, Matrix2f m);
+    /**
+     * Sets a uniform {@link org.spout.math.matrix.Matrix4f} in the shader to the desired value.
+     *
+     * @param name The name of the uniform to set
+     * @param m The matrix value
+     */
+    public abstract void setUniform(String name, Matrix2f m);
 
-	/**
-	 * Sets a uniform {@link org.spout.math.matrix.Matrix4f} in the shader to the desired value.
-	 *
-	 * @param name The name of the uniform to set
-	 * @param m The matrix value
-	 */
-	public abstract void setUniform(String name, Matrix3f m);
+    /**
+     * Sets a uniform {@link org.spout.math.matrix.Matrix4f} in the shader to the desired value.
+     *
+     * @param name The name of the uniform to set
+     * @param m The matrix value
+     */
+    public abstract void setUniform(String name, Matrix3f m);
 
-	/**
-	 * Sets a uniform {@link org.spout.math.matrix.Matrix4f} in the shader to the desired value.
-	 *
-	 * @param name The name of the uniform to set
-	 * @param m The matrix value
-	 */
-	public abstract void setUniform(String name, Matrix4f m);
+    /**
+     * Sets a uniform {@link org.spout.math.matrix.Matrix4f} in the shader to the desired value.
+     *
+     * @param name The name of the uniform to set
+     * @param m The matrix value
+     */
+    public abstract void setUniform(String name, Matrix4f m);
 
-	/**
-	 * Sets a uniform {@link java.awt.Color} in the shader to the desired value.
-	 *
-	 * @param name The name of the uniform to set
-	 * @param c The color value
-	 */
-	public void setUniform(String name, Color c) {
-		setUniform(name, (Vector4f) c.normalize());
-	}
+    /**
+     * Sets a uniform {@link java.awt.Color} in the shader to the desired value.
+     *
+     * @param name The name of the uniform to set
+     * @param c The color value
+     */
+    public void setUniform(String name, Color c) {
+        setUniform(name, (Vector4f) c.normalize());
+    }
 
-	/**
-	 * Returns an set containing all of the uniform names for this program.
-	 *
-	 * @return A set of all the uniform names
-	 */
-	public abstract Set<String> getUniformNames();
+    /**
+     * Returns an set containing all of the uniform names for this program.
+     *
+     * @return A set of all the uniform names
+     */
+    public abstract Set<String> getUniformNames();
 
-	/**
-	 * Gets the ID for this program as assigned by OpenGL.
-	 *
-	 * @return The ID
-	 */
-	public int getID() {
-		return id;
-	}
+    /**
+     * Gets the ID for this program as assigned by OpenGL.
+     *
+     * @return The ID
+     */
+    public int getID() {
+        return id;
+    }
 
-	/**
-	 * Adds a shader.
-	 *
-	 * @param shader The shader to add
-	 */
-	public void addShader(Shader shader) {
-		shaders.put(shader.getType(), shader);
-		if (shader.getAttributeLayouts() != null) {
-			if (attributeLayouts == null) {
-				attributeLayouts = new TObjectIntHashMap<>();
-			}
-			attributeLayouts.putAll(shader.getAttributeLayouts());
-		}
-		if (shader.getTextureLayouts() != null) {
-			if (textureLayouts == null) {
-				textureLayouts = new TIntObjectHashMap<>();
-			}
-			textureLayouts.putAll(shader.getTextureLayouts());
-		}
-	}
+    /**
+     * Adds a shader.
+     *
+     * @param shader The shader to add
+     */
+    public void addShader(Shader shader) {
+        shaders.put(shader.getType(), shader);
+        if (shader.getAttributeLayouts() != null) {
+            if (attributeLayouts == null) {
+                attributeLayouts = new TObjectIntHashMap<>();
+            }
+            attributeLayouts.putAll(shader.getAttributeLayouts());
+        }
+        if (shader.getTextureLayouts() != null) {
+            if (textureLayouts == null) {
+                textureLayouts = new TIntObjectHashMap<>();
+            }
+            textureLayouts.putAll(shader.getTextureLayouts());
+        }
+    }
 
-	/**
-	 * Returns the shader for the type.
-	 *
-	 * @param type The shader type to lookup
-	 * @return The shader, or null if none could be found
-	 */
-	public Shader getShader(ShaderType type) {
-		return shaders.get(type);
-	}
+    /**
+     * Returns the shader for the type.
+     *
+     * @param type The shader type to lookup
+     * @return The shader, or null if none could be found
+     */
+    public Shader getShader(ShaderType type) {
+        return shaders.get(type);
+    }
 
-	/**
-	 * Returns all the shaders in this program.
-	 *
-	 * @return An unmodifiable collection of all the shaders in this program
-	 */
-	public Collection<Shader> getShaders() {
-		return Collections.unmodifiableCollection(shaders.values());
-	}
+    /**
+     * Returns all the shaders in this program.
+     *
+     * @return An unmodifiable collection of all the shaders in this program
+     */
+    public Collection<Shader> getShaders() {
+        return Collections.unmodifiableCollection(shaders.values());
+    }
 
-	/**
-	 * Returns true if a shader is present for the shader type.
-	 *
-	 * @param type The shader type to lookup
-	 * @return Whether or not a shader of the type is present
-	 */
-	public boolean hasShader(ShaderType type) {
-		return shaders.containsKey(type);
-	}
+    /**
+     * Returns true if a shader is present for the shader type.
+     *
+     * @param type The shader type to lookup
+     * @return Whether or not a shader of the type is present
+     */
+    public boolean hasShader(ShaderType type) {
+        return shaders.containsKey(type);
+    }
 
-	/**
-	 * Removes the shader source associated to the type, if present.
-	 *
-	 * @param type The type to remove
-	 */
-	public void removeShader(ShaderType type) {
-		shaders.remove(type);
-	}
+    /**
+     * Removes the shader source associated to the type, if present.
+     *
+     * @param type The type to remove
+     */
+    public void removeShader(ShaderType type) {
+        shaders.remove(type);
+    }
 
-	/**
-	 * Sets the index of the attribute of the provided name, in the program.
-	 *
-	 * @param name The name of the attribute
-	 * @param index The index for the attribute
-	 */
-	public void addAttributeLayout(String name, int index) {
-		if (attributeLayouts == null) {
-			attributeLayouts = new TObjectIntHashMap<>();
-		}
-		attributeLayouts.put(name, index);
-	}
+    /**
+     * Sets the index of the attribute of the provided name, in the program.
+     *
+     * @param name The name of the attribute
+     * @param index The index for the attribute
+     */
+    public void addAttributeLayout(String name, int index) {
+        if (attributeLayouts == null) {
+            attributeLayouts = new TObjectIntHashMap<>();
+        }
+        attributeLayouts.put(name, index);
+    }
 
-	/**
-	 * Removes the index for the attribute of the provided name.
-	 */
-	public void removeAttributeLayout(String name) {
-		if (attributeLayouts != null) {
-			attributeLayouts.remove(name);
-			if (attributeLayouts.isEmpty()) {
-				attributeLayouts = null;
-			}
-		}
-	}
+    /**
+     * Removes the index for the attribute of the provided name.
+     */
+    public void removeAttributeLayout(String name) {
+        if (attributeLayouts != null) {
+            attributeLayouts.remove(name);
+            if (attributeLayouts.isEmpty()) {
+                attributeLayouts = null;
+            }
+        }
+    }
 
-	/**
-	 * Sets the unit of the texture to the provided name, in the program.
-	 *
-	 * @param name The name of the texture
-	 * @param unit The unit for the texture
-	 */
-	public void addTextureLayout(String name, int unit) {
-		if (textureLayouts == null) {
-			textureLayouts = new TIntObjectHashMap<>();
-		}
-		textureLayouts.put(unit, name);
-	}
+    /**
+     * Sets the unit of the texture to the provided name, in the program.
+     *
+     * @param name The name of the texture
+     * @param unit The unit for the texture
+     */
+    public void addTextureLayout(String name, int unit) {
+        if (textureLayouts == null) {
+            textureLayouts = new TIntObjectHashMap<>();
+        }
+        textureLayouts.put(unit, name);
+    }
 
-	/**
-	 * Removes the layout for the texture at the provided unit.
-	 */
-	public void removeTextureLayout(int unit) {
-		if (textureLayouts != null) {
-			textureLayouts.remove(unit);
-			if (textureLayouts.isEmpty()) {
-				textureLayouts = null;
-			}
-		}
-	}
+    /**
+     * Removes the layout for the texture at the provided unit.
+     */
+    public void removeTextureLayout(int unit) {
+        if (textureLayouts != null) {
+            textureLayouts.remove(unit);
+            if (textureLayouts.isEmpty()) {
+                textureLayouts = null;
+            }
+        }
+    }
 }

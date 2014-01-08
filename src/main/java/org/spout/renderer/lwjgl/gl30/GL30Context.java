@@ -36,16 +36,16 @@ import org.spout.renderer.lwjgl.gl20.GL20Context;
  * {@see Context}
  */
 public class GL30Context extends GL20Context {
-	protected GL30Context() {
-	}
+    protected GL30Context() {
+    }
 
-	@Override
-	protected ContextAttribs createContextAttributes() {
-		return new ContextAttribs(3, 2).withProfileCore(true);
-	}
+    @Override
+    protected ContextAttribs createContextAttributes() {
+        return new ContextAttribs(3, 2).withProfileCore(true);
+    }
 
-	@Override
-	public GLVersion getGLVersion() {
-		return GLVersion.GL30;
-	}
+    @Override
+    public GLVersion getGLVersion() {
+        return GLVersion.GL30;
+    }
 }

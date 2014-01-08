@@ -27,11 +27,11 @@
 package org.spout.renderer.lwjgl.gl20;
 
 import org.spout.renderer.GLImplementation;
+import org.spout.renderer.gl.Context;
 import org.spout.renderer.gl.FrameBuffer;
 import org.spout.renderer.gl.GLFactory;
 import org.spout.renderer.gl.Program;
 import org.spout.renderer.gl.RenderBuffer;
-import org.spout.renderer.gl.Context;
 import org.spout.renderer.gl.Shader;
 import org.spout.renderer.gl.Texture;
 import org.spout.renderer.gl.VertexArray;
@@ -42,50 +42,50 @@ import org.spout.renderer.gl.VertexArray;
  * @see GLFactory
  */
 public class GL20GLFactory implements GLFactory {
-	static {
-		GLImplementation.register(GLVersion.GL20, new GL20GLFactory());
-	}
+    static {
+        GLImplementation.register(GLVersion.GL20, new GL20GLFactory());
+    }
 
-	private GL20GLFactory() {
-	}
+    private GL20GLFactory() {
+    }
 
-	@Override
-	public FrameBuffer createFrameBuffer() {
-		return new GL20FrameBuffer();
-	}
+    @Override
+    public FrameBuffer createFrameBuffer() {
+        return new GL20FrameBuffer();
+    }
 
-	@Override
-	public Program createProgram() {
-		return new GL20Program();
-	}
+    @Override
+    public Program createProgram() {
+        return new GL20Program();
+    }
 
-	@Override
-	public RenderBuffer createRenderBuffer() {
-		return new GL20RenderBuffer();
-	}
+    @Override
+    public RenderBuffer createRenderBuffer() {
+        return new GL20RenderBuffer();
+    }
 
-	@Override
-	public Context createContext() {
-		return new GL20Context();
-	}
+    @Override
+    public Context createContext() {
+        return new GL20Context();
+    }
 
-	@Override
-	public Shader createShader() {
-		return new GL20Shader();
-	}
+    @Override
+    public Shader createShader() {
+        return new GL20Shader();
+    }
 
-	@Override
-	public Texture createTexture() {
-		return new GL20Texture();
-	}
+    @Override
+    public Texture createTexture() {
+        return new GL20Texture();
+    }
 
-	@Override
-	public VertexArray createVertexArray() {
-		return new GL20VertexArray();
-	}
+    @Override
+    public VertexArray createVertexArray() {
+        return new GL20VertexArray();
+    }
 
-	@Override
-	public GLVersion getGLVersion() {
-		return GLVersion.GL20;
-	}
+    @Override
+    public GLVersion getGLVersion() {
+        return GLVersion.GL20;
+    }
 }

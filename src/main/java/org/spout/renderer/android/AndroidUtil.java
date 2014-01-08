@@ -30,45 +30,45 @@ import android.opengl.GLES20;
 import android.opengl.GLU;
 
 public final class AndroidUtil {
-	private AndroidUtil() {
-	}
+    private AndroidUtil() {
+    }
 
-	private static boolean debug = true;
+    private static boolean debug = true;
 
-	/**
-	 * Sets the caustic renderer in debug mode.
-	 *
-	 * @param enabled If debug should be enabled
-	 */
-	public static void setDebugEnabled(boolean enabled) {
-		debug = enabled;
-	}
+    /**
+     * Sets the caustic renderer in debug mode.
+     *
+     * @param enabled If debug should be enabled
+     */
+    public static void setDebugEnabled(boolean enabled) {
+        debug = enabled;
+    }
 
-	/**
-	 * Throws an exception if OpenGL reports an error.
-	 *
-	 * @throws org.spout.renderer.android.AndroidUtil.GLESException If OpenGL reports an error
-	 */
-	public static void checkForGLESError() {
-		if (debug) {
-			final int errorValue = GLES20.glGetError();
-			if (errorValue != GLES20.GL_NO_ERROR) {
-				throw new GLESException("OPEN GL ERROR: " + GLU.gluErrorString(errorValue));
-			}
-		}
-	}
+    /**
+     * Throws an exception if OpenGL reports an error.
+     *
+     * @throws org.spout.renderer.android.AndroidUtil.GLESException If OpenGL reports an error
+     */
+    public static void checkForGLESError() {
+        if (debug) {
+            final int errorValue = GLES20.glGetError();
+            if (errorValue != GLES20.GL_NO_ERROR) {
+                throw new GLESException("OPEN GL ERROR: " + GLU.gluErrorString(errorValue));
+            }
+        }
+    }
 
-	/**
-	 * An exception throw when a GLES exception occurs on Android.
-	 */
-	public static class GLESException extends RuntimeException {
-		/**
-		 * Constructs a new Android GLES exception from the message.
-		 *
-		 * @param message The error message
-		 */
-		public GLESException(String message) {
-			super(message);
-		}
-	}
+    /**
+     * An exception throw when a GLES exception occurs on Android.
+     */
+    public static class GLESException extends RuntimeException {
+        /**
+         * Constructs a new Android GLES exception from the message.
+         *
+         * @param message The error message
+         */
+        public GLESException(String message) {
+            super(message);
+        }
+    }
 }

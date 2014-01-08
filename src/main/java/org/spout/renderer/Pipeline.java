@@ -53,114 +53,114 @@ import org.spout.renderer.util.Rectangle;
  * added.
  */
 public class Pipeline {
-	private final Action first;
+    private final Action first;
 
-	/**
-	 * Constructs a new pipeline from the first action to execute the chain from. The next action is linked in the first action and so on.
-	 *
-	 * @param first The first action of the chain
-	 */
-	protected Pipeline(Action first) {
-		if (first == null) {
-			throw new IllegalArgumentException("First action cannot be null");
-		}
-		this.first = first;
-	}
+    /**
+     * Constructs a new pipeline from the first action to execute the chain from. The next action is linked in the first action and so on.
+     *
+     * @param first The first action of the chain
+     */
+    protected Pipeline(Action first) {
+        if (first == null) {
+            throw new IllegalArgumentException("First action cannot be null");
+        }
+        this.first = first;
+    }
 
-	/**
-	 * Runs the pipeline using the provided context.
-	 *
-	 * @param context The context to use.
-	 */
-	public void run(Context context) {
-		first.executeChain(context);
-	}
+    /**
+     * Runs the pipeline using the provided context.
+     *
+     * @param context The context to use.
+     */
+    public void run(Context context) {
+        first.executeChain(context);
+    }
 
-	/**
-	 * Used to built a pipeline through chained calls.
-	 */
-	public static class PipelineBuilder {
-		private Action first = null;
-		private Action current;
+    /**
+     * Used to built a pipeline through chained calls.
+     */
+    public static class PipelineBuilder {
+        private Action first = null;
+        private Action current;
 
-		/**
-		 * Builds the next action in the chain. The action sets the clear color to use when clearing color buffers.
-		 *
-		 * @param color The color to use for clearing buffers
-		 * @return The builder itself, for chained calls
-		 */
-		public PipelineBuilder useClearColor(Color color) {
-			return doAction(new SetClearColorAction(color));
-		}
+        /**
+         * Builds the next action in the chain. The action sets the clear color to use when clearing color buffers.
+         *
+         * @param color The color to use for clearing buffers
+         * @return The builder itself, for chained calls
+         */
+        public PipelineBuilder useClearColor(Color color) {
+            return doAction(new SetClearColorAction(color));
+        }
 
-		/**
-		 * Builds the next action in the chain. The action clears the current active buffer (the bound frame buffer, or if none bound, the front (screen) buffer).
-		 *
-		 * @return The builder itself, for chained calls
-		 */
-		public PipelineBuilder clearBuffer() {
-			return doAction(new ClearBufferAction());
-		}
+        /**
+         * Builds the next action in the chain. The action clears the current active buffer (the bound frame buffer, or if none bound, the front (screen) buffer).
+         *
+         * @return The builder itself, for chained calls
+         */
+        public PipelineBuilder clearBuffer() {
+            return doAction(new ClearBufferAction());
+        }
 
-		/**
-		 * Builds the next action in the chain. The action sets the view port to use when rendering to a buffer.
-		 *
-		 * @param viewPort The rendering view port
-		 * @return The builder itself, for chained calls
-		 */
-		public PipelineBuilder useViewPort(Rectangle viewPort) {
-			return doAction(new SetViewPortAction(viewPort));
-		}
+        /**
+         * Builds the next action in the chain. The action sets the view port to use when rendering to a buffer.
+         *
+         * @param viewPort The rendering view port
+         * @return The builder itself, for chained calls
+         */
+        public PipelineBuilder useViewPort(Rectangle viewPort) {
+            return doAction(new SetViewPortAction(viewPort));
+        }
 
-		/**
-		 * Builds the next action in the chain. The action enables the desired capabilities in the context.
-		 *
-		 * @param capabilities The capabilities to enable
-		 * @return The builder itself, for chained calls
-		 */
-		public PipelineBuilder enableCapabilities(Capability... capabilities) {
-			return doAction(new EnableCapabilitiesAction(capabilities));
-		}
+        /**
+         * Builds the next action in the chain. The action enables the desired capabilities in the context.
+         *
+         * @param capabilities The capabilities to enable
+         * @return The builder itself, for chained calls
+         */
+        public PipelineBuilder enableCapabilities(Capability... capabilities) {
+            return doAction(new EnableCapabilitiesAction(capabilities));
+        }
 
-		/**
-		 * Builds the next action in the chain. The action disables the desired capabilities in the context.
-		 *
-		 * @param capabilities The capabilities to disable
-		 * @return The builder itself, for chained calls
-		 */
-		public PipelineBuilder disableCapabilities(Capability... capabilities) {
-			return doAction(new DisableCapabilitiesAction(capabilities));
-		}
+        /**
+         * Builds the next action in the chain. The action disables the desired capabilities in the context.
+         *
+         * @param capabilities The capabilities to disable
+         * @return The builder itself, for chained calls
+         */
+        public PipelineBuilder disableCapabilities(Capability... capabilities) {
+            return doAction(new DisableCapabilitiesAction(capabilities));
+        }
 
-		/**
-		 * Builds the next action in the chain. The action binds the desired frame buffer to the context.
-		 *
-		 * @param frameBuffer The frame buffer to bind
-		 * @return The builder itself, for chained calls
-		 */
-		public PipelineBuilder bindFrameBuffer(FrameBuffer frameBuffer) {
-			return doAction(new BindFrameBufferAction(frameBuffer));
-		}
+        /**
+         * Builds the next action in the chain. The action binds the desired frame buffer to the context.
+         *
+         * @param frameBuffer The frame buffer to bind
+         * @return The builder itself, for chained calls
+         */
+        public PipelineBuilder bindFrameBuffer(FrameBuffer frameBuffer) {
+            return doAction(new BindFrameBufferAction(frameBuffer));
+        }
 
-		/**
-		 * Builds the next action in the chain. The action unbinds the desired frame buffer from the context.
-		 *
-		 * @param frameBuffer The frame buffer to unbind
-		 * @return The builder itself, for chained calls
-		 */
-		public PipelineBuilder unbindFrameBuffer(FrameBuffer frameBuffer) {
-			return doAction(new UnbindFrameBufferAction(frameBuffer));
-		}
+        /**
+         * Builds the next action in the chain. The action unbinds the desired frame buffer from the context.
+         *
+         * @param frameBuffer The frame buffer to unbind
+         * @return The builder itself, for chained calls
+         */
+        public PipelineBuilder unbindFrameBuffer(FrameBuffer frameBuffer) {
+            return doAction(new UnbindFrameBufferAction(frameBuffer));
+        }
 
-		/**
-		 * Builds the next action in the chain. The action sets the camera to use when rendering the models.
-		 *
-		 * @param camera The rendering camera
-		 * @return The builder itself, for chained calls
-		 */
-		public PipelineBuilder useCamera(Camera camera) {
-			return doAction(new SetCameraAction(camera));
-		}
+        /**
+         * Builds the next action in the chain. The action sets the camera to use when rendering the models.
+         *
+         * @param camera The rendering camera
+         * @return The builder itself, for chained calls
+         */
+        public PipelineBuilder useCamera(Camera camera) {
+            return doAction(new SetCameraAction(camera));
+        }
 
         /**
          * Builds the next action in the chain. The action enables the depth mask.
@@ -190,48 +190,48 @@ public class Pipeline {
         }
 
         /**
-		 * Builds the next action in the chain. The actions renders the model list. The models will be reordered to be grouped by material. This reordering is done via a stable sort ({@link
-		 * java.util.Collections#sort(java.util.List)}) so that models with the same materials are not reordered. This grouping improves performance by reducing the amount of rendering calls.
-		 *
-		 * @param models The models to render
-		 * @return The builder itself, for chained calls
-		 */
-		public PipelineBuilder renderModels(List<Model> models) {
-			return doAction(new RenderModelsAction(models));
-		}
+         * Builds the next action in the chain. The actions renders the model list. The models will be reordered to be grouped by material. This reordering is done via a stable sort ({@link
+         * java.util.Collections#sort(java.util.List)}) so that models with the same materials are not reordered. This grouping improves performance by reducing the amount of rendering calls.
+         *
+         * @param models The models to render
+         * @return The builder itself, for chained calls
+         */
+        public PipelineBuilder renderModels(List<Model> models) {
+            return doAction(new RenderModelsAction(models));
+        }
 
-		/**
-		 * Builds the next action in the chain. The action updates the context's display.
-		 *
-		 * @return The builder itself, for chained calls
-		 */
-		public PipelineBuilder updateDisplay() {
-			return doAction(new UpdateDisplayAction());
-		}
+        /**
+         * Builds the next action in the chain. The action updates the context's display.
+         *
+         * @return The builder itself, for chained calls
+         */
+        public PipelineBuilder updateDisplay() {
+            return doAction(new UpdateDisplayAction());
+        }
 
-		/**
-		 * Builds the next action in the chain.
-		 *
-		 * @param action The action
-		 * @return The builder itself, for chained calls
-		 */
-		public PipelineBuilder doAction(Action action) {
-			if (first == null) {
-				first = action;
-			} else {
-				current.setNext(action);
-			}
-			current = action;
-			return this;
-		}
+        /**
+         * Builds the next action in the chain.
+         *
+         * @param action The action
+         * @return The builder itself, for chained calls
+         */
+        public PipelineBuilder doAction(Action action) {
+            if (first == null) {
+                first = action;
+            } else {
+                current.setNext(action);
+            }
+            current = action;
+            return this;
+        }
 
-		/**
-		 * Builds the pipeline, returning it.
-		 *
-		 * @return The built pipeline
-		 */
-		public Pipeline build() {
-			return new Pipeline(first);
-		}
-	}
+        /**
+         * Builds the pipeline, returning it.
+         *
+         * @return The built pipeline
+         */
+        public Pipeline build() {
+            return new Pipeline(first);
+        }
+    }
 }
