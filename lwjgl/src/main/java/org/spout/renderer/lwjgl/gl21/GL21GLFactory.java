@@ -50,40 +50,63 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.lwjgl.gl30;
+package org.spout.renderer.lwjgl.gl21;
 
-import java.nio.ByteBuffer;
-
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL30;
-
-import org.spout.renderer.api.GLVersioned.GLVersion;
-import org.spout.renderer.lwjgl.LWJGLUtil;
-import org.spout.renderer.lwjgl.gl20.GL20Texture;
+import org.spout.renderer.api.gl.Context;
+import org.spout.renderer.api.gl.FrameBuffer;
+import org.spout.renderer.api.gl.GLFactory;
+import org.spout.renderer.api.gl.Program;
+import org.spout.renderer.api.gl.RenderBuffer;
+import org.spout.renderer.api.gl.Shader;
+import org.spout.renderer.api.gl.Texture;
+import org.spout.renderer.api.gl.VertexArray;
 
 /**
- * An OpenGL 3.0 implementation of {@link org.spout.renderer.api.gl.Texture}.
+ * An OpenGL 2.1 implementation of {@link GLFactory}.
  *
- * @see org.spout.renderer.api.gl.Texture
+ * @see GLFactory
  */
-public class GL30Texture extends GL20Texture {
-    protected GL30Texture() {
+public class GL21GLFactory implements GLFactory {
+    private GL21GLFactory() {
     }
 
     @Override
-    protected void uploadTexture(ByteBuffer buffer, int width, int height) {
-        // Upload the texture
-        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, internalFormat != null ? internalFormat.getGLConstant() : format.getGLConstant(), width, height, 0, format.getGLConstant(), GL11.GL_UNSIGNED_BYTE, buffer);
-        // Generate mipmaps if necessary
-        if (minFilter.needsMipMaps() && buffer != null) {
-            GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
-        }
-        // Check for errors
-        LWJGLUtil.checkForGLError();
+    public FrameBuffer createFrameBuffer() {
+        return new GL21FrameBuffer();
+    }
+
+    @Override
+    public Program createProgram() {
+        return new GL21Program();
+    }
+
+    @Override
+    public RenderBuffer createRenderBuffer() {
+        return new GL21RenderBuffer();
+    }
+
+    @Override
+    public Context createContext() {
+        return new GL21Context();
+    }
+
+    @Override
+    public Shader createShader() {
+        return new GL21Shader();
+    }
+
+    @Override
+    public Texture createTexture() {
+        return new GL21Texture();
+    }
+
+    @Override
+    public VertexArray createVertexArray() {
+        return new GL21VertexArray();
     }
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL30;
+        return GLVersion.GL20;
     }
 }

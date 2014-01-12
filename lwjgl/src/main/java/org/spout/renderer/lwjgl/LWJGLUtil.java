@@ -55,11 +55,18 @@ package org.spout.renderer.lwjgl;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
+import org.spout.renderer.api.GLImplementation;
+import org.spout.renderer.api.GLVersioned.GLVersion;
+import org.spout.renderer.lwjgl.gl21.GL21GLFactory;
+import org.spout.renderer.lwjgl.gl32.GL32GLFactory;
+
 public final class LWJGLUtil {
+    public static final GLImplementation GL21_IMPL = new GLImplementation(GLVersion.GL21, GL21GLFactory.class.getName());
+    public static final GLImplementation GL32_IMPL = new GLImplementation(GLVersion.GL32, GL32GLFactory.class.getName());
+    private static boolean debug = true;
+
     private LWJGLUtil() {
     }
-
-    private static boolean debug = true;
 
     /**
      * Sets the caustic renderer in debug mode.

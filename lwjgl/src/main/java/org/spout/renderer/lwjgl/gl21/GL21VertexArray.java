@@ -50,7 +50,7 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.lwjgl.gl20;
+package org.spout.renderer.lwjgl.gl21;
 
 import org.lwjgl.opengl.APPLEVertexArrayObject;
 import org.lwjgl.opengl.ARBVertexArrayObject;
@@ -66,18 +66,18 @@ import org.spout.renderer.api.gl.VertexArray;
 import org.spout.renderer.lwjgl.LWJGLUtil;
 
 /**
- * An OpenGL 2.0 implementation of {@link VertexArray}. <p/> Vertex arrays will be used if the ARB or APPLE extension is supported by the hardware. Else, since core OpenGL doesn't support them until
+ * An OpenGL 2.1 implementation of {@link VertexArray}. <p/> Vertex arrays will be used if the ARB or APPLE extension is supported by the hardware. Else, since core OpenGL doesn't support them until
  * 3.0, the vertex attributes will have to be redefined on each render call.
  *
  * @see VertexArray
  */
-public class GL20VertexArray extends VertexArray {
+public class GL21VertexArray extends VertexArray {
     private final VertexArrayExtension extension;
     private int[] attributeSizes;
     private int[] attributeTypes;
     private boolean[] attributeNormalizing;
 
-    protected GL20VertexArray() {
+    protected GL21VertexArray() {
         final ContextCapabilities capabilities = GLContext.getCapabilities();
         if (capabilities.GL_ARB_vertex_array_object) {
             extension = VertexArrayExtension.ARB;

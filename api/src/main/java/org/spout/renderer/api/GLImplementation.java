@@ -53,67 +53,97 @@
 package org.spout.renderer.api;
 
 import java.util.Collections;
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.spout.renderer.api.GLVersioned.GLVersion;
 import org.spout.renderer.api.gl.GLFactory;
 
 /**
- * A manager for the implementations of the various OpenGL and OpenGLES versions.
+ * Represents and implementation of an OpenGL or OpenGLES version. Also manages the implementations statically.
  */
 public final class GLImplementation {
-    private static final Logger logger = Logger.getLogger("GLImplementation.logger");
-    private static final Map<GLVersion, GLFactory> implementations = new EnumMap<>(GLVersion.class);
-
-    private GLImplementation() {
-    }
-
-    static {
-        loadDefaults();
-    }
+    private static final Map<GLImplementation, GLFactory> implementations = Collections.synchronizedMap(new HashMap<GLImplementation, GLFactory>());
+    private final GLVersion version;
+    private final String factoryName;
 
     /**
-     * Registers an implementation for a version. Only one implementation per version is allowed. Any previous one is replaced.
+     * Constructs a new implementation from the version and the factory class name.
      *
-     * @param glVersion The GL version of the implementation
-     * @param glFactory The factory for the implementation
+     * @param version The version implementation
+     * @param factoryName The factory class name
      */
-    public static void register(GLVersion glVersion, GLFactory glFactory) {
-        implementations.put(glVersion, glFactory);
+    public GLImplementation(GLVersion version, String factoryName) {
+        this.version = version;
+        this.factoryName = factoryName;
     }
 
     /**
-     * Returns a {@link GLFactory} for the {@link GLVersion}, or null if none has been registered.
+     * Returns the {@link org.spout.renderer.api.GLVersioned.GLVersion} of this implementation.
      *
-     * @param glVersion The GL version to look up an implementation for
+     * @return The version
+     */
+    public GLVersion getVersion() {
+        return version;
+    }
+
+    /**
+     * Returns the full name of the factor class.
+     *
+     * @return The name of the factory class
+     */
+    public String getFactoryName() {
+        return factoryName;
+    }
+
+    /**
+     * Loads the implementation, making it accessible.
+     *
+     * @param implementation The implementation to load
+     * @return Whether or not the loading succeeded
+     */
+    public static boolean load(GLImplementation implementation) {
+        final Class<?> clazz = tryLoadClass(implementation.getFactoryName());
+        if (clazz == null) {
+            return false;
+        }
+        final GLFactory factory;
+        try {
+            factory = (GLFactory) clazz.newInstance();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
+        implementations.put(implementation, factory);
+        return true;
+    }
+
+    /**
+     * Returns a {@link GLFactory} for the {@link GLImplementation}, or null if none has been registered.
+     *
+     * @param glVersion The GL implementation to look up an implementation for
      * @return The implementation, as a {@link GLFactory}
      */
-    public static GLFactory get(GLVersion glVersion) {
+    public static GLFactory get(GLImplementation glVersion) {
         return implementations.get(glVersion);
     }
 
-    public static Set<GLVersion> getAvailableVersions() {
+    /**
+     * Returns an unmodifiable set of all the available implementations.
+     *
+     * @return The available implementations
+     */
+    public static Set<GLImplementation> getAvailableImplementations() {
         return Collections.unmodifiableSet(implementations.keySet());
     }
 
-    private static void loadDefaults() {
-        tryLoadClass(GLVersion.GL20, "lwjgl.gl20.GL20GLFactory");
-        tryLoadClass(GLVersion.GL30, "lwjgl.gl30.GL30GLFactory");
-        tryLoadClass(GLVersion.GLES20, "android.gles20.GLES20GLFactory");
-        //tryLoadClass(GLVersion.GLES30, "android.gles30.GLES30GLFactory");
-    }
-
-    private static void tryLoadClass(GLVersion version, String localPkg) {
+    private static Class<?> tryLoadClass(String localPkg) {
         try {
-            Class.forName("org.spout.renderer." + localPkg);
+            return Class.forName("org.spout.renderer." + localPkg);
         } catch (ClassNotFoundException ex) {
-            logger.log(Level.WARNING, "Default " + version + " implementation \"" + localPkg + "\" not found");
-            return;
+            ex.printStackTrace();
+            return null;
         }
-        logger.log(Level.INFO, "Loaded default " + version + " implementation \"" + localPkg + "\"");
     }
 }

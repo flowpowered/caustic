@@ -50,45 +50,50 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.lwjgl.gl20;
+package org.spout.renderer.lwjgl.gl21;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.EXTFramebufferObject;
+import org.lwjgl.opengl.GLContext;
 
-import org.spout.renderer.api.gl.Shader;
+import org.spout.renderer.api.gl.RenderBuffer;
 import org.spout.renderer.lwjgl.LWJGLUtil;
 
 /**
- * An OpenGL 2.0 implementation of {@link Shader}.
+ * An OpenGL 2.1 implementation of {@link RenderBuffer} using EXT.
  *
- * @see Shader
+ * @see RenderBuffer
  */
-public class GL20Shader extends Shader {
-    protected GL20Shader() {
+public class GL21RenderBuffer extends RenderBuffer {
+    /**
+     * Constructs a new render buffer for OpenGL 2.1. If no EXT extension for render buffers is available, an exception is thrown.
+     *
+     * @throws UnsupportedOperationException If the hardware doesn't support EXT render buffers.
+     */
+    protected GL21RenderBuffer() {
+        if (!GLContext.getCapabilities().GL_EXT_framebuffer_object) {
+            throw new UnsupportedOperationException("Render buffers are not supported by this hardware");
+        }
     }
 
     @Override
     public void create() {
-        if (isCreated()) {
-            throw new IllegalStateException("Shader has already been created");
+        if (format == null) {
+            throw new IllegalStateException("Format has not been set");
         }
-        if (source == null) {
-            throw new IllegalStateException("Shader source has not been set");
+        if (width == -1) {
+            throw new IllegalStateException("Width has not been set");
         }
-        if (type == null) {
-            throw new IllegalStateException("Shader type has not been set");
+        if (height == -1) {
+            throw new IllegalStateException("Height has not been set");
         }
-        // Create a shader for the type
-        final int id = GL20.glCreateShader(type.getGLConstant());
-        // Upload the source
-        GL20.glShaderSource(id, source);
-        // Compile the shader
-        GL20.glCompileShader(id);
-        // Get the shader compile status property, check it's false and fail if that's the case
-        if (GL20.glGetShaderi(id, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
-            throw new IllegalStateException("OPEN GL ERROR: Could not compile shader\n" + GL20.glGetShaderInfoLog(id, 1000));
-        }
-        this.id = id;
+        // Generate and bind the render buffer
+        id = EXTFramebufferObject.glGenRenderbuffersEXT();
+        EXTFramebufferObject.glBindRenderbufferEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, id);
+        // Set the storage format and size
+        EXTFramebufferObject.glRenderbufferStorageEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, format.getGLConstant(), width, height);
+        // Unbind the render buffer
+        EXTFramebufferObject.glBindRenderbufferEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, 0);
+        // Update the state
         super.create();
         // Check for errors
         LWJGLUtil.checkForGLError();
@@ -96,12 +101,28 @@ public class GL20Shader extends Shader {
 
     @Override
     public void destroy() {
-        if (!isCreated()) {
-            throw new IllegalStateException("Shader has not been created yet");
-        }
-        // Delete the shader
-        GL20.glDeleteShader(id);
+        checkCreated();
+        // Unbind and delete the render buffer
+        EXTFramebufferObject.glBindRenderbufferEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, 0);
+        EXTFramebufferObject.glDeleteRenderbuffersEXT(id);
+        // Update state
         super.destroy();
+        // Check for errors
+        LWJGLUtil.checkForGLError();
+    }
+
+    @Override
+    public void bind() {
+        checkCreated();
+        EXTFramebufferObject.glBindRenderbufferEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, id);
+        // Check for errors
+        LWJGLUtil.checkForGLError();
+    }
+
+    @Override
+    public void unbind() {
+        checkCreated();
+        EXTFramebufferObject.glBindRenderbufferEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, 0);
         // Check for errors
         LWJGLUtil.checkForGLError();
     }

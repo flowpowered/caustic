@@ -50,7 +50,7 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.lwjgl.gl20;
+package org.spout.renderer.lwjgl.gl21;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -79,15 +79,15 @@ import org.spout.renderer.api.util.CausticUtil;
 import org.spout.renderer.lwjgl.LWJGLUtil;
 
 /**
- * An OpenGL 2.0 implementation of {@link Program}.
+ * An OpenGL 2.1 implementation of {@link Program}.
  *
  * @see Program
  */
-public class GL20Program extends Program {
+public class GL21Program extends Program {
     // Map of the uniform names to their locations
     private final TObjectIntMap<String> uniforms = new TObjectIntHashMap<>(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, -1);
 
-    protected GL20Program() {
+    protected GL21Program() {
     }
 
     @Override

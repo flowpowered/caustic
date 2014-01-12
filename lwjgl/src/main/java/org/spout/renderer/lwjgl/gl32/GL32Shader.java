@@ -50,68 +50,17 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.lwjgl.gl20;
+package org.spout.renderer.lwjgl.gl32;
 
-import org.spout.renderer.api.GLImplementation;
-import org.spout.renderer.api.gl.Context;
-import org.spout.renderer.api.gl.FrameBuffer;
-import org.spout.renderer.api.gl.GLFactory;
-import org.spout.renderer.api.gl.Program;
-import org.spout.renderer.api.gl.RenderBuffer;
-import org.spout.renderer.api.gl.Shader;
-import org.spout.renderer.api.gl.Texture;
-import org.spout.renderer.api.gl.VertexArray;
+import org.spout.renderer.lwjgl.gl21.GL21Shader;
 
 /**
- * An OpenGL 2.0 implementation of {@link GLFactory}.
+ * An OpenGL 3.2 implementation of {@link org.spout.renderer.api.gl.Shader}.
  *
- * @see GLFactory
+ * @see org.spout.renderer.api.gl.Shader
  */
-public class GL20GLFactory implements GLFactory {
-    static {
-        GLImplementation.register(GLVersion.GL20, new GL20GLFactory());
+public class GL32Shader extends GL21Shader {
+    protected GL32Shader() {
     }
-
-    private GL20GLFactory() {
-    }
-
-    @Override
-    public FrameBuffer createFrameBuffer() {
-        return new GL20FrameBuffer();
-    }
-
-    @Override
-    public Program createProgram() {
-        return new GL20Program();
-    }
-
-    @Override
-    public RenderBuffer createRenderBuffer() {
-        return new GL20RenderBuffer();
-    }
-
-    @Override
-    public Context createContext() {
-        return new GL20Context();
-    }
-
-    @Override
-    public Shader createShader() {
-        return new GL20Shader();
-    }
-
-    @Override
-    public Texture createTexture() {
-        return new GL20Texture();
-    }
-
-    @Override
-    public VertexArray createVertexArray() {
-        return new GL20VertexArray();
-    }
-
-    @Override
-    public GLVersion getGLVersion() {
-        return GLVersion.GL20;
-    }
+    // TODO: add GL30 specific stuff
 }

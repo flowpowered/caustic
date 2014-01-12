@@ -50,68 +50,64 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.lwjgl.gl30;
+package org.spout.renderer.lwjgl.gl21;
 
-import org.spout.renderer.api.GLImplementation;
-import org.spout.renderer.api.gl.Context;
-import org.spout.renderer.api.gl.FrameBuffer;
-import org.spout.renderer.api.gl.GLFactory;
-import org.spout.renderer.api.gl.Program;
-import org.spout.renderer.api.gl.RenderBuffer;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
+
 import org.spout.renderer.api.gl.Shader;
-import org.spout.renderer.api.gl.Texture;
-import org.spout.renderer.api.gl.VertexArray;
+import org.spout.renderer.lwjgl.LWJGLUtil;
 
 /**
- * An OpenGL 3.0 implementation of {@link GLFactory}.
+ * An OpenGL 2.1 implementation of {@link Shader}.
  *
- * @see GLFactory
+ * @see Shader
  */
-public class GL30GLFactory implements GLFactory {
-    static {
-        GLImplementation.register(GLVersion.GL30, new GL30GLFactory());
-    }
-
-    private GL30GLFactory() {
+public class GL21Shader extends Shader {
+    protected GL21Shader() {
     }
 
     @Override
-    public FrameBuffer createFrameBuffer() {
-        return new GL30FrameBuffer();
+    public void create() {
+        if (isCreated()) {
+            throw new IllegalStateException("Shader has already been created");
+        }
+        if (source == null) {
+            throw new IllegalStateException("Shader source has not been set");
+        }
+        if (type == null) {
+            throw new IllegalStateException("Shader type has not been set");
+        }
+        // Create a shader for the type
+        final int id = GL20.glCreateShader(type.getGLConstant());
+        // Upload the source
+        GL20.glShaderSource(id, source);
+        // Compile the shader
+        GL20.glCompileShader(id);
+        // Get the shader compile status property, check it's false and fail if that's the case
+        if (GL20.glGetShaderi(id, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
+            throw new IllegalStateException("OPEN GL ERROR: Could not compile shader\n" + GL20.glGetShaderInfoLog(id, 1000));
+        }
+        this.id = id;
+        super.create();
+        // Check for errors
+        LWJGLUtil.checkForGLError();
     }
 
     @Override
-    public Program createProgram() {
-        return new GL30Program();
-    }
-
-    @Override
-    public RenderBuffer createRenderBuffer() {
-        return new GL30RenderBuffer();
-    }
-
-    @Override
-    public Context createContext() {
-        return new GL30Context();
-    }
-
-    @Override
-    public Shader createShader() {
-        return new GL30Shader();
-    }
-
-    @Override
-    public Texture createTexture() {
-        return new GL30Texture();
-    }
-
-    @Override
-    public VertexArray createVertexArray() {
-        return new GL30VertexArray();
+    public void destroy() {
+        if (!isCreated()) {
+            throw new IllegalStateException("Shader has not been created yet");
+        }
+        // Delete the shader
+        GL20.glDeleteShader(id);
+        super.destroy();
+        // Check for errors
+        LWJGLUtil.checkForGLError();
     }
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL30;
+        return GLVersion.GL20;
     }
 }

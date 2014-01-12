@@ -50,85 +50,39 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.lwjgl.gl20;
+package org.spout.renderer.lwjgl.gl32;
 
-import org.lwjgl.opengl.EXTFramebufferObject;
-import org.lwjgl.opengl.GLContext;
+import java.nio.ByteBuffer;
 
-import org.spout.renderer.api.gl.RenderBuffer;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL30;
+
 import org.spout.renderer.lwjgl.LWJGLUtil;
+import org.spout.renderer.lwjgl.gl21.GL21Texture;
 
 /**
- * An OpenGL 2.0 implementation of {@link RenderBuffer} using EXT.
+ * An OpenGL 3.2 implementation of {@link org.spout.renderer.api.gl.Texture}.
  *
- * @see RenderBuffer
+ * @see org.spout.renderer.api.gl.Texture
  */
-public class GL20RenderBuffer extends RenderBuffer {
-    /**
-     * Constructs a new render buffer for OpenGL 2.0. If no EXT extension for render buffers is available, an exception is thrown.
-     *
-     * @throws UnsupportedOperationException If the hardware doesn't support EXT render buffers.
-     */
-    protected GL20RenderBuffer() {
-        if (!GLContext.getCapabilities().GL_EXT_framebuffer_object) {
-            throw new UnsupportedOperationException("Render buffers are not supported by this hardware");
-        }
+public class GL32Texture extends GL21Texture {
+    protected GL32Texture() {
     }
 
     @Override
-    public void create() {
-        if (format == null) {
-            throw new IllegalStateException("Format has not been set");
+    protected void uploadTexture(ByteBuffer buffer, int width, int height) {
+        // Upload the texture
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, internalFormat != null ? internalFormat.getGLConstant() : format.getGLConstant(), width, height, 0, format.getGLConstant(), GL11.GL_UNSIGNED_BYTE, buffer);
+        // Generate mipmaps if necessary
+        if (minFilter.needsMipMaps() && buffer != null) {
+            GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
         }
-        if (width == -1) {
-            throw new IllegalStateException("Width has not been set");
-        }
-        if (height == -1) {
-            throw new IllegalStateException("Height has not been set");
-        }
-        // Generate and bind the render buffer
-        id = EXTFramebufferObject.glGenRenderbuffersEXT();
-        EXTFramebufferObject.glBindRenderbufferEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, id);
-        // Set the storage format and size
-        EXTFramebufferObject.glRenderbufferStorageEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, format.getGLConstant(), width, height);
-        // Unbind the render buffer
-        EXTFramebufferObject.glBindRenderbufferEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, 0);
-        // Update the state
-        super.create();
-        // Check for errors
-        LWJGLUtil.checkForGLError();
-    }
-
-    @Override
-    public void destroy() {
-        checkCreated();
-        // Unbind and delete the render buffer
-        EXTFramebufferObject.glBindRenderbufferEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, 0);
-        EXTFramebufferObject.glDeleteRenderbuffersEXT(id);
-        // Update state
-        super.destroy();
-        // Check for errors
-        LWJGLUtil.checkForGLError();
-    }
-
-    @Override
-    public void bind() {
-        checkCreated();
-        EXTFramebufferObject.glBindRenderbufferEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, id);
-        // Check for errors
-        LWJGLUtil.checkForGLError();
-    }
-
-    @Override
-    public void unbind() {
-        checkCreated();
-        EXTFramebufferObject.glBindRenderbufferEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, 0);
         // Check for errors
         LWJGLUtil.checkForGLError();
     }
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL20;
+        return GLVersion.GL30;
     }
 }

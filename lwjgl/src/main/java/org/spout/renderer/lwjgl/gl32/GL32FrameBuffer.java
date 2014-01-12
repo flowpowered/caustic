@@ -50,7 +50,7 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.lwjgl.gl20;
+package org.spout.renderer.lwjgl.gl32;
 
 import java.nio.IntBuffer;
 import java.util.Arrays;
@@ -59,10 +59,10 @@ import java.util.Map.Entry;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
 
-import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GLContext;
+import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.GL32;
 
 import org.spout.renderer.api.gl.FrameBuffer;
 import org.spout.renderer.api.gl.RenderBuffer;
@@ -71,27 +71,19 @@ import org.spout.renderer.api.util.CausticUtil;
 import org.spout.renderer.lwjgl.LWJGLUtil;
 
 /**
- * An OpenGL 2.0 implementation of {@link FrameBuffer} using EXT.
+ * An OpenGL 3.2 implementation of {@link FrameBuffer}.
  *
  * @see FrameBuffer
  */
-public class GL20FrameBuffer extends FrameBuffer {
-    /**
-     * Constructs a new frame buffer for OpenGL 2.0. If no EXT extension for frame buffers is available, an exception is thrown.
-     *
-     * @throws UnsupportedOperationException If the hardware doesn't support EXT frame buffers
-     */
-    protected GL20FrameBuffer() {
-        if (!GLContext.getCapabilities().GL_EXT_framebuffer_object) {
-            throw new UnsupportedOperationException("Frame buffers are not supported by this hardware");
-        }
+public class GL32FrameBuffer extends FrameBuffer {
+    protected GL32FrameBuffer() {
     }
 
     @Override
     public void create() {
         // Generate and bind the frame buffer
-        id = EXTFramebufferObject.glGenFramebuffersEXT();
-        EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, id);
+        id = GL30.glGenFramebuffers();
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, id);
         // Track the color attachments to output for later use
         final TIntSet outputBuffers = new TIntHashSet();
         // Attach the textures
@@ -99,7 +91,7 @@ public class GL20FrameBuffer extends FrameBuffer {
             final AttachmentPoint point = entry.getKey();
             final Texture texture = entry.getValue();
             texture.checkCreated();
-            EXTFramebufferObject.glFramebufferTexture2DEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, point.getGLConstant(), GL11.GL_TEXTURE_2D, texture.getID(), 0);
+            GL32.glFramebufferTexture(GL30.GL_FRAMEBUFFER, point.getGLConstant(), texture.getID(), 0);
             if (point.isColor()) {
                 outputBuffers.add(point.getGLConstant());
             }
@@ -109,7 +101,7 @@ public class GL20FrameBuffer extends FrameBuffer {
             final AttachmentPoint point = entry.getKey();
             final RenderBuffer buffer = entry.getValue();
             buffer.checkCreated();
-            EXTFramebufferObject.glFramebufferRenderbufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, point.getGLConstant(), EXTFramebufferObject.GL_RENDERBUFFER_EXT, buffer.getID());
+            GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER, point.getGLConstant(), GL30.GL_RENDERBUFFER, buffer.getID());
             if (point.isColor()) {
                 outputBuffers.add(point.getGLConstant());
             }
@@ -132,12 +124,11 @@ public class GL20FrameBuffer extends FrameBuffer {
         // Disable input buffers
         GL11.glReadBuffer(GL11.GL_NONE);
         // Check for success
-        if (EXTFramebufferObject.glCheckFramebufferStatusEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT) != EXTFramebufferObject.GL_FRAMEBUFFER_COMPLETE_EXT) {
-            System.out.println(Integer.toHexString(EXTFramebufferObject.glCheckFramebufferStatusEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT)));
+        if (GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER) != GL30.GL_FRAMEBUFFER_COMPLETE) {
             throw new IllegalStateException("Failed to create the frame buffer");
         }
         // Unbind the frame buffer
-        EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0);
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
         // Update the state
         super.create();
         // Check for errors
@@ -148,8 +139,8 @@ public class GL20FrameBuffer extends FrameBuffer {
     public void destroy() {
         checkCreated();
         // Unbind and delete the frame buffer
-        EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0);
-        EXTFramebufferObject.glDeleteFramebuffersEXT(id);
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
+        GL30.glDeleteFramebuffers(id);
         // Release some resources
         textures.clear();
         buffers.clear();
@@ -162,8 +153,7 @@ public class GL20FrameBuffer extends FrameBuffer {
     @Override
     public void bind() {
         checkCreated();
-        // Bind the frame buffer
-        EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, id);
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, id);
         // Check for errors
         LWJGLUtil.checkForGLError();
     }
@@ -171,13 +161,14 @@ public class GL20FrameBuffer extends FrameBuffer {
     @Override
     public void unbind() {
         checkCreated();
-        EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0);
+        // Bind the frame buffer
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
         // Check for errors
         LWJGLUtil.checkForGLError();
     }
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL20;
+        return GLVersion.GL30;
     }
 }

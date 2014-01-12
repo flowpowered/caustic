@@ -50,7 +50,7 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.lwjgl.gl20;
+package org.spout.renderer.lwjgl.gl21;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -66,12 +66,12 @@ import org.spout.renderer.api.util.CausticUtil;
 import org.spout.renderer.lwjgl.LWJGLUtil;
 
 /**
- * An OpenGL 2.0 implementation of {@link Texture}.
+ * An OpenGL 2.1 implementation of {@link Texture}.
  *
  * @see Texture
  */
-public class GL20Texture extends Texture {
-    protected GL20Texture() {
+public class GL21Texture extends Texture {
+    protected GL21Texture() {
     }
 
     @Override

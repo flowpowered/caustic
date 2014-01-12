@@ -50,7 +50,7 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.lwjgl.gl20;
+package org.spout.renderer.lwjgl.gl21;
 
 import java.nio.ByteBuffer;
 
@@ -69,12 +69,12 @@ import org.spout.renderer.api.util.Rectangle;
 import org.spout.renderer.lwjgl.LWJGLUtil;
 
 /**
- * An OpenGL 2.0 implementation of {@link org.spout.renderer.api.gl.Context}.
+ * An OpenGL 2.1 implementation of {@link org.spout.renderer.api.gl.Context}.
  *
  * @see org.spout.renderer.api.gl.Context
  */
-public class GL20Context extends Context {
-    protected GL20Context() {
+public class GL21Context extends Context {
+    protected GL21Context() {
     }
 
     @Override

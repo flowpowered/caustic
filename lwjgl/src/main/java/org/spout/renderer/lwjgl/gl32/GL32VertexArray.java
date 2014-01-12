@@ -50,7 +50,7 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.lwjgl.gl30;
+package org.spout.renderer.lwjgl.gl32;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
@@ -64,12 +64,12 @@ import org.spout.renderer.api.gl.VertexArray;
 import org.spout.renderer.lwjgl.LWJGLUtil;
 
 /**
- * An OpenGL 3.0 implementation of {@link VertexArray}.
+ * An OpenGL 3.2 implementation of {@link VertexArray}.
  *
  * @see VertexArray
  */
-public class GL30VertexArray extends VertexArray {
-    protected GL30VertexArray() {
+public class GL32VertexArray extends VertexArray {
+    protected GL32VertexArray() {
     }
 
     @Override

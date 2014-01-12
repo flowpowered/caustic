@@ -55,11 +55,16 @@ package org.spout.renderer.android;
 import android.opengl.GLES20;
 import android.opengl.GLU;
 
+import org.spout.renderer.android.gles20.GLES20GLFactory;
+import org.spout.renderer.api.GLImplementation;
+import org.spout.renderer.api.GLVersioned.GLVersion;
+
 public final class AndroidUtil {
+    public static final GLImplementation GLES20_IMPL = new GLImplementation(GLVersion.GLES20, GLES20GLFactory.class.getName());
+    private static boolean debug = true;
+
     private AndroidUtil() {
     }
-
-    private static boolean debug = true;
 
     /**
      * Sets the caustic renderer in debug mode.

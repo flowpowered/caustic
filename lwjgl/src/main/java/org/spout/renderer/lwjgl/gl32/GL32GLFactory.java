@@ -50,20 +50,59 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.lwjgl.gl30;
+package org.spout.renderer.lwjgl.gl32;
 
-import org.spout.renderer.api.GLVersioned.GLVersion;
-import org.spout.renderer.lwjgl.gl20.GL20Program;
+import org.spout.renderer.api.gl.Context;
+import org.spout.renderer.api.gl.FrameBuffer;
+import org.spout.renderer.api.gl.GLFactory;
+import org.spout.renderer.api.gl.Program;
+import org.spout.renderer.api.gl.RenderBuffer;
+import org.spout.renderer.api.gl.Shader;
+import org.spout.renderer.api.gl.Texture;
+import org.spout.renderer.api.gl.VertexArray;
 
 /**
- * An OpenGL 3.0 implementation of {@link org.spout.renderer.api.gl.Program}.
+ * An OpenGL 3.2 implementation of {@link GLFactory}.
  *
- * @see org.spout.renderer.api.gl.Program
+ * @see GLFactory
  */
-public class GL30Program extends GL20Program {
-    // TODO: Support unsigned int scalars and vectors
+public class GL32GLFactory implements GLFactory {
+    private GL32GLFactory() {
+    }
 
-    protected GL30Program() {
+    @Override
+    public FrameBuffer createFrameBuffer() {
+        return new GL32FrameBuffer();
+    }
+
+    @Override
+    public Program createProgram() {
+        return new GL32Program();
+    }
+
+    @Override
+    public RenderBuffer createRenderBuffer() {
+        return new GL32RenderBuffer();
+    }
+
+    @Override
+    public Context createContext() {
+        return new GL32Context();
+    }
+
+    @Override
+    public Shader createShader() {
+        return new GL32Shader();
+    }
+
+    @Override
+    public Texture createTexture() {
+        return new GL32Texture();
+    }
+
+    @Override
+    public VertexArray createVertexArray() {
+        return new GL32VertexArray();
     }
 
     @Override

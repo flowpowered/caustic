@@ -50,72 +50,19 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.lwjgl.gl30;
+package org.spout.renderer.lwjgl.gl32;
 
-import org.lwjgl.opengl.GL30;
-
-import org.spout.renderer.api.gl.RenderBuffer;
-import org.spout.renderer.lwjgl.LWJGLUtil;
+import org.spout.renderer.lwjgl.gl21.GL21Program;
 
 /**
- * An OpenGL 3.0 implementation of {@link RenderBuffer}.
+ * An OpenGL 3.2 implementation of {@link org.spout.renderer.api.gl.Program}.
  *
- * @see RenderBuffer
+ * @see org.spout.renderer.api.gl.Program
  */
-public class GL30RenderBuffer extends RenderBuffer {
-    protected GL30RenderBuffer() {
-    }
+public class GL32Program extends GL21Program {
+    // TODO: Support unsigned int scalars and vectors
 
-    @Override
-    public void create() {
-        if (format == null) {
-            throw new IllegalStateException("Format has not been set");
-        }
-        if (width == -1) {
-            throw new IllegalStateException("Width has not been set");
-        }
-        if (height == -1) {
-            throw new IllegalStateException("Height has not been set");
-        }
-        // Generate and bind the render buffer
-        id = GL30.glGenRenderbuffers();
-        GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, id);
-        // Set the storage format and size
-        GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, format.getGLConstant(), width, height);
-        // Unbind the render buffer
-        GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, 0);
-        // Update the state
-        super.create();
-        // Check for errors
-        LWJGLUtil.checkForGLError();
-    }
-
-    @Override
-    public void destroy() {
-        checkCreated();
-        // Unbind and delete the render buffer
-        GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, 0);
-        GL30.glDeleteRenderbuffers(id);
-        // Update state
-        super.destroy();
-        // Check for errors
-        LWJGLUtil.checkForGLError();
-    }
-
-    @Override
-    public void bind() {
-        checkCreated();
-        GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, id);
-        // Check for errors
-        LWJGLUtil.checkForGLError();
-    }
-
-    @Override
-    public void unbind() {
-        checkCreated();
-        GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, 0);
-        // Check for errors
-        LWJGLUtil.checkForGLError();
+    protected GL32Program() {
     }
 
     @Override

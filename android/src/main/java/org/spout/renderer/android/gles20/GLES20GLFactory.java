@@ -52,7 +52,6 @@
  */
 package org.spout.renderer.android.gles20;
 
-import org.spout.renderer.api.GLImplementation;
 import org.spout.renderer.api.gl.Context;
 import org.spout.renderer.api.gl.FrameBuffer;
 import org.spout.renderer.api.gl.GLFactory;
@@ -68,10 +67,6 @@ import org.spout.renderer.api.gl.VertexArray;
  * @see GLFactory
  */
 public class GLES20GLFactory implements GLFactory {
-    static {
-        GLImplementation.register(GLVersion.GLES20, new GLES20GLFactory());
-    }
-
     private GLES20GLFactory() {
     }
 

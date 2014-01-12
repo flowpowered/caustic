@@ -64,11 +64,25 @@ public interface GLVersioned {
     GLVersion getGLVersion();
 
     /**
-     * An enum of the supported OpenGL versions. Use this class to generate rendering objects compatible with the version.
+     * An enum of the existing OpenGL versions. Use this class to generate rendering objects compatible with the version.
      */
     public static enum GLVersion {
+        GL11,
+        GL12,
+        GL13,
+        GL14,
+        GL15,
         GL20,
+        GL21,
         GL30,
+        GL31,
+        GL32,
+        GL33,
+        GL40,
+        GL41,
+        GL42,
+        GL43,
+        GLES10,
         GLES20,
         GLES30
     }
