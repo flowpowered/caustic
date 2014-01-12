@@ -34,9 +34,9 @@ import org.spout.math.vector.Vector3f;
  * Represents a camera with a projection, position and rotation, for rendering purposes.
  */
 public class Camera {
-    private static final Vector3f RIGHT = new Vector3f(-1, 0, 0);
-    private static final Vector3f UP = new Vector3f(0, 1, 0);
-    private static final Vector3f FORWARD = new Vector3f(0, 0, -1);
+    private static final Vector3f RIGHT = Vector3f.RIGHT;
+    private static final Vector3f UP = Vector3f.UP;
+    private static final Vector3f FORWARD = Vector3f.FORWARD.negate();
     private Matrix4f projection = new Matrix4f();
     private Vector3f position = new Vector3f(0, 0, 0);
     private Quaternionf rotation = new Quaternionf();
