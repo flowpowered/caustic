@@ -26,6 +26,7 @@
  */
 package org.spout.renderer.api;
 
+import java.lang.reflect.Constructor;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -78,13 +79,15 @@ public final class GLImplementation {
      * @return Whether or not the loading succeeded
      */
     public static boolean load(GLImplementation implementation) {
-        final Class<?> clazz = tryLoadClass(implementation.getFactoryName());
+        final Class<?> clazz = loadClass(implementation.getFactoryName());
         if (clazz == null) {
             return false;
         }
         final GLFactory factory;
         try {
-            factory = (GLFactory) clazz.newInstance();
+            final Constructor<?> constructor = clazz.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            factory = (GLFactory) constructor.newInstance();
         } catch (Exception ex) {
             ex.printStackTrace();
             return false;
@@ -94,13 +97,18 @@ public final class GLImplementation {
     }
 
     /**
-     * Returns a {@link GLFactory} for the {@link GLImplementation}, or null if none has been registered.
+     * Returns a {@link GLFactory} for the {@link GLImplementation}, loading it if necessary.
      *
-     * @param glVersion The GL implementation to look up an implementation for
-     * @return The implementation, as a {@link GLFactory}
+     * @param glImplementation The GL implementation to look up a factory for
+     * @return The implementation, as a {@link GLFactory} or null if it couldn't be loaded
      */
-    public static GLFactory get(GLImplementation glVersion) {
-        return implementations.get(glVersion);
+    public static GLFactory get(GLImplementation glImplementation) {
+        if (!implementations.containsKey(glImplementation)) {
+            if (!load(glImplementation)) {
+                return null;
+            }
+        }
+        return implementations.get(glImplementation);
     }
 
     /**
@@ -112,9 +120,9 @@ public final class GLImplementation {
         return Collections.unmodifiableSet(implementations.keySet());
     }
 
-    private static Class<?> tryLoadClass(String localPkg) {
+    private static Class<?> loadClass(String name) {
         try {
-            return Class.forName("org.spout.renderer." + localPkg);
+            return Class.forName(name);
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
             return null;
