@@ -48,16 +48,16 @@ import org.spout.renderer.api.data.VertexData;
 public class MeshGenerator {
     /*
     ^
-	| y
-	|
-	|     x
-	------->
-	\
-	 \
-	  \ z
-	   V
-	The axis system
-	 */
+    | y
+    |
+    |     x
+    ------->
+    \
+     \
+      \ z
+       V
+    The axis system
+     */
 
     /**
      * Generates a crosshairs shaped wireframe in 3D. The center is at the intersection point of the three lines.
@@ -67,13 +67,13 @@ public class MeshGenerator {
      * @return The vertex data
      */
     public static VertexData generateCrosshairs(VertexData destination, float length) {
-		/*
-		  \ |
-		   \|
-		----O-----
-		    |\
-		    | \
-		 */
+        /*
+          \ |
+           \|
+        ----O-----
+            |\
+            | \
+         */
         // Model data buffers
         if (destination == null) {
             destination = new VertexData();
@@ -105,15 +105,15 @@ public class MeshGenerator {
      * @return The vertex data
      */
     public static VertexData generateWireCuboid(VertexData destination, Vector3f size) {
-		/*
-		4------5
-		|\     |\
-		| 7------6
-		| |    | |
-		0-|----1 |
-		 \|     \|
-		  3------2
-		 */
+        /*
+        4------5
+        |\     |\
+        | 7------6
+        | |    | |
+        0-|----1 |
+         \|     \|
+          3------2
+         */
         // Corner positions
         final Vector3f p = size.div(2);
         final Vector3f p6 = new Vector3f(p.getX(), p.getY(), p.getZ());
@@ -178,12 +178,12 @@ public class MeshGenerator {
      * @return The vertex data
      */
     public static VertexData generatePlane(VertexData destination, Vector2f size) {
-		/*
-		2-----3
-		|     |
-		|     |
-		0-----1
-		 */
+        /*
+        2-----3
+        |     |
+        |     |
+        0-----1
+         */
         // Corner positions
         final Vector2f p = size.div(2);
         final Vector3f p3 = new Vector3f(p.getX(), p.getY(), 0);
@@ -249,15 +249,15 @@ public class MeshGenerator {
      * @return The vertex data
      */
     public static VertexData generateCuboid(VertexData destination, Vector3f size) {
-		/*
-		4------5
-		|\     |\
-		| 7------6
-		| |    | |
-		0-|----1 |
-		 \|     \|
-		  3------2
-		 */
+        /*
+        4------5
+        |\     |\
+        | 7------6
+        | |    | |
+        0-|----1 |
+         \|     \|
+          3------2
+         */
         // Corner positions
         final Vector3f p = size.div(2);
         final Vector3f p6 = new Vector3f(p.getX(), p.getY(), p.getZ());

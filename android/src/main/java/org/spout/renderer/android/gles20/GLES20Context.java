@@ -57,10 +57,10 @@ public class GLES20Context extends Context implements GLSurfaceView.Renderer {
         // TODO: Attempt to create the display
         /*
         Display.setDisplayMode(new DisplayMode(windowSize.getFloorX(), windowSize.getFloorY()));
-		Display.create(new PixelFormat().withSamples(MSAA), createContextAttributes());
-		// Set the title
-		Display.setTitle(windowTitle);
-		*/
+        Display.create(new PixelFormat().withSamples(MSAA), createContextAttributes());
+        // Set the title
+        Display.setTitle(windowTitle);
+        */
         // Set the default view port
         GLES20.glViewport(0, 0, windowSize.getFloorX(), windowSize.getFloorY());
         // Set the alpha blending function for transparency
