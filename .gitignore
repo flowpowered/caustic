@@ -10,6 +10,7 @@ build
 dist
 lib
 out
+run
 target
 *.com
 *.class
@@ -30,7 +31,6 @@ target
 *.dmg
 *.gz
 *.iso
-*.jar
 *.rar
 *.tar
 *.zip
@@ -58,6 +58,7 @@ Thumbs.db
 ###########
 .classpath
 .externalToolBuilders
+.gradle
 .idea
 .project
 .settings
@@ -68,15 +69,3 @@ nb-configuration.xml
 *.iml
 *.ipr
 *.iws
-
-# Runtime #
-###########
-/cache
-/config
-/data
-/natives
-/plugins
-/resources
-/update
-/updates
-/worlds
