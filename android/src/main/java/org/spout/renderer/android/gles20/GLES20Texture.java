@@ -47,7 +47,7 @@ public class GLES20Texture extends Texture {
         // Get the context capabilities for the graphics hardware
         //final ContextCapabilities contextCaps = GLContext.getCapabilities();
         //if (!contextCaps.GL_ARB_texture_non_power_of_two && (!GenericMath.isPowerOfTwo(width) || !GenericMath.isPowerOfTwo(height))) {
-        //	TODO: Resize images. Also, this only really matters for mipmaps
+        //    TODO: Resize images. Also, this only really matters for mipmaps
         //}
         // Generate and bind the texture in the unit
         int[] params = new int[1];
@@ -65,16 +65,16 @@ public class GLES20Texture extends Texture {
         // TODO: Set the anisotropic filtering value, if any
         /*
         if (anisotropicFiltering > 0) {
-			GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAX_ANISOTROPY, anisotropicFiltering);
-		}
-		*/
+            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAX_ANISOTROPY, anisotropicFiltering);
+        }
+        */
         // TODO: Set the compare mode, if any
-		/*if (compareMode != null) {
-			// Note: GL14.GL_COMPARE_R_TO_TEXTURE and GL30.GL_COMPARE_REF_TO_TEXTURE are the same, just a different name
-			// No need for a different call in the GL30 implementation
-			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GL14.GL_TEXTURE_COMPARE_MODE, GL14.GL_COMPARE_R_TO_TEXTURE);
-			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GL14.GL_TEXTURE_COMPARE_FUNC, compareMode.getGLConstant());
-		}*/
+        /*if (compareMode != null) {
+            // Note: GL14.GL_COMPARE_R_TO_TEXTURE and GL30.GL_COMPARE_REF_TO_TEXTURE are the same, just a different name
+            // No need for a different call in the GL30 implementation
+            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GL14.GL_TEXTURE_COMPARE_MODE, GL14.GL_COMPARE_R_TO_TEXTURE);
+            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GL14.GL_TEXTURE_COMPARE_FUNC, compareMode.getGLConstant());
+        }*/
         // TODO: Set the border color, if any
         /*if (borderColor != null) {
             GL11.glTexParameter(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_BORDER_COLOR, (FloatBuffer) CausticUtil.createFloatBuffer(4).put(borderColor.toArray()).flip());

@@ -279,13 +279,13 @@ public class StringModel extends Model {
         final TIntList indices = data.getIndices();
         /*
         Generate a pile of small rectangles, each having one glyph on it
-		Rendering a sequence of glyphs means rendering the sequence of rectangles with the correct glyphs
-		Offsetting them correctly
-		1--3
-		|\ |
-		| \|
-		0--2
-		 */
+        Rendering a sequence of glyphs means rendering the sequence of rectangles with the correct glyphs
+        Offsetting them correctly
+        1--3
+        |\ |
+        | \|
+        0--2
+         */
         float x = 0;
         int index = 0;
         int renderIndex = 0;

@@ -53,7 +53,7 @@ public class GL21Texture extends Texture {
         // Get the context capabilities for the graphics hardware
         //final ContextCapabilities contextCaps = GLContext.getCapabilities();
         //if (!contextCaps.GL_ARB_texture_non_power_of_two && (!GenericMath.isPowerOfTwo(width) || !GenericMath.isPowerOfTwo(height))) {
-        //	TODO: Resize images. Also, this only really matters for mipmaps
+        //    TODO: Resize images. Also, this only really matters for mipmaps
         //}
         // Generate and bind the texture in the unit
         id = GL11.glGenTextures();
