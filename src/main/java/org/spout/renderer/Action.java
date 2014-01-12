@@ -26,8 +26,8 @@
  */
 package org.spout.renderer;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.Arrays;
+import java.util.Collection;
 
 import org.spout.renderer.data.Color;
 import org.spout.renderer.gl.Context;
@@ -286,24 +286,26 @@ public abstract class Action {
 
     /**
      * An action that renders the models to the bound buffer. The models will be reordered to be grouped by material. This reordering is done via a stable sort ({@link
-     * java.util.Collections#sort(java.util.List)}) so that models with the same materials are not reordered. This grouping improves performance by reducing the amount of rendering calls.
+     * java.util.Arrays#sort(Object[])}) so that models with the same materials are not reordered. This grouping improves performance by reducing the amount of rendering calls.
      */
     public static class RenderModelsAction extends Action {
-        private final List<Model> models;
+        private final Collection<Model> models;
 
         /**
          * Constructs a model rendering action with the models to render
          *
          * @param models The models
          */
-        public RenderModelsAction(List<Model> models) {
+        public RenderModelsAction(Collection<Model> models) {
             this.models = models;
         }
 
         @Override
         public void execute(Context context) {
+            // Get the model array
+            final Model[] models = this.models.toArray(new Model[this.models.size()]);
             // Batch the models with the same materials together
-            Collections.sort(models);
+            Arrays.sort(models);
             // Current material
             Material current = null;
             for (Model model : models) {
