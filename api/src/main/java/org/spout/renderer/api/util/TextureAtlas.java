@@ -26,13 +26,13 @@
  */
 package org.spout.renderer.api.util;
 
-import javax.imageio.ImageIO;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import javax.imageio.ImageIO;
 
 import org.spout.renderer.api.gl.Texture;
 import org.spout.renderer.api.gl.Texture.Format;
