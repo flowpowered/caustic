@@ -1,23 +1,32 @@
-# Source language and JDK version to use.
+# Source language and JDK version to use
 language: java
 jdk: oraclejdk7
 
-# Compile and package JAR and set build properties.
-install: mvn package -DbuildNumber=$TRAVIS_BUILD_NUMBER -DciSystem=travis -Dcommit=${TRAVIS_COMMIT:0:7}
+# Compile and package JAR and set build properties
+install: mvn package -DbuildNumber=$TRAVIS_BUILD_NUMBER -Dci=travis -Dcommit=${TRAVIS_COMMIT:0:7}
+
+# Perform steps after compilation/test success
 after_success:
-  # Get files for use with build, namely the custom Maven settings.xml.
+  # Generate Javadocs, create Javadoc and source jars, and Cobertura report for Coveralls.io
+  - "mvn javadoc:jar source:jar cobertura:cobertura coveralls:cobertura -DserviceJobId=$TRAVIS_JOB_ID"
+  # Get files for use with build, namely the custom Maven settings.xml
   - "git clone https://github.com/flow/travis-ci-resources.git target/travis"
-  # Check if commit s not a pull request, if git repo is official, and if branch is master. If checks pass, deploy artifacts to Maven repository.
+  # Check if commit is not a pull request, if git repo is official, and if branch is master, then deploy artifacts to Maven repository
   - "[[ $TRAVIS_PULL_REQUEST == false ]] && [[ $TRAVIS_REPO_SLUG == flow/Caustic ]] && [[ $TRAVIS_BRANCH == master ]] && mvn deploy --settings target/travis/settings.xml"
 
+# Notification services
 notifications:
-  # Disable build status email notifications, until the issue with forks is fixed.
+  # Disable build status email notifications, until the issue with forks is fixed
   email: false
   webhooks:
-    # Send build information and status to Notifico.
+    # Send build information and status to Notifico
     - http://n.tkte.ch/h/1150/GJBL60vlZTUiHJOZjosvqCdh
 
+# Environmental system variables
 env:
   global:
+    # Make the log output cleaner
+    - TERM=dumb
+    # Super secure, encrypted variables! Ssssh!
     - secure: "XuzfBWuHSSP0u0SOQXn8DdrEGPlxlH0w6KrOaUlcOWmG1KK/KYBuE6FYs6eEhe2Q438S83Dp4ec6mgzCS5RSaoseyZR0CC4T0NsQEPksoV37CX0vM1/kPAcilPubT0B6oO2fa4XKuCwiNflb6nw5m9hoo91I673vpjsobZBj0Fw="
     - secure: "aDZk1Qxvg+DaTEs+mzsQHDKAVHxiLvTLxjcfQzOIiMQj80bNTY0ntsw85CRQu6DGEPlHfb+zEjb/965HqbTomAayjEXhImun/m0+oAQXQhJoBqI2ThiGOed/KvgGyiMKoMSM71HBkEBowoUanRpNzHrC9scJHrVDei7JnvYtfVQ="
