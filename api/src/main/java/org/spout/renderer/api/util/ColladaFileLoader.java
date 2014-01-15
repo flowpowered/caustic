@@ -26,18 +26,18 @@
  */
 package org.spout.renderer.api.util;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathFactory;
 
 import gnu.trove.list.TFloatList;
 import gnu.trove.list.TIntList;
@@ -51,7 +51,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import org.spout.math.vector.Vector3f;
+import com.flowpowered.math.vector.Vector3f;
 
 /**
  * A static loading class for the COLLADA file format (.dae). This class has the capability to load mesh data such as positions, texture coordinates, and normals. All models should be triangulated.

@@ -30,7 +30,8 @@ import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
-import org.spout.math.vector.Vector2f;
+import com.flowpowered.math.vector.Vector2f;
+
 import org.spout.renderer.api.Camera;
 import org.spout.renderer.api.Creatable;
 import org.spout.renderer.api.GLVersioned;

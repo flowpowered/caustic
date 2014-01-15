@@ -26,7 +26,7 @@
  */
 package org.spout.renderer.api.util;
 
-import org.spout.math.vector.Vector2f;
+import com.flowpowered.math.vector.Vector2f;
 
 /**
  * A simple mutable rectangle object, positioned in 2D space.

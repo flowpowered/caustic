@@ -30,14 +30,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.flowpowered.math.vector.Vector2f;
+import com.flowpowered.math.vector.Vector3f;
+
 import gnu.trove.list.TFloatList;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TFloatArrayList;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 
-import org.spout.math.vector.Vector2f;
-import org.spout.math.vector.Vector3f;
 import org.spout.renderer.api.data.VertexAttribute;
 import org.spout.renderer.api.data.VertexAttribute.DataType;
 import org.spout.renderer.api.data.VertexData;

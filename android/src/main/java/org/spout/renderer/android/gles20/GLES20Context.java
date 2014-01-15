@@ -26,9 +26,9 @@
  */
 package org.spout.renderer.android.gles20;
 
+import java.nio.ByteBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
-import java.nio.ByteBuffer;
 
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;

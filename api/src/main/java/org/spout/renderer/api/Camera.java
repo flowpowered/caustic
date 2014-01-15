@@ -26,9 +26,9 @@
  */
 package org.spout.renderer.api;
 
-import org.spout.math.imaginary.Quaternionf;
-import org.spout.math.matrix.Matrix4f;
-import org.spout.math.vector.Vector3f;
+import com.flowpowered.math.imaginary.Quaternionf;
+import com.flowpowered.math.matrix.Matrix4f;
+import com.flowpowered.math.vector.Vector3f;
 
 /**
  * Represents a camera with a projection, position and rotation, for rendering purposes.

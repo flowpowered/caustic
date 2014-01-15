@@ -32,17 +32,18 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
+import com.flowpowered.math.matrix.Matrix2f;
+import com.flowpowered.math.matrix.Matrix3f;
+import com.flowpowered.math.matrix.Matrix4f;
+import com.flowpowered.math.vector.Vector2f;
+import com.flowpowered.math.vector.Vector3f;
+import com.flowpowered.math.vector.Vector4f;
+
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 
-import org.spout.math.matrix.Matrix2f;
-import org.spout.math.matrix.Matrix3f;
-import org.spout.math.matrix.Matrix4f;
-import org.spout.math.vector.Vector2f;
-import org.spout.math.vector.Vector3f;
-import org.spout.math.vector.Vector4f;
 import org.spout.renderer.api.Creatable;
 import org.spout.renderer.api.GLVersioned;
 import org.spout.renderer.api.data.Color;
@@ -138,7 +139,7 @@ public abstract class Program extends Creatable implements GLVersioned {
     public abstract void setUniform(String name, float f);
 
     /**
-     * Sets a uniform {@link org.spout.math.vector.Vector2f} in the shader to the desired value.
+     * Sets a uniform {@link com.flowpowered.math.vector.Vector2f} in the shader to the desired value.
      *
      * @param name The name of the uniform to set
      * @param v The vector value
@@ -146,7 +147,7 @@ public abstract class Program extends Creatable implements GLVersioned {
     public abstract void setUniform(String name, Vector2f v);
 
     /**
-     * Sets a uniform {@link org.spout.math.vector.Vector2f} array in the shader to the desired value.
+     * Sets a uniform {@link com.flowpowered.math.vector.Vector2f} array in the shader to the desired value.
      *
      * @param name The name of the uniform to set
      * @param vs The vector array value
@@ -154,7 +155,7 @@ public abstract class Program extends Creatable implements GLVersioned {
     public abstract void setUniform(String name, Vector2f[] vs);
 
     /**
-     * Sets a uniform {@link org.spout.math.vector.Vector3f} in the shader to the desired value.
+     * Sets a uniform {@link com.flowpowered.math.vector.Vector3f} in the shader to the desired value.
      *
      * @param name The name of the uniform to set
      * @param v The vector value
@@ -162,7 +163,7 @@ public abstract class Program extends Creatable implements GLVersioned {
     public abstract void setUniform(String name, Vector3f v);
 
     /**
-     * Sets a uniform {@link org.spout.math.vector.Vector3f} array in the shader to the desired value.
+     * Sets a uniform {@link com.flowpowered.math.vector.Vector3f} array in the shader to the desired value.
      *
      * @param name The name of the uniform to set
      * @param vs The vector array value
@@ -170,7 +171,7 @@ public abstract class Program extends Creatable implements GLVersioned {
     public abstract void setUniform(String name, Vector3f[] vs);
 
     /**
-     * Sets a uniform {@link org.spout.math.vector.Vector4f} in the shader to the desired value.
+     * Sets a uniform {@link com.flowpowered.math.vector.Vector4f} in the shader to the desired value.
      *
      * @param name The name of the uniform to set
      * @param v The vector value
@@ -178,7 +179,7 @@ public abstract class Program extends Creatable implements GLVersioned {
     public abstract void setUniform(String name, Vector4f v);
 
     /**
-     * Sets a uniform {@link org.spout.math.matrix.Matrix4f} in the shader to the desired value.
+     * Sets a uniform {@link com.flowpowered.math.matrix.Matrix4f} in the shader to the desired value.
      *
      * @param name The name of the uniform to set
      * @param m The matrix value
@@ -186,7 +187,7 @@ public abstract class Program extends Creatable implements GLVersioned {
     public abstract void setUniform(String name, Matrix2f m);
 
     /**
-     * Sets a uniform {@link org.spout.math.matrix.Matrix4f} in the shader to the desired value.
+     * Sets a uniform {@link com.flowpowered.math.matrix.Matrix4f} in the shader to the desired value.
      *
      * @param name The name of the uniform to set
      * @param m The matrix value
@@ -194,7 +195,7 @@ public abstract class Program extends Creatable implements GLVersioned {
     public abstract void setUniform(String name, Matrix3f m);
 
     /**
-     * Sets a uniform {@link org.spout.math.matrix.Matrix4f} in the shader to the desired value.
+     * Sets a uniform {@link com.flowpowered.math.matrix.Matrix4f} in the shader to the desired value.
      *
      * @param name The name of the uniform to set
      * @param m The matrix value

@@ -39,12 +39,12 @@ import gnu.trove.map.hash.TObjectIntHashMap;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
-import org.spout.math.matrix.Matrix2f;
-import org.spout.math.matrix.Matrix3f;
-import org.spout.math.matrix.Matrix4f;
-import org.spout.math.vector.Vector2f;
-import org.spout.math.vector.Vector3f;
-import org.spout.math.vector.Vector4f;
+import com.flowpowered.math.matrix.Matrix2f;
+import com.flowpowered.math.matrix.Matrix3f;
+import com.flowpowered.math.matrix.Matrix4f;
+import com.flowpowered.math.vector.Vector2f;
+import com.flowpowered.math.vector.Vector3f;
+import com.flowpowered.math.vector.Vector4f;
 import org.spout.renderer.api.data.Uniform;
 import org.spout.renderer.api.data.UniformHolder;
 import org.spout.renderer.api.gl.Program;

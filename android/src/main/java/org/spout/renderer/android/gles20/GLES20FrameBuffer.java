@@ -30,10 +30,10 @@ import java.nio.IntBuffer;
 import java.util.Arrays;
 import java.util.Map.Entry;
 
+import android.opengl.GLES20;
+
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
-
-import android.opengl.GLES20;
 
 import org.spout.renderer.android.AndroidUtil;
 import org.spout.renderer.api.gl.FrameBuffer;

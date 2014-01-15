@@ -38,6 +38,9 @@ import java.nio.ByteBuffer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.flowpowered.math.GenericMath;
+import com.flowpowered.math.vector.Vector2f;
+
 import gnu.trove.impl.Constants;
 import gnu.trove.list.TFloatList;
 import gnu.trove.list.TIntList;
@@ -49,8 +52,6 @@ import gnu.trove.map.hash.TCharFloatHashMap;
 import gnu.trove.map.hash.TCharIntHashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
-import org.spout.math.GenericMath;
-import org.spout.math.vector.Vector2f;
 import org.spout.renderer.api.Material;
 import org.spout.renderer.api.data.Color;
 import org.spout.renderer.api.data.VertexAttribute;

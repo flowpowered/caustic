@@ -29,12 +29,12 @@ package org.spout.renderer.api.util;
 import java.io.InputStream;
 import java.util.Scanner;
 
+import com.flowpowered.math.vector.Vector3f;
+
 import gnu.trove.list.TFloatList;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TFloatArrayList;
 import gnu.trove.list.array.TIntArrayList;
-
-import org.spout.math.vector.Vector3f;
 
 /**
  * A static loading class for standard .obj model files. This class will load positions, normals can texture coordinates. Missing normals are not calculated. Normals are expected to be of unit length.

@@ -31,19 +31,19 @@ import java.nio.IntBuffer;
 import java.util.Collections;
 import java.util.Set;
 
+import android.opengl.GLES20;
+
 import gnu.trove.impl.Constants;
 import gnu.trove.iterator.TObjectIntIterator;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 
-import android.opengl.GLES20;
-
-import org.spout.math.matrix.Matrix2f;
-import org.spout.math.matrix.Matrix3f;
-import org.spout.math.matrix.Matrix4f;
-import org.spout.math.vector.Vector2f;
-import org.spout.math.vector.Vector3f;
-import org.spout.math.vector.Vector4f;
+import com.flowpowered.math.matrix.Matrix2f;
+import com.flowpowered.math.matrix.Matrix3f;
+import com.flowpowered.math.matrix.Matrix4f;
+import com.flowpowered.math.vector.Vector2f;
+import com.flowpowered.math.vector.Vector3f;
+import com.flowpowered.math.vector.Vector4f;
 import org.spout.renderer.android.AndroidUtil;
 import org.spout.renderer.api.data.Uniform;
 import org.spout.renderer.api.data.UniformHolder;

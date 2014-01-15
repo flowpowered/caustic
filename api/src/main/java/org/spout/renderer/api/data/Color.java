@@ -26,8 +26,8 @@
  */
 package org.spout.renderer.api.data;
 
-import org.spout.math.GenericMath;
-import org.spout.math.vector.Vector4f;
+import com.flowpowered.math.GenericMath;
+import com.flowpowered.math.vector.Vector4f;
 
 /**
  * Represents an immutable color with red, green and blue components, and an optional alpha component. When no alpha component is present, the return value is 255 (opaque). A color can be normalized
