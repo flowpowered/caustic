@@ -91,12 +91,8 @@
     <!-- Dependency repositories -->
     <repositories>
         <repository>
-            <id>sonatype-nexus-releases</id>
-            <url>https://oss.sonatype.org/content/repositories/releases</url>
-        </repository>
-        <repository>
-            <id>sonatype-nexus-snapshots</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <id>sonatype-nexus</id>
+            <url>https://oss.sonatype.org/content/repositories/public</url>
             <snapshots>
                 <enabled>true</enabled>
                 <updatePolicy>always</updatePolicy>
@@ -107,12 +103,8 @@
     <!-- Build plugin repositories -->
     <pluginRepositories>
         <pluginRepository>
-            <id>sonatype-nexus-releases</id>
-            <url>https://oss.sonatype.org/content/repositories/releases</url>
-        </pluginRepository>
-        <pluginRepository>
-            <id>sonatype-nexus-snapshots</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <id>sonatype-nexus</id>
+            <url>https://oss.sonatype.org/content/repositories/public</url>
             <snapshots>
                 <enabled>true</enabled>
                 <updatePolicy>always</updatePolicy>
@@ -223,14 +215,6 @@
                             <Specification-Version>${project.version}+${ciSystem}-b${buildNumber}.git-${commit}</Specification-Version>
                             <Specification-Vendor>${project.organization.name}</Specification-Vendor>
                         </manifestEntries>
-                        <manifestSections>
-                            <manifestSection>
-                                <name>org/spout/</name>
-                                <manifestEntries>
-                                    <Sealed>true</Sealed>
-                                </manifestEntries>
-                            </manifestSection>
-                        </manifestSections>
                     </archive>
                 </configuration>
             </plugin>
@@ -250,6 +234,25 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <!-- Coveralls reporting plugin  -->
+            <plugin>
+                <groupId>org.eluder.coveralls</groupId>
+                <artifactId>coveralls-maven-plugin</artifactId>
+                <version>2.1.0</version>
+            </plugin>
+            <!-- Cobertura test coverage plugin -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <format>xml</format>
+                    <maxmem>256m</maxmem>
+                    <sourceDirectories>
+                        <sourceDirectory>target/generated-sources/*</sourceDirectory>
+                    </sourceDirectories>
+                </configuration>
             </plugin>
         </plugins>
     </build>
