@@ -249,9 +249,7 @@
                 <configuration>
                     <format>xml</format>
                     <maxmem>256m</maxmem>
-                    <sourceDirectories>
-                        <sourceDirectory>target/generated-sources/*</sourceDirectory>
-                    </sourceDirectories>
+                    <aggregate>true</aggregate>
                 </configuration>
             </plugin>
         </plugins>
