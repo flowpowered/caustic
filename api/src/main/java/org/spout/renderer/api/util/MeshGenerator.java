@@ -422,7 +422,7 @@ public class MeshGenerator {
         for (int i = 0; i < 3; i++) {
             // Subdivide all of the triangles by splitting the edges
             for (Triangle triangle : triangles) {
-                newTriangles.addAll(Arrays.asList(subdivide(triangle)));
+                newTriangles.addAll(Arrays.asList(triangle.subdivide()));
             }
             // Store the new triangles in the main list
             triangles.clear();
@@ -433,9 +433,9 @@ public class MeshGenerator {
         // Normalize the positions so they are all the same distance from the center
         // then scale them to the appropriate radius
         for (Triangle triangle : triangles) {
-            triangle.getV0().normalize().mul(radius);
-            triangle.getV1().normalize().mul(radius);
-            triangle.getV2().normalize().mul(radius);
+            triangle.setV0(triangle.getV0().normalize().mul(radius));
+            triangle.setV1(triangle.getV1().normalize().mul(radius));
+            triangle.setV2(triangle.getV2().normalize().mul(radius));
         }
         // Model data buffers
         if (destination == null) {
@@ -653,21 +653,6 @@ public class MeshGenerator {
         to.add(f);
     }
 
-    private static Triangle[] subdivide(Triangle triangle) {
-        final Vector3f e0 = triangle.v1.sub(triangle.v0).div(2);
-        final Vector3f va = triangle.v0.add(e0);
-        final Vector3f e1 = triangle.v2.sub(triangle.v1).div(2);
-        final Vector3f vb = triangle.v1.add(e1);
-        final Vector3f e2 = triangle.v0.sub(triangle.v2).div(2);
-        final Vector3f vc = triangle.v2.add(e2);
-        return new Triangle[]{
-                new Triangle(triangle.v0, va, vc),
-                new Triangle(va, triangle.v1, vb),
-                new Triangle(vc, vb, triangle.v2),
-                new Triangle(va, vb, vc)
-        };
-    }
-
     private static class Triangle {
         private Vector3f v0;
         private Vector3f v1;
@@ -679,16 +664,43 @@ public class MeshGenerator {
             this.v2 = v2;
         }
 
-        private Vector3f getV0() {
+        public Vector3f getV0() {
             return v0;
         }
 
-        private Vector3f getV1() {
+        public void setV0(Vector3f v0) {
+            this.v0 = v0;
+        }
+
+        public Vector3f getV1() {
             return v1;
         }
 
-        private Vector3f getV2() {
+        public void setV1(Vector3f v1) {
+            this.v1 = v1;
+        }
+
+        public Vector3f getV2() {
             return v2;
+        }
+
+        public void setV2(Vector3f v2) {
+            this.v2 = v2;
+        }
+
+        private Triangle[] subdivide() {
+            final Vector3f e0 = v1.sub(v0).div(2);
+            final Vector3f va = v0.add(e0);
+            final Vector3f e1 = v2.sub(v1).div(2);
+            final Vector3f vb = v1.add(e1);
+            final Vector3f e2 = v0.sub(v2).div(2);
+            final Vector3f vc = v2.add(e2);
+            return new Triangle[]{
+                    new Triangle(v0, va, vc),
+                    new Triangle(va, v1, vb),
+                    new Triangle(vc, vb, v2),
+                    new Triangle(va, vb, vc)
+            };
         }
     }
 }
