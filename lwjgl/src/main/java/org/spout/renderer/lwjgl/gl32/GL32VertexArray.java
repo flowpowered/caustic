@@ -140,6 +140,6 @@ public class GL32VertexArray extends VertexArray {
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL30;
+        return GLVersion.GL32;
     }
 }

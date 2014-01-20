@@ -81,6 +81,6 @@ public class GL21GLFactory implements GLFactory {
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL20;
+        return GLVersion.GL21;
     }
 }

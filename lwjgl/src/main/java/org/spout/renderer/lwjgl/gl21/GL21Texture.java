@@ -145,6 +145,6 @@ public class GL21Texture extends Texture {
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL20;
+        return GLVersion.GL21;
     }
 }

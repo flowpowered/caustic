@@ -143,6 +143,6 @@ public class GL32FrameBuffer extends FrameBuffer {
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL30;
+        return GLVersion.GL32;
     }
 }

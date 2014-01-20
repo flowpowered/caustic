@@ -82,6 +82,6 @@ public class GL21Shader extends Shader {
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL20;
+        return GLVersion.GL21;
     }
 }

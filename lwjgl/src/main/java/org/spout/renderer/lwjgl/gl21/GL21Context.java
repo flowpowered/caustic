@@ -155,6 +155,6 @@ public class GL21Context extends Context {
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL20;
+        return GLVersion.GL21;
     }
 }

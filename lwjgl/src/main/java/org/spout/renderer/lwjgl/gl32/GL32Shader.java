@@ -37,4 +37,9 @@ public class GL32Shader extends GL21Shader {
     protected GL32Shader() {
     }
     // TODO: add GL30 specific stuff
+
+    @Override
+    public GLVersion getGLVersion() {
+        return GLVersion.GL32;
+    }
 }

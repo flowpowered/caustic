@@ -41,6 +41,6 @@ public class GL32Program extends GL21Program {
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL30;
+        return GLVersion.GL32;
     }
 }

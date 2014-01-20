@@ -81,6 +81,6 @@ public class GL32GLFactory implements GLFactory {
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL30;
+        return GLVersion.GL32;
     }
 }

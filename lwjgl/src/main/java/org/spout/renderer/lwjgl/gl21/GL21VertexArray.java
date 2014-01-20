@@ -191,7 +191,7 @@ public class GL21VertexArray extends VertexArray {
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL20;
+        return GLVersion.GL21;
     }
 
     private static enum VertexArrayExtension {

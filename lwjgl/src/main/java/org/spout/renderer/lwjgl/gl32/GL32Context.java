@@ -46,6 +46,6 @@ public class GL32Context extends GL21Context {
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL30;
+        return GLVersion.GL32;
     }
 }

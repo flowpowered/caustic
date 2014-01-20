@@ -94,6 +94,6 @@ public class GL32RenderBuffer extends RenderBuffer {
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL30;
+        return GLVersion.GL32;
     }
 }

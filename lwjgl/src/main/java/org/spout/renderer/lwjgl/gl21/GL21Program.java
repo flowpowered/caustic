@@ -300,6 +300,6 @@ public class GL21Program extends Program {
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL20;
+        return GLVersion.GL21;
     }
 }

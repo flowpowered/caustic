@@ -152,6 +152,6 @@ public class GL21FrameBuffer extends FrameBuffer {
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL20;
+        return GLVersion.GL21;
     }
 }

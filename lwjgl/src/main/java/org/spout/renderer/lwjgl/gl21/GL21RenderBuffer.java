@@ -103,6 +103,6 @@ public class GL21RenderBuffer extends RenderBuffer {
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL20;
+        return GLVersion.GL21;
     }
 }

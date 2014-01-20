@@ -57,6 +57,6 @@ public class GL32Texture extends GL21Texture {
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL30;
+        return GLVersion.GL32;
     }
 }
