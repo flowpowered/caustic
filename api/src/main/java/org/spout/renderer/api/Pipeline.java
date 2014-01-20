@@ -26,7 +26,7 @@
  */
 package org.spout.renderer.api;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.spout.renderer.api.Action.BindFrameBufferAction;
 import org.spout.renderer.api.Action.ClearBufferAction;
@@ -191,12 +191,12 @@ public class Pipeline {
 
         /**
          * Builds the next action in the chain. The actions renders the model list. The models will be reordered to be grouped by material. This reordering is done via a stable sort ({@link
-         * java.util.Collections#sort(java.util.List)}) so that models with the same materials are not reordered. This grouping improves performance by reducing the amount of rendering calls.
+         * java.util.Arrays#sort(java.lang.Object[])}) so that models with the same materials are not reordered. This grouping improves performance by reducing the amount of rendering calls.
          *
          * @param models The models to render
          * @return The builder itself, for chained calls
          */
-        public PipelineBuilder renderModels(List<Model> models) {
+        public PipelineBuilder renderModels(Collection<Model> models) {
             return doAction(new RenderModelsAction(models));
         }
 
