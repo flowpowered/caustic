@@ -192,6 +192,21 @@ public class GL21Program extends Program {
     }
 
     @Override
+    public void setUniform(String name, float[] fs) {
+        checkCreated();
+        if (!uniforms.containsKey(name)) {
+            return;
+        }
+        final FloatBuffer floatBuffer = CausticUtil.createFloatBuffer(fs.length);
+        for (float f : fs) {
+            floatBuffer.put(f);
+        }
+        floatBuffer.flip();
+        GL20.glUniform1(uniforms.get(name), floatBuffer);
+        LWJGLUtil.checkForGLError();
+    }
+
+    @Override
     public void setUniform(String name, Vector2f v) {
         checkCreated();
         if (!uniforms.containsKey(name)) {

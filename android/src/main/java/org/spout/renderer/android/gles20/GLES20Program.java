@@ -31,19 +31,20 @@ import java.nio.IntBuffer;
 import java.util.Collections;
 import java.util.Set;
 
-import android.opengl.GLES20;
-
-import gnu.trove.impl.Constants;
-import gnu.trove.iterator.TObjectIntIterator;
-import gnu.trove.map.TObjectIntMap;
-import gnu.trove.map.hash.TObjectIntHashMap;
-
 import com.flowpowered.math.matrix.Matrix2f;
 import com.flowpowered.math.matrix.Matrix3f;
 import com.flowpowered.math.matrix.Matrix4f;
 import com.flowpowered.math.vector.Vector2f;
 import com.flowpowered.math.vector.Vector3f;
 import com.flowpowered.math.vector.Vector4f;
+
+import gnu.trove.impl.Constants;
+import gnu.trove.iterator.TObjectIntIterator;
+import gnu.trove.map.TObjectIntMap;
+import gnu.trove.map.hash.TObjectIntHashMap;
+
+import android.opengl.GLES20;
+
 import org.spout.renderer.android.AndroidUtil;
 import org.spout.renderer.api.data.Uniform;
 import org.spout.renderer.api.data.UniformHolder;
@@ -190,6 +191,21 @@ public class GLES20Program extends Program {
     }
 
     @Override
+    public void setUniform(String name, float[] fs) {
+        checkCreated();
+        if (!uniforms.containsKey(name)) {
+            return;
+        }
+        final FloatBuffer floatBuffer = CausticUtil.createFloatBuffer(fs.length);
+        for (float f : fs) {
+            floatBuffer.put(f);
+        }
+        floatBuffer.flip();
+        GLES20.glUniform1fv(uniforms.get(name), fs.length, floatBuffer);
+        AndroidUtil.checkForGLESError();
+    }
+
+    @Override
     public void setUniform(String name, Vector2f v) {
         checkCreated();
         if (!uniforms.containsKey(name)) {
@@ -205,15 +221,13 @@ public class GLES20Program extends Program {
         if (!uniforms.containsKey(name)) {
             return;
         }
-        int count = 0;
         final FloatBuffer vectorBuffer = CausticUtil.createFloatBuffer(vs.length * 2);
         for (Vector2f v : vs) {
             vectorBuffer.put(v.getX());
             vectorBuffer.put(v.getY());
-            count++;
         }
         vectorBuffer.flip();
-        GLES20.glUniform2fv(uniforms.get(name), count, vectorBuffer);
+        GLES20.glUniform2fv(uniforms.get(name), vs.length, vectorBuffer);
         AndroidUtil.checkForGLESError();
     }
 
@@ -233,16 +247,14 @@ public class GLES20Program extends Program {
         if (!uniforms.containsKey(name)) {
             return;
         }
-        int count = 0;
         final FloatBuffer vectorBuffer = CausticUtil.createFloatBuffer(vs.length * 3);
         for (Vector3f v : vs) {
             vectorBuffer.put(v.getX());
             vectorBuffer.put(v.getY());
             vectorBuffer.put(v.getZ());
-            count++;
         }
         vectorBuffer.flip();
-        GLES20.glUniform3fv(uniforms.get(name), count, vectorBuffer);
+        GLES20.glUniform3fv(uniforms.get(name), vs.length, vectorBuffer);
         AndroidUtil.checkForGLESError();
     }
 

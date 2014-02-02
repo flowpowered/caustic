@@ -139,6 +139,14 @@ public abstract class Program extends Creatable implements GLVersioned {
     public abstract void setUniform(String name, float f);
 
     /**
+     * Sets a uniform float array in the shader to the desired value.
+     *
+     * @param name The name of the uniform to set
+     * @param fs The float array value
+     */
+    public abstract void setUniform(String name, float[] fs);
+
+    /**
      * Sets a uniform {@link com.flowpowered.math.vector.Vector2f} in the shader to the desired value.
      *
      * @param name The name of the uniform to set

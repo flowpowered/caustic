@@ -185,6 +185,47 @@ public abstract class Uniform {
     }
 
     /**
+     * Represents a uniform with a float array value.
+     */
+    public static class FloatArrayUniform extends Uniform {
+        private float[] value;
+
+        /**
+         * Constructs a new float array uniform from the name and the value.
+         *
+         * @param name The name of the uniform
+         * @param value Its value
+         */
+        public FloatArrayUniform(String name, float[] value) {
+            super(name);
+            this.value = value;
+        }
+
+        @Override
+        public void upload(Program program) {
+            program.setUniform(name, value);
+        }
+
+        /**
+         * Returns the value of the uniform.
+         *
+         * @return The value
+         */
+        public float[] get() {
+            return value;
+        }
+
+        /**
+         * Sets the value of the uniform.
+         *
+         * @param value The value
+         */
+        public void set(float[] value) {
+            this.value = value;
+        }
+    }
+
+    /**
      * Represents a uniform with a vector2 value.
      */
     public static class Vector2Uniform extends Uniform {
