@@ -352,45 +352,35 @@ public abstract class Texture extends Creatable implements GLVersioned {
      * An enum of sized texture component formats.
      */
     public static enum InternalFormat {
-        RGB8(0x8051, 3, 3, true, true, true, false, false, false), // GL11.GL_RGB8
-        RGBA8(0x8058, 4, 4, true, true, true, true, false, false), // GL11.GL_RGBA8
-        RGBA16(0x805B, 4, 8, true, true, true, true, false, false), // GL11.GL_RGBA16
-        DEPTH_COMPONENT16(0x81A5, 1, 2, false, false, false, false, true, false), // GL14.GL_DEPTH_COMPONENT16
-        DEPTH_COMPONENT24(0x81A6, 1, 3, false, false, false, false, true, false), // GL14.GL_DEPTH_COMPONENT24
-        DEPTH_COMPONENT32(0x81A7, 1, 4, false, false, false, false, true, false), // GL14.GL_DEPTH_COMPONENT32
-        R8(0x8229, 1, 1, true, false, false, false, false, false), // GL30.GL_R8
-        R16(0x822A, 1, 2, true, false, false, false, false, false), // GL30.GL_R16
-        RG8(0x822B, 2, 2, true, true, false, false, false, false), // GL30.GL_RG8
-        RG16(0x822C, 2, 4, true, true, false, false, false, false), // GL30.GL_RG16
-        R16F(0x822D, 1, 2, true, false, false, false, false, true), // GL30.GL_R16F
-        R32F(0x822E, 1, 4, true, false, false, false, false, true), // GL30.GL_R32F
-        RG16F(0x822F, 2, 4, true, true, false, false, false, true), // GL30.GL_RG16F
-        RG32F(0x8230, 2, 8, true, true, false, false, false, true), // GL30.GL_RG32F
-        RGBA32F(0x8814, 4, 16, true, true, true, true, false, true), // GL30.GL_RGBA32F
-        RGB32F(0x8815, 3, 12, true, true, true, false, false, true), // GL30.GL_RGB32F
-        RGBA16F(0x881A, 4, 8, true, true, true, true, false, true), // GL30.GL_RGBA16F
-        RGB16F(0x881B, 3, 6, true, true, true, false, false, true); // GL30.GL_RGB16F
+        RGB8(0x8051, Format.RGB, 3, false), // GL11.GL_RGB8
+        RGBA8(0x8058, Format.RGBA, 4, false), // GL11.GL_RGBA8
+        RGBA16(0x805B, Format.RGBA, 8, false), // GL11.GL_RGBA16
+        DEPTH_COMPONENT16(0x81A5, Format.DEPTH, 2, false), // GL14.GL_DEPTH_COMPONENT16
+        DEPTH_COMPONENT24(0x81A6, Format.DEPTH, 3, false), // GL14.GL_DEPTH_COMPONENT24
+        DEPTH_COMPONENT32(0x81A7, Format.DEPTH, 4, false), // GL14.GL_DEPTH_COMPONENT32
+        R8(0x8229, Format.RED, 1, false), // GL30.GL_R8
+        R16(0x822A, Format.RED, 2, false), // GL30.GL_R16
+        RG8(0x822B, Format.RG, 2, false), // GL30.GL_RG8
+        RG16(0x822C, Format.RG, 4, false), // GL30.GL_RG16
+        R16F(0x822D, Format.RED, 2, true), // GL30.GL_R16F
+        R32F(0x822E, Format.RED, 4, true), // GL30.GL_R32F
+        RG16F(0x822F, Format.RG, 4, true), // GL30.GL_RG16F
+        RG32F(0x8230, Format.RGB, 8, true), // GL30.GL_RG32F
+        RGBA32F(0x8814, Format.RGBA, 16, true), // GL30.GL_RGBA32F
+        RGB32F(0x8815, Format.RGB, 12, true), // GL30.GL_RGB32F
+        RGBA16F(0x881A, Format.RGBA, 8, true), // GL30.GL_RGBA16F
+        RGB16F(0x881B, Format.RGB, 6, true); // GL30.GL_RGB16F
         private final int glConstant;
-        private final int components;
+        private final Format format;
         private final int bytes;
         private final int bytesPerComponent;
-        private final boolean hasRed;
-        private final boolean hasGreen;
-        private final boolean hasBlue;
-        private final boolean hasAlpha;
-        private final boolean hasDepth;
         private final boolean floatBased;
 
-        private InternalFormat(int glConstant, int components, int bytes, boolean hasRed, boolean hasGreen, boolean hasBlue, boolean hasAlpha, boolean hasDepth, boolean floatBased) {
+        private InternalFormat(int glConstant, Format format, int bytes, boolean floatBased) {
             this.glConstant = glConstant;
-            this.components = components;
+            this.format = format;
             this.bytes = bytes;
-            bytesPerComponent = bytes / components;
-            this.hasRed = hasRed;
-            this.hasGreen = hasGreen;
-            this.hasBlue = hasBlue;
-            this.hasAlpha = hasAlpha;
-            this.hasDepth = hasDepth;
+            bytesPerComponent = bytes / format.getComponentCount();
             this.floatBased = floatBased;
         }
 
@@ -404,12 +394,21 @@ public abstract class Texture extends Creatable implements GLVersioned {
         }
 
         /**
+         * Returns the format associated to this internal format
+         *
+         * @return The associated format
+         */
+        public Format getFormat() {
+            return format;
+        }
+
+        /**
          * Returns the number of components in the format.
          *
          * @return The number of components
          */
         public int getComponentCount() {
-            return components;
+            return format.getComponentCount();
         }
 
         /**
@@ -436,7 +435,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
          * @return True if a red component is present
          */
         public boolean hasRed() {
-            return hasRed;
+            return format.hasRed();
         }
 
         /**
@@ -445,7 +444,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
          * @return True if a green component is present
          */
         public boolean hasGreen() {
-            return hasGreen;
+            return format.hasGreen();
         }
 
         /**
@@ -454,7 +453,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
          * @return True if a blue component is present
          */
         public boolean hasBlue() {
-            return hasBlue;
+            return format.hasBlue();
         }
 
         /**
@@ -463,7 +462,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
          * @return True if an alpha component is present
          */
         public boolean hasAlpha() {
-            return hasAlpha;
+            return format.hasAlpha();
         }
 
         /**
@@ -472,7 +471,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
          * @return True if a depth component is present
          */
         public boolean hasDepth() {
-            return hasDepth;
+            return format.hasDepth();
         }
 
         /**
