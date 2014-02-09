@@ -95,6 +95,15 @@ public abstract class Texture extends Creatable implements GLVersioned {
     }
 
     /**
+     * Returns the texture's format
+     *
+     * @return the format
+     */
+    public Format getFormat() {
+        return format;
+    }
+
+    /**
      * Sets the texture's format.
      *
      * @param format The format to set
@@ -104,6 +113,15 @@ public abstract class Texture extends Creatable implements GLVersioned {
             throw new IllegalArgumentException("Format cannot be null");
         }
         this.format = format;
+    }
+
+    /**
+     * Returns the texture's internal format.
+     *
+     * @return The internal format
+     */
+    public InternalFormat getInternalFormat() {
+        return internalFormat;
     }
 
     /**
