@@ -28,7 +28,6 @@ package org.spout.renderer.lwjgl.gl21;
 
 import java.nio.IntBuffer;
 import java.util.Arrays;
-import java.util.Map.Entry;
 
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
@@ -50,6 +49,8 @@ import org.spout.renderer.lwjgl.LWJGLUtil;
  * @see FrameBuffer
  */
 public class GL21FrameBuffer extends FrameBuffer {
+    private final TIntSet outputBuffers = new TIntHashSet();
+
     /**
      * Constructs a new frame buffer for OpenGL 2.1. If no EXT extension for frame buffers is available, an exception is thrown.
      *
@@ -66,28 +67,91 @@ public class GL21FrameBuffer extends FrameBuffer {
         // Generate and bind the frame buffer
         id = EXTFramebufferObject.glGenFramebuffersEXT();
         EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, id);
-        // Track the color attachments to output for later use
-        final TIntSet outputBuffers = new TIntHashSet();
-        // Attach the textures
-        for (Entry<AttachmentPoint, Texture> entry : textures.entrySet()) {
-            final AttachmentPoint point = entry.getKey();
-            final Texture texture = entry.getValue();
-            texture.checkCreated();
-            EXTFramebufferObject.glFramebufferTexture2DEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, point.getGLConstant(), GL11.GL_TEXTURE_2D, texture.getID(), 0);
-            if (point.isColor()) {
-                outputBuffers.add(point.getGLConstant());
-            }
+        // Disable input buffers
+        GL11.glReadBuffer(GL11.GL_NONE);
+        // Unbind the frame buffer
+        EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0);
+        // Update the state
+        super.create();
+        // Check for errors
+        LWJGLUtil.checkForGLError();
+    }
+
+    @Override
+    public void destroy() {
+        checkCreated();
+        // Unbind and delete the frame buffer
+        EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0);
+        EXTFramebufferObject.glDeleteFramebuffersEXT(id);
+        // Clear output buffers
+        outputBuffers.clear();
+        // Update the state
+        super.destroy();
+        // Check for errors
+        LWJGLUtil.checkForGLError();
+    }
+
+    @Override
+    public void attach(AttachmentPoint point, Texture texture) {
+        texture.checkCreated();
+        CausticUtil.checkVersion(this, texture);
+        // Bind the frame buffer
+        EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, id);
+        // Attach the texture
+        EXTFramebufferObject.glFramebufferTexture2DEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, point.getGLConstant(), GL11.GL_TEXTURE_2D, texture.getID(), 0);
+        // Add it to the color outputs if it's a color type
+        if (point.isColor()) {
+            outputBuffers.add(point.getGLConstant());
         }
-        // Attach the render buffers
-        for (Entry<AttachmentPoint, RenderBuffer> entry : buffers.entrySet()) {
-            final AttachmentPoint point = entry.getKey();
-            final RenderBuffer buffer = entry.getValue();
-            buffer.checkCreated();
-            EXTFramebufferObject.glFramebufferRenderbufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, point.getGLConstant(), EXTFramebufferObject.GL_RENDERBUFFER_EXT, buffer.getID());
-            if (point.isColor()) {
-                outputBuffers.add(point.getGLConstant());
-            }
+        // Update the list of output buffers
+        updateOutputBuffers();
+        // Unbind the frame buffer
+        EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0);
+        // Check for errors
+        LWJGLUtil.checkForGLError();
+    }
+
+    @Override
+    public void attach(AttachmentPoint point, RenderBuffer buffer) {
+        checkCreated();
+        CausticUtil.checkVersion(this, buffer);
+        buffer.checkCreated();
+        // Bind the frame buffer
+        EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, id);
+        // Attach the render buffer
+        EXTFramebufferObject.glFramebufferRenderbufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, point.getGLConstant(), EXTFramebufferObject.GL_RENDERBUFFER_EXT, buffer.getID());
+        // Add it to the color outputs if it's a color type
+        if (point.isColor()) {
+            outputBuffers.add(point.getGLConstant());
         }
+        // Update the list of output buffers
+        updateOutputBuffers();
+        // Unbind the frame buffer
+        EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0);
+        // Check for errors
+        LWJGLUtil.checkForGLError();
+    }
+
+    @Override
+    public void detach(AttachmentPoint point) {
+        checkCreated();
+        // Bind the frame buffer
+        EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, id);
+        // Detach the render buffer or texture
+        EXTFramebufferObject.glFramebufferRenderbufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, point.getGLConstant(), EXTFramebufferObject.GL_RENDERBUFFER_EXT, 0);
+        // Remove it from the color outputs if it's a color type
+        if (point.isColor()) {
+            outputBuffers.remove(point.getGLConstant());
+        }
+        // Update the list of output buffers
+        updateOutputBuffers();
+        // Unbind the frame buffer
+        EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0);
+        // Check for errors
+        LWJGLUtil.checkForGLError();
+    }
+
+    private void updateOutputBuffers() {
         // Set the output to the proper buffers
         if (outputBuffers.isEmpty()) {
             // No color to output
@@ -103,34 +167,19 @@ public class GL21FrameBuffer extends FrameBuffer {
             buffer.flip();
             GL20.glDrawBuffers(buffer);
         }
-        // Disable input buffers
-        GL11.glReadBuffer(GL11.GL_NONE);
-        // Check for success
-        if (EXTFramebufferObject.glCheckFramebufferStatusEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT) != EXTFramebufferObject.GL_FRAMEBUFFER_COMPLETE_EXT) {
-            System.out.println(Integer.toHexString(EXTFramebufferObject.glCheckFramebufferStatusEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT)));
-            throw new IllegalStateException("Failed to create the frame buffer");
-        }
-        // Unbind the frame buffer
-        EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0);
-        // Update the state
-        super.create();
-        // Check for errors
-        LWJGLUtil.checkForGLError();
     }
 
     @Override
-    public void destroy() {
-        checkCreated();
-        // Unbind and delete the frame buffer
+    public boolean isComplete() {
+        // Bind the frame buffer
+        EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, id);
+        // Fetch the status and compare to the complete enum value
+        final boolean complete = EXTFramebufferObject.glCheckFramebufferStatusEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT) == EXTFramebufferObject.GL_FRAMEBUFFER_COMPLETE_EXT;
+        // Unbind the frame buffer
         EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0);
-        EXTFramebufferObject.glDeleteFramebuffersEXT(id);
-        // Release some resources
-        textures.clear();
-        buffers.clear();
-        // Update the state
-        super.destroy();
         // Check for errors
         LWJGLUtil.checkForGLError();
+        return complete;
     }
 
     @Override
@@ -145,6 +194,7 @@ public class GL21FrameBuffer extends FrameBuffer {
     @Override
     public void unbind() {
         checkCreated();
+        // Unbind the frame buffer
         EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0);
         // Check for errors
         LWJGLUtil.checkForGLError();

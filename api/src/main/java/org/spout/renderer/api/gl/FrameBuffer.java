@@ -26,22 +26,15 @@
  */
 package org.spout.renderer.api.gl;
 
-import java.util.EnumMap;
-import java.util.Map;
-
 import org.spout.renderer.api.Creatable;
 import org.spout.renderer.api.GLVersioned;
-import org.spout.renderer.api.util.CausticUtil;
 
 /**
- * Represents an OpenGL frame buffer. A frame buffer can be assigned to a render list. When assigned, all models in the list will be rendered to the frame buffer, instead of the screen. This is meant
- * for advanced rendering techniques such as shadow mapping and screen space ambient occlusion (SSAO).
+ * Represents an OpenGL frame buffer. A frame buffer can be bound before rendering to redirect the output to textures instead of the screen. This is meant for advanced rendering techniques such as
+ * shadow mapping and screen space ambient occlusion (SSAO).
  */
 public abstract class FrameBuffer extends Creatable implements GLVersioned {
     protected int id;
-    // The attached texture and render buffers
-    protected final Map<AttachmentPoint, Texture> textures = new EnumMap<>(AttachmentPoint.class);
-    protected final Map<AttachmentPoint, RenderBuffer> buffers = new EnumMap<>(AttachmentPoint.class);
 
     @Override
     public void destroy() {
@@ -65,11 +58,7 @@ public abstract class FrameBuffer extends Creatable implements GLVersioned {
      * @param point The attachment point
      * @param texture The texture to attach
      */
-    public void attach(AttachmentPoint point, Texture texture) {
-        CausticUtil.checkVersion(this, texture);
-        buffers.remove(point);
-        textures.put(point, texture);
-    }
+    public abstract void attach(AttachmentPoint point, Texture texture);
 
     /**
      * Attaches the render buffer to the attachment point
@@ -77,11 +66,21 @@ public abstract class FrameBuffer extends Creatable implements GLVersioned {
      * @param point The attachment point
      * @param buffer The render buffer
      */
-    public void attach(AttachmentPoint point, RenderBuffer buffer) {
-        CausticUtil.checkVersion(this, buffer);
-        textures.remove(point);
-        buffers.put(point, buffer);
-    }
+    public abstract void attach(AttachmentPoint point, RenderBuffer buffer);
+
+    /**
+     * Detaches the texture or render buffer from the attachment point
+     *
+     * @param point The attachment point
+     */
+    public abstract void detach(AttachmentPoint point);
+
+    /**
+     * Returns true if the frame buffer is complete, false if otherwise.
+     *
+     * @return Whether or not the frame buffer is complete
+     */
+    public abstract boolean isComplete();
 
     /**
      * Gets the ID for this frame buffer as assigned by OpenGL.
