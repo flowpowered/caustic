@@ -26,7 +26,7 @@
  */
 package org.spout.renderer.api.util;
 
-import com.flowpowered.math.vector.Vector2f;
+import com.flowpowered.math.vector.Vector2i;
 
 /**
  * A simple mutable rectangle object, positioned in 2D space.
@@ -47,8 +47,8 @@ public class Rectangle {
      *
      * @param size The (width, height) vector
      */
-    public Rectangle(Vector2f size) {
-        this(size.getFloorX(), size.getFloorY());
+    public Rectangle(Vector2i size) {
+        this(size.getX(), size.getY());
     }
 
     /**
@@ -67,8 +67,8 @@ public class Rectangle {
      * @param position The (x, y) vector
      * @param size The (width, height) vector
      */
-    public Rectangle(Vector2f position, Vector2f size) {
-        this(position.getFloorX(), position.getFloorY(), size.getFloorX(), size.getFloorY());
+    public Rectangle(Vector2i position, Vector2i size) {
+        this(position.getX(), position.getY(), size.getX(), size.getY());
     }
 
     /**
@@ -105,6 +105,15 @@ public class Rectangle {
     }
 
     /**
+     * Returns the position.
+     *
+     * @return The position
+     */
+    public Vector2i getPosition() {
+        return new Vector2i(x, y);
+    }
+
+    /**
      * Returns the width.
      *
      * @return The width
@@ -120,6 +129,15 @@ public class Rectangle {
      */
     public int getHeight() {
         return height;
+    }
+
+    /**
+     * Returns the dimensions.
+     *
+     * @return The size
+     */
+    public Vector2i getSize() {
+        return new Vector2i(width, height);
     }
 
     /**
@@ -161,6 +179,15 @@ public class Rectangle {
     /**
      * Sets the position coordinates.
      *
+     * @param position The position
+     */
+    public void setPosition(Vector2i position) {
+        setPosition(position.getX(), position.getY());
+    }
+
+    /**
+     * Sets the position coordinates.
+     *
      * @param x The x coordinate
      * @param y The y coordinate
      */
@@ -172,12 +199,31 @@ public class Rectangle {
     /**
      * Sets the dimensions.
      *
+     * @param size The size
+     */
+    public void setSize(Vector2i size) {
+        setSize(size.getX(), size.getY());
+    }
+
+    /**
+     * Sets the dimensions.
+     *
      * @param width The width
      * @param height The height
      */
     public void setSize(int width, int height) {
         setWidth(width);
         setHeight(height);
+    }
+
+    /**
+     * Sets all the values.
+     *
+     * @param position The position
+     * @param size The size
+     */
+    public void set(Vector2i position, Vector2i size) {
+        set(position.getX(), position.getY(), size.getX(), size.getY());
     }
 
     /**
