@@ -335,11 +335,10 @@ public class StringModel extends Model {
         // Dispose of the image graphics
         graphics.dispose();
         // Generate the texture
-        texture.setFormat(Format.RGBA);
-        texture.setImageData((ByteBuffer) CausticUtil.getImageData(image, Format.RGBA).flip(), image.getWidth(), image.getHeight());
-        texture.setMagFilter(FilterMode.LINEAR);
-        texture.setMinFilter(FilterMode.LINEAR);
         texture.create();
+        texture.setFormat(Format.RGBA);
+        texture.setFilters(FilterMode.NEAREST, FilterMode.NEAREST);
+        texture.setImageData((ByteBuffer) CausticUtil.getImageData(image, Format.RGBA).flip(), width, height);
         return texture;
     }
 

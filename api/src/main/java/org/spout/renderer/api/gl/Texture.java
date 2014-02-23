@@ -34,36 +34,13 @@ import org.spout.renderer.api.data.Color;
 import org.spout.renderer.api.data.VertexAttribute.DataType;
 
 /**
- * Represents a texture for OpenGL. Image data can be set with one of the <code>setImageData(...)</code> methods before creation, but this is not obligatory. This results in an empty texture, with an
- * undefined content. This is mostly used for frame buffers.
+ * Represents a texture for OpenGL. Image data and various parameters can be set after creation. Image data should be set last.
  */
 public abstract class Texture extends Creatable implements GLVersioned {
     protected int id = 0;
-    // The format
-    protected Format format = Format.RGB;
-    protected InternalFormat internalFormat = null;
-    protected DataType type = DataType.UNSIGNED_BYTE;
-    // Wrapping modes for s and t
-    protected WrapMode wrapT = WrapMode.REPEAT;
-    protected WrapMode wrapS = WrapMode.REPEAT;
-    // Minimisation and magnification modes
-    protected FilterMode minFilter = FilterMode.NEAREST;
-    protected FilterMode magFilter = FilterMode.NEAREST;
-    // Anisotropic filtering
-    protected float anisotropicFiltering = 0;
-    // Compare modes for PCF
-    protected CompareMode compareMode = null;
-    // Border color when sampling outside the textures for certain wrap modes
-    protected Color borderColor = null;
-    // The texture image data
-    protected ByteBuffer imageData;
-    // Texture image dimensions
-    protected int width;
-    protected int height;
 
     @Override
     public void create() {
-        imageData = null;
         super.create();
     }
 
@@ -95,173 +72,120 @@ public abstract class Texture extends Creatable implements GLVersioned {
     }
 
     /**
+     * Sets the texture's format. The type will be {@link org.spout.renderer.api.data.VertexAttribute.DataType#BYTE}.
+     *
+     * @param format The format
+     */
+    public void setFormat(Format format) {
+        setFormat(format, null);
+    }
+
+    /**
+     * Sets the texture's format and internal format. The type will be {@link org.spout.renderer.api.data.VertexAttribute.DataType#BYTE}.
+     *
+     * @param format The format
+     * @param internalFormat The internal format
+     */
+    public void setFormat(Format format, InternalFormat internalFormat) {
+        setFormat(format, internalFormat, DataType.UNSIGNED_BYTE);
+    }
+
+    /**
+     * Sets the texture's format, internal format and type.
+     *
+     * @param format The format
+     * @param internalFormat The internal format
+     * @param type The data type
+     */
+    public abstract void setFormat(Format format, InternalFormat internalFormat, DataType type);
+
+    /**
      * Returns the texture's format
      *
      * @return the format
      */
-    public Format getFormat() {
-        return format;
-    }
-
-    /**
-     * Sets the texture's format.
-     *
-     * @param format The format to set
-     */
-    public void setFormat(Format format) {
-        if (format == null) {
-            throw new IllegalArgumentException("Format cannot be null");
-        }
-        this.format = format;
-    }
+    public abstract Format getFormat();
 
     /**
      * Returns the texture's internal format.
      *
      * @return The internal format
      */
-    public InternalFormat getInternalFormat() {
-        return internalFormat;
-    }
+    public abstract InternalFormat getInternalFormat();
 
     /**
-     * Sets the texture's internal format. Set to null to use the un-sized format instead.
+     * Returns the texture's component type.
      *
-     * @param internalFormat The internal format to set
+     * @return The component type
      */
-    public void setInternalFormat(InternalFormat internalFormat) {
-        this.internalFormat = internalFormat;
-    }
+    public abstract DataType getComponentType();
 
     /**
-     * Sets the value for anisotropic filtering. A value smaller or equal to zero is considered as no filtering. Note that this is EXT based and might not be supported on all hardware.
+     * Sets the value for anisotropic filtering. Must be greater than zero. Note that this is EXT based and might not be supported on all hardware.
      *
      * @param value The anisotropic filtering value
      */
-    public void setAnisotropicFiltering(float value) {
-        this.anisotropicFiltering = value;
-    }
+    public abstract void setAnisotropicFiltering(float value);
 
     /**
-     * Sets the texture's data type.
+     * Sets the horizontal and vertical texture wraps.
      *
-     * @param type The type to set
+     * @param horizontalWrap The horizontal wrap
+     * @param verticalWrap The vertical wrap
      */
-    public void setComponentType(DataType type) {
-        if (type == null) {
-            throw new IllegalArgumentException("Type cannot be null");
-        }
-        this.type = type;
-    }
+    public abstract void setWraps(WrapMode horizontalWrap, WrapMode verticalWrap);
 
     /**
-     * Sets the horizontal texture wrap.
-     *
-     * @param wrapS Horizontal texture wrap
-     */
-    public void setWrapS(WrapMode wrapS) {
-        if (wrapS == null) {
-            throw new IllegalArgumentException("Wrap cannot be null");
-        }
-        this.wrapS = wrapS;
-    }
-
-    /**
-     * Sets the vertical texture wrap.
-     *
-     * @param wrapT Vertical texture wrap
-     */
-    public void setWrapT(WrapMode wrapT) {
-        if (wrapT == null) {
-            throw new IllegalArgumentException("Wrap cannot be null");
-        }
-        this.wrapT = wrapT;
-    }
-
-    /**
-     * Sets the texture's min filter.
+     * Sets the texture's min and mag filters. The mag filter cannot require mipmap generation.
      *
      * @param minFilter The min filter
-     */
-    public void setMinFilter(FilterMode minFilter) {
-        if (minFilter == null) {
-            throw new IllegalArgumentException("Filter cannot be null");
-        }
-        this.minFilter = minFilter;
-    }
-
-    /**
-     * Sets the texture's mag filter. Filters that require mipmaps generation cannot be used here.
-     *
      * @param magFilter The mag filter
      */
-    public void setMagFilter(FilterMode magFilter) {
-        if (magFilter == null) {
-            throw new IllegalArgumentException("Filter cannot be null");
-        }
-        if (magFilter.needsMipMaps()) {
-            throw new IllegalArgumentException("Mimpmap filters cannot be used for texture magnification");
-        }
-        this.magFilter = magFilter;
-    }
+    public abstract void setFilters(FilterMode minFilter, FilterMode magFilter);
 
     /**
-     * Sets the compare mode. If null, this feature is deactivated. Use this for PCF with shadow samplers.
+     * Sets the compare mode.
      *
      * @param compareMode The compare mode
      */
-    public void setCompareMode(CompareMode compareMode) {
-        this.compareMode = compareMode;
-    }
+    public abstract void setCompareMode(CompareMode compareMode);
 
     /**
-     * Sets the border color. If null, the default OpenGL border color is used.
+     * Sets the border color.
      *
      * @param borderColor The border color
      */
-    public void setBorderColor(Color borderColor) {
-        this.borderColor = borderColor;
-    }
+    public abstract void setBorderColor(Color borderColor);
 
     /**
-     * Sets the texture's image data. The image data reading is done according the the set {@link org.spout.renderer.api.gl.Texture.Format}.
+     * Sets the texture's image data.
      *
      * @param imageData The image data
      * @param width The width of the image
      * @param height the height of the image
      */
-    public void setImageData(ByteBuffer imageData, int width, int height) {
-        this.imageData = imageData;
-        this.width = width;
-        this.height = height;
-    }
+    public abstract void setImageData(ByteBuffer imageData, int width, int height);
 
     /**
-     * Returns the image data. After creation is over, it returns null.
+     * Returns the image data.
      *
      * @return The image data
      */
-    public ByteBuffer getImageData() {
-        return imageData;
-    }
+    public abstract ByteBuffer getImageData();
 
     /**
      * Returns the width of the image.
      *
      * @return The image width
      */
-    public int getWidth() {
-        return width;
-    }
+    public abstract int getWidth();
 
     /**
      * Returns the height of the image.
      *
      * @return The image height
      */
-    public int getHeight() {
-        return height;
-    }
+    public abstract int getHeight();
 
     /**
      * An enum of texture component formats.
