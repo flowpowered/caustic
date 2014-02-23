@@ -56,6 +56,7 @@ public class GL32FrameBuffer extends FrameBuffer {
 
     @Override
     public void create() {
+        checkNotCreated();
         // Generate and bind the frame buffer
         id = GL30.glGenFramebuffers();
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, id);
@@ -127,6 +128,7 @@ public class GL32FrameBuffer extends FrameBuffer {
 
     @Override
     public void detach(AttachmentPoint point) {
+        checkCreated();
         // Bind the frame buffer
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, id);
         // Detach the render buffer
@@ -163,6 +165,7 @@ public class GL32FrameBuffer extends FrameBuffer {
 
     @Override
     public boolean isComplete() {
+        checkCreated();
         // Bind the frame buffer
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, id);
         // Fetch the status and compare to the complete enum value

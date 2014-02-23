@@ -64,6 +64,7 @@ public class GL21FrameBuffer extends FrameBuffer {
 
     @Override
     public void create() {
+        checkNotCreated();
         // Generate and bind the frame buffer
         id = EXTFramebufferObject.glGenFramebuffersEXT();
         EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, id);
@@ -93,6 +94,7 @@ public class GL21FrameBuffer extends FrameBuffer {
 
     @Override
     public void attach(AttachmentPoint point, Texture texture) {
+        checkCreated();
         texture.checkCreated();
         CausticUtil.checkVersion(this, texture);
         // Bind the frame buffer
@@ -171,6 +173,7 @@ public class GL21FrameBuffer extends FrameBuffer {
 
     @Override
     public boolean isComplete() {
+        checkCreated();
         // Bind the frame buffer
         EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, id);
         // Fetch the status and compare to the complete enum value
