@@ -62,13 +62,24 @@ public abstract class Creatable {
     }
 
     /**
-     * Throws an exception is the resource hasn't been created yet.
+     * Throws an exception if the resource hasn't been created yet.
      *
      * @throws IllegalStateException if the resource hasn't been created
      */
     public void checkCreated() {
         if (!isCreated()) {
             throw new IllegalStateException("Resource has not been created yet");
+        }
+    }
+
+    /**
+     * Throws an exception if the resource has been created already.
+     *
+     * @throws IllegalStateException if the resource has been created
+     */
+    public void checkNotCreated() {
+        if (isCreated()) {
+            throw new IllegalStateException("Resource has been created already");
         }
     }
 }

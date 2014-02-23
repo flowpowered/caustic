@@ -55,9 +55,7 @@ public class GL21Context extends Context {
 
     @Override
     public void create() {
-        if (isCreated()) {
-            throw new IllegalStateException("Context has already been created");
-        }
+        checkNotCreated();
         // Attempt to create the display
         try {
             PixelFormat pixelFormat = new PixelFormat();
