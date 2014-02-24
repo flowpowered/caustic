@@ -309,8 +309,8 @@ public class StringModel extends Model {
         textureCoordsAttribute.setData(textureCoords);
         // Set the vertex data in the model
         final VertexArray vertexArray = factory.createVertexArray();
-        vertexArray.setData(data);
         vertexArray.create();
+        vertexArray.setData(data);
         return vertexArray;
     }
 
