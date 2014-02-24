@@ -79,18 +79,22 @@ public class GL32VertexArray extends VertexArray {
         checkCreated();
         // Unbind any bound buffer
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-        // Unbind and delete the indices buffer
+        // Unbind the indices buffer
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
+        // Delete the indices buffer
         GL15.glDeleteBuffers(indicesBufferID);
-        // Bind the vao for deletion
-        GL30.glBindVertexArray(id);
-        // Disable each attribute and delete its buffer
+        // Unbind the vao
+        GL30.glBindVertexArray(0);
+        // Delete the attribute buffers
         for (int attributeBufferID : attributeBufferIDs) {
             GL15.glDeleteBuffers(attributeBufferID);
         }
-        // Unbind the vao and delete it
-        GL30.glBindVertexArray(0);
+        // Delete the vao
         GL30.glDeleteVertexArrays(id);
+        // Reset the IDs and data
+        indicesBufferID = 0;
+        attributeBufferIDs = EMPTY_ARRAY;
+        attributeBufferSizes = EMPTY_ARRAY;
         // Update the state
         super.destroy();
         // Check for errors
@@ -150,7 +154,7 @@ public class GL32VertexArray extends VertexArray {
             final int bufferSize = newAttributeBufferSizes[i];
             // Get the new buffer size
             final int newBufferSize = attributeData.remaining();
-            // Bind the targer buffer
+            // Bind the target buffer
             GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, newAttributeBufferIDs[i]);
             // If the new count is greater than or 50% smaller than the old one, we'll reallocate the memory
             if (newBufferSize > bufferSize || newBufferSize <= bufferSize * 0.5) {

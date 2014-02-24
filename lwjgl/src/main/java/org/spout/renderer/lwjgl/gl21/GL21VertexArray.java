@@ -98,20 +98,20 @@ public class GL21VertexArray extends VertexArray {
         checkCreated();
         // Unbind any bound buffer
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-        // Unbind and delete indices buffer
+        // Unbind the indices buffer
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
+        // Delete the indices buffer
         GL15.glDeleteBuffers(indicesBufferID);
+        // Unbind the vao
         if (extension.has()) {
-            // Bind the vao for deletion
-            extension.glBindVertexArray(id);
+            extension.glBindVertexArray(0);
         }
         // Delete the attribute buffers
         for (int attributeBufferID : attributeBufferIDs) {
             GL15.glDeleteBuffers(attributeBufferID);
         }
         if (extension.has()) {
-            // Unbind the vao and delete it
-            extension.glBindVertexArray(0);
+            // Delete the vao
             extension.glDeleteVertexArrays(id);
         } else {
             // Else delete the attribute properties
@@ -119,6 +119,11 @@ public class GL21VertexArray extends VertexArray {
             attributeTypes = null;
             attributeNormalizing = null;
         }
+        // Reset the IDs and data
+        indicesBufferID = 0;
+        attributeBufferIDs = EMPTY_ARRAY;
+        attributeBufferSizes = EMPTY_ARRAY;
+        // Update the state
         super.destroy();
         // Check for errors
         LWJGLUtil.checkForGLError();
@@ -185,7 +190,7 @@ public class GL21VertexArray extends VertexArray {
             final int bufferSize = newAttributeBufferSizes[i];
             // Get the new buffer size
             final int newBufferSize = attributeData.remaining();
-            // Bind the targer buffer
+            // Bind the target buffer
             GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, newAttributeBufferIDs[i]);
             // If the new count is greater than or 50% smaller than the old one, we'll reallocate the memory
             if (newBufferSize > bufferSize || newBufferSize <= bufferSize * 0.5) {

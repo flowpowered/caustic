@@ -152,11 +152,11 @@ public class GL32FrameBuffer extends FrameBuffer {
             GL20.glDrawBuffers(GL11.GL_NONE);
         } else {
             // Keep track of the buffers to output
-            final IntBuffer buffer = CausticUtil.createIntBuffer(outputBuffers.size());
             final int[] outputBuffersArray = outputBuffers.toArray();
             // Sorting the array ensures that attachments are in order n, n + 1, n + 2...
             // This is important!
             Arrays.sort(outputBuffersArray);
+            final IntBuffer buffer = CausticUtil.createIntBuffer(outputBuffers.size());
             buffer.put(outputBuffersArray);
             buffer.flip();
             GL20.glDrawBuffers(buffer);

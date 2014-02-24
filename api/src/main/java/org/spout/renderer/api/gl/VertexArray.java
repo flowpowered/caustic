@@ -43,7 +43,7 @@ public abstract class VertexArray extends Creatable implements GLVersioned {
     }
 
     /**
-     * Sets the vertex data source to use.
+     * Sets the vertex data source to use. The indices offset is kept but maybe reduced if it doesn't fit inside the new data. The count is set to the size from the offset to the end of the data.
      *
      * @param vertexData The vertex data source
      */
@@ -65,7 +65,7 @@ public abstract class VertexArray extends Creatable implements GLVersioned {
 
     /**
      * Sets the number of indices to render during each draw call, starting at the offset set by {@link #setIndicesOffset(int)}. Setting this to a value smaller than zero results in rendering of the
-     * whole list. If the value is larger than the list starting at the offset, it will be maxed to that value.
+     * whole list. If the value is larger than the list (starting at the offset), it will be maxed to that value.
      *
      * @param count The number of indices
      */
