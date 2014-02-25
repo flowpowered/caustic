@@ -73,7 +73,7 @@ public class Material implements Comparable<Material> {
                 final int unit = iterator.key();
                 iterator.value().bind(unit);
                 // Bind the shader sampler uniform to the unit
-                program.bindTextureUniform(unit);
+                program.bindSampler(unit);
             }
         }
     }

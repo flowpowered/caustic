@@ -29,6 +29,7 @@ package org.spout.renderer.lwjgl.gl21;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import com.flowpowered.math.matrix.Matrix2f;
@@ -40,7 +41,9 @@ import com.flowpowered.math.vector.Vector4f;
 
 import gnu.trove.impl.Constants;
 import gnu.trove.iterator.TObjectIntIterator;
+import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.TObjectIntMap;
+import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 
 import org.lwjgl.opengl.GL11;
@@ -49,7 +52,7 @@ import org.lwjgl.opengl.GL20;
 import org.spout.renderer.api.data.Uniform;
 import org.spout.renderer.api.data.UniformHolder;
 import org.spout.renderer.api.gl.Program;
-import org.spout.renderer.api.gl.Shader.ShaderType;
+import org.spout.renderer.api.gl.Shader;
 import org.spout.renderer.api.util.CausticUtil;
 import org.spout.renderer.lwjgl.LWJGLUtil;
 
@@ -59,6 +62,11 @@ import org.spout.renderer.lwjgl.LWJGLUtil;
  * @see Program
  */
 public class GL21Program extends Program {
+    private final Set<Shader> shaders = new HashSet<>();
+    // Map of the attribute names to their vao index (optional for GL30 as they can be defined in the shader instead)
+    private final TObjectIntMap<String> attributeLayouts = new TObjectIntHashMap<>();
+    // Map of the texture units to their names
+    private final TIntObjectMap<String> textureLayouts = new TIntObjectHashMap<>();
     // Map of the uniform names to their locations
     private final TObjectIntMap<String> uniforms = new TObjectIntHashMap<>(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, -1);
 
@@ -67,29 +75,70 @@ public class GL21Program extends Program {
 
     @Override
     public void create() {
-        if (isCreated()) {
-            throw new IllegalStateException("Program has already been created");
-        }
-        if (!shaders.containsKey(ShaderType.VERTEX)) {
-            throw new IllegalStateException("No source set for vertex shader");
-        }
-        if (!shaders.containsKey(ShaderType.FRAGMENT)) {
-            throw new IllegalStateException("No source set for fragment shader");
-        }
+        checkNotCreated();
         // Create program
         id = GL20.glCreateProgram();
-        // Create the vertex Shader
-        GL20.glAttachShader(id, shaders.get(ShaderType.VERTEX).getID());
-        // Create the fragment Shader
-        GL20.glAttachShader(id, shaders.get(ShaderType.FRAGMENT).getID());
-        // If the attribute layout has been setup, apply it
-        if (attributeLayouts != null && !attributeLayouts.isEmpty()) {
-            final TObjectIntIterator<String> iterator = attributeLayouts.iterator();
-            while (iterator.hasNext()) {
-                iterator.advance();
-                // Bind the index to the name
-                GL20.glBindAttribLocation(id, iterator.value(), iterator.key());
-            }
+        // Update the state
+        super.create();
+    }
+
+    @Override
+    public void destroy() {
+        checkCreated();
+        // Delete the program
+        GL20.glDeleteProgram(id);
+        // Check for errors
+        LWJGLUtil.checkForGLError();
+        // Clear the data
+        shaders.clear();
+        attributeLayouts.clear();
+        textureLayouts.clear();
+        uniforms.clear();
+        // Update the state
+        super.destroy();
+    }
+
+    @Override
+    public void attachShader(Shader shader) {
+        checkCreated();
+        // Attach the shader
+        GL20.glAttachShader(id, shader.getID());
+        // Check for errors
+        LWJGLUtil.checkForGLError();
+        // Add the shader to the set
+        shaders.add(shader);
+        // Add all attribute and texture layouts
+        attributeLayouts.putAll(shader.getAttributeLayouts());
+        textureLayouts.putAll(shader.getTextureLayouts());
+    }
+
+    @Override
+    public void detachShader(Shader shader) {
+        checkCreated();
+        // Attach the shader
+        GL20.glDetachShader(id, shader.getID());
+        // Check for errors
+        LWJGLUtil.checkForGLError();
+        // Remove the shader from the set
+        shaders.remove(shader);
+        // Remove all attribute and texture layouts
+        for (String attribute : shader.getAttributeLayouts().keySet()) {
+            attributeLayouts.remove(attribute);
+        }
+        for (int unit : shader.getTextureLayouts().keys()) {
+            textureLayouts.remove(unit);
+        }
+    }
+
+    @Override
+    public void link() {
+        checkCreated();
+        // Add the attribute layouts to the program state
+        final TObjectIntIterator<String> iterator = attributeLayouts.iterator();
+        while (iterator.hasNext()) {
+            iterator.advance();
+            // Bind the index to the name
+            GL20.glBindAttribLocation(id, iterator.value(), iterator.key());
         }
         // Link program
         GL20.glLinkProgram(id);
@@ -97,9 +146,17 @@ public class GL21Program extends Program {
         if (GL20.glGetProgrami(id, GL20.GL_LINK_STATUS) == GL11.GL_FALSE) {
             throw new IllegalStateException("Program could not be linked\n" + GL20.glGetProgramInfoLog(id, 1000));
         }
+        // TODO: enable only for debug, and don't throw an exception, just warn
+        /*
         // Validate program
         GL20.glValidateProgram(id);
+        // Check program validation status
+        if (GL20.glGetProgrami(id, GL20.GL_VALIDATE_STATUS) == GL11.GL_FALSE) {
+            throw new IllegalStateException("Program could not be validated\n" + GL20.glGetProgramInfoLog(id, 1000));
+        }
+        */
         // Load uniforms
+        uniforms.clear();
         final int uniformCount = GL20.glGetProgrami(id, GL20.GL_ACTIVE_UNIFORMS);
         for (int i = 0; i < uniformCount; i++) {
             final ByteBuffer nameBuffer = CausticUtil.createByteBuffer(256);
@@ -111,35 +168,31 @@ public class GL21Program extends Program {
             final String name = new String(nameBytes).trim().replaceFirst("\\[\\d+\\]", "");
             uniforms.put(name, GL20.glGetUniformLocation(id, name));
         }
-        super.create();
-        LWJGLUtil.checkForGLError();
-    }
-
-    @Override
-    public void destroy() {
-        checkCreated();
-        GL20.glDeleteProgram(id);
-        uniforms.clear();
-        super.destroy();
+        // Check for errors
         LWJGLUtil.checkForGLError();
     }
 
     @Override
     public void bind() {
         checkCreated();
+        // Bind the program
         GL20.glUseProgram(id);
+        // Check for errors
         LWJGLUtil.checkForGLError();
     }
 
     @Override
     public void unbind() {
         checkCreated();
+        // Unbind the program
         GL20.glUseProgram(0);
+        // Check for errors
+        LWJGLUtil.checkForGLError();
     }
 
     @Override
-    public void bindTextureUniform(int unit) {
-        if (textureLayouts == null || !textureLayouts.containsKey(unit)) {
+    public void bindSampler(int unit) {
+        if (!textureLayouts.containsKey(unit)) {
             throw new IllegalArgumentException("No texture layout has been set for the unit: " + unit);
         }
         setUniform(textureLayouts.get(unit), unit);
@@ -147,13 +200,11 @@ public class GL21Program extends Program {
 
     @Override
     public void upload(Uniform uniform) {
-        checkCreated();
         uniform.upload(this);
     }
 
     @Override
     public void upload(UniformHolder uniforms) {
-        checkCreated();
         for (Uniform uniform : uniforms) {
             uniform.upload(this);
         }
@@ -306,6 +357,11 @@ public class GL21Program extends Program {
         buffer.flip();
         GL20.glUniformMatrix4(uniforms.get(name), false, buffer);
         LWJGLUtil.checkForGLError();
+    }
+
+    @Override
+    public Set<Shader> getShaders() {
+        return Collections.unmodifiableSet(shaders);
     }
 
     @Override
