@@ -53,6 +53,8 @@ public abstract class Shader extends Creatable implements GLVersioned {
      */
     public abstract void setSource(ShaderSource source);
 
+    public abstract void compile();
+
     /**
      * Gets the shader type.
      *
@@ -73,6 +75,10 @@ public abstract class Shader extends Creatable implements GLVersioned {
      * @return A map of the texture name to the layout index.
      */
     public abstract TIntObjectMap<String> getTextureLayouts();
+
+    public abstract void setAttributeLayout(String attribute, int layout);
+
+    public abstract void setTextureLayout(int unit, String sampler);
 
     /**
      * Gets the ID for this shader as assigned by OpenGL.
