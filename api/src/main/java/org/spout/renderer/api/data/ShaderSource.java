@@ -116,6 +116,10 @@ public class ShaderSource {
         return type;
     }
 
+    public void setType(ShaderType type) {
+        this.type = type;
+    }
+
     public TObjectIntMap<String> getAttributeLayouts() {
         return TCollections.unmodifiableMap(attributeLayouts);
     }
@@ -124,15 +128,11 @@ public class ShaderSource {
         return TCollections.unmodifiableMap(textureLayouts);
     }
 
-    public void setType(ShaderType type) {
-        this.type = type;
-    }
-
-    public void addAttributeLayout(String attribute, int layout) {
+    public void setAttributeLayout(String attribute, int layout) {
         attributeLayouts.put(attribute, layout);
     }
 
-    public void addTextureLayout(int unit, String sampler) {
+    public void setTextureLayout(int unit, String sampler) {
         textureLayouts.put(unit, sampler);
     }
 }
