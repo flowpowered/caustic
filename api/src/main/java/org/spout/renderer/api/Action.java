@@ -29,7 +29,8 @@ package org.spout.renderer.api;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.spout.renderer.api.data.Color;
+import com.flowpowered.math.vector.Vector4f;
+
 import org.spout.renderer.api.gl.Context;
 import org.spout.renderer.api.gl.Context.BlendFunction;
 import org.spout.renderer.api.gl.Context.Capability;
@@ -83,14 +84,14 @@ public abstract class Action {
      * An action that sets the color for clearing color buffers in the context.
      */
     public static class SetClearColorAction extends Action {
-        private final Color color;
+        private final Vector4f color;
 
         /**
          * Constructs a clear color setting action with the desired clearing color.
          *
          * @param color The clearing color
          */
-        public SetClearColorAction(Color color) {
+        public SetClearColorAction(Vector4f color) {
             this.color = color;
         }
 

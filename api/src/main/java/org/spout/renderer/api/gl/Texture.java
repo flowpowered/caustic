@@ -28,9 +28,10 @@ package org.spout.renderer.api.gl;
 
 import java.nio.ByteBuffer;
 
+import com.flowpowered.math.vector.Vector4f;
+
 import org.spout.renderer.api.Creatable;
 import org.spout.renderer.api.GLVersioned;
-import org.spout.renderer.api.data.Color;
 import org.spout.renderer.api.data.VertexAttribute.DataType;
 
 /**
@@ -150,7 +151,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
      *
      * @param borderColor The border color
      */
-    public abstract void setBorderColor(Color borderColor);
+    public abstract void setBorderColor(Vector4f borderColor);
 
     /**
      * Sets the texture's image data.

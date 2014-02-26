@@ -31,7 +31,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.spout.renderer.api.data.Uniform.BooleanUniform;
-import org.spout.renderer.api.data.Uniform.ColorUniform;
 import org.spout.renderer.api.data.Uniform.FloatUniform;
 import org.spout.renderer.api.data.Uniform.IntUniform;
 import org.spout.renderer.api.data.Uniform.Matrix2Uniform;
@@ -211,20 +210,6 @@ public class UniformHolder implements Iterable<Uniform> {
             return null;
         }
         return (Matrix4Uniform) uniform;
-    }
-
-    /**
-     * Returns a color uniform with the provided name, or null if non can be found, or if the found uniform is not of color type.
-     *
-     * @param name The name to lookup
-     * @return The uniform
-     */
-    public ColorUniform getColor(String name) {
-        final Uniform uniform = get(name);
-        if (!(uniform instanceof ColorUniform)) {
-            return null;
-        }
-        return (ColorUniform) uniform;
     }
 
     /**

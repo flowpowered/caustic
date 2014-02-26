@@ -556,45 +556,4 @@ public abstract class Uniform {
             this.value = value;
         }
     }
-
-    /**
-     * Represents a uniform with a color value.
-     */
-    public static class ColorUniform extends Uniform {
-        private Color value;
-
-        /**
-         * Constructs a new color uniform from the name and the value.
-         *
-         * @param name The name of the uniform
-         * @param value Its value
-         */
-        public ColorUniform(String name, Color value) {
-            super(name);
-            this.value = value;
-        }
-
-        @Override
-        public void upload(Program program) {
-            program.setUniform(name, value);
-        }
-
-        /**
-         * Returns the value of the uniform.
-         *
-         * @return The value
-         */
-        public Color get() {
-            return value;
-        }
-
-        /**
-         * Sets the value of the uniform.
-         *
-         * @param value The value
-         */
-        public void set(Color value) {
-            this.value = value;
-        }
-    }
 }

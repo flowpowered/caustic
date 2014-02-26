@@ -29,11 +29,11 @@ package org.spout.renderer.api.gl;
 import java.nio.ByteBuffer;
 
 import com.flowpowered.math.vector.Vector2i;
+import com.flowpowered.math.vector.Vector4f;
 
 import org.spout.renderer.api.Camera;
 import org.spout.renderer.api.Creatable;
 import org.spout.renderer.api.GLVersioned;
-import org.spout.renderer.api.data.Color;
 import org.spout.renderer.api.data.UniformHolder;
 import org.spout.renderer.api.gl.Texture.Format;
 import org.spout.renderer.api.util.CausticUtil;
@@ -162,7 +162,7 @@ public abstract class Context extends Creatable implements GLVersioned {
      *
      * @param color The clear color
      */
-    public abstract void setClearColor(Color color);
+    public abstract void setClearColor(Vector4f color);
 
     /**
      * Clears the currently bound buffer (either a frame buffer, or the front (screen) buffer if none are bound).

@@ -29,13 +29,14 @@ package org.spout.renderer.lwjgl.gl21;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
+import com.flowpowered.math.vector.Vector4f;
+
 import org.lwjgl.opengl.EXTTextureFilterAnisotropic;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.util.glu.GLU;
 
-import org.spout.renderer.api.data.Color;
 import org.spout.renderer.api.data.VertexAttribute.DataType;
 import org.spout.renderer.api.gl.Texture;
 import org.spout.renderer.api.util.CausticUtil;
@@ -192,7 +193,7 @@ public class GL21Texture extends Texture {
     }
 
     @Override
-    public void setBorderColor(Color borderColor) {
+    public void setBorderColor(Vector4f borderColor) {
         checkCreated();
         if (borderColor == null) {
             throw new IllegalArgumentException("Border color cannot be null");

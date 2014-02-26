@@ -29,6 +29,7 @@ package org.spout.renderer.lwjgl.gl21;
 import java.nio.ByteBuffer;
 
 import com.flowpowered.math.vector.Vector2i;
+import com.flowpowered.math.vector.Vector4f;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.ContextAttribs;
@@ -37,7 +38,6 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.PixelFormat;
 
-import org.spout.renderer.api.data.Color;
 import org.spout.renderer.api.gl.Context;
 import org.spout.renderer.api.gl.FrameBuffer;
 import org.spout.renderer.api.gl.Program;
@@ -162,10 +162,9 @@ public class GL21Context extends Context {
     }
 
     @Override
-    public void setClearColor(Color color) {
+    public void setClearColor(Vector4f color) {
         checkCreated();
-        Color normC = color.normalize();
-        GL11.glClearColor(normC.getRed(), normC.getGreen(), normC.getBlue(), normC.getAlpha());
+        GL11.glClearColor(color.getX(), color.getY(), color.getZ(), color.getW());
         // Check for errors
         LWJGLUtil.checkForGLError();
     }

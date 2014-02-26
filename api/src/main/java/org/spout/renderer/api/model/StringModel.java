@@ -40,6 +40,7 @@ import java.util.regex.Pattern;
 
 import com.flowpowered.math.GenericMath;
 import com.flowpowered.math.vector.Vector2f;
+import com.flowpowered.math.vector.Vector4f;
 
 import gnu.trove.impl.Constants;
 import gnu.trove.list.TFloatList;
@@ -53,7 +54,6 @@ import gnu.trove.map.hash.TCharIntHashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
 import org.spout.renderer.api.Material;
-import org.spout.renderer.api.data.Color;
 import org.spout.renderer.api.data.VertexAttribute;
 import org.spout.renderer.api.data.VertexAttribute.DataType;
 import org.spout.renderer.api.data.VertexData;
@@ -83,7 +83,7 @@ public class StringModel extends Model {
     private float pixelSize;
     private String rawString;
     private String string;
-    private final TIntObjectMap<Color> colorIndices = new TIntObjectHashMap<>();
+    private final TIntObjectMap<Vector4f> colorIndices = new TIntObjectHashMap<>();
 
     /**
      * Constructs a new string model from the provided one. The glyph indexes, offsets, padding and line heights are reused. The string and color information remain empty.
@@ -168,7 +168,7 @@ public class StringModel extends Model {
     @Override
     public void render() {
         final Program program = getMaterial().getProgram();
-        program.setUniform("fontColor", Color.WHITE);
+        program.setUniform("fontColor", CausticUtil.WHITE);
         program.setUniform("pixelSize", pixelSize);
         final VertexArray vertexArray = getVertexArray();
         // Remove the padding for the first glyph
@@ -182,7 +182,7 @@ public class StringModel extends Model {
                 continue;
             }
             // Look for a color code
-            final Color color = colorIndices.get(i);
+            final Vector4f color = colorIndices.get(i);
             if (color != null) {
                 // Upload the color
                 program.setUniform("fontColor", color);
@@ -227,7 +227,7 @@ public class StringModel extends Model {
             }
             // Add the color for the index and delete it from the string
             final String colorCode = matcher.group();
-            colorIndices.put(index, new Color(Long.decode(colorCode).intValue(), true));
+            colorIndices.put(index, CausticUtil.fromPackedARGB(Long.decode(colorCode).intValue()));
             final int length = colorCode.length();
             stringBuilder.delete(index, index + length);
             removedCount += length;

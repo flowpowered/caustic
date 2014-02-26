@@ -28,6 +28,8 @@ package org.spout.renderer.api;
 
 import java.util.Collection;
 
+import com.flowpowered.math.vector.Vector4f;
+
 import org.spout.renderer.api.Action.BindFrameBufferAction;
 import org.spout.renderer.api.Action.ClearBufferAction;
 import org.spout.renderer.api.Action.DisableCapabilitiesAction;
@@ -40,7 +42,6 @@ import org.spout.renderer.api.Action.SetDepthMaskAction;
 import org.spout.renderer.api.Action.SetViewPortAction;
 import org.spout.renderer.api.Action.UnbindFrameBufferAction;
 import org.spout.renderer.api.Action.UpdateDisplayAction;
-import org.spout.renderer.api.data.Color;
 import org.spout.renderer.api.gl.Context;
 import org.spout.renderer.api.gl.Context.BlendFunction;
 import org.spout.renderer.api.gl.Context.Capability;
@@ -89,7 +90,7 @@ public class Pipeline {
          * @param color The color to use for clearing buffers
          * @return The builder itself, for chained calls
          */
-        public PipelineBuilder useClearColor(Color color) {
+        public PipelineBuilder useClearColor(Vector4f color) {
             return doAction(new SetClearColorAction(color));
         }
 

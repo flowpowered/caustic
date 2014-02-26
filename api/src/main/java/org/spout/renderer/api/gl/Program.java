@@ -37,7 +37,6 @@ import com.flowpowered.math.vector.Vector4f;
 
 import org.spout.renderer.api.Creatable;
 import org.spout.renderer.api.GLVersioned;
-import org.spout.renderer.api.data.Color;
 import org.spout.renderer.api.data.Uniform;
 import org.spout.renderer.api.data.UniformHolder;
 
@@ -201,16 +200,6 @@ public abstract class Program extends Creatable implements GLVersioned {
      * @param m The matrix value
      */
     public abstract void setUniform(String name, Matrix4f m);
-
-    /**
-     * Sets a uniform {@link java.awt.Color} in the shader to the desired value.
-     *
-     * @param name The name of the uniform to set
-     * @param c The color value
-     */
-    public void setUniform(String name, Color c) {
-        setUniform(name, (Vector4f) c.normalize());
-    }
 
     /**
      * Returns the shaders that have been attached to this program.
