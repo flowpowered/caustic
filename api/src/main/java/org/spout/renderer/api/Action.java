@@ -244,7 +244,7 @@ public abstract class Action {
      * An action that enables the depth mask.
      */
     public static class SetDepthMaskAction extends Action {
-        private boolean value;
+        private final boolean value;
 
         /**
          * Constructs a new depth mask setting action with the desired depth mask status.
@@ -265,7 +265,7 @@ public abstract class Action {
      * An action that set the blending functions.
      */
     public static class SetBlendingFunctions extends Action {
-        private BlendFunction source, destination;
+        private final BlendFunction source, destination;
 
         /**
          * Constructs a new blending function setting action with the desired source and destination blending functions.

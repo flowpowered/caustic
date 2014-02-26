@@ -125,7 +125,7 @@ public class StringModel extends Model {
             throw new IllegalStateException("The window width must be greater than zero");
         }
         // Stores the first vertex index for each glyph
-        glyphIndexes = new TCharIntHashMap(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, (char) 0, -1);
+        glyphIndexes = new TCharIntHashMap(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, Character.MIN_VALUE, -1);
         // Stores the offset (width) of each glyph
         glyphOffsets = new TCharFloatHashMap();
         // Size of a pixel in screen coordinates

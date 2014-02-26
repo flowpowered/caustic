@@ -34,14 +34,11 @@ import com.flowpowered.math.vector.Vector3f;
  * Represents a camera with a projection, position and rotation, for rendering purposes.
  */
 public class Camera {
-    private static final Vector3f RIGHT = Vector3f.RIGHT;
-    private static final Vector3f UP = Vector3f.UP;
-    private static final Vector3f FORWARD = Vector3f.FORWARD.negate();
-    private Matrix4f projection = new Matrix4f();
-    private Vector3f position = new Vector3f(0, 0, 0);
-    private Quaternionf rotation = new Quaternionf();
-    private Matrix4f rotationMatrixInverse = new Matrix4f();
-    private Matrix4f viewMatrix = new Matrix4f();
+    private Matrix4f projection = Matrix4f.IDENTITY;
+    private Vector3f position = Vector3f.ZERO;
+    private Quaternionf rotation = Quaternionf.IDENTITY;
+    private Matrix4f rotationMatrixInverse = Matrix4f.IDENTITY;
+    private Matrix4f viewMatrix = Matrix4f.IDENTITY;
     private boolean updateViewMatrix = true;
 
     /**
@@ -49,7 +46,7 @@ public class Camera {
      *
      * @param projection The projection matrix
      */
-    public Camera(Matrix4f projection) {
+    private Camera(Matrix4f projection) {
         this.projection = projection;
     }
 
@@ -131,7 +128,7 @@ public class Camera {
      * @return The camera's right direction vector
      */
     public Vector3f getRight() {
-        return toCamera(RIGHT);
+        return toCamera(Vector3f.RIGHT);
     }
 
     /**
@@ -140,7 +137,7 @@ public class Camera {
      * @return The camera's up direction vector
      */
     public Vector3f getUp() {
-        return toCamera(UP);
+        return toCamera(Vector3f.UP);
     }
 
     /**
@@ -149,7 +146,7 @@ public class Camera {
      * @return The camera's forward direction vector
      */
     public Vector3f getForward() {
-        return toCamera(FORWARD);
+        return toCamera(Vector3f.FORWARD);
     }
 
     private Vector3f toCamera(Vector3f v) {

@@ -703,4 +703,7 @@ public class MeshGenerator {
             };
         }
     }
+
+    private MeshGenerator() {
+    }
 }

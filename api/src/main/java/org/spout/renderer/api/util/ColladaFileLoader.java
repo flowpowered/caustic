@@ -47,11 +47,13 @@ import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TFloatArrayList;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * A static loading class for the COLLADA file format (.dae). This class has the capability to load mesh data such as positions, texture coordinates, and normals. All models should be triangulated.
@@ -160,12 +162,12 @@ public final class ColladaFileLoader {
             loadIndices(parseIndices(triTag), offsetMap, indices, rawTextureCoords, textureCoords, rawNormals, normals);
         } catch (IOException e) {
             throw new MalformedColladaFileException("Error reading from input stream.", e);
-        } catch (Exception e) {
+        } catch (ParserConfigurationException | SAXException | MalformedColladaFileException e) {
             throw new MalformedColladaFileException("The specified Collada file is not valid.", e);
         } finally {
             try {
                 in.close();
-            } catch (Exception e) {
+            } catch (IOException e) {
                 logger.log(Level.SEVERE, "Couldn't close input stream", e);
             }
         }

@@ -40,6 +40,7 @@ import java.util.logging.Logger;
 import gnu.trove.list.TFloatList;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TFloatArrayList;
+import java.io.IOException;
 
 import org.spout.renderer.api.GLVersioned;
 import org.spout.renderer.api.data.Color;
@@ -110,7 +111,7 @@ public final class CausticUtil {
             final BufferedImage image = ImageIO.read(source);
             size.setSize(image.getWidth(), image.getHeight());
             return getImageData(image, format);
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             throw new IllegalStateException("Unreadable texture image data", ex);
         }
     }
