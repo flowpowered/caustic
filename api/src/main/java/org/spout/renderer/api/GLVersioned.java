@@ -56,6 +56,7 @@ public interface GLVersioned {
         GL41,
         GL42,
         GL43,
+        GL44,
         GLES10,
         GLES20,
         GLES30
