@@ -27,6 +27,7 @@
 package org.spout.renderer.api;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -87,7 +88,7 @@ public final class GLImplementation {
             constructor.setAccessible(true);
             implementations.put(implementation, (Constructor<Context>) constructor);
             return true;
-        } catch (Exception ex) {
+        } catch (ClassNotFoundException | NoSuchMethodException | SecurityException ex) {
             CausticUtil.getCausticLogger().log(Level.WARNING, "Couldn't load implementation", ex);
             return false;
         }
@@ -107,7 +108,7 @@ public final class GLImplementation {
         }
         try {
             return implementations.get(glImplementation).newInstance();
-        } catch (Exception ex) {
+        } catch (IllegalAccessException | IllegalArgumentException | InstantiationException | InvocationTargetException ex) {
             CausticUtil.getCausticLogger().log(Level.WARNING, "Couldn't create Context from loaded implementation class", ex);
             return null;
         }

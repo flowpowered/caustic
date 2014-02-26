@@ -106,10 +106,13 @@ public class ShaderSource {
             matcher = LAYOUT_TOKEN_PATTERN.matcher(line);
             while (matcher.find()) {
                 final String token = matcher.group(1);
-                if (token.equals(ATTRIBUTE_LAYOUT_TOKEN)) {
-                    attributeLayouts.put(matcher.group(2), Integer.parseInt(matcher.group(3)));
-                } else if (token.equals(TEXTURE_LAYOUT_TOKEN)) {
-                    textureLayouts.put(Integer.parseInt(matcher.group(3)), matcher.group(2));
+                switch (token) {
+                    case ATTRIBUTE_LAYOUT_TOKEN:
+                        attributeLayouts.put(matcher.group(2), Integer.parseInt(matcher.group(3)));
+                        break;
+                    case TEXTURE_LAYOUT_TOKEN:
+                        textureLayouts.put(Integer.parseInt(matcher.group(3)), matcher.group(2));
+                        break;
                 }
             }
         }
