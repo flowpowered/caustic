@@ -47,6 +47,9 @@ import org.spout.renderer.api.data.VertexData;
  * Generates various shape meshes of the desired size and stores them to the models.
  */
 public class MeshGenerator {
+    private MeshGenerator() {
+    }
+
     /*
     ^
     | y
@@ -702,8 +705,5 @@ public class MeshGenerator {
                     new Triangle(va, vb, vc)
             };
         }
-    }
-
-    private MeshGenerator() {
     }
 }

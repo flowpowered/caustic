@@ -308,14 +308,14 @@ public class StringModel extends Model {
         positionAttribute.setData(positions);
         textureCoordsAttribute.setData(textureCoords);
         // Set the vertex data in the model
-        final VertexArray vertexArray = context.createVertexArray();
+        final VertexArray vertexArray = context.newVertexArray();
         vertexArray.create();
         vertexArray.setData(data);
         return vertexArray;
     }
 
     private Texture generateTexture(Context context, CharSequence glyphs, TCharIntMap glyphWidths, Font font, int width, int height) {
-        final Texture texture = context.createTexture();
+        final Texture texture = context.newTexture();
         // Create an image for the texture
         final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         final Graphics graphics = image.getGraphics();

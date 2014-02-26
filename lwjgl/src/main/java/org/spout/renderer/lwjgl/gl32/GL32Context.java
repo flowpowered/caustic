@@ -51,32 +51,32 @@ public class GL32Context extends GL21Context {
     }
 
     @Override
-    public FrameBuffer createFrameBuffer() {
+    public FrameBuffer newFrameBuffer() {
         return new GL32FrameBuffer();
     }
 
     @Override
-    public Program createProgram() {
+    public Program newProgram() {
         return new GL32Program();
     }
 
     @Override
-    public RenderBuffer createRenderBuffer() {
+    public RenderBuffer newRenderBuffer() {
         return new GL32RenderBuffer();
     }
 
     @Override
-    public Shader createShader() {
+    public Shader newShader() {
         return new GL32Shader();
     }
 
     @Override
-    public Texture createTexture() {
+    public Texture newTexture() {
         return new GL32Texture();
     }
 
     @Override
-    public VertexArray createVertexArray() {
+    public VertexArray newVertexArray() {
         return new GL32VertexArray();
     }
 

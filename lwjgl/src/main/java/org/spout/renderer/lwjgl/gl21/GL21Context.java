@@ -97,32 +97,32 @@ public class GL21Context extends Context {
     }
 
     @Override
-    public FrameBuffer createFrameBuffer() {
+    public FrameBuffer newFrameBuffer() {
         return new GL21FrameBuffer();
     }
 
     @Override
-    public Program createProgram() {
+    public Program newProgram() {
         return new GL21Program();
     }
 
     @Override
-    public RenderBuffer createRenderBuffer() {
+    public RenderBuffer newRenderBuffer() {
         return new GL21RenderBuffer();
     }
 
     @Override
-    public Shader createShader() {
+    public Shader newShader() {
         return new GL21Shader();
     }
 
     @Override
-    public Texture createTexture() {
+    public Texture newTexture() {
         return new GL21Texture();
     }
 
     @Override
-    public VertexArray createVertexArray() {
+    public VertexArray newVertexArray() {
         return new GL21VertexArray();
     }
 

@@ -61,42 +61,42 @@ public abstract class Context extends Creatable implements GLVersioned {
      *
      * @return A new frame buffer
      */
-    public abstract FrameBuffer createFrameBuffer();
+    public abstract FrameBuffer newFrameBuffer();
 
     /**
      * Creates a new program.
      *
      * @return A new program
      */
-    public abstract Program createProgram();
+    public abstract Program newProgram();
 
     /**
      * Creates a new render buffer.
      *
      * @return A new render buffer
      */
-    public abstract RenderBuffer createRenderBuffer();
+    public abstract RenderBuffer newRenderBuffer();
 
     /**
      * Creates a new shader.
      *
      * @return A new shader
      */
-    public abstract Shader createShader();
+    public abstract Shader newShader();
 
     /**
      * Creates a new texture.
      *
      * @return A new texture
      */
-    public abstract Texture createTexture();
+    public abstract Texture newTexture();
 
     /**
      * Creates a new vertex array.
      *
      * @return A new vertex array
      */
-    public abstract VertexArray createVertexArray();
+    public abstract VertexArray newVertexArray();
 
     /**
      * Returns the window title.
