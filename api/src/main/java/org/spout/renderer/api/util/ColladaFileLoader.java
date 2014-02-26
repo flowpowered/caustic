@@ -26,18 +26,21 @@
  */
 package org.spout.renderer.api.util;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathFactory;
+
+import com.flowpowered.math.vector.Vector3f;
 
 import gnu.trove.list.TFloatList;
 import gnu.trove.list.TIntList;
@@ -49,9 +52,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
-import com.flowpowered.math.vector.Vector3f;
 
 /**
  * A static loading class for the COLLADA file format (.dae). This class has the capability to load mesh data such as positions, texture coordinates, and normals. All models should be triangulated.
@@ -59,7 +59,7 @@ import com.flowpowered.math.vector.Vector3f;
  * loaded by this class as well.
  */
 public final class ColladaFileLoader {
-    private static final Logger logger = Logger.getLogger("Caustic");
+    private static final Logger logger = CausticUtil.getCausticLogger();
     public static final String SEMANTIC_VERTEX = "VERTEX";
     public static final String SEMANTIC_NORMAL = "NORMAL";
     public static final String SEMANTIC_TEXCOORD = "TEXCOORD";
@@ -159,16 +159,14 @@ public final class ColladaFileLoader {
             // load the indices
             loadIndices(parseIndices(triTag), offsetMap, indices, rawTextureCoords, textureCoords, rawNormals, normals);
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "Error reading from input stream.", e);
-        } catch (SAXException e) {
-            throw new MalformedColladaFileException("The specified Collada file is not valid XML.", e);
+            throw new MalformedColladaFileException("Error reading from input stream.", e);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new MalformedColladaFileException("The specified Collada file is not valid.", e);
         } finally {
             try {
                 in.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.log(Level.SEVERE, "Couldn't close input stream", e);
             }
         }
 
@@ -229,8 +227,8 @@ public final class ColladaFileLoader {
             String src = String.format("//*[@id='%s']", id);
             XPathExpression bin = xp.compile(src);
             return (Element) ((NodeList) bin.evaluate(doc, XPathConstants.NODESET)).item(0);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (XPathExpressionException e) {
+            logger.log(Level.WARNING, "Couldn't obtain element " + id + " in Collada file", e);
             return null;
         }
     }

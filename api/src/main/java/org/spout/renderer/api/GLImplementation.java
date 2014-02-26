@@ -31,9 +31,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
 import org.spout.renderer.api.GLVersioned.GLVersion;
 import org.spout.renderer.api.gl.Context;
+import org.spout.renderer.api.util.CausticUtil;
 
 /**
  * Represents and implementation of an OpenGL or OpenGLES version. Also manages the implementations statically.
@@ -86,8 +88,7 @@ public final class GLImplementation {
             implementations.put(implementation, (Constructor<Context>) constructor);
             return true;
         } catch (Exception ex) {
-            // TODO: use a logger
-            ex.printStackTrace();
+            CausticUtil.getCausticLogger().log(Level.WARNING, "Couldn't load implementation", ex);
             return false;
         }
     }
@@ -107,8 +108,7 @@ public final class GLImplementation {
         try {
             return implementations.get(glImplementation).newInstance();
         } catch (Exception ex) {
-            // TODO: use a logger
-            ex.printStackTrace();
+            CausticUtil.getCausticLogger().log(Level.WARNING, "Couldn't create Context from loaded implementation class", ex);
             return null;
         }
     }

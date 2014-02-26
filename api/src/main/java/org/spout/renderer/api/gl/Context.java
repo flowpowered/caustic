@@ -27,8 +27,6 @@
 package org.spout.renderer.api.gl;
 
 import java.nio.ByteBuffer;
-import java.util.EnumSet;
-import java.util.Set;
 
 import com.flowpowered.math.vector.Vector2i;
 
@@ -47,8 +45,6 @@ import org.spout.renderer.api.util.Rectangle;
 public abstract class Context extends Creatable implements GLVersioned {
     // MSAA value
     protected int msaa = -1;
-    // Properties
-    protected final Set<Capability> capabilities = EnumSet.noneOf(Capability.class);
     // Context uniforms
     protected final UniformHolder uniforms = new UniformHolder();
     // Camera
@@ -56,7 +52,6 @@ public abstract class Context extends Creatable implements GLVersioned {
 
     @Override
     public void destroy() {
-        capabilities.clear();
         uniforms.clear();
         super.destroy();
     }
@@ -102,7 +97,7 @@ public abstract class Context extends Creatable implements GLVersioned {
      * @return A new vertex array
      */
     public abstract VertexArray createVertexArray();
-    
+
     /**
      * Returns the window title.
      *

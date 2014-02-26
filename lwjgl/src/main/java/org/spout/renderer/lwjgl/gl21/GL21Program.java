@@ -31,6 +31,7 @@ import java.nio.FloatBuffer;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import com.flowpowered.math.matrix.Matrix2f;
 import com.flowpowered.math.matrix.Matrix3f;
@@ -146,15 +147,15 @@ public class GL21Program extends Program {
         if (GL20.glGetProgrami(id, GL20.GL_LINK_STATUS) == GL11.GL_FALSE) {
             throw new IllegalStateException("Program could not be linked\n" + GL20.glGetProgramInfoLog(id, 1000));
         }
-        // TODO: enable only for debug, and don't throw an exception, just warn
-        /*
-        // Validate program
-        GL20.glValidateProgram(id);
-        // Check program validation status
-        if (GL20.glGetProgrami(id, GL20.GL_VALIDATE_STATUS) == GL11.GL_FALSE) {
-            throw new IllegalStateException("Program could not be validated\n" + GL20.glGetProgramInfoLog(id, 1000));
+        if (CausticUtil.isDebugEnabled()) {
+            // Validate program
+            GL20.glValidateProgram(id);
+            // Check program validation status
+            if (GL20.glGetProgrami(id, GL20.GL_VALIDATE_STATUS) == GL11.GL_FALSE) {
+                final Logger logger = CausticUtil.getCausticLogger();
+                logger.warning("Program validation failed. This doesn't mean it won't work, so you maybe able to ignore it\n" + GL20.glGetProgramInfoLog(id, 1000));
+            }
         }
-        */
         // Load uniforms
         uniforms.clear();
         final int uniformCount = GL20.glGetProgrami(id, GL20.GL_ACTIVE_UNIFORMS);

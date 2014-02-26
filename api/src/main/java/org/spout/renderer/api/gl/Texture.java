@@ -40,11 +40,6 @@ public abstract class Texture extends Creatable implements GLVersioned {
     protected int id = 0;
 
     @Override
-    public void create() {
-        super.create();
-    }
-
-    @Override
     public void destroy() {
         id = 0;
         super.destroy();
