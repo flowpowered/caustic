@@ -31,24 +31,15 @@ import org.lwjgl.util.glu.GLU;
 
 import org.spout.renderer.api.GLImplementation;
 import org.spout.renderer.api.GLVersioned.GLVersion;
+import org.spout.renderer.api.util.CausticUtil;
 import org.spout.renderer.lwjgl.gl21.GL21Context;
 import org.spout.renderer.lwjgl.gl32.GL32Context;
 
 public final class LWJGLUtil {
     public static final GLImplementation GL21_IMPL = new GLImplementation(GLVersion.GL21, GL21Context.class.getName());
     public static final GLImplementation GL32_IMPL = new GLImplementation(GLVersion.GL32, GL32Context.class.getName());
-    private static boolean debug = true;
 
     private LWJGLUtil() {
-    }
-
-    /**
-     * Sets the caustic renderer in debug mode.
-     *
-     * @param enabled If debug should be enabled
-     */
-    public static void setDebugEnabled(boolean enabled) {
-        debug = enabled;
     }
 
     /**
@@ -57,7 +48,7 @@ public final class LWJGLUtil {
      * @throws GLException If OpenGL reports an error
      */
     public static void checkForGLError() {
-        if (debug) {
+        if (CausticUtil.isDebugEnabled()) {
             final int errorValue = GL11.glGetError();
             if (errorValue != GL11.GL_NO_ERROR) {
                 throw new GLException("GL ERROR: " + GLU.gluErrorString(errorValue));

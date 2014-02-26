@@ -35,6 +35,7 @@ import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
+import java.util.logging.Logger;
 
 import gnu.trove.list.TFloatList;
 import gnu.trove.list.TIntList;
@@ -46,10 +47,40 @@ import org.spout.renderer.api.data.VertexAttribute.DataType;
 import org.spout.renderer.api.gl.Texture.Format;
 
 /**
- * Utility methods for rendering.
+ * Utility methods for Caustic and rendering.
  */
 public final class CausticUtil {
+    private static boolean debug = true;
+    private static final Logger logger = Logger.getLogger("Caustic");
+
     private CausticUtil() {
+    }
+
+    /**
+     * Sets the caustic renderer in debug mode.
+     *
+     * @param enabled If debug should be enabled
+     */
+    public static void setDebugEnabled(boolean enabled) {
+        debug = enabled;
+    }
+
+    /**
+     * Returns true if debug mode is enabled, false if otherwise.
+     *
+     * @return Whether or not debug mode is enabled.
+     */
+    public static boolean isDebugEnabled() {
+        return debug;
+    }
+
+    /**
+     * Returns the logger used by the Caustic classes.
+     *
+     * @return The Caustic logger
+     */
+    public static Logger getCausticLogger() {
+        return logger;
     }
 
     /**
