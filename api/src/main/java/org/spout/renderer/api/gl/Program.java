@@ -26,10 +26,6 @@
  */
 package org.spout.renderer.api.gl;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.Set;
 
 import com.flowpowered.math.matrix.Matrix2f;
@@ -39,48 +35,32 @@ import com.flowpowered.math.vector.Vector2f;
 import com.flowpowered.math.vector.Vector3f;
 import com.flowpowered.math.vector.Vector4f;
 
-import gnu.trove.map.TIntObjectMap;
-import gnu.trove.map.TObjectIntMap;
-import gnu.trove.map.hash.TIntObjectHashMap;
-import gnu.trove.map.hash.TObjectIntHashMap;
-
 import org.spout.renderer.api.Creatable;
 import org.spout.renderer.api.GLVersioned;
 import org.spout.renderer.api.data.Color;
 import org.spout.renderer.api.data.Uniform;
 import org.spout.renderer.api.data.UniformHolder;
-import org.spout.renderer.api.gl.Shader.ShaderType;
 
 /**
- * Represents an OpenGL program. A program holds the necessary shaders for the rendering pipeline. This requires at least that the {@link org.spout.renderer.api.gl.Shader.ShaderType#VERTEX} and {@link
- * org.spout.renderer.api.gl.Shader.ShaderType#FRAGMENT} shaders be set with {@link #addShader(Shader)} before creation. When using GL20, it is strongly recommended to set the attribute layout in the
- * program with {@link #addAttributeLayout(String, int)}, which must be done before creation. The layout allows for association between the attribute index in the vertex data and the name in the
- * shaders. For GL30, it is recommended to do so in the shaders instead, using the "layout" keyword. Failing to do so might result in partial, wrong or missing rendering, and affects models using
- * multiple attributes. The texture layout should also be setup using {@link #addTextureLayout(String, int)} if textures are used in the shaders. This one can be done after creation, but is necessary
- * for assigning texture units to sampler uniforms.
+ * Represents an OpenGL program. A program holds the necessary shaders for the rendering pipeline. When using GL20, it is strongly recommended to set the attribute layout in the {@link
+ * org.spout.renderer.api.gl.Shader}s with {@link org.spout.renderer.api.gl.Shader#setAttributeLayout(String, int)}}, which must be done before attaching it. The layout allows for association between
+ * the attribute index in the vertex data and the name in the shaders. For GL30, it is recommended to do so in the shaders instead, using the "layout" keyword. Failing to do so might result in
+ * partial, wrong or missing rendering, and affects models using multiple attributes. The texture layout should also be setup using {@link Shader#setTextureLayout(int, String)} in the same way.
  */
 public abstract class Program extends Creatable implements GLVersioned {
     protected int id;
-    // Shaders
-    protected final Map<ShaderType, Shader> shaders = new EnumMap<>(ShaderType.class);
-    // Map of the attribute names to their vao index (optional for GL30 as they can be defined in the shader instead)
-    protected TObjectIntMap<String> attributeLayouts;
-    // Map of the texture units to their names. Only necessary if textures are used
-    protected TIntObjectMap<String> textureLayouts;
-
-    @Override
-    public void create() {
-        attributeLayouts = null;
-        super.create();
-    }
 
     @Override
     public void destroy() {
-        shaders.clear();
-        textureLayouts = null;
         id = 0;
         super.destroy();
     }
+
+    public abstract void attachShader(Shader shader);
+
+    public abstract void detachShader(Shader shader);
+
+    public abstract void link();
 
     /**
      * Binds this program to the OpenGL context.
@@ -93,12 +73,11 @@ public abstract class Program extends Creatable implements GLVersioned {
     public abstract void unbind();
 
     /**
-     * Binds the texture unit to the shader uniform. The binding is done according to the texture layout, which must be set in the program for the textures that will be used before any binding can be
-     * done.
+     * Binds the sampler to the texture unit. The binding is done according to the texture layout, which must be set in the program for the textures that will be used before any binding can be done.
      *
      * @param unit The unit to bind
      */
-    public abstract void bindTextureUniform(int unit);
+    public abstract void bindSampler(int unit);
 
     /**
      * Uploads the uniform to this program.
@@ -220,6 +199,8 @@ public abstract class Program extends Creatable implements GLVersioned {
         setUniform(name, (Vector4f) c.normalize());
     }
 
+    public abstract Set<Shader> getShaders();
+
     /**
      * Returns an set containing all of the uniform names for this program.
      *
@@ -234,114 +215,5 @@ public abstract class Program extends Creatable implements GLVersioned {
      */
     public int getID() {
         return id;
-    }
-
-    /**
-     * Adds a shader.
-     *
-     * @param shader The shader to add
-     */
-    public void addShader(Shader shader) {
-        shaders.put(shader.getType(), shader);
-        if (shader.getAttributeLayouts() != null) {
-            if (attributeLayouts == null) {
-                attributeLayouts = new TObjectIntHashMap<>();
-            }
-            attributeLayouts.putAll(shader.getAttributeLayouts());
-        }
-        if (shader.getTextureLayouts() != null) {
-            if (textureLayouts == null) {
-                textureLayouts = new TIntObjectHashMap<>();
-            }
-            textureLayouts.putAll(shader.getTextureLayouts());
-        }
-    }
-
-    /**
-     * Returns the shader for the type.
-     *
-     * @param type The shader type to lookup
-     * @return The shader, or null if none could be found
-     */
-    public Shader getShader(ShaderType type) {
-        return shaders.get(type);
-    }
-
-    /**
-     * Returns all the shaders in this program.
-     *
-     * @return An unmodifiable collection of all the shaders in this program
-     */
-    public Collection<Shader> getShaders() {
-        return Collections.unmodifiableCollection(shaders.values());
-    }
-
-    /**
-     * Returns true if a shader is present for the shader type.
-     *
-     * @param type The shader type to lookup
-     * @return Whether or not a shader of the type is present
-     */
-    public boolean hasShader(ShaderType type) {
-        return shaders.containsKey(type);
-    }
-
-    /**
-     * Removes the shader source associated to the type, if present.
-     *
-     * @param type The type to remove
-     */
-    public void removeShader(ShaderType type) {
-        shaders.remove(type);
-    }
-
-    /**
-     * Sets the index of the attribute of the provided name, in the program.
-     *
-     * @param name The name of the attribute
-     * @param index The index for the attribute
-     */
-    public void addAttributeLayout(String name, int index) {
-        if (attributeLayouts == null) {
-            attributeLayouts = new TObjectIntHashMap<>();
-        }
-        attributeLayouts.put(name, index);
-    }
-
-    /**
-     * Removes the index for the attribute of the provided name.
-     */
-    public void removeAttributeLayout(String name) {
-        if (attributeLayouts != null) {
-            attributeLayouts.remove(name);
-            if (attributeLayouts.isEmpty()) {
-                attributeLayouts = null;
-            }
-        }
-    }
-
-    /**
-     * Sets the unit of the texture to the provided name, in the program.
-     *
-     * @param name The name of the texture
-     * @param unit The unit for the texture
-     */
-    public void addTextureLayout(String name, int unit) {
-        if (textureLayouts == null) {
-            textureLayouts = new TIntObjectHashMap<>();
-        }
-        textureLayouts.put(unit, name);
-    }
-
-    /**
-     * Removes the layout for the texture at the provided unit.
-     */
-    public void removeTextureLayout(int unit) {
-        if (textureLayouts != null) {
-            textureLayouts.remove(unit);
-            if (textureLayouts.isEmpty()) {
-                textureLayouts = null;
-            }
-        }
     }
 }

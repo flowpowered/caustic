@@ -30,7 +30,7 @@ import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
-import com.flowpowered.math.vector.Vector2f;
+import com.flowpowered.math.vector.Vector2i;
 
 import org.spout.renderer.api.Camera;
 import org.spout.renderer.api.Creatable;
@@ -45,12 +45,8 @@ import org.spout.renderer.api.util.Rectangle;
  * Represents an OpenGL context. Creating context must be done before any other OpenGL object.
  */
 public abstract class Context extends Creatable implements GLVersioned {
-    // Window title
-    protected String windowTitle = "Caustic";
-    // Window size
-    protected Vector2f windowSize;
     // MSAA value
-    protected int msaa = 0;
+    protected int msaa = -1;
     // Properties
     protected final Set<Capability> capabilities = EnumSet.noneOf(Capability.class);
     // Context uniforms
@@ -63,6 +59,60 @@ public abstract class Context extends Creatable implements GLVersioned {
         capabilities.clear();
         uniforms.clear();
         super.destroy();
+    }
+
+    /**
+     * Returns the window title.
+     *
+     * @return The window title
+     */
+    public abstract String getWindowTitle();
+
+    /**
+     * Sets the window title to the desired one.
+     *
+     * @param title The window title
+     */
+    public abstract void setWindowTitle(String title);
+
+    /**
+     * Sets the window size.
+     *
+     * @param width The width
+     * @param height The height
+     */
+    public void setWindowSize(int width, int height) {
+        setWindowSize(new Vector2i(width, height));
+    }
+
+    /**
+     * Sets the window size.
+     *
+     * @param windowSize The window size
+     */
+    public abstract void setWindowSize(Vector2i windowSize);
+
+    /**
+     * Returns the window width.
+     *
+     * @return The window width
+     */
+    public abstract int getWindowWidth();
+
+    /**
+     * Returns the window height.
+     *
+     * @return The window height
+     */
+    public abstract int getWindowHeight();
+
+    /**
+     * Returns the window size, which is the dimensions of the window.
+     *
+     * @return The window size
+     */
+    public Vector2i getWindowSize() {
+        return new Vector2i(getWindowWidth(), getWindowHeight());
     }
 
     /**
@@ -166,70 +216,6 @@ public abstract class Context extends Creatable implements GLVersioned {
      */
     public Camera getCamera() {
         return camera;
-    }
-
-    /**
-     * Returns the window title.
-     *
-     * @return The window title
-     */
-    public String setWindowTitle() {
-        return windowTitle;
-    }
-
-    /**
-     * Sets the window title to the desired one.
-     *
-     * @param title The window title
-     */
-    public void setWindowTitle(String title) {
-        this.windowTitle = title;
-    }
-
-    /**
-     * Sets the window size.
-     *
-     * @param width The width
-     * @param height The height
-     */
-    public void setWindowSize(int width, int height) {
-        setWindowSize(new Vector2f(width, height));
-    }
-
-    /**
-     * Sets the window size.
-     *
-     * @param windowSize The window size (floored)
-     */
-    public void setWindowSize(Vector2f windowSize) {
-        this.windowSize = windowSize;
-    }
-
-    /**
-     * Returns the window width.
-     *
-     * @return The window width
-     */
-    public int getWindowWidth() {
-        return windowSize.getFloorX();
-    }
-
-    /**
-     * Returns the window height.
-     *
-     * @return The window height
-     */
-    public int getWindowHeight() {
-        return windowSize.getFloorY();
-    }
-
-    /**
-     * Returns the window size, which is the dimensions of the window.
-     *
-     * @return The window size
-     */
-    public Vector2f getWindowSize() {
-        return windowSize;
     }
 
     /**

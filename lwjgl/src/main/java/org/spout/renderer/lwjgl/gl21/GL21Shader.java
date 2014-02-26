@@ -26,9 +26,16 @@
  */
 package org.spout.renderer.lwjgl.gl21;
 
+import gnu.trove.TCollections;
+import gnu.trove.map.TIntObjectMap;
+import gnu.trove.map.TObjectIntMap;
+import gnu.trove.map.hash.TIntObjectHashMap;
+import gnu.trove.map.hash.TObjectIntHashMap;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
+import org.spout.renderer.api.data.ShaderSource;
 import org.spout.renderer.api.gl.Shader;
 import org.spout.renderer.lwjgl.LWJGLUtil;
 
@@ -38,46 +45,103 @@ import org.spout.renderer.lwjgl.LWJGLUtil;
  * @see Shader
  */
 public class GL21Shader extends Shader {
+    private ShaderType type;
+    // Map of the attribute names to their vao index (optional for GL30 as they can be defined in the shader instead)
+    private final TObjectIntMap<String> attributeLayouts = new TObjectIntHashMap<>();
+    // Map of the texture units to their names
+    private final TIntObjectMap<String> textureLayouts = new TIntObjectHashMap<>();
+
     protected GL21Shader() {
     }
 
     @Override
     public void create() {
-        if (isCreated()) {
-            throw new IllegalStateException("Shader has already been created");
-        }
+        checkNotCreated();
+        // Update the state
+        super.create();
+    }
+
+    @Override
+    public void destroy() {
+        checkCreated();
+        // Delete the shader
+        GL20.glDeleteShader(id);
+        // Clear the data
+        type = null;
+        attributeLayouts.clear();
+        textureLayouts.clear();
+        // Update the state
+        super.destroy();
+        // Check for errors
+        LWJGLUtil.checkForGLError();
+    }
+
+    @Override
+    public void setSource(ShaderSource source) {
+        checkCreated();
         if (source == null) {
-            throw new IllegalStateException("Shader source has not been set");
+            throw new IllegalArgumentException("Shader source cannot be null");
         }
-        if (type == null) {
-            throw new IllegalStateException("Shader type has not been set");
+        if (!source.isComplete()) {
+            throw new IllegalArgumentException("Shader source isn't complete");
         }
-        // Create a shader for the type
-        final int id = GL20.glCreateShader(type.getGLConstant());
-        // Upload the source
-        GL20.glShaderSource(id, source);
+        // If we don't have a previous shader or the type isn't the same, we need to create a new one
+        final ShaderType type = source.getType();
+        if (id == 0 || this.type != type) {
+            // Delete the old shader
+            GL20.glDeleteShader(id);
+            // Create a shader of the correct type
+            id = GL20.glCreateShader(type.getGLConstant());
+            // Store the current type
+            this.type = type;
+        }
+        // Upload the new source
+        GL20.glShaderSource(id, source.getSource());
+        // Set the layouts from the source
+        attributeLayouts.clear();
+        attributeLayouts.putAll(source.getAttributeLayouts());
+        textureLayouts.clear();
+        textureLayouts.putAll(source.getTextureLayouts());
+        // Check for errors
+        LWJGLUtil.checkForGLError();
+    }
+
+    @Override
+    public void compile() {
+        checkCreated();
         // Compile the shader
         GL20.glCompileShader(id);
         // Get the shader compile status property, check it's false and fail if that's the case
         if (GL20.glGetShaderi(id, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
             throw new IllegalStateException("OPEN GL ERROR: Could not compile shader\n" + GL20.glGetShaderInfoLog(id, 1000));
         }
-        this.id = id;
-        super.create();
         // Check for errors
         LWJGLUtil.checkForGLError();
     }
 
     @Override
-    public void destroy() {
-        if (!isCreated()) {
-            throw new IllegalStateException("Shader has not been created yet");
-        }
-        // Delete the shader
-        GL20.glDeleteShader(id);
-        super.destroy();
-        // Check for errors
-        LWJGLUtil.checkForGLError();
+    public ShaderType getType() {
+        return type;
+    }
+
+    @Override
+    public TObjectIntMap<String> getAttributeLayouts() {
+        return TCollections.unmodifiableMap(attributeLayouts);
+    }
+
+    @Override
+    public TIntObjectMap<String> getTextureLayouts() {
+        return TCollections.unmodifiableMap(textureLayouts);
+    }
+
+    @Override
+    public void setAttributeLayout(String attribute, int layout) {
+        attributeLayouts.put(attribute, layout);
+    }
+
+    @Override
+    public void setTextureLayout(int unit, String sampler) {
+        textureLayouts.put(unit, sampler);
     }
 
     @Override

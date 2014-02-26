@@ -44,13 +44,26 @@ public class GL32Texture extends GL21Texture {
     }
 
     @Override
-    protected void uploadTexture(ByteBuffer buffer, int width, int height) {
+    public void setImageData(ByteBuffer imageData, int width, int height) {
+        checkCreated();
+        if (width <= 0) {
+            throw new IllegalArgumentException("Width must be greater than zero");
+        }
+        if (height <= 0) {
+            throw new IllegalArgumentException("Height must be greater than zero");
+        }
+        this.width = width;
+        this.height = height;
+        // Bind the texture
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
         // Upload the texture
-        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, internalFormat != null ? internalFormat.getGLConstant() : format.getGLConstant(), width, height, 0, format.getGLConstant(), GL11.GL_UNSIGNED_BYTE, buffer);
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, internalFormat != null ? internalFormat.getGLConstant() : format.getGLConstant(), width, height, 0, format.getGLConstant(), type.getGLConstant(), imageData);
         // Generate mipmaps if necessary
-        if (minFilter.needsMipMaps() && buffer != null) {
+        if (minFilter.needsMipMaps() && imageData != null) {
             GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
         }
+        // Unbind the texture
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
         // Check for errors
         LWJGLUtil.checkForGLError();
     }

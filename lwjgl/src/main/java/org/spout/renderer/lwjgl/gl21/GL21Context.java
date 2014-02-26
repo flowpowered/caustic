@@ -28,6 +28,8 @@ package org.spout.renderer.lwjgl.gl21;
 
 import java.nio.ByteBuffer;
 
+import com.flowpowered.math.vector.Vector2i;
+
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.opengl.Display;
@@ -53,20 +55,17 @@ public class GL21Context extends Context {
 
     @Override
     public void create() {
-        if (isCreated()) {
-            throw new IllegalStateException("Context has already been created");
-        }
+        checkNotCreated();
         // Attempt to create the display
         try {
-            Display.setDisplayMode(new DisplayMode(windowSize.getFloorX(), windowSize.getFloorY()));
-            Display.create(new PixelFormat().withSamples(this.msaa), createContextAttributes());
+            PixelFormat pixelFormat = new PixelFormat();
+            if (msaa > 0) {
+                pixelFormat = pixelFormat.withSamples(this.msaa);
+            }
+            Display.create(pixelFormat, createContextAttributes());
         } catch (LWJGLException ex) {
             throw new IllegalStateException("Unable to create OpenGL context: " + ex.getMessage());
         }
-        // Set the title
-        Display.setTitle(this.windowTitle);
-        // Set the default view port
-        GL11.glViewport(0, 0, windowSize.getFloorX(), windowSize.getFloorY());
         // Check for errors
         LWJGLUtil.checkForGLError();
         // Update the state
@@ -92,6 +91,35 @@ public class GL21Context extends Context {
     }
 
     @Override
+    public String getWindowTitle() {
+        return Display.getTitle();
+    }
+
+    @Override
+    public void setWindowTitle(String title) {
+        Display.setTitle(title);
+    }
+
+    @Override
+    public void setWindowSize(Vector2i windowSize) {
+        try {
+            Display.setDisplayMode(new DisplayMode(windowSize.getX(), windowSize.getY()));
+        } catch (LWJGLException ex) {
+            throw new IllegalStateException("Unable to set display size: " + ex.getMessage());
+        }
+    }
+
+    @Override
+    public int getWindowWidth() {
+        return Display.getWidth();
+    }
+
+    @Override
+    public int getWindowHeight() {
+        return Display.getHeight();
+    }
+
+    @Override
     public void updateDisplay() {
         checkCreated();
         Display.update();
@@ -99,6 +127,7 @@ public class GL21Context extends Context {
 
     @Override
     public void setClearColor(Color color) {
+        checkCreated();
         Color normC = color.normalize();
         GL11.glClearColor(normC.getRed(), normC.getGreen(), normC.getBlue(), normC.getAlpha());
         // Check for errors
@@ -107,6 +136,7 @@ public class GL21Context extends Context {
 
     @Override
     public void clearCurrentBuffer() {
+        checkCreated();
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
         // Check for errors
         LWJGLUtil.checkForGLError();
@@ -114,13 +144,23 @@ public class GL21Context extends Context {
 
     @Override
     public void enableCapability(Capability capability) {
+        checkCreated();
         GL11.glEnable(capability.getGLConstant());
         // Check for errors
         LWJGLUtil.checkForGLError();
     }
 
     @Override
+    public void disableCapability(Capability capability) {
+        checkCreated();
+        GL11.glDisable(capability.getGLConstant());
+        // Check for errors
+        LWJGLUtil.checkForGLError();
+    }
+
+    @Override
     public void setDepthMask(boolean enabled) {
+        checkCreated();
         GL11.glDepthMask(enabled);
         // Check for errors
         LWJGLUtil.checkForGLError();
@@ -128,11 +168,15 @@ public class GL21Context extends Context {
 
     @Override
     public void setBlendingFunctions(int bufferIndex, BlendFunction source, BlendFunction destination) {
+        checkCreated();
         GL11.glBlendFunc(source.getGLConstant(), destination.getGLConstant());
+        // Check for errors
+        LWJGLUtil.checkForGLError();
     }
 
     @Override
     public void setViewPort(Rectangle viewPort) {
+        checkCreated();
         GL11.glViewport(viewPort.getX(), viewPort.getY(), viewPort.getWidth(), viewPort.getHeight());
         // Check for errors
         LWJGLUtil.checkForGLError();
@@ -140,17 +184,13 @@ public class GL21Context extends Context {
 
     @Override
     public ByteBuffer readCurrentFrame(Rectangle size, Format format) {
+        checkCreated();
         final ByteBuffer buffer = CausticUtil.createByteBuffer(size.getArea() * 3);
         GL11.glReadBuffer(GL11.GL_FRONT);
         GL11.glReadPixels(size.getX(), size.getY(), size.getWidth(), size.getHeight(), format.getGLConstant(), GL11.GL_UNSIGNED_BYTE, buffer);
-        return buffer;
-    }
-
-    @Override
-    public void disableCapability(Capability capability) {
-        GL11.glDisable(capability.getGLConstant());
         // Check for errors
         LWJGLUtil.checkForGLError();
+        return buffer;
     }
 
     @Override

@@ -35,48 +35,46 @@ import org.spout.renderer.api.data.VertexData;
  */
 public abstract class VertexArray extends Creatable implements GLVersioned {
     protected int id = 0;
-    // Buffers IDs
-    protected int indicesBufferID = 0;
-    protected int[] attributeBufferIDs;
-    // Amount of indices to render
-    protected int indicesCountCache;
-    protected int indicesCount = 0;
-    // First and last index to render
-    protected int indicesOffset = 0;
-    // Vertex attributes
-    protected VertexData vertexData;
-    // Drawing mode
-    protected DrawingMode drawingMode = DrawingMode.TRIANGLES;
-
-    @Override
-    public void create() {
-        vertexData = null;
-        super.create();
-    }
 
     @Override
     public void destroy() {
         id = 0;
-        indicesCountCache = 0;
-        indicesBufferID = 0;
-        attributeBufferIDs = null;
-        resetIndicesCountAndOffset();
         super.destroy();
     }
 
     /**
-     * Draws the vertex data to the screen.
-     */
-    public abstract void draw();
-
-    /**
-     * Sets the vertex data source to use.
+     * Sets the vertex data source to use. The indices offset is kept but maybe reduced if it doesn't fit inside the new data. The count is set to the size from the offset to the end of the data.
      *
      * @param vertexData The vertex data source
      */
-    public void setData(VertexData vertexData) {
-        this.vertexData = vertexData;
-    }
+    public abstract void setData(VertexData vertexData);
+
+    /**
+     * Sets the model's drawing mode.
+     *
+     * @param drawingMode The drawing mode to use
+     */
+    public abstract void setDrawingMode(DrawingMode drawingMode);
+
+    /**
+     * Sets the starting offset in the indices buffer. Defaults to 0.
+     *
+     * @param offset The offset in the indices buffer
+     */
+    public abstract void setIndicesOffset(int offset);
+
+    /**
+     * Sets the number of indices to render during each draw call, starting at the offset set by {@link #setIndicesOffset(int)}. Setting this to a value smaller than zero results in rendering of the
+     * whole list. If the value is larger than the list (starting at the offset), it will be maxed to that value.
+     *
+     * @param count The number of indices
+     */
+    public abstract void setIndicesCount(int count);
+
+    /**
+     * Draws the primitives defined by the vertex data.
+     */
+    public abstract void draw();
 
     /**
      * Gets the ID for this vertex array as assigned by OpenGL.
@@ -85,41 +83,6 @@ public abstract class VertexArray extends Creatable implements GLVersioned {
      */
     public int getID() {
         return id;
-    }
-
-    /**
-     * Sets the model's drawing mode.
-     *
-     * @param mode The drawing mode to use
-     */
-    public void setDrawingMode(DrawingMode mode) {
-        this.drawingMode = mode;
-    }
-
-    /**
-     * Sets the number of indices to render during each draw call.
-     *
-     * @param count The number of indices
-     */
-    public void setIndicesCount(int count) {
-        this.indicesCount = count;
-    }
-
-    /**
-     * Sets the offset in the indices buffer to start at when rendering.
-     *
-     * @param offset The offset in the indices buffer
-     */
-    public void setIndicesOffset(int offset) {
-        this.indicesOffset = offset;
-    }
-
-    /**
-     * Resets the indices count to the full count and the offset to zero.
-     */
-    public void resetIndicesCountAndOffset() {
-        indicesCount = indicesCountCache;
-        indicesOffset = 0;
     }
 
     /**
