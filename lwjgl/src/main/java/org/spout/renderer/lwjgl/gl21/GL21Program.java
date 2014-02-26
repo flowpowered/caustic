@@ -26,13 +26,6 @@
  */
 package org.spout.renderer.lwjgl.gl21;
 
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.logging.Logger;
-
 import com.flowpowered.math.matrix.Matrix2f;
 import com.flowpowered.math.matrix.Matrix3f;
 import com.flowpowered.math.matrix.Matrix4f;
@@ -46,6 +39,14 @@ import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
+
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
@@ -153,7 +154,7 @@ public class GL21Program extends Program {
             // Check program validation status
             if (GL20.glGetProgrami(id, GL20.GL_VALIDATE_STATUS) == GL11.GL_FALSE) {
                 final Logger logger = CausticUtil.getCausticLogger();
-                logger.warning("Program validation failed. This doesn't mean it won't work, so you maybe able to ignore it\n" + GL20.glGetProgramInfoLog(id, 1000));
+                logger.log(Level.WARNING, "Program validation failed. This doesn''t mean it won''t work, so you maybe able to ignore it\n{0}", GL20.glGetProgramInfoLog(id, 1000));
             }
         }
         // Load uniforms
