@@ -57,7 +57,7 @@ import org.spout.renderer.api.data.Color;
 import org.spout.renderer.api.data.VertexAttribute;
 import org.spout.renderer.api.data.VertexAttribute.DataType;
 import org.spout.renderer.api.data.VertexData;
-import org.spout.renderer.api.gl.GLFactory;
+import org.spout.renderer.api.gl.Context;
 import org.spout.renderer.api.gl.Program;
 import org.spout.renderer.api.gl.Texture;
 import org.spout.renderer.api.gl.Texture.FilterMode;
@@ -100,16 +100,16 @@ public class StringModel extends Model {
     }
 
     /**
-     * Creates a new string model, from the OpenGL factory, the font shader program, the glyphs to support, the font to render with and the window width (used to get scale for the model).
+     * Creates a new string model, from the OpenGL context, the font shader program, the glyphs to support, the font to render with and the window width (used to get scale for the model).
      *
-     * @param factory The OpenGL factory
+     * @param context The OpenGL context
      * @param fontProgram The program of shaders responsible to for rendering the font
      * @param glyphs The glyphs
      * @param font The font
      * @param windowWidth The window with
      */
-    public StringModel(GLFactory factory, Program fontProgram, CharSequence glyphs, Font font, int windowWidth) {
-        if (factory == null) {
+    public StringModel(Context context, Program fontProgram, CharSequence glyphs, Font font, int windowWidth) {
+        if (context == null) {
             throw new IllegalStateException("GL version cannot be null");
         }
         if (fontProgram == null) {
@@ -150,7 +150,7 @@ public class StringModel extends Model {
         // Create the texture
         final int width = (int) Math.ceil(size.getWidth()) + glyphs.length() * glyphPadding * 2;
         final int height = (int) Math.ceil(size.getHeight());
-        final Texture texture = generateTexture(factory, glyphs, widths, font, width, height);
+        final Texture texture = generateTexture(context, glyphs, widths, font, width, height);
         // Set the line height, for new lines
         lineHeight = fontMetrics.getHeight();
         // Create the material
@@ -158,7 +158,7 @@ public class StringModel extends Model {
         material.addTexture(0, texture);
         setMaterial(material);
         // Create the model mesh
-        final VertexArray vertexArray = generateMesh(factory, glyphs, widths, width, height);
+        final VertexArray vertexArray = generateMesh(context, glyphs, widths, width, height);
         // Only render one glyph per render call
         vertexArray.setIndicesCount(GLYPH_INDEX_COUNT);
         // Set the vertex array
@@ -267,7 +267,7 @@ public class StringModel extends Model {
         return new StringModel(this);
     }
 
-    private VertexArray generateMesh(GLFactory factory, CharSequence glyphs, TCharIntMap glyphWidths, int textureWidth, int textureHeight) {
+    private VertexArray generateMesh(Context context, CharSequence glyphs, TCharIntMap glyphWidths, int textureWidth, int textureHeight) {
         final VertexData data = new VertexData();
         // Add the positions and texture coordinates attributes
         final VertexAttribute positionAttribute = new VertexAttribute("positions", DataType.FLOAT, 2);
@@ -308,14 +308,14 @@ public class StringModel extends Model {
         positionAttribute.setData(positions);
         textureCoordsAttribute.setData(textureCoords);
         // Set the vertex data in the model
-        final VertexArray vertexArray = factory.createVertexArray();
+        final VertexArray vertexArray = context.createVertexArray();
         vertexArray.create();
         vertexArray.setData(data);
         return vertexArray;
     }
 
-    private Texture generateTexture(GLFactory factory, CharSequence glyphs, TCharIntMap glyphWidths, Font font, int width, int height) {
-        final Texture texture = factory.createTexture();
+    private Texture generateTexture(Context context, CharSequence glyphs, TCharIntMap glyphWidths, Font font, int width, int height) {
+        final Texture texture = context.createTexture();
         // Create an image for the texture
         final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         final Graphics graphics = image.getGraphics();

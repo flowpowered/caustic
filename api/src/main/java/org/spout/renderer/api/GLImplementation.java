@@ -33,25 +33,25 @@ import java.util.Map;
 import java.util.Set;
 
 import org.spout.renderer.api.GLVersioned.GLVersion;
-import org.spout.renderer.api.gl.GLFactory;
+import org.spout.renderer.api.gl.Context;
 
 /**
  * Represents and implementation of an OpenGL or OpenGLES version. Also manages the implementations statically.
  */
 public final class GLImplementation {
-    private static final Map<GLImplementation, GLFactory> implementations = Collections.synchronizedMap(new HashMap<GLImplementation, GLFactory>());
+    private static final Map<GLImplementation, Constructor<Context>> implementations = Collections.synchronizedMap(new HashMap<GLImplementation, Constructor<Context>>());
     private final GLVersion version;
-    private final String factoryName;
+    private final String contextName;
 
     /**
-     * Constructs a new implementation from the version and the factory class name.
+     * Constructs a new implementation from the version and the context class name.
      *
      * @param version The version implementation
-     * @param factoryName The factory class name
+     * @param contextName The context class name
      */
-    public GLImplementation(GLVersion version, String factoryName) {
+    public GLImplementation(GLVersion version, String contextName) {
         this.version = version;
-        this.factoryName = factoryName;
+        this.contextName = contextName;
     }
 
     /**
@@ -64,12 +64,12 @@ public final class GLImplementation {
     }
 
     /**
-     * Returns the full name of the factor class.
+     * Returns the full name of the context class.
      *
-     * @return The name of the factory class
+     * @return The name of the context class
      */
-    public String getFactoryName() {
-        return factoryName;
+    public String getContextName() {
+        return contextName;
     }
 
     /**
@@ -78,37 +78,39 @@ public final class GLImplementation {
      * @param implementation The implementation to load
      * @return Whether or not the loading succeeded
      */
+    @SuppressWarnings("unchecked")
     public static boolean load(GLImplementation implementation) {
-        final Class<?> clazz = loadClass(implementation.getFactoryName());
-        if (clazz == null) {
-            return false;
-        }
-        final GLFactory factory;
         try {
-            final Constructor<?> constructor = clazz.getDeclaredConstructor();
+            final Constructor<?> constructor = Class.forName(implementation.getContextName()).getDeclaredConstructor();
             constructor.setAccessible(true);
-            factory = (GLFactory) constructor.newInstance();
+            implementations.put(implementation, (Constructor<Context>) constructor);
+            return true;
         } catch (Exception ex) {
+            // TODO: use a logger
             ex.printStackTrace();
             return false;
         }
-        implementations.put(implementation, factory);
-        return true;
     }
 
     /**
-     * Returns a {@link GLFactory} for the {@link GLImplementation}, loading it if necessary.
+     * Returns a {@link org.spout.renderer.api.gl.Context} for the {@link GLImplementation}, loading it if necessary.
      *
      * @param glImplementation The GL implementation to look up a factory for
-     * @return The implementation, as a {@link GLFactory} or null if it couldn't be loaded
+     * @return The implementation, as a {@link org.spout.renderer.api.gl.Context} or null if it couldn't be loaded
      */
-    public static GLFactory get(GLImplementation glImplementation) {
+    public static Context get(GLImplementation glImplementation) {
         if (!implementations.containsKey(glImplementation)) {
             if (!load(glImplementation)) {
                 return null;
             }
         }
-        return implementations.get(glImplementation);
+        try {
+            return implementations.get(glImplementation).newInstance();
+        } catch (Exception ex) {
+            // TODO: use a logger
+            ex.printStackTrace();
+            return null;
+        }
     }
 
     /**
@@ -118,14 +120,5 @@ public final class GLImplementation {
      */
     public static Set<GLImplementation> getAvailableImplementations() {
         return Collections.unmodifiableSet(implementations.keySet());
-    }
-
-    private static Class<?> loadClass(String name) {
-        try {
-            return Class.forName(name);
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
-            return null;
-        }
     }
 }

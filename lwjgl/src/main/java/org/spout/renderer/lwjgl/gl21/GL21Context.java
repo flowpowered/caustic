@@ -39,7 +39,13 @@ import org.lwjgl.opengl.PixelFormat;
 
 import org.spout.renderer.api.data.Color;
 import org.spout.renderer.api.gl.Context;
+import org.spout.renderer.api.gl.FrameBuffer;
+import org.spout.renderer.api.gl.Program;
+import org.spout.renderer.api.gl.RenderBuffer;
+import org.spout.renderer.api.gl.Shader;
+import org.spout.renderer.api.gl.Texture;
 import org.spout.renderer.api.gl.Texture.Format;
+import org.spout.renderer.api.gl.VertexArray;
 import org.spout.renderer.api.util.CausticUtil;
 import org.spout.renderer.api.util.Rectangle;
 import org.spout.renderer.lwjgl.LWJGLUtil;
@@ -88,6 +94,36 @@ public class GL21Context extends Context {
         LWJGLUtil.checkForGLError();
         Display.destroy();
         super.destroy();
+    }
+
+    @Override
+    public FrameBuffer createFrameBuffer() {
+        return new GL21FrameBuffer();
+    }
+
+    @Override
+    public Program createProgram() {
+        return new GL21Program();
+    }
+
+    @Override
+    public RenderBuffer createRenderBuffer() {
+        return new GL21RenderBuffer();
+    }
+
+    @Override
+    public Shader createShader() {
+        return new GL21Shader();
+    }
+
+    @Override
+    public Texture createTexture() {
+        return new GL21Texture();
+    }
+
+    @Override
+    public VertexArray createVertexArray() {
+        return new GL21VertexArray();
     }
 
     @Override

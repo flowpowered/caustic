@@ -28,6 +28,12 @@ package org.spout.renderer.lwjgl.gl32;
 
 import org.lwjgl.opengl.ContextAttribs;
 
+import org.spout.renderer.api.gl.FrameBuffer;
+import org.spout.renderer.api.gl.Program;
+import org.spout.renderer.api.gl.RenderBuffer;
+import org.spout.renderer.api.gl.Shader;
+import org.spout.renderer.api.gl.Texture;
+import org.spout.renderer.api.gl.VertexArray;
 import org.spout.renderer.lwjgl.gl21.GL21Context;
 
 /**
@@ -42,6 +48,36 @@ public class GL32Context extends GL21Context {
     @Override
     protected ContextAttribs createContextAttributes() {
         return new ContextAttribs(3, 2).withProfileCore(true);
+    }
+
+    @Override
+    public FrameBuffer createFrameBuffer() {
+        return new GL32FrameBuffer();
+    }
+
+    @Override
+    public Program createProgram() {
+        return new GL32Program();
+    }
+
+    @Override
+    public RenderBuffer createRenderBuffer() {
+        return new GL32RenderBuffer();
+    }
+
+    @Override
+    public Shader createShader() {
+        return new GL32Shader();
+    }
+
+    @Override
+    public Texture createTexture() {
+        return new GL32Texture();
+    }
+
+    @Override
+    public VertexArray createVertexArray() {
+        return new GL32VertexArray();
     }
 
     @Override

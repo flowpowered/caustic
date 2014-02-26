@@ -31,12 +31,12 @@ import org.lwjgl.util.glu.GLU;
 
 import org.spout.renderer.api.GLImplementation;
 import org.spout.renderer.api.GLVersioned.GLVersion;
-import org.spout.renderer.lwjgl.gl21.GL21GLFactory;
-import org.spout.renderer.lwjgl.gl32.GL32GLFactory;
+import org.spout.renderer.lwjgl.gl21.GL21Context;
+import org.spout.renderer.lwjgl.gl32.GL32Context;
 
 public final class LWJGLUtil {
-    public static final GLImplementation GL21_IMPL = new GLImplementation(GLVersion.GL21, GL21GLFactory.class.getName());
-    public static final GLImplementation GL32_IMPL = new GLImplementation(GLVersion.GL32, GL32GLFactory.class.getName());
+    public static final GLImplementation GL21_IMPL = new GLImplementation(GLVersion.GL21, GL21Context.class.getName());
+    public static final GLImplementation GL32_IMPL = new GLImplementation(GLVersion.GL32, GL32Context.class.getName());
     private static boolean debug = true;
 
     private LWJGLUtil() {
