@@ -53,6 +53,9 @@ public abstract class Shader extends Creatable implements GLVersioned {
      */
     public abstract void setSource(ShaderSource source);
 
+    /**
+     * Compiles the shader.
+     */
     public abstract void compile();
 
     /**
@@ -76,8 +79,20 @@ public abstract class Shader extends Creatable implements GLVersioned {
      */
     public abstract TIntObjectMap<String> getTextureLayouts();
 
+    /**
+     * Sets an attribute layout.
+     *
+     * @param attribute The name of the attribute
+     * @param layout The layout for the attribute
+     */
     public abstract void setAttributeLayout(String attribute, int layout);
 
+    /**
+     * Sets a texture layout.
+     *
+     * @param unit The unit for the sampler
+     * @param sampler The sampler name
+     */
     public abstract void setTextureLayout(int unit, String sampler);
 
     /**

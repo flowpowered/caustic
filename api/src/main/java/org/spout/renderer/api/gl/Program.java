@@ -56,10 +56,23 @@ public abstract class Program extends Creatable implements GLVersioned {
         super.destroy();
     }
 
+    /**
+     * Attaches a shader to the program.
+     *
+     * @param shader The shader to attach
+     */
     public abstract void attachShader(Shader shader);
 
+    /**
+     * Detaches a shader from the shader.
+     *
+     * @param shader The shader to detach
+     */
     public abstract void detachShader(Shader shader);
 
+    /**
+     * Links the shaders together in the program. This makes it usable.
+     */
     public abstract void link();
 
     /**
@@ -199,6 +212,11 @@ public abstract class Program extends Creatable implements GLVersioned {
         setUniform(name, (Vector4f) c.normalize());
     }
 
+    /**
+     * Returns the shaders that have been attached to this program.
+     *
+     * @return The attached shaders
+     */
     public abstract Set<Shader> getShaders();
 
     /**
