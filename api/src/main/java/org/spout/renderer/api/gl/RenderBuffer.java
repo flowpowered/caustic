@@ -28,11 +28,11 @@ package org.spout.renderer.api.gl;
 
 import org.spout.renderer.api.Creatable;
 import org.spout.renderer.api.GLVersioned;
-import org.spout.renderer.api.gl.Texture.Format;
+import org.spout.renderer.api.gl.Texture.InternalFormat;
 
 /**
  * Represents an OpenGL render buffer. A render buffer can be used as a faster alternative to a texture in a frame buffer when its rendering output doesn't need to be read. The storage format, width
- * and height dimensions need to be set with {@link #setStorage(org.spout.renderer.api.gl.Texture.Format, int, int)}, before the render buffer can be used.
+ * and height dimensions need to be set with {@link #setStorage(org.spout.renderer.api.gl.Texture.InternalFormat, int, int)}, before the render buffer can be used.
  */
 public abstract class RenderBuffer extends Creatable implements GLVersioned {
     protected int id;
@@ -50,14 +50,14 @@ public abstract class RenderBuffer extends Creatable implements GLVersioned {
      * @param width The width
      * @param height The height
      */
-    public abstract void setStorage(Format format, int width, int height);
+    public abstract void setStorage(InternalFormat format, int width, int height);
 
     /**
      * Returns the render buffer format.
      *
      * @return The format
      */
-    public abstract Format getFormat();
+    public abstract InternalFormat getFormat();
 
     /**
      * Returns the render buffer width.

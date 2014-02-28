@@ -30,7 +30,7 @@ import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GLContext;
 
 import org.spout.renderer.api.gl.RenderBuffer;
-import org.spout.renderer.api.gl.Texture.Format;
+import org.spout.renderer.api.gl.Texture.InternalFormat;
 import org.spout.renderer.lwjgl.LWJGLUtil;
 
 /**
@@ -40,7 +40,7 @@ import org.spout.renderer.lwjgl.LWJGLUtil;
  */
 public class GL21RenderBuffer extends RenderBuffer {
     // The render buffer storage format
-    private Format format;
+    private InternalFormat format;
     // The storage dimensions
     private int width = 1;
     private int height = 1;
@@ -81,7 +81,7 @@ public class GL21RenderBuffer extends RenderBuffer {
     }
 
     @Override
-    public void setStorage(Format format, int width, int height) {
+    public void setStorage(InternalFormat format, int width, int height) {
         checkCreated();
         if (format == null) {
             throw new IllegalArgumentException("Format cannot be null");
@@ -106,7 +106,7 @@ public class GL21RenderBuffer extends RenderBuffer {
     }
 
     @Override
-    public Format getFormat() {
+    public InternalFormat getFormat() {
         return format;
     }
 

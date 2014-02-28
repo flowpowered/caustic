@@ -51,7 +51,6 @@ public class GL21Texture extends Texture {
     // The format
     protected Format format = Format.RGB;
     protected InternalFormat internalFormat = null;
-    protected DataType type = DataType.UNSIGNED_BYTE;
     // The min filter, to check if we need mip maps
     protected FilterMode minFilter = FilterMode.NEAREST_MIPMAP_LINEAR;
     // Texture image dimensions
@@ -86,16 +85,12 @@ public class GL21Texture extends Texture {
     }
 
     @Override
-    public void setFormat(Format format, InternalFormat internalFormat, DataType type) {
+    public void setFormat(Format format, InternalFormat internalFormat) {
         if (format == null) {
             throw new IllegalArgumentException("Format cannot be null");
         }
-        if (type == null) {
-            throw new IllegalArgumentException("Type cannot be null");
-        }
         this.format = format;
         this.internalFormat = internalFormat;
-        this.type = type;
     }
 
     @Override
@@ -106,11 +101,6 @@ public class GL21Texture extends Texture {
     @Override
     public InternalFormat getInternalFormat() {
         return internalFormat;
-    }
-
-    @Override
-    public DataType getComponentType() {
-        return type;
     }
 
     @Override
@@ -222,12 +212,15 @@ public class GL21Texture extends Texture {
         // Bind the texture
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
         // Upload the texture to the GPU
+        final boolean hasInternalFormat = internalFormat != null;
         if (minFilter.needsMipMaps() && imageData != null) {
             // Build mipmaps if using mip mapped filters
-            GLU.gluBuild2DMipmaps(GL11.GL_TEXTURE_2D, internalFormat != null ? internalFormat.getGLConstant() : format.getGLConstant(), width, height, format.getGLConstant(), type.getGLConstant(), imageData);
+            GLU.gluBuild2DMipmaps(GL11.GL_TEXTURE_2D, hasInternalFormat ? internalFormat.getGLConstant() : format.getGLConstant(), width, height, format.getGLConstant(),
+                    hasInternalFormat ? internalFormat.getComponentType().getGLConstant() : DataType.UNSIGNED_BYTE.getGLConstant(), imageData);
         } else {
             // Else just make it a normal texture
-            GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, internalFormat != null ? internalFormat.getGLConstant() : format.getGLConstant(), width, height, 0, format.getGLConstant(), type.getGLConstant(), imageData);
+            GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, hasInternalFormat ? internalFormat.getGLConstant() : format.getGLConstant(), width, height, 0, format.getGLConstant(),
+                    hasInternalFormat ? internalFormat.getComponentType().getGLConstant() : DataType.UNSIGNED_BYTE.getGLConstant(), imageData);
         }
         // Unbind the texture
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
@@ -236,14 +229,15 @@ public class GL21Texture extends Texture {
     }
 
     @Override
-    public ByteBuffer getImageData() {
+    public ByteBuffer getImageData(InternalFormat format) {
         checkCreated();
         // Bind the texture
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
         // Create the image buffer
-        final ByteBuffer imageData = CausticUtil.createByteBuffer(width * height * format.getComponentCount() * type.getByteSize());
+        final ByteBuffer imageData = CausticUtil.createByteBuffer(width * height * format.getBytes());
         // Get the image data
-        GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, format.getGLConstant(), type.getGLConstant(), imageData);
+        GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, format != null ? format.getFormat().getGLConstant() : this.format.getGLConstant(),
+                format != null ? format.getComponentType().getGLConstant() : DataType.UNSIGNED_BYTE.getGLConstant(), imageData);
         // Unbind the texture
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
         // Check for errors

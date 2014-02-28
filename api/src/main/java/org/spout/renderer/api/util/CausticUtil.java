@@ -29,6 +29,8 @@ package org.spout.renderer.api.util;
 import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -44,7 +46,6 @@ import com.flowpowered.math.vector.Vector4f;
 import gnu.trove.list.TFloatList;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TFloatArrayList;
-import java.io.IOException;
 
 import org.spout.renderer.api.GLVersioned;
 import org.spout.renderer.api.data.VertexAttribute.DataType;
@@ -142,13 +143,19 @@ public final class CausticUtil {
     public static ByteBuffer getImageData(BufferedImage image, Format format) {
         final int width = image.getWidth();
         final int height = image.getHeight();
-        final int[] pixels = new int[width * height];
-        image.getRGB(0, 0, width, height, pixels, 0, width);
+        final int type = image.getType();
+        final int[] pixels;
+        if (type == BufferedImage.TYPE_INT_ARGB || type == BufferedImage.TYPE_INT_RGB) {
+            pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
+        } else {
+            pixels = new int[width * height];
+            image.getRGB(0, 0, width, height, pixels, 0, width);
+        }
         return getImageData(pixels, format, width, height);
     }
 
     /**
-     * Sets the texture's image data. The image data reading is done according to the set {@link org.spout.renderer.api.gl.Texture.Format}.
+     * Sets the texture's image data. The image data reading is done according to the given {@link org.spout.renderer.api.gl.Texture.Format}.
      *
      * @param pixels The image pixels
      * @param width The width of the image
@@ -174,6 +181,78 @@ public final class CausticUtil {
             }
         }
         return data;
+    }
+
+    /**
+     * Converts a byte buffer of image data to a flat integer array integer where each pixel is and integer in the ARGB format. Input data is expected to be 8 bits per component. If the format has no
+     * alpha, 0xFF is written as the value.
+     *
+     * @param imageData The source image data
+     * @param format The format of the image data, 8 bits per component
+     * @param size The size of the image
+     * @return The packed pixel array
+     */
+    public static int[] getPackedPixels(ByteBuffer imageData, Format format, Rectangle size) {
+        final int[] pixels = new int[size.getArea()];
+        final int width = size.getWidth();
+        final int height = size.getHeight();
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                final int srcIndex = (x + y * width) * format.getComponentCount();
+                final int destIndex = x + (height - y - 1) * width;
+                if (format.hasRed()) {
+                    pixels[destIndex] |= (imageData.get(srcIndex) & 0xff) << 16;
+                }
+                if (format.hasGreen()) {
+                    pixels[destIndex] |= (imageData.get(srcIndex + 1) & 0xff) << 8;
+                }
+                if (format.hasBlue()) {
+                    pixels[destIndex] |= imageData.get(srcIndex + 2) & 0xff;
+                }
+                if (format.hasAlpha()) {
+                    pixels[destIndex] |= (imageData.get(srcIndex + 3) & 0xff) << 24;
+                } else {
+                    pixels[destIndex] |= 0xff000000;
+                }
+            }
+        }
+        return pixels;
+    }
+
+    /**
+     * Converts a byte buffer of image data to a buffered image in the ARGB format. Input data is expected to be 8 bits per component. If the format has no alpha, 0xFF is written as the value.
+     *
+     * @param imageData The source image data
+     * @param format The format of the image data, 8 bits per component
+     * @param size The size of the image
+     * @return The buffered image
+     */
+    public static BufferedImage getImage(ByteBuffer imageData, Format format, Rectangle size) {
+        final int width = size.getWidth();
+        final int height = size.getHeight();
+        final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        final int[] pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                final int srcIndex = (x + y * width) * format.getComponentCount();
+                final int destIndex = x + (height - y - 1) * width;
+                if (format.hasRed()) {
+                    pixels[destIndex] |= (imageData.get(srcIndex) & 0xff) << 16;
+                }
+                if (format.hasGreen()) {
+                    pixels[destIndex] |= (imageData.get(srcIndex + 1) & 0xff) << 8;
+                }
+                if (format.hasBlue()) {
+                    pixels[destIndex] |= imageData.get(srcIndex + 2) & 0xff;
+                }
+                if (format.hasAlpha()) {
+                    pixels[destIndex] |= (imageData.get(srcIndex + 3) & 0xff) << 24;
+                } else {
+                    pixels[destIndex] |= 0xff000000;
+                }
+            }
+        }
+        return image;
     }
 
     /**

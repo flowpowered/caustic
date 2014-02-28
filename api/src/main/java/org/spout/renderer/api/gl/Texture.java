@@ -68,7 +68,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
     }
 
     /**
-     * Sets the texture's format. The type will be {@link org.spout.renderer.api.data.VertexAttribute.DataType#BYTE}.
+     * Sets the texture's format.
      *
      * @param format The format
      */
@@ -77,23 +77,21 @@ public abstract class Texture extends Creatable implements GLVersioned {
     }
 
     /**
-     * Sets the texture's format and internal format. The type will be {@link org.spout.renderer.api.data.VertexAttribute.DataType#BYTE}.
+     * Sets the texture's format.
      *
      * @param format The format
-     * @param internalFormat The internal format
      */
-    public void setFormat(Format format, InternalFormat internalFormat) {
-        setFormat(format, internalFormat, DataType.UNSIGNED_BYTE);
+    public void setFormat(InternalFormat format) {
+        setFormat(format.getFormat(), format);
     }
 
     /**
-     * Sets the texture's format, internal format and type.
+     * Sets the texture's format and internal format.
      *
      * @param format The format
      * @param internalFormat The internal format
-     * @param type The data type
      */
-    public abstract void setFormat(Format format, InternalFormat internalFormat, DataType type);
+    public abstract void setFormat(Format format, InternalFormat internalFormat);
 
     /**
      * Returns the texture's format
@@ -108,13 +106,6 @@ public abstract class Texture extends Creatable implements GLVersioned {
      * @return The internal format
      */
     public abstract InternalFormat getInternalFormat();
-
-    /**
-     * Returns the texture's component type.
-     *
-     * @return The component type
-     */
-    public abstract DataType getComponentType();
 
     /**
      * Sets the value for anisotropic filtering. Must be greater than zero. Note that this is EXT based and might not be supported on all hardware.
@@ -163,11 +154,21 @@ public abstract class Texture extends Creatable implements GLVersioned {
     public abstract void setImageData(ByteBuffer imageData, int width, int height);
 
     /**
-     * Returns the image data.
+     * Returns the image data in the internal format.
      *
-     * @return The image data
+     * @return The image data in the internal format.
      */
-    public abstract ByteBuffer getImageData();
+    public ByteBuffer getImageData() {
+        return getImageData(getInternalFormat());
+    }
+
+    /**
+     * Returns the image data in the desired format.
+     *
+     * @param format The format to return the data in
+     * @return The image data in the desired format
+     */
+    public abstract ByteBuffer getImageData(InternalFormat format);
 
     /**
      * Returns the width of the image.
@@ -290,36 +291,35 @@ public abstract class Texture extends Creatable implements GLVersioned {
      * An enum of sized texture component formats.
      */
     public static enum InternalFormat {
-        RGB8(0x8051, Format.RGB, 3, false), // GL11.GL_RGB8
-        RGBA8(0x8058, Format.RGBA, 4, false), // GL11.GL_RGBA8
-        RGBA16(0x805B, Format.RGBA, 8, false), // GL11.GL_RGBA16
-        DEPTH_COMPONENT16(0x81A5, Format.DEPTH, 2, false), // GL14.GL_DEPTH_COMPONENT16
-        DEPTH_COMPONENT24(0x81A6, Format.DEPTH, 3, false), // GL14.GL_DEPTH_COMPONENT24
-        DEPTH_COMPONENT32(0x81A7, Format.DEPTH, 4, false), // GL14.GL_DEPTH_COMPONENT32
-        R8(0x8229, Format.RED, 1, false), // GL30.GL_R8
-        R16(0x822A, Format.RED, 2, false), // GL30.GL_R16
-        RG8(0x822B, Format.RG, 2, false), // GL30.GL_RG8
-        RG16(0x822C, Format.RG, 4, false), // GL30.GL_RG16
-        R16F(0x822D, Format.RED, 2, true), // GL30.GL_R16F
-        R32F(0x822E, Format.RED, 4, true), // GL30.GL_R32F
-        RG16F(0x822F, Format.RG, 4, true), // GL30.GL_RG16F
-        RG32F(0x8230, Format.RGB, 8, true), // GL30.GL_RG32F
-        RGBA32F(0x8814, Format.RGBA, 16, true), // GL30.GL_RGBA32F
-        RGB32F(0x8815, Format.RGB, 12, true), // GL30.GL_RGB32F
-        RGBA16F(0x881A, Format.RGBA, 8, true), // GL30.GL_RGBA16F
-        RGB16F(0x881B, Format.RGB, 6, true); // GL30.GL_RGB16F
+        RGB8(0x8051, Format.RGB, DataType.UNSIGNED_BYTE), // GL11.GL_RGB8
+        RGBA8(0x8058, Format.RGBA, DataType.UNSIGNED_BYTE), // GL11.GL_RGBA8
+        RGB16(32852, Format.RGB, DataType.UNSIGNED_SHORT), // GL11.GL_RGB16
+        RGBA16(0x805B, Format.RGBA, DataType.UNSIGNED_SHORT), // GL11.GL_RGBA16
+        DEPTH_COMPONENT16(0x81A5, Format.DEPTH, DataType.UNSIGNED_SHORT), // GL14.GL_DEPTH_COMPONENT16
+        DEPTH_COMPONENT24(0x81A6, Format.DEPTH, DataType.UNSIGNED_INT), // GL14.GL_DEPTH_COMPONENT24
+        DEPTH_COMPONENT32(0x81A7, Format.DEPTH, DataType.UNSIGNED_INT), // GL14.GL_DEPTH_COMPONENT32
+        R8(0x8229, Format.RED, DataType.UNSIGNED_BYTE), // GL30.GL_R8
+        R16(0x822A, Format.RED, DataType.UNSIGNED_SHORT), // GL30.GL_R16
+        RG8(0x822B, Format.RG, DataType.UNSIGNED_BYTE), // GL30.GL_RG8
+        RG16(0x822C, Format.RG, DataType.UNSIGNED_SHORT), // GL30.GL_RG16
+        R16F(0x822D, Format.RED, DataType.HALF_FLOAT), // GL30.GL_R16F
+        R32F(0x822E, Format.RED, DataType.FLOAT), // GL30.GL_R32F
+        RG16F(0x822F, Format.RG, DataType.HALF_FLOAT), // GL30.GL_RG16F
+        RG32F(0x8230, Format.RGB, DataType.FLOAT), // GL30.GL_RG32F
+        RGBA32F(0x8814, Format.RGBA, DataType.FLOAT), // GL30.GL_RGBA32F
+        RGB32F(0x8815, Format.RGB, DataType.FLOAT), // GL30.GL_RGB32F
+        RGBA16F(0x881A, Format.RGBA, DataType.HALF_FLOAT), // GL30.GL_RGBA16F
+        RGB16F(0x881B, Format.RGB, DataType.HALF_FLOAT); // GL30.GL_RGB16F
         private final int glConstant;
         private final Format format;
         private final int bytes;
-        private final int bytesPerComponent;
-        private final boolean floatBased;
+        private final DataType componentType;
 
-        private InternalFormat(int glConstant, Format format, int bytes, boolean floatBased) {
+        private InternalFormat(int glConstant, Format format, DataType componentType) {
             this.glConstant = glConstant;
             this.format = format;
-            this.bytes = bytes;
-            bytesPerComponent = bytes / format.getComponentCount();
-            this.floatBased = floatBased;
+            this.componentType = componentType;
+            bytes = format.getComponentCount() * componentType.getByteSize();
         }
 
         /**
@@ -350,6 +350,15 @@ public abstract class Texture extends Creatable implements GLVersioned {
         }
 
         /**
+         * Returns the data type of the components.
+         *
+         * @return The component type
+         */
+        public DataType getComponentType() {
+            return componentType;
+        }
+
+        /**
          * Returns the number of bytes used by a single pixel in the format.
          *
          * @return The number of bytes for a pixel
@@ -364,7 +373,7 @@ public abstract class Texture extends Creatable implements GLVersioned {
          * @return The number of bytes for a pixel component
          */
         public int getBytesPerComponent() {
-            return bytesPerComponent;
+            return componentType.getByteSize();
         }
 
         /**
@@ -410,15 +419,6 @@ public abstract class Texture extends Creatable implements GLVersioned {
          */
         public boolean hasDepth() {
             return format.hasDepth();
-        }
-
-        /**
-         * Returns true if this format has float based components.
-         *
-         * @return True if the components are float based
-         */
-        public boolean isFloatBased() {
-            return floatBased;
         }
     }
 

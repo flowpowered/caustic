@@ -31,6 +31,7 @@ import java.nio.ByteBuffer;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 
+import org.spout.renderer.api.data.VertexAttribute.DataType;
 import org.spout.renderer.lwjgl.LWJGLUtil;
 import org.spout.renderer.lwjgl.gl21.GL21Texture;
 
@@ -57,7 +58,9 @@ public class GL32Texture extends GL21Texture {
         // Bind the texture
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
         // Upload the texture
-        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, internalFormat != null ? internalFormat.getGLConstant() : format.getGLConstant(), width, height, 0, format.getGLConstant(), type.getGLConstant(), imageData);
+        final boolean hasInternalFormat = internalFormat != null;
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, hasInternalFormat ? internalFormat.getGLConstant() : format.getGLConstant(), width, height, 0, format.getGLConstant(),
+                hasInternalFormat ? internalFormat.getComponentType().getGLConstant() : DataType.UNSIGNED_BYTE.getGLConstant(), imageData);
         // Generate mipmaps if necessary
         if (minFilter.needsMipMaps() && imageData != null) {
             GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);

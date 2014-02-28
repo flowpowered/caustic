@@ -35,7 +35,7 @@ import org.spout.renderer.api.Camera;
 import org.spout.renderer.api.Creatable;
 import org.spout.renderer.api.GLVersioned;
 import org.spout.renderer.api.data.UniformHolder;
-import org.spout.renderer.api.gl.Texture.Format;
+import org.spout.renderer.api.gl.Texture.InternalFormat;
 import org.spout.renderer.api.util.CausticUtil;
 import org.spout.renderer.api.util.Rectangle;
 
@@ -225,7 +225,7 @@ public abstract class Context extends Creatable implements GLVersioned {
      * @param format The image format to return
      * @return The byte buffer containing the pixel data, according to the provided format
      */
-    public abstract ByteBuffer readCurrentFrame(Rectangle size, Format format);
+    public abstract ByteBuffer readFrame(Rectangle size, InternalFormat format);
 
     /**
      * Uploads the renderer uniforms to the desired program.

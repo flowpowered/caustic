@@ -44,7 +44,7 @@ import org.spout.renderer.api.gl.Program;
 import org.spout.renderer.api.gl.RenderBuffer;
 import org.spout.renderer.api.gl.Shader;
 import org.spout.renderer.api.gl.Texture;
-import org.spout.renderer.api.gl.Texture.Format;
+import org.spout.renderer.api.gl.Texture.InternalFormat;
 import org.spout.renderer.api.gl.VertexArray;
 import org.spout.renderer.api.util.CausticUtil;
 import org.spout.renderer.api.util.Rectangle;
@@ -218,11 +218,11 @@ public class GL21Context extends Context {
     }
 
     @Override
-    public ByteBuffer readCurrentFrame(Rectangle size, Format format) {
+    public ByteBuffer readFrame(Rectangle size, InternalFormat format) {
         checkCreated();
-        final ByteBuffer buffer = CausticUtil.createByteBuffer(size.getArea() * 3);
+        final ByteBuffer buffer = CausticUtil.createByteBuffer(size.getArea() * format.getBytes());
         GL11.glReadBuffer(GL11.GL_FRONT);
-        GL11.glReadPixels(size.getX(), size.getY(), size.getWidth(), size.getHeight(), format.getGLConstant(), GL11.GL_UNSIGNED_BYTE, buffer);
+        GL11.glReadPixels(size.getX(), size.getY(), size.getWidth(), size.getHeight(), format.getFormat().getGLConstant(), format.getComponentType().getGLConstant(), buffer);
         // Check for errors
         LWJGLUtil.checkForGLError();
         return buffer;
