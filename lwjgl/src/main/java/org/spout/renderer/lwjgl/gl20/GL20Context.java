@@ -24,7 +24,7 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.lwjgl.gl21;
+package org.spout.renderer.lwjgl.gl20;
 
 import java.nio.ByteBuffer;
 
@@ -51,12 +51,12 @@ import org.spout.renderer.api.util.Rectangle;
 import org.spout.renderer.lwjgl.LWJGLUtil;
 
 /**
- * An OpenGL 2.1 implementation of {@link org.spout.renderer.api.gl.Context}.
+ * An OpenGL 2.0 implementation of {@link org.spout.renderer.api.gl.Context}.
  *
  * @see org.spout.renderer.api.gl.Context
  */
-public class GL21Context extends Context {
-    protected GL21Context() {
+public class GL20Context extends Context {
+    protected GL20Context() {
     }
 
     @Override
@@ -84,7 +84,7 @@ public class GL21Context extends Context {
      * @return The context attributes
      */
     protected ContextAttribs createContextAttributes() {
-        return new ContextAttribs(2, 1);
+        return new ContextAttribs(2, 0);
     }
 
     @Override
@@ -98,32 +98,32 @@ public class GL21Context extends Context {
 
     @Override
     public FrameBuffer newFrameBuffer() {
-        return new GL21FrameBuffer();
+        return new GL20FrameBuffer();
     }
 
     @Override
     public Program newProgram() {
-        return new GL21Program();
+        return new GL20Program();
     }
 
     @Override
     public RenderBuffer newRenderBuffer() {
-        return new GL21RenderBuffer();
+        return new GL20RenderBuffer();
     }
 
     @Override
     public Shader newShader() {
-        return new GL21Shader();
+        return new GL20Shader();
     }
 
     @Override
     public Texture newTexture() {
-        return new GL21Texture();
+        return new GL20Texture();
     }
 
     @Override
     public VertexArray newVertexArray() {
-        return new GL21VertexArray();
+        return new GL20VertexArray();
     }
 
     @Override
@@ -230,6 +230,6 @@ public class GL21Context extends Context {
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL21;
+        return GLVersion.GL20;
     }
 }

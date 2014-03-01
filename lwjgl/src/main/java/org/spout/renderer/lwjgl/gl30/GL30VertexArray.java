@@ -24,7 +24,7 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.lwjgl.gl32;
+package org.spout.renderer.lwjgl.gl30;
 
 import java.nio.ByteBuffer;
 
@@ -41,11 +41,11 @@ import org.spout.renderer.api.gl.VertexArray;
 import org.spout.renderer.lwjgl.LWJGLUtil;
 
 /**
- * An OpenGL 3.2 implementation of {@link VertexArray}.
+ * An OpenGL 3.0 implementation of {@link VertexArray}.
  *
  * @see VertexArray
  */
-public class GL32VertexArray extends VertexArray {
+public class GL30VertexArray extends VertexArray {
     private static final int[] EMPTY_ARRAY = {};
     // Buffers IDs
     private int indicesBufferID = 0;
@@ -60,7 +60,7 @@ public class GL32VertexArray extends VertexArray {
     // Drawing mode
     private DrawingMode drawingMode = DrawingMode.TRIANGLES;
 
-    protected GL32VertexArray() {
+    protected GL30VertexArray() {
     }
 
     @Override
@@ -77,14 +77,8 @@ public class GL32VertexArray extends VertexArray {
     @Override
     public void destroy() {
         checkCreated();
-        // Unbind any bound buffer
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-        // Unbind the indices buffer
-        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
         // Delete the indices buffer
         GL15.glDeleteBuffers(indicesBufferID);
-        // Unbind the vao
-        GL30.glBindVertexArray(0);
         // Delete the attribute buffers
         for (int attributeBufferID : attributeBufferIDs) {
             GL15.glDeleteBuffers(attributeBufferID);
@@ -218,11 +212,11 @@ public class GL32VertexArray extends VertexArray {
         checkCreated();
         // Bind the vao
         GL30.glBindVertexArray(id);
-        // Bind the indices buffer
+        // Bind the index buffer
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesBufferID);
         // Draw all indices with the provided mode
         GL11.glDrawElements(drawingMode.getGLConstant(), indicesDrawCount, GL11.GL_UNSIGNED_INT, indicesOffset * DataType.INT.getByteSize());
-        // Unbind the indices buffer
+        // Unbind the index buffer
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
         // Unbind the vao
         GL30.glBindVertexArray(0);
@@ -232,6 +226,6 @@ public class GL32VertexArray extends VertexArray {
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL32;
+        return GLVersion.GL30;
     }
 }

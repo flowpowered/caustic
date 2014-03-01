@@ -24,7 +24,7 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.lwjgl.gl21;
+package org.spout.renderer.lwjgl.gl20;
 
 import java.nio.ByteBuffer;
 
@@ -43,12 +43,14 @@ import org.spout.renderer.api.gl.VertexArray;
 import org.spout.renderer.lwjgl.LWJGLUtil;
 
 /**
- * An OpenGL 2.1 implementation of {@link VertexArray}. <p/> Vertex arrays will be used if the ARB or APPLE extension is supported by the hardware. Else, since core OpenGL doesn't support them until
+ * An OpenGL 2.0 implementation of {@link VertexArray}.
+ * <p/>
+ * Vertex arrays will be used if the ARB or APPLE extension is supported by the hardware. Else, since core OpenGL doesn't support them until
  * 3.0, the vertex attributes will have to be redefined on each render call.
  *
  * @see VertexArray
  */
-public class GL21VertexArray extends VertexArray {
+public class GL20VertexArray extends VertexArray {
     private static final int[] EMPTY_ARRAY = {};
     // Buffers IDs
     private int indicesBufferID = 0;
@@ -69,7 +71,7 @@ public class GL21VertexArray extends VertexArray {
     private int[] attributeTypes;
     private boolean[] attributeNormalizing;
 
-    protected GL21VertexArray() {
+    protected GL20VertexArray() {
         final ContextCapabilities capabilities = GLContext.getCapabilities();
         if (capabilities.GL_ARB_vertex_array_object) {
             extension = VertexArrayExtension.ARB;
@@ -96,16 +98,8 @@ public class GL21VertexArray extends VertexArray {
     @Override
     public void destroy() {
         checkCreated();
-        // Unbind any bound buffer
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-        // Unbind the indices buffer
-        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
         // Delete the indices buffer
         GL15.glDeleteBuffers(indicesBufferID);
-        // Unbind the vao
-        if (extension.has()) {
-            extension.glBindVertexArray(0);
-        }
         // Delete the attribute buffers
         for (int attributeBufferID : attributeBufferIDs) {
             GL15.glDeleteBuffers(attributeBufferID);
@@ -259,7 +253,7 @@ public class GL21VertexArray extends VertexArray {
             // Bind the vao
             extension.glBindVertexArray(id);
         } else {
-            // Else enable the vertex attributes
+            // Enable the vertex attributes
             for (int i = 0; i < attributeBufferIDs.length; i++) {
                 // Bind the buffer
                 GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, attributeBufferIDs[i]);
@@ -271,11 +265,11 @@ public class GL21VertexArray extends VertexArray {
             // Unbind the last buffer
             GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
         }
-        // Bind the indices buffer
+        // Bind the index buffer
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesBufferID);
         // Draw all indices with the provided mode
         GL11.glDrawElements(drawingMode.getGLConstant(), indicesCount, GL11.GL_UNSIGNED_INT, indicesOffset * DataType.INT.getByteSize());
-        // Unbind the indices buffer
+        // Unbind the index buffer
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
         // Check for errors
         LWJGLUtil.checkForGLError();
@@ -283,7 +277,7 @@ public class GL21VertexArray extends VertexArray {
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL21;
+        return GLVersion.GL20;
     }
 
     private static enum VertexArrayExtension {
