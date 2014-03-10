@@ -116,12 +116,12 @@ public final class CausticUtil {
 
     /**
      * Gets the {@link java.io.InputStream}'s data as a {@link java.nio.ByteBuffer}. The image data reading is done according to the {@link org.spout.renderer.api.gl.Texture.Format}. The image size is
-     * stored in the passed {@link Rectangle} instance.
+     * stored in the passed {@link Rectangle} instance. The returned buffer is flipped an ready for reading.
      *
      * @param source The image input stream to extract the data from
      * @param format The format of the image data
      * @param size The rectangle to store the size in
-     * @return buffer containing the decoded image data
+     * @return The flipped buffer containing the decoded image data
      */
     public static ByteBuffer getImageData(InputStream source, Format format, Rectangle size) {
         try {
@@ -134,11 +134,11 @@ public final class CausticUtil {
     }
 
     /**
-     * Gets the {@link java.awt.image.BufferedImage}'s data as a {@link java.nio.ByteBuffer}. The image data reading is done according to the {@link org.spout.renderer.api.gl.Texture.Format}.
+     * Gets the {@link java.awt.image.BufferedImage}'s data as a {@link java.nio.ByteBuffer}. The image data reading is done according to the {@link org.spout.renderer.api.gl.Texture.Format}. The returned buffer is flipped an ready for reading.
      *
      * @param image The image to extract the data from
      * @param format The format of the image data
-     * @return buffer containing the decoded image data
+     * @return The flipped buffer containing the decoded image data
      */
     public static ByteBuffer getImageData(BufferedImage image, Format format) {
         final int width = image.getWidth();
@@ -155,11 +155,12 @@ public final class CausticUtil {
     }
 
     /**
-     * Sets the texture's image data. The image data reading is done according to the given {@link org.spout.renderer.api.gl.Texture.Format}.
+     * Sets the texture's image data. The image data reading is done according to the given {@link org.spout.renderer.api.gl.Texture.Format}. The returned buffer is flipped an ready for reading.
      *
      * @param pixels The image pixels
      * @param width The width of the image
      * @param height the height of the image
+     * @return The flipped buffer containing the decoded image data
      */
     public static ByteBuffer getImageData(int[] pixels, Format format, int width, int height) {
         final ByteBuffer data = CausticUtil.createByteBuffer(width * height * format.getComponentCount());
@@ -180,6 +181,7 @@ public final class CausticUtil {
                 }
             }
         }
+        data.flip();
         return data;
     }
 
