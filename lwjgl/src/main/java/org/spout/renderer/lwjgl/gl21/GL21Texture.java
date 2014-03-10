@@ -219,6 +219,9 @@ public class GL21Texture extends Texture {
                     hasInternalFormat ? internalFormat.getComponentType().getGLConstant() : DataType.UNSIGNED_BYTE.getGLConstant(), imageData);
         } else {
             // Else just make it a normal texture
+            // Use byte alignment
+            GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
+            // Upload the image
             GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, hasInternalFormat ? internalFormat.getGLConstant() : format.getGLConstant(), width, height, 0, format.getGLConstant(),
                     hasInternalFormat ? internalFormat.getComponentType().getGLConstant() : DataType.UNSIGNED_BYTE.getGLConstant(), imageData);
         }
@@ -234,10 +237,13 @@ public class GL21Texture extends Texture {
         // Bind the texture
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
         // Create the image buffer
-        final ByteBuffer imageData = CausticUtil.createByteBuffer(width * height * format.getBytes());
+        final boolean formatNotNull = format != null;
+        final ByteBuffer imageData = CausticUtil.createByteBuffer(width * height * (formatNotNull ? format.getBytes() : this.format.getComponentCount() * DataType.UNSIGNED_BYTE.getByteSize()));
+        // Use byte alignment
+        GL11.glPixelStorei(GL11.GL_PACK_ALIGNMENT, 1);
         // Get the image data
-        GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, format != null ? format.getFormat().getGLConstant() : this.format.getGLConstant(),
-                format != null ? format.getComponentType().getGLConstant() : DataType.UNSIGNED_BYTE.getGLConstant(), imageData);
+        GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, formatNotNull ? format.getFormat().getGLConstant() : this.format.getGLConstant(),
+                formatNotNull ? format.getComponentType().getGLConstant() : DataType.UNSIGNED_BYTE.getGLConstant(), imageData);
         // Unbind the texture
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
         // Check for errors

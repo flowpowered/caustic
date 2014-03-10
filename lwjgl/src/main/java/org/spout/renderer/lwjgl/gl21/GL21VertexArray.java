@@ -274,7 +274,7 @@ public class GL21VertexArray extends VertexArray {
         // Bind the indices buffer
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesBufferID);
         // Draw all indices with the provided mode
-        GL11.glDrawElements(drawingMode.getGLConstant(), indicesCount, GL11.GL_UNSIGNED_INT, indicesOffset * DataType.INT.getByteSize());
+        GL11.glDrawElements(drawingMode.getGLConstant(), indicesDrawCount, GL11.GL_UNSIGNED_INT, indicesOffset * DataType.INT.getByteSize());
         // Unbind the indices buffer
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
         // Check for errors

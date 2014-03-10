@@ -220,8 +220,13 @@ public class GL21Context extends Context {
     @Override
     public ByteBuffer readFrame(Rectangle size, InternalFormat format) {
         checkCreated();
+        // Create the image buffer
         final ByteBuffer buffer = CausticUtil.createByteBuffer(size.getArea() * format.getBytes());
+        // Read from the front buffer
         GL11.glReadBuffer(GL11.GL_FRONT);
+        // Use byte alignment
+        GL11.glPixelStorei(GL11.GL_PACK_ALIGNMENT, 1);
+        // Read the pixels
         GL11.glReadPixels(size.getX(), size.getY(), size.getWidth(), size.getHeight(), format.getFormat().getGLConstant(), format.getComponentType().getGLConstant(), buffer);
         // Check for errors
         LWJGLUtil.checkForGLError();

@@ -57,6 +57,8 @@ public class GL32Texture extends GL21Texture {
         this.height = height;
         // Bind the texture
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
+        // Use byte alignment
+        GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
         // Upload the texture
         final boolean hasInternalFormat = internalFormat != null;
         GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, hasInternalFormat ? internalFormat.getGLConstant() : format.getGLConstant(), width, height, 0, format.getGLConstant(),
