@@ -134,7 +134,8 @@ public final class CausticUtil {
     }
 
     /**
-     * Gets the {@link java.awt.image.BufferedImage}'s data as a {@link java.nio.ByteBuffer}. The image data reading is done according to the {@link org.spout.renderer.api.gl.Texture.Format}. The returned buffer is flipped an ready for reading.
+     * Gets the {@link java.awt.image.BufferedImage}'s data as a {@link java.nio.ByteBuffer}. The image data reading is done according to the {@link org.spout.renderer.api.gl.Texture.Format}. The
+     * returned buffer is flipped an ready for reading.
      *
      * @param image The image to extract the data from
      * @param format The format of the image data

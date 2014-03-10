@@ -24,22 +24,22 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.lwjgl.gl32;
+package org.spout.renderer.lwjgl.gl30;
 
-import org.spout.renderer.lwjgl.gl21.GL21Shader;
+import org.spout.renderer.lwjgl.gl20.GL20Shader;
 
 /**
- * An OpenGL 3.2 implementation of {@link org.spout.renderer.api.gl.Shader}.
+ * An OpenGL 3.0 implementation of {@link org.spout.renderer.api.gl.Shader}.
  *
  * @see org.spout.renderer.api.gl.Shader
  */
-public class GL32Shader extends GL21Shader {
-    protected GL32Shader() {
+public class GL30Shader extends GL20Shader {
+    protected GL30Shader() {
     }
     // TODO: add GL30 specific stuff
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL32;
+        return GLVersion.GL30;
     }
 }

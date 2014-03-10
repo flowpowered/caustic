@@ -24,43 +24,34 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.lwjgl.gl21;
+package org.spout.renderer.lwjgl.gl30;
 
-import org.lwjgl.opengl.EXTFramebufferObject;
-import org.lwjgl.opengl.GLContext;
+import org.lwjgl.opengl.GL30;
 
 import org.spout.renderer.api.gl.RenderBuffer;
 import org.spout.renderer.api.gl.Texture.InternalFormat;
 import org.spout.renderer.lwjgl.LWJGLUtil;
 
 /**
- * An OpenGL 2.1 implementation of {@link RenderBuffer} using EXT.
+ * An OpenGL 3.0 implementation of {@link RenderBuffer}.
  *
  * @see RenderBuffer
  */
-public class GL21RenderBuffer extends RenderBuffer {
+public class GL30RenderBuffer extends RenderBuffer {
     // The render buffer storage format
     private InternalFormat format;
     // The storage dimensions
     private int width = 1;
     private int height = 1;
 
-    /**
-     * Constructs a new render buffer for OpenGL 2.1. If no EXT extension for render buffers is available, an exception is thrown.
-     *
-     * @throws UnsupportedOperationException If the hardware doesn't support EXT render buffers.
-     */
-    protected GL21RenderBuffer() {
-        if (!GLContext.getCapabilities().GL_EXT_framebuffer_object) {
-            throw new UnsupportedOperationException("Render buffers are not supported by this hardware");
-        }
+    protected GL30RenderBuffer() {
     }
 
     @Override
     public void create() {
         checkNotCreated();
         // Generate the render buffer
-        id = EXTFramebufferObject.glGenRenderbuffersEXT();
+        id = GL30.glGenRenderbuffers();
         // Update the state
         super.create();
         // Check for errors
@@ -70,10 +61,8 @@ public class GL21RenderBuffer extends RenderBuffer {
     @Override
     public void destroy() {
         checkCreated();
-        // Unbind the render buffer
-        EXTFramebufferObject.glBindRenderbufferEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, 0);
         // Delete the render buffer
-        EXTFramebufferObject.glDeleteRenderbuffersEXT(id);
+        GL30.glDeleteRenderbuffers(id);
         // Update state
         super.destroy();
         // Check for errors
@@ -96,11 +85,11 @@ public class GL21RenderBuffer extends RenderBuffer {
         this.width = width;
         this.height = height;
         // Bind the render buffer
-        EXTFramebufferObject.glBindRenderbufferEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, id);
+        GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, id);
         // Set the storage format and size
-        EXTFramebufferObject.glRenderbufferStorageEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, format.getGLConstant(), width, height);
+        GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, format.getGLConstant(), width, height);
         // Unbind the render buffer
-        EXTFramebufferObject.glBindRenderbufferEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, 0);
+        GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, 0);
         // Check for errors
         LWJGLUtil.checkForGLError();
     }
@@ -123,8 +112,8 @@ public class GL21RenderBuffer extends RenderBuffer {
     @Override
     public void bind() {
         checkCreated();
-        // Unbind the render buffer
-        EXTFramebufferObject.glBindRenderbufferEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, id);
+        // Bind the render buffer
+        GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, id);
         // Check for errors
         LWJGLUtil.checkForGLError();
     }
@@ -132,14 +121,14 @@ public class GL21RenderBuffer extends RenderBuffer {
     @Override
     public void unbind() {
         checkCreated();
-        // Bind the render buffer
-        EXTFramebufferObject.glBindRenderbufferEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, 0);
+        // Unbind the render buffer
+        GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, 0);
         // Check for errors
         LWJGLUtil.checkForGLError();
     }
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL21;
+        return GLVersion.GL30;
     }
 }

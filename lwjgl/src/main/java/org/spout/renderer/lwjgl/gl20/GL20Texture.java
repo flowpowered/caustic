@@ -24,7 +24,7 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.lwjgl.gl21;
+package org.spout.renderer.lwjgl.gl20;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -43,11 +43,11 @@ import org.spout.renderer.api.util.CausticUtil;
 import org.spout.renderer.lwjgl.LWJGLUtil;
 
 /**
- * An OpenGL 2.1 implementation of {@link Texture}.
+ * An OpenGL 2.0 implementation of {@link Texture}.
  *
  * @see Texture
  */
-public class GL21Texture extends Texture {
+public class GL20Texture extends Texture {
     // The format
     protected Format format = Format.RGB;
     protected InternalFormat internalFormat = null;
@@ -57,7 +57,7 @@ public class GL21Texture extends Texture {
     protected int width = 1;
     protected int height = 1;
 
-    protected GL21Texture() {
+    protected GL20Texture() {
     }
 
     @Override
@@ -74,8 +74,6 @@ public class GL21Texture extends Texture {
     @Override
     public void destroy() {
         checkCreated();
-        // Unbind the texture
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
         // Delete the texture
         GL11.glDeleteTextures(id);
         // Reset the data
@@ -285,6 +283,6 @@ public class GL21Texture extends Texture {
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL21;
+        return GLVersion.GL20;
     }
 }

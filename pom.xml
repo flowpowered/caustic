@@ -1,279 +1,280 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-    <!-- Project information -->
-    <name>Caustic</name>
-    <groupId>org.spout</groupId>
-    <artifactId>caustic</artifactId>
-    <version>2.0.1-SNAPSHOT</version>
-    <packaging>pom</packaging>
-    <inceptionYear>2013</inceptionYear>
-    <url>https://github.com/flow/Caustic</url>
-    <description>Parent Maven project for the Caustic OpenGL rendering library.</description>
+	<!-- Project information -->
+	<name>Caustic</name>
+	<groupId>org.spout</groupId>
+	<artifactId>caustic</artifactId>
+	<version>2.0.2-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<inceptionYear>2013</inceptionYear>
+	<url>https://github.com/flow/Caustic</url>
+	<description>Parent Maven project for the Caustic OpenGL rendering library.</description>
 
-    <!-- Parent information -->
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>7</version>
-    </parent>
+	<!-- Parent information -->
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>9</version>
+	</parent>
 
-    <!-- Modules -->
-    <modules>
-        <module>api</module>
-        <module>lwjgl</module>
-        <module>android</module>
-    </modules>
+	<!-- Modules -->
+	<modules>
+		<module>api</module>
+		<module>lwjgl</module>
+		<module>android</module>
+	</modules>
 
-    <!-- Build properties -->
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.root>.</project.root>
-        <buildNumber>0</buildNumber>
-        <ciSystem>unknown</ciSystem>
-        <commit>unknown</commit>
-    </properties>
+	<!-- Build properties -->
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.root>.</project.root>
+		<buildNumber>0</buildNumber>
+		<ciSystem>unknown</ciSystem>
+		<commit>unknown</commit>
+	</properties>
 
-    <!-- License information -->
-    <licenses>
-        <license>
-            <name>Spout License Version 1</name>
-            <url>http://spout.in/licensev1</url>
-            <distribution>repo</distribution>
-            <comments>GNU Lesser General Public License Version 3, but with a provision that files are released under the MIT license 180 days after they are published.</comments>
-        </license>
-    </licenses>
+	<!-- License information -->
+	<licenses>
+		<license>
+			<name>Spout License Version 1</name>
+			<url>http://spout.in/licensev1</url>
+			<distribution>repo</distribution>
+			<comments>GNU Lesser General Public License Version 3, but with a provision that files are released under the MIT license 180 days after they are published.</comments>
+		</license>
+	</licenses>
 
-    <!-- Organization information -->
-    <organization>
-        <name>Spout LLC</name>
-        <url>http://www.spout.org</url>
-    </organization>
+	<!-- Organization information -->
+	<organization>
+		<name>Spout LLC</name>
+		<url>http://www.spout.org</url>
+	</organization>
 
-    <!-- Project developers -->
-    <developers>
-        <developer>
-            <id>DDoS</id>
-            <name>Aleksi Sapon</name>
-            <email>qctechs@gmail.com</email>
-        </developer>
-        <developer>
-            <id>Wulfspider</id>
-            <name>Luke Spragg</name>
-            <email>the@wulf.im</email>
-        </developer>
-        <developer>
-            <id>Zidane</id>
-            <name>Chris Sanders</name>
-            <email>zidane@outlook.com</email>
-        </developer>
-    </developers>
+	<!-- Project developers -->
+	<developers>
+		<developer>
+			<id>DDoS</id>
+			<name>Aleksi Sapon</name>
+			<email>qctechs@gmail.com</email>
+		</developer>
+		<developer>
+			<id>Wulfspider</id>
+			<name>Luke Spragg</name>
+			<email>the@wulf.im</email>
+		</developer>
+		<developer>
+			<id>Zidane</id>
+			<name>Chris Sanders</name>
+			<email>zidane@outlook.com</email>
+		</developer>
+	</developers>
 
-    <!-- Source code access -->
-    <scm>
-        <connection>scm:git:git://github.com/flow/Caustic.git</connection>
-        <developerConnection>scm:git:git@github.com:flow/Caustic.git</developerConnection>
-        <url>https://github.com/flow/Caustic</url>
-    </scm>
+	<!-- Source code access -->
+	<scm>
+		<connection>scm:git:git://github.com/flow/Caustic.git</connection>
+		<developerConnection>scm:git:git@github.com:flow/Caustic.git</developerConnection>
+		<url>https://github.com/flow/Caustic</url>
+	</scm>
 
-    <!-- Continuous integration -->
-    <ciManagement>
-        <system>travis</system>
-        <url>https://travis-ci.org/flow/Caustic</url>
-    </ciManagement>
+	<!-- Continuous integration -->
+	<ciManagement>
+		<system>travis</system>
+		<url>https://travis-ci.org/flow/Caustic</url>
+	</ciManagement>
 
-    <!-- Issue management -->
-    <issueManagement>
-        <system>github</system>
-        <url>https://github.com/flow/Caustic/issues</url>
-    </issueManagement>
+	<!-- Issue management -->
+	<issueManagement>
+		<system>github</system>
+		<url>https://github.com/flow/Caustic/issues</url>
+	</issueManagement>
 
-    <!-- Dependency repositories -->
-    <repositories>
-        <repository>
-            <id>sonatype-nexus</id>
-            <url>https://oss.sonatype.org/content/repositories/public</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-        </repository>
-    </repositories>
+	<!-- Dependency repositories -->
+	<repositories>
+		<repository>
+			<id>sonatype-nexus</id>
+			<url>https://oss.sonatype.org/content/repositories/public</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
+		</repository>
+	</repositories>
 
-    <!-- Build plugin repositories -->
-    <pluginRepositories>
-        <pluginRepository>
-            <id>sonatype-nexus</id>
-            <url>https://oss.sonatype.org/content/repositories/public</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
+	<!-- Build plugin repositories -->
+	<pluginRepositories>
+		<pluginRepository>
+			<id>sonatype-nexus</id>
+			<url>https://oss.sonatype.org/content/repositories/public</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
 
-    <!-- Project dependencies -->
-    <dependencies>
-        <!-- Testing only -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.11</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+	<!-- Project dependencies -->
+	<dependencies>
+		<!-- Testing only -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 
-    <!-- Build configuration -->
-    <build>
-        <defaultGoal>clean install</defaultGoal>
+	<!-- Build configuration -->
+	<build>
+		<defaultGoal>clean install</defaultGoal>
 
-        <!-- Resources to include -->
-        <resources>
-            <!-- Static resources -->
-            <resource>
-                <filtering>false</filtering>
-                <directory>.</directory>
-                <targetPath>.</targetPath>
-                <includes>
-                    <include>LICENSE.txt</include>
-                </includes>
-            </resource>
-            <resource>
-                <filtering>false</filtering>
-                <directory>src/main/resources</directory>
-                <targetPath>.</targetPath>
-                <includes>
-                    <include>**/*</include>
-                </includes>
-            </resource>
-        </resources>
+		<!-- Resources to include -->
+		<resources>
+			<!-- Static resources -->
+			<resource>
+				<filtering>false</filtering>
+				<directory>.</directory>
+				<targetPath>.</targetPath>
+				<includes>
+					<include>LICENSE.txt</include>
+				</includes>
+			</resource>
+			<resource>
+				<filtering>false</filtering>
+				<directory>src/main/resources</directory>
+				<targetPath>.</targetPath>
+				<includes>
+					<include>**/*</include>
+				</includes>
+			</resource>
+		</resources>
 
-        <!-- Build plugins -->
-        <plugins>
-            <!-- License header plugin -->
-            <plugin>
-                <groupId>com.mycila.maven-license-plugin</groupId>
-                <artifactId>maven-license-plugin</artifactId>
-                <version>1.10.b1</version>
-                <executions>
-                    <execution>
-                        <configuration>
-                            <properties>
-                                <name>${project.name}</name>
-                                <inceptionYear>${project.inceptionYear}</inceptionYear>
-                                <organization>${project.organization.name}</organization>
-                                <url>${project.organization.url}</url>
-                            </properties>
-                            <quiet>true</quiet>
-                            <encoding>UTF-8</encoding>
-                            <strictCheck>true</strictCheck>
-                            <header>${project.root}/HEADER.txt</header>
-                            <mapping>
-                                <java>SLASHSTAR_STYLE</java>
-                            </mapping>
-                            <keywords>
-                                <keyword>${project.name}</keyword>
-                                <keyword>license</keyword>
-                            </keywords>
-                            <includes>
-                                <include>src/main/java/**</include>
-                                <include>src/test/java/**</include>
-                            </includes>
-                        </configuration>
-                        <phase>clean</phase>
-                        <goals>
-                            <goal>format</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- Source compiler plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
-                <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                    <compilerArguments>
-                        <O>-Xlint:all</O>
-                        <O>-Xlint:-path</O>
-                    </compilerArguments>
-                    <showWarnings>true</showWarnings>
-                    <showDeprecation>true</showDeprecation>
-                </configuration>
-            </plugin>
-            <!-- JAR creation plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
-                <configuration>
-                    <archive>
-                        <manifestEntries>
-                            <Specification-Title>${project.name}</Specification-Title>
-                            <Specification-Version>${project.version}+${ciSystem}-b${buildNumber}.git-${commit}</Specification-Version>
-                            <Specification-Vendor>${project.organization.name}</Specification-Vendor>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
-            </plugin>
-            <!-- Dependency addition plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>2.1</version>
-                <executions>
-                    <execution>
-                        <configuration>
-                            <minimizeJar>false</minimizeJar>
-                        </configuration>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- Coveralls reporting plugin  -->
-            <plugin>
-                <groupId>org.eluder.coveralls</groupId>
-                <artifactId>coveralls-maven-plugin</artifactId>
-                <version>2.1.0</version>
-            </plugin>
-            <!-- Cobertura test coverage plugin -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>cobertura-maven-plugin</artifactId>
-                <version>2.6</version>
-                <configuration>
-                    <format>xml</format>
-                    <maxmem>256m</maxmem>
-                    <aggregate>true</aggregate>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+		<!-- Build plugins -->
+		<plugins>
+			<!-- License header plugin -->
+			<plugin>
+				<groupId>com.mycila.maven-license-plugin</groupId>
+				<artifactId>maven-license-plugin</artifactId>
+				<version>1.10.b1</version>
+				<executions>
+					<execution>
+						<configuration>
+							<properties>
+								<name>${project.name}</name>
+								<inceptionYear>${project.inceptionYear}</inceptionYear>
+								<organization>${project.organization.name}</organization>
+								<url>${project.organization.url}</url>
+							</properties>
+							<quiet>true</quiet>
+							<encoding>UTF-8</encoding>
+							<strictCheck>true</strictCheck>
+							<header>${project.root}/HEADER.txt</header>
+							<mapping>
+								<java>SLASHSTAR_STYLE</java>
+							</mapping>
+							<keywords>
+								<keyword>${project.name}</keyword>
+								<keyword>license</keyword>
+							</keywords>
+							<includes>
+								<include>src/main/java/**</include>
+								<include>src/test/java/**</include>
+							</includes>
+						</configuration>
+						<phase>clean</phase>
+						<goals>
+							<goal>format</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Source compiler plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+					<compilerArguments>
+						<O>-Xlint:all</O>
+						<O>-Xlint:-path</O>
+					</compilerArguments>
+					<showWarnings>true</showWarnings>
+					<showDeprecation>true</showDeprecation>
+				</configuration>
+			</plugin>
+			<!-- JAR creation plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<archive>
+						<manifestEntries>
+							<Specification-Title>${project.name}</Specification-Title>
+							<Specification-Version>${project.version}+${ciSystem}-b${buildNumber}.git-${commit}</Specification-Version>
+							<Specification-Vendor>${project.organization.name}</Specification-Vendor>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+			<!-- Dependency addition plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>2.2</version>
+				<executions>
+					<execution>
+						<configuration>
+							<minimizeJar>false</minimizeJar>
+						</configuration>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Coveralls reporting plugin  -->
+			<plugin>
+				<groupId>org.eluder.coveralls</groupId>
+				<artifactId>coveralls-maven-plugin</artifactId>
+				<version>2.2.0</version>
+			</plugin>
+			<!-- Cobertura test coverage plugin -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<format>xml</format>
+					<maxmem>256m</maxmem>
+					<aggregate>true</aggregate>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
-    <!-- Reporting configuration -->
-    <reporting>
-        <!-- Reporting plugins -->
-        <plugins>
-            <!-- Javadoc creation plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
-                <configuration>
-                    <bottom>
-                        <![CDATA[Copyright (c) {project.inceptionYear} <a href="${project.organization.url}" target="_blank">${project.organization.name}</a>. ${project.name} is licensed under <a href="http://www.gnu.org/licenses/lgpl.html" target="_blank">GNU Lesser General Public License Version 3</a>]]>
-                    </bottom>
-                    <doctitle><![CDATA[${project.name} ${project.version}+${ciSystem}-b${buildNumber}.git-${commit}]]></doctitle>
-                    <windowtitle>${project.name} Javadocs</windowtitle>
-                    <author>false</author>
-                    <version>false</version>
-                </configuration>
-            </plugin>
-        </plugins>
-    </reporting>
+	<!-- Reporting configuration -->
+	<reporting>
+		<!-- Reporting plugins -->
+		<plugins>
+			<!-- Javadoc creation plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9.1</version>
+				<configuration>
+					<bottom>
+						<![CDATA[Copyright (c) {project.inceptionYear} <a href="${project.organization.url}" target="_blank">${project.organization.name}</a>. ${project.name} is licensed under <a href="http://www.gnu.org/licenses/lgpl.html" target="_blank">GNU Lesser General Public License Version 3</a>]]>
+					</bottom>
+					<doctitle><![CDATA[${project.name} ${project.version}+${ciSystem}-b${buildNumber}.git-${commit}]]></doctitle>
+					<windowtitle>${project.name} Javadocs</windowtitle>
+					<author>false</author>
+					<version>false</version>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
 </project>

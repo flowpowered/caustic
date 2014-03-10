@@ -26,13 +26,13 @@
  */
 package org.spout.renderer.api.util;
 
+import javax.imageio.ImageIO;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import javax.imageio.ImageIO;
 
 import org.spout.renderer.api.gl.Texture;
 import org.spout.renderer.api.gl.Texture.Format;
@@ -75,7 +75,8 @@ public class TextureAtlas {
      *
      * @param name The name of this {@link Texture}
      * @param input The {@link java.io.InputStream} of the texture
-     * @throws org.spout.renderer.util.TextureAtlas.TextureTooBigException
+     * @throws org.spout.renderer.api.util.TextureAtlas.TextureTooBigException
+     * @throws java.io.IOException
      */
     public void addTexture(String name, InputStream input) throws TextureTooBigException, IOException {
         addTexture(name, ImageIO.read(input));
@@ -87,7 +88,7 @@ public class TextureAtlas {
      *
      * @param name The name of this {@link Texture}
      * @param image The {@link java.awt.image.BufferedImage} of the texture
-     * @throws org.spout.renderer.util.TextureAtlas.TextureTooBigException
+     * @throws org.spout.renderer.api.util.TextureAtlas.TextureTooBigException
      */
     public void addTexture(String name, BufferedImage image) throws TextureTooBigException {
         final RegionData data = findUsableRegion(image.getWidth(), image.getHeight());
@@ -192,6 +193,8 @@ public class TextureAtlas {
      * If the texture attempting to be added to this {@link TextureAtlas} is too big or there is no space left for it, then this exception will be thrown.
      */
     private static final class TextureTooBigException extends Exception {
+        private static final long serialVersionUID = 1L;
+
         private TextureTooBigException() {
             super("Texture is too big for this TextureAtlas or there isn't enough space");
         }

@@ -24,7 +24,7 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.lwjgl.gl32;
+package org.spout.renderer.lwjgl.gl30;
 
 import java.nio.ByteBuffer;
 
@@ -33,15 +33,15 @@ import org.lwjgl.opengl.GL30;
 
 import org.spout.renderer.api.data.VertexAttribute.DataType;
 import org.spout.renderer.lwjgl.LWJGLUtil;
-import org.spout.renderer.lwjgl.gl21.GL21Texture;
+import org.spout.renderer.lwjgl.gl20.GL20Texture;
 
 /**
- * An OpenGL 3.2 implementation of {@link org.spout.renderer.api.gl.Texture}.
+ * An OpenGL 3.0 implementation of {@link org.spout.renderer.api.gl.Texture}.
  *
  * @see org.spout.renderer.api.gl.Texture
  */
-public class GL32Texture extends GL21Texture {
-    protected GL32Texture() {
+public class GL30Texture extends GL20Texture {
+    protected GL30Texture() {
     }
 
     @Override
@@ -75,6 +75,6 @@ public class GL32Texture extends GL21Texture {
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL32;
+        return GLVersion.GL30;
     }
 }

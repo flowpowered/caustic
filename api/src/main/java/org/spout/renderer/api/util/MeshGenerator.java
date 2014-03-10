@@ -51,16 +51,16 @@ public class MeshGenerator {
     }
 
     /*
-    ^
-    | y
-    |
-    |     x
-    ------->
-    \
-     \
-      \ z
-       V
-    The axis system
+     * ^
+     * | y
+     * |
+     * | x
+     * ------->
+     * \
+     * \
+     * \ z
+     * V
+     * The axis system
      */
 
     /**
@@ -72,11 +72,11 @@ public class MeshGenerator {
      */
     public static VertexData generateCrosshairs(VertexData destination, float length) {
         /*
-          \ |
-           \|
-        ----O-----
-            |\
-            | \
+         * \ |
+         * \|
+         * ----O-----
+         * |\
+         * | \
          */
         // Model data buffers
         if (destination == null) {
@@ -110,13 +110,13 @@ public class MeshGenerator {
      */
     public static VertexData generateWireCuboid(VertexData destination, Vector3f size) {
         /*
-        4------5
-        |\     |\
-        | 7------6
-        | |    | |
-        0-|----1 |
-         \|     \|
-          3------2
+         * 4------5
+         * |\ |\
+         * | 7------6
+         * | | | |
+         * 0-|----1 |
+         * \| \|
+         * 3------2
          */
         // Corner positions
         final Vector3f p = size.div(2);
@@ -183,10 +183,10 @@ public class MeshGenerator {
      */
     public static VertexData generatePlane(VertexData destination, Vector2f size) {
         /*
-        2-----3
-        |     |
-        |     |
-        0-----1
+         * 2-----3
+         * | |
+         * | |
+         * 0-----1
          */
         // Corner positions
         final Vector2f p = size.div(2);
@@ -254,13 +254,13 @@ public class MeshGenerator {
      */
     public static VertexData generateCuboid(VertexData destination, Vector3f size) {
         /*
-        4------5
-        |\     |\
-        | 7------6
-        | |    | |
-        0-|----1 |
-         \|     \|
-          3------2
+         * 4------5
+         * |\ |\
+         * | 7------6
+         * | | | |
+         * 0-|----1 |
+         * \| \|
+         * 3------2
          */
         // Corner positions
         final Vector3f p = size.div(2);

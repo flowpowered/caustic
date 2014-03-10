@@ -89,6 +89,7 @@ public class VertexData {
     /**
      * Adds an attribute.
      *
+     * @param index The attribute index
      * @param attribute The attribute to add
      */
     public void addAttribute(int index, VertexAttribute attribute) {

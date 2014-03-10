@@ -28,6 +28,7 @@ package org.spout.renderer.api.util;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -47,7 +48,6 @@ import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TFloatArrayList;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -263,6 +263,8 @@ public final class ColladaFileLoader {
     }
 
     public static class MalformedColladaFileException extends RuntimeException {
+        private static final long serialVersionUID = 1L;
+
         public MalformedColladaFileException(String msg) {
             super(msg);
         }
