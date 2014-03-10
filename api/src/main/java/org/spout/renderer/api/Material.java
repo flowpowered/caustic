@@ -64,7 +64,7 @@ public class Material implements Comparable<Material> {
      * Binds the material to the OpenGL context.
      */
     public void bind() {
-        program.bind();
+        program.use();
         if (textures != null) {
             final TIntObjectIterator<Texture> iterator = textures.iterator();
             while (iterator.hasNext()) {
@@ -82,7 +82,6 @@ public class Material implements Comparable<Material> {
      * Unbinds the material from the OpenGL context.
      */
     public void unbind() {
-        program.unbind();
         if (textures != null) {
             for (Texture texture : textures.valueCollection()) {
                 texture.unbind();

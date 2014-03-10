@@ -24,34 +24,43 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.lwjgl.gl32;
+package org.spout.renderer.lwjgl.gl20;
 
-import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.EXTFramebufferObject;
+import org.lwjgl.opengl.GLContext;
 
 import org.spout.renderer.api.gl.RenderBuffer;
 import org.spout.renderer.api.gl.Texture.InternalFormat;
 import org.spout.renderer.lwjgl.LWJGLUtil;
 
 /**
- * An OpenGL 3.2 implementation of {@link RenderBuffer}.
+ * An OpenGL 2.0 implementation of {@link RenderBuffer} using EXT.
  *
  * @see RenderBuffer
  */
-public class GL32RenderBuffer extends RenderBuffer {
+public class GL20RenderBuffer extends RenderBuffer {
     // The render buffer storage format
     private InternalFormat format;
     // The storage dimensions
     private int width = 1;
     private int height = 1;
 
-    protected GL32RenderBuffer() {
+    /**
+     * Constructs a new render buffer for OpenGL 2.0. If no EXT extension for render buffers is available, an exception is thrown.
+     *
+     * @throws UnsupportedOperationException If the hardware doesn't support EXT render buffers.
+     */
+    protected GL20RenderBuffer() {
+        if (!GLContext.getCapabilities().GL_EXT_framebuffer_object) {
+            throw new UnsupportedOperationException("Render buffers are not supported by this hardware");
+        }
     }
 
     @Override
     public void create() {
         checkNotCreated();
         // Generate the render buffer
-        id = GL30.glGenRenderbuffers();
+        id = EXTFramebufferObject.glGenRenderbuffersEXT();
         // Update the state
         super.create();
         // Check for errors
@@ -61,10 +70,8 @@ public class GL32RenderBuffer extends RenderBuffer {
     @Override
     public void destroy() {
         checkCreated();
-        // Unbind the render buffer
-        GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, 0);
         // Delete the render buffer
-        GL30.glDeleteRenderbuffers(id);
+        EXTFramebufferObject.glDeleteRenderbuffersEXT(id);
         // Update state
         super.destroy();
         // Check for errors
@@ -87,11 +94,11 @@ public class GL32RenderBuffer extends RenderBuffer {
         this.width = width;
         this.height = height;
         // Bind the render buffer
-        GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, id);
+        EXTFramebufferObject.glBindRenderbufferEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, id);
         // Set the storage format and size
-        GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, format.getGLConstant(), width, height);
+        EXTFramebufferObject.glRenderbufferStorageEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, format.getGLConstant(), width, height);
         // Unbind the render buffer
-        GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, 0);
+        EXTFramebufferObject.glBindRenderbufferEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, 0);
         // Check for errors
         LWJGLUtil.checkForGLError();
     }
@@ -114,8 +121,8 @@ public class GL32RenderBuffer extends RenderBuffer {
     @Override
     public void bind() {
         checkCreated();
-        // Bind the render buffer
-        GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, id);
+        // Unbind the render buffer
+        EXTFramebufferObject.glBindRenderbufferEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, id);
         // Check for errors
         LWJGLUtil.checkForGLError();
     }
@@ -123,14 +130,14 @@ public class GL32RenderBuffer extends RenderBuffer {
     @Override
     public void unbind() {
         checkCreated();
-        // Unbind the render buffer
-        GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, 0);
+        // Bind the render buffer
+        EXTFramebufferObject.glBindRenderbufferEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, 0);
         // Check for errors
         LWJGLUtil.checkForGLError();
     }
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL32;
+        return GLVersion.GL20;
     }
 }

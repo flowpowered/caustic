@@ -24,7 +24,7 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.lwjgl.gl21;
+package org.spout.renderer.lwjgl.gl20;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -43,11 +43,11 @@ import org.spout.renderer.api.util.CausticUtil;
 import org.spout.renderer.lwjgl.LWJGLUtil;
 
 /**
- * An OpenGL 2.1 implementation of {@link Texture}.
+ * An OpenGL 2.0 implementation of {@link Texture}.
  *
  * @see Texture
  */
-public class GL21Texture extends Texture {
+public class GL20Texture extends Texture {
     // The format
     protected Format format = Format.RGB;
     protected InternalFormat internalFormat = null;
@@ -57,7 +57,7 @@ public class GL21Texture extends Texture {
     protected int width = 1;
     protected int height = 1;
 
-    protected GL21Texture() {
+    protected GL20Texture() {
     }
 
     @Override
@@ -74,8 +74,6 @@ public class GL21Texture extends Texture {
     @Override
     public void destroy() {
         checkCreated();
-        // Unbind the texture
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
         // Delete the texture
         GL11.glDeleteTextures(id);
         // Reset the data
@@ -216,11 +214,14 @@ public class GL21Texture extends Texture {
         if (minFilter.needsMipMaps() && imageData != null) {
             // Build mipmaps if using mip mapped filters
             GLU.gluBuild2DMipmaps(GL11.GL_TEXTURE_2D, hasInternalFormat ? internalFormat.getGLConstant() : format.getGLConstant(), width, height, format.getGLConstant(),
-                    hasInternalFormat ? internalFormat.getComponentType().getGLConstant() : DataType.UNSIGNED_BYTE.getGLConstant(), imageData);
+                                  hasInternalFormat ? internalFormat.getComponentType().getGLConstant() : DataType.UNSIGNED_BYTE.getGLConstant(), imageData);
         } else {
             // Else just make it a normal texture
+            // Use byte alignment
+            GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
+            // Upload the image
             GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, hasInternalFormat ? internalFormat.getGLConstant() : format.getGLConstant(), width, height, 0, format.getGLConstant(),
-                    hasInternalFormat ? internalFormat.getComponentType().getGLConstant() : DataType.UNSIGNED_BYTE.getGLConstant(), imageData);
+                              hasInternalFormat ? internalFormat.getComponentType().getGLConstant() : DataType.UNSIGNED_BYTE.getGLConstant(), imageData);
         }
         // Unbind the texture
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
@@ -234,10 +235,13 @@ public class GL21Texture extends Texture {
         // Bind the texture
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
         // Create the image buffer
-        final ByteBuffer imageData = CausticUtil.createByteBuffer(width * height * format.getBytes());
+        final boolean formatNotNull = format != null;
+        final ByteBuffer imageData = CausticUtil.createByteBuffer(width * height * (formatNotNull ? format.getBytes() : this.format.getComponentCount() * DataType.UNSIGNED_BYTE.getByteSize()));
+        // Use byte alignment
+        GL11.glPixelStorei(GL11.GL_PACK_ALIGNMENT, 1);
         // Get the image data
-        GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, format != null ? format.getFormat().getGLConstant() : this.format.getGLConstant(),
-                format != null ? format.getComponentType().getGLConstant() : DataType.UNSIGNED_BYTE.getGLConstant(), imageData);
+        GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, formatNotNull ? format.getFormat().getGLConstant() : this.format.getGLConstant(),
+                           formatNotNull ? format.getComponentType().getGLConstant() : DataType.UNSIGNED_BYTE.getGLConstant(), imageData);
         // Unbind the texture
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
         // Check for errors
@@ -279,6 +283,6 @@ public class GL21Texture extends Texture {
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL21;
+        return GLVersion.GL20;
     }
 }

@@ -24,7 +24,7 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.lwjgl.gl21;
+package org.spout.renderer.lwjgl.gl30;
 
 import java.nio.IntBuffer;
 import java.util.Arrays;
@@ -32,10 +32,9 @@ import java.util.Arrays;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
 
-import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GLContext;
+import org.lwjgl.opengl.GL30;
 
 import org.spout.renderer.api.gl.FrameBuffer;
 import org.spout.renderer.api.gl.RenderBuffer;
@@ -44,34 +43,26 @@ import org.spout.renderer.api.util.CausticUtil;
 import org.spout.renderer.lwjgl.LWJGLUtil;
 
 /**
- * An OpenGL 2.1 implementation of {@link FrameBuffer} using EXT.
+ * An OpenGL 3.0 implementation of {@link FrameBuffer}.
  *
  * @see FrameBuffer
  */
-public class GL21FrameBuffer extends FrameBuffer {
+public class GL30FrameBuffer extends FrameBuffer {
     private final TIntSet outputBuffers = new TIntHashSet();
 
-    /**
-     * Constructs a new frame buffer for OpenGL 2.1. If no EXT extension for frame buffers is available, an exception is thrown.
-     *
-     * @throws UnsupportedOperationException If the hardware doesn't support EXT frame buffers
-     */
-    protected GL21FrameBuffer() {
-        if (!GLContext.getCapabilities().GL_EXT_framebuffer_object) {
-            throw new UnsupportedOperationException("Frame buffers are not supported by this hardware");
-        }
+    protected GL30FrameBuffer() {
     }
 
     @Override
     public void create() {
         checkNotCreated();
         // Generate and bind the frame buffer
-        id = EXTFramebufferObject.glGenFramebuffersEXT();
-        EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, id);
+        id = GL30.glGenFramebuffers();
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, id);
         // Disable input buffers
         GL11.glReadBuffer(GL11.GL_NONE);
         // Unbind the frame buffer
-        EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0);
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
         // Update the state
         super.create();
         // Check for errors
@@ -81,9 +72,8 @@ public class GL21FrameBuffer extends FrameBuffer {
     @Override
     public void destroy() {
         checkCreated();
-        // Unbind and delete the frame buffer
-        EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0);
-        EXTFramebufferObject.glDeleteFramebuffersEXT(id);
+        // Delete the frame buffer
+        GL30.glDeleteFramebuffers(id);
         // Clear output buffers
         outputBuffers.clear();
         // Update the state
@@ -95,12 +85,12 @@ public class GL21FrameBuffer extends FrameBuffer {
     @Override
     public void attach(AttachmentPoint point, Texture texture) {
         checkCreated();
-        texture.checkCreated();
         CausticUtil.checkVersion(this, texture);
+        texture.checkCreated();
         // Bind the frame buffer
-        EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, id);
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, id);
         // Attach the texture
-        EXTFramebufferObject.glFramebufferTexture2DEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, point.getGLConstant(), GL11.GL_TEXTURE_2D, texture.getID(), 0);
+        GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, point.getGLConstant(), GL11.GL_TEXTURE_2D, texture.getID(), 0);
         // Add it to the color outputs if it's a color type
         if (point.isColor()) {
             outputBuffers.add(point.getGLConstant());
@@ -108,7 +98,7 @@ public class GL21FrameBuffer extends FrameBuffer {
         // Update the list of output buffers
         updateOutputBuffers();
         // Unbind the frame buffer
-        EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0);
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
         // Check for errors
         LWJGLUtil.checkForGLError();
     }
@@ -119,9 +109,9 @@ public class GL21FrameBuffer extends FrameBuffer {
         CausticUtil.checkVersion(this, buffer);
         buffer.checkCreated();
         // Bind the frame buffer
-        EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, id);
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, id);
         // Attach the render buffer
-        EXTFramebufferObject.glFramebufferRenderbufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, point.getGLConstant(), EXTFramebufferObject.GL_RENDERBUFFER_EXT, buffer.getID());
+        GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER, point.getGLConstant(), GL30.GL_RENDERBUFFER, buffer.getID());
         // Add it to the color outputs if it's a color type
         if (point.isColor()) {
             outputBuffers.add(point.getGLConstant());
@@ -129,7 +119,7 @@ public class GL21FrameBuffer extends FrameBuffer {
         // Update the list of output buffers
         updateOutputBuffers();
         // Unbind the frame buffer
-        EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0);
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
         // Check for errors
         LWJGLUtil.checkForGLError();
     }
@@ -138,9 +128,9 @@ public class GL21FrameBuffer extends FrameBuffer {
     public void detach(AttachmentPoint point) {
         checkCreated();
         // Bind the frame buffer
-        EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, id);
-        // Detach the render buffer or texture
-        EXTFramebufferObject.glFramebufferRenderbufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, point.getGLConstant(), EXTFramebufferObject.GL_RENDERBUFFER_EXT, 0);
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, id);
+        // Detach the render buffer
+        GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER, point.getGLConstant(), GL30.GL_RENDERBUFFER, 0);
         // Remove it from the color outputs if it's a color type
         if (point.isColor()) {
             outputBuffers.remove(point.getGLConstant());
@@ -148,7 +138,7 @@ public class GL21FrameBuffer extends FrameBuffer {
         // Update the list of output buffers
         updateOutputBuffers();
         // Unbind the frame buffer
-        EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0);
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
         // Check for errors
         LWJGLUtil.checkForGLError();
     }
@@ -175,11 +165,11 @@ public class GL21FrameBuffer extends FrameBuffer {
     public boolean isComplete() {
         checkCreated();
         // Bind the frame buffer
-        EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, id);
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, id);
         // Fetch the status and compare to the complete enum value
-        final boolean complete = EXTFramebufferObject.glCheckFramebufferStatusEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT) == EXTFramebufferObject.GL_FRAMEBUFFER_COMPLETE_EXT;
+        final boolean complete = GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER) == GL30.GL_FRAMEBUFFER_COMPLETE;
         // Unbind the frame buffer
-        EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0);
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
         // Check for errors
         LWJGLUtil.checkForGLError();
         return complete;
@@ -189,7 +179,7 @@ public class GL21FrameBuffer extends FrameBuffer {
     public void bind() {
         checkCreated();
         // Bind the frame buffer
-        EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, id);
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, id);
         // Check for errors
         LWJGLUtil.checkForGLError();
     }
@@ -198,13 +188,13 @@ public class GL21FrameBuffer extends FrameBuffer {
     public void unbind() {
         checkCreated();
         // Unbind the frame buffer
-        EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0);
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
         // Check for errors
         LWJGLUtil.checkForGLError();
     }
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL21;
+        return GLVersion.GL30;
     }
 }

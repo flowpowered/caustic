@@ -51,16 +51,16 @@ public class MeshGenerator {
     }
 
     /*
-    ^
-    | y
-    |
-    |     x
-    ------->
-    \
-     \
-      \ z
-       V
-    The axis system
+     * ^
+     * | y
+     * |
+     * | x
+     * ------->
+     * \
+     * \
+     * \ z
+     * V
+     * The axis system
      */
 
     /**
@@ -72,11 +72,11 @@ public class MeshGenerator {
      */
     public static VertexData generateCrosshairs(VertexData destination, float length) {
         /*
-          \ |
-           \|
-        ----O-----
-            |\
-            | \
+         * \ |
+         * \|
+         * ----O-----
+         * |\
+         * | \
          */
         // Model data buffers
         if (destination == null) {
@@ -110,13 +110,13 @@ public class MeshGenerator {
      */
     public static VertexData generateWireCuboid(VertexData destination, Vector3f size) {
         /*
-        4------5
-        |\     |\
-        | 7------6
-        | |    | |
-        0-|----1 |
-         \|     \|
-          3------2
+         * 4------5
+         * |\ |\
+         * | 7------6
+         * | | | |
+         * 0-|----1 |
+         * \| \|
+         * 3------2
          */
         // Corner positions
         final Vector3f p = size.div(2);
@@ -183,10 +183,10 @@ public class MeshGenerator {
      */
     public static VertexData generatePlane(VertexData destination, Vector2f size) {
         /*
-        2-----3
-        |     |
-        |     |
-        0-----1
+         * 2-----3
+         * | |
+         * | |
+         * 0-----1
          */
         // Corner positions
         final Vector2f p = size.div(2);
@@ -254,13 +254,13 @@ public class MeshGenerator {
      */
     public static VertexData generateCuboid(VertexData destination, Vector3f size) {
         /*
-        4------5
-        |\     |\
-        | 7------6
-        | |    | |
-        0-|----1 |
-         \|     \|
-          3------2
+         * 4------5
+         * |\ |\
+         * | 7------6
+         * | | | |
+         * 0-|----1 |
+         * \| \|
+         * 3------2
          */
         // Corner positions
         final Vector3f p = size.div(2);
@@ -412,14 +412,14 @@ public class MeshGenerator {
         // Build a list of triangles
         final List<Triangle> triangles = new ArrayList<>();
         triangles.addAll(Arrays.asList(
-                new Triangle(v0, v1, v2),
-                new Triangle(v0, v2, v3),
-                new Triangle(v0, v3, v4),
-                new Triangle(v0, v4, v1),
-                new Triangle(v1, v5, v2),
-                new Triangle(v2, v5, v3),
-                new Triangle(v3, v5, v4),
-                new Triangle(v4, v5, v1)));
+            new Triangle(v0, v1, v2),
+            new Triangle(v0, v2, v3),
+            new Triangle(v0, v3, v4),
+            new Triangle(v0, v4, v1),
+            new Triangle(v1, v5, v2),
+            new Triangle(v2, v5, v3),
+            new Triangle(v3, v5, v4),
+            new Triangle(v4, v5, v1)));
         // List to store the subdivided triangles
         final List<Triangle> newTriangles = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
@@ -506,9 +506,9 @@ public class MeshGenerator {
         for (int angle = 0; angle < 360; angle += 15) {
             final double angleRads = Math.toRadians(angle);
             rims.add(new Vector3f(
-                    radius * (float) Math.cos(angleRads),
-                    halfHeight,
-                    radius * (float) -Math.sin(angleRads)));
+                radius * (float) Math.cos(angleRads),
+                halfHeight,
+                radius * (float) -Math.sin(angleRads)));
         }
         // Model data buffers
         if (destination == null) {
@@ -580,9 +580,9 @@ public class MeshGenerator {
         for (int angle = 0; angle < 360; angle += 15) {
             final double angleRads = Math.toRadians(angle);
             rim.add(new Vector3f(
-                    radius * (float) Math.cos(angleRads),
-                    -halfHeight,
-                    radius * (float) -Math.sin(angleRads)));
+                radius * (float) Math.cos(angleRads),
+                -halfHeight,
+                radius * (float) -Math.sin(angleRads)));
         }
         // Model data buffers
         if (destination == null) {
@@ -637,9 +637,9 @@ public class MeshGenerator {
 
     private static Vector3f mean(Vector3f v0, Vector3f v1) {
         return new Vector3f(
-                (v0.getX() + v1.getX()) / 2,
-                (v0.getY() + v1.getY()) / 2,
-                (v0.getZ() + v1.getZ()) / 2);
+            (v0.getX() + v1.getX()) / 2,
+            (v0.getY() + v1.getY()) / 2,
+            (v0.getZ() + v1.getZ()) / 2);
     }
 
     private static void addVector(TFloatList to, Vector3f v) {
@@ -698,11 +698,11 @@ public class MeshGenerator {
             final Vector3f vb = v1.add(e1);
             final Vector3f e2 = v0.sub(v2).div(2);
             final Vector3f vc = v2.add(e2);
-            return new Triangle[]{
-                    new Triangle(v0, va, vc),
-                    new Triangle(va, v1, vb),
-                    new Triangle(vc, vb, v2),
-                    new Triangle(va, vb, vc)
+            return new Triangle[] {
+                new Triangle(v0, va, vc),
+                new Triangle(va, v1, vb),
+                new Triangle(vc, vb, v2),
+                new Triangle(va, vb, vc)
             };
         }
     }

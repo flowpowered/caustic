@@ -24,7 +24,7 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.lwjgl.gl32;
+package org.spout.renderer.lwjgl.gl30;
 
 import java.nio.ByteBuffer;
 
@@ -33,15 +33,15 @@ import org.lwjgl.opengl.GL30;
 
 import org.spout.renderer.api.data.VertexAttribute.DataType;
 import org.spout.renderer.lwjgl.LWJGLUtil;
-import org.spout.renderer.lwjgl.gl21.GL21Texture;
+import org.spout.renderer.lwjgl.gl20.GL20Texture;
 
 /**
- * An OpenGL 3.2 implementation of {@link org.spout.renderer.api.gl.Texture}.
+ * An OpenGL 3.0 implementation of {@link org.spout.renderer.api.gl.Texture}.
  *
  * @see org.spout.renderer.api.gl.Texture
  */
-public class GL32Texture extends GL21Texture {
-    protected GL32Texture() {
+public class GL30Texture extends GL20Texture {
+    protected GL30Texture() {
     }
 
     @Override
@@ -57,10 +57,12 @@ public class GL32Texture extends GL21Texture {
         this.height = height;
         // Bind the texture
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
+        // Use byte alignment
+        GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
         // Upload the texture
         final boolean hasInternalFormat = internalFormat != null;
         GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, hasInternalFormat ? internalFormat.getGLConstant() : format.getGLConstant(), width, height, 0, format.getGLConstant(),
-                hasInternalFormat ? internalFormat.getComponentType().getGLConstant() : DataType.UNSIGNED_BYTE.getGLConstant(), imageData);
+                          hasInternalFormat ? internalFormat.getComponentType().getGLConstant() : DataType.UNSIGNED_BYTE.getGLConstant(), imageData);
         // Generate mipmaps if necessary
         if (minFilter.needsMipMaps() && imageData != null) {
             GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
@@ -73,6 +75,6 @@ public class GL32Texture extends GL21Texture {
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL32;
+        return GLVersion.GL30;
     }
 }

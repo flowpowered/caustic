@@ -34,7 +34,6 @@ import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.nio.ByteBuffer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -67,8 +66,12 @@ import org.spout.renderer.api.util.CausticUtil;
 
 /**
  * A model for rendering strings with a desired font. This model will work with both OpenGL versions. To render a string, set it with {@link #setString(String)}. Glyphs in the string that have not
- * been declared when constructing the model will be ignored. <p/> Colors are supported. Use <code>#aarrggbb</code>, where <code>aa</code> is the alpha hexadecimal value, <code>rr</code> is the red
- * hexadecimal value, <code>gg</code> is the green hexadecimal value and <code>bb</code> is the blue hexadecimal value. Color codes can be escaped with <code>\</code>. <p/> As for the implementation,
+ * been declared when constructing the model will be ignored.
+ * <p/>
+ * Colors are supported. Use <code>#aarrggbb</code>, where <code>aa</code> is the alpha hexadecimal value, <code>rr</code> is the red
+ * hexadecimal value, <code>gg</code> is the green hexadecimal value and <code>bb</code> is the blue hexadecimal value. Color codes can be escaped with <code>\</code>.
+ * <p/>
+ * As for the implementation,
  * this model wraps a model of the desired OpenGL version. The model contains a mesh of tiles, all at (0,0). Each tile has one glyph on it. When rendering, the desired tile is selected, placed at the
  * origin and rendered. The next glyph will be rendered in the same fashion, but offset on the x axis by the width of the last glyph. The mesh and indices are only uploaded once; the renderer uses the
  * indices for the desired glyph.
@@ -279,13 +282,13 @@ public class StringModel extends Model {
         // Get the indices
         final TIntList indices = data.getIndices();
         /*
-        Generate a pile of small rectangles, each having one glyph on it
-        Rendering a sequence of glyphs means rendering the sequence of rectangles with the correct glyphs
-        Offsetting them correctly
-        1--3
-        |\ |
-        | \|
-        0--2
+         * Generate a pile of small rectangles, each having one glyph on it
+         * Rendering a sequence of glyphs means rendering the sequence of rectangles with the correct glyphs
+         * Offsetting them correctly
+         * 1--3
+         * |\ |
+         * | \|
+         * 0--2
          */
         float x = 0;
         int index = 0;
@@ -338,7 +341,7 @@ public class StringModel extends Model {
         texture.create();
         texture.setFormat(Format.RGBA);
         texture.setFilters(FilterMode.NEAREST, FilterMode.NEAREST);
-        texture.setImageData((ByteBuffer) CausticUtil.getImageData(image, Format.RGBA).flip(), width, height);
+        texture.setImageData(CausticUtil.getImageData(image, Format.RGBA), width, height);
         return texture;
     }
 

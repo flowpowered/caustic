@@ -159,6 +159,8 @@ public final class ObjFileLoader {
      * An exception throw by the {@link ObjFileLoader} during loading if any errors are encountered.
      */
     public static class MalformedObjFileException extends RuntimeException {
+        private static final long serialVersionUID = 1L;
+
         /**
          * Creates a new exception from the line at which the error occurred and the cause. If the error did not occur on a line, the variable can be passed as null.
          *

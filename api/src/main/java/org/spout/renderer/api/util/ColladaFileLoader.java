@@ -180,8 +180,8 @@ public final class ColladaFileLoader {
     }
 
     private static void loadIndices(int[] rawIndices, TObjectIntMap<String> offsets, TIntList indices,
-                                    TFloatList rawTextureCoords, TFloatList textureCoords,
-                                    TFloatList rawNormals, TFloatList normals) {
+        TFloatList rawTextureCoords, TFloatList textureCoords,
+        TFloatList rawNormals, TFloatList normals) {
         final int positionOffset = offsets.get(SEMANTIC_VERTEX);
         final int texcoordOffset = offsets.get(SEMANTIC_TEXCOORD);
         final int normalOffset = offsets.get(SEMANTIC_NORMAL);
@@ -263,6 +263,8 @@ public final class ColladaFileLoader {
     }
 
     public static class MalformedColladaFileException extends RuntimeException {
+        private static final long serialVersionUID = 1L;
+
         public MalformedColladaFileException(String msg) {
             super(msg);
         }

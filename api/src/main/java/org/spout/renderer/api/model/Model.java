@@ -220,7 +220,7 @@ public class Model implements Comparable<Model> {
     /**
      * Returns an instance of this model. The model shares the same vertex array and material as the original one, but different position information and uniform holder.
      *
-     * @return The instanced  model
+     * @return The instanced model
      */
     public Model getInstance() {
         return new Model(this);
