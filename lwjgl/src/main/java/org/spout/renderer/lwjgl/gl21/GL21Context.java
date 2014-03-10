@@ -24,7 +24,7 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.lwjgl.gl20;
+package org.spout.renderer.lwjgl.gl21;
 
 import java.nio.ByteBuffer;
 
@@ -51,12 +51,12 @@ import org.spout.renderer.api.util.Rectangle;
 import org.spout.renderer.lwjgl.LWJGLUtil;
 
 /**
- * An OpenGL 2.0 implementation of {@link org.spout.renderer.api.gl.Context}.
+ * An OpenGL 2.1 implementation of {@link org.spout.renderer.api.gl.Context}.
  *
  * @see org.spout.renderer.api.gl.Context
  */
-public class GL20Context extends Context {
-    protected GL20Context() {
+public class GL21Context extends Context {
+    protected GL21Context() {
     }
 
     @Override
@@ -84,7 +84,7 @@ public class GL20Context extends Context {
      * @return The context attributes
      */
     protected ContextAttribs createContextAttributes() {
-        return new ContextAttribs(2, 0);
+        return new ContextAttribs(2, 1);
     }
 
     @Override
@@ -98,32 +98,32 @@ public class GL20Context extends Context {
 
     @Override
     public FrameBuffer newFrameBuffer() {
-        return new GL20FrameBuffer();
+        return new GL21FrameBuffer();
     }
 
     @Override
     public Program newProgram() {
-        return new GL20Program();
+        return new GL21Program();
     }
 
     @Override
     public RenderBuffer newRenderBuffer() {
-        return new GL20RenderBuffer();
+        return new GL21RenderBuffer();
     }
 
     @Override
     public Shader newShader() {
-        return new GL20Shader();
+        return new GL21Shader();
     }
 
     @Override
     public Texture newTexture() {
-        return new GL20Texture();
+        return new GL21Texture();
     }
 
     @Override
     public VertexArray newVertexArray() {
-        return new GL20VertexArray();
+        return new GL21VertexArray();
     }
 
     @Override
@@ -220,8 +220,13 @@ public class GL20Context extends Context {
     @Override
     public ByteBuffer readFrame(Rectangle size, InternalFormat format) {
         checkCreated();
+        // Create the image buffer
         final ByteBuffer buffer = CausticUtil.createByteBuffer(size.getArea() * format.getBytes());
+        // Read from the front buffer
         GL11.glReadBuffer(GL11.GL_FRONT);
+        // Use byte alignment
+        GL11.glPixelStorei(GL11.GL_PACK_ALIGNMENT, 1);
+        // Read the pixels
         GL11.glReadPixels(size.getX(), size.getY(), size.getWidth(), size.getHeight(), format.getFormat().getGLConstant(), format.getComponentType().getGLConstant(), buffer);
         // Check for errors
         LWJGLUtil.checkForGLError();
@@ -230,6 +235,6 @@ public class GL20Context extends Context {
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL20;
+        return GLVersion.GL21;
     }
 }

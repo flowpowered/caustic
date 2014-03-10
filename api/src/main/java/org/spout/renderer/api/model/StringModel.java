@@ -34,7 +34,6 @@ import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.nio.ByteBuffer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -338,7 +337,7 @@ public class StringModel extends Model {
         texture.create();
         texture.setFormat(Format.RGBA);
         texture.setFilters(FilterMode.NEAREST, FilterMode.NEAREST);
-        texture.setImageData((ByteBuffer) CausticUtil.getImageData(image, Format.RGBA).flip(), width, height);
+        texture.setImageData(CausticUtil.getImageData(image, Format.RGBA), width, height);
         return texture;
     }
 

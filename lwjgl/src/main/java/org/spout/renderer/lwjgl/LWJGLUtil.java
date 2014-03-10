@@ -32,12 +32,12 @@ import org.lwjgl.util.glu.GLU;
 import org.spout.renderer.api.GLImplementation;
 import org.spout.renderer.api.GLVersioned.GLVersion;
 import org.spout.renderer.api.util.CausticUtil;
-import org.spout.renderer.lwjgl.gl20.GL20Context;
-import org.spout.renderer.lwjgl.gl30.GL30Context;
+import org.spout.renderer.lwjgl.gl21.GL21Context;
+import org.spout.renderer.lwjgl.gl32.GL32Context;
 
 public final class LWJGLUtil {
-    public static final GLImplementation GL20_IMPL = new GLImplementation(GLVersion.GL20, GL20Context.class.getName());
-    public static final GLImplementation GL30_IMPL = new GLImplementation(GLVersion.GL30, GL30Context.class.getName());
+    public static final GLImplementation GL21_IMPL = new GLImplementation(GLVersion.GL21, GL21Context.class.getName());
+    public static final GLImplementation GL32_IMPL = new GLImplementation(GLVersion.GL32, GL32Context.class.getName());
 
     private LWJGLUtil() {
     }
@@ -60,8 +60,6 @@ public final class LWJGLUtil {
      * An exception throw when a GL exception occurs on Android.
      */
     public static class GLException extends RuntimeException {
-        private static final long serialVersionUID = 1L;
-
         /**
          * Constructs a new Android GL exception from the message.
          *

@@ -24,7 +24,7 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.lwjgl.gl20;
+package org.spout.renderer.lwjgl.gl21;
 
 import com.flowpowered.math.matrix.Matrix2f;
 import com.flowpowered.math.matrix.Matrix3f;
@@ -59,11 +59,11 @@ import org.spout.renderer.api.util.CausticUtil;
 import org.spout.renderer.lwjgl.LWJGLUtil;
 
 /**
- * An OpenGL 2.0 implementation of {@link Program}.
+ * An OpenGL 2.1 implementation of {@link Program}.
  *
  * @see Program
  */
-public class GL20Program extends Program {
+public class GL21Program extends Program {
     private final Set<Shader> shaders = new HashSet<>();
     // Map of the attribute names to their vao index (optional for GL30 as they can be defined in the shader instead)
     private final TObjectIntMap<String> attributeLayouts = new TObjectIntHashMap<>();
@@ -72,7 +72,7 @@ public class GL20Program extends Program {
     // Map of the uniform names to their locations
     private final TObjectIntMap<String> uniforms = new TObjectIntHashMap<>(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, -1);
 
-    protected GL20Program() {
+    protected GL21Program() {
     }
 
     @Override
@@ -175,10 +175,19 @@ public class GL20Program extends Program {
     }
 
     @Override
-    public void use() {
+    public void bind() {
         checkCreated();
         // Bind the program
         GL20.glUseProgram(id);
+        // Check for errors
+        LWJGLUtil.checkForGLError();
+    }
+
+    @Override
+    public void unbind() {
+        checkCreated();
+        // Unbind the program
+        GL20.glUseProgram(0);
         // Check for errors
         LWJGLUtil.checkForGLError();
     }
@@ -204,6 +213,7 @@ public class GL20Program extends Program {
     }
 
     // TODO: Support int and boolean vectors
+
     @Override
     public void setUniform(String name, boolean b) {
         checkCreated();
@@ -363,6 +373,6 @@ public class GL20Program extends Program {
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL20;
+        return GLVersion.GL21;
     }
 }

@@ -24,7 +24,7 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.lwjgl.gl30;
+package org.spout.renderer.lwjgl.gl32;
 
 import org.lwjgl.opengl.ContextAttribs;
 
@@ -34,56 +34,54 @@ import org.spout.renderer.api.gl.RenderBuffer;
 import org.spout.renderer.api.gl.Shader;
 import org.spout.renderer.api.gl.Texture;
 import org.spout.renderer.api.gl.VertexArray;
-import org.spout.renderer.lwjgl.gl20.GL20Context;
+import org.spout.renderer.lwjgl.gl21.GL21Context;
 
 /**
- * An OpenGL 3.0 implementation of {@link org.spout.renderer.api.gl.Context}.
+ * An OpenGL 3.2 implementation of {@link org.spout.renderer.api.gl.Context}.
  * <p/>
- * {
- *
- * @see Context}
+ * {@see Context}
  */
-public class GL30Context extends GL20Context {
-    protected GL30Context() {
+public class GL32Context extends GL21Context {
+    protected GL32Context() {
     }
 
     @Override
     protected ContextAttribs createContextAttributes() {
-        return new ContextAttribs(3, 0).withForwardCompatible(true);
+        return new ContextAttribs(3, 2).withProfileCore(true);
     }
 
     @Override
     public FrameBuffer newFrameBuffer() {
-        return new GL30FrameBuffer();
+        return new GL32FrameBuffer();
     }
 
     @Override
     public Program newProgram() {
-        return new GL30Program();
+        return new GL32Program();
     }
 
     @Override
     public RenderBuffer newRenderBuffer() {
-        return new GL30RenderBuffer();
+        return new GL32RenderBuffer();
     }
 
     @Override
     public Shader newShader() {
-        return new GL30Shader();
+        return new GL32Shader();
     }
 
     @Override
     public Texture newTexture() {
-        return new GL30Texture();
+        return new GL32Texture();
     }
 
     @Override
     public VertexArray newVertexArray() {
-        return new GL30VertexArray();
+        return new GL32VertexArray();
     }
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL30;
+        return GLVersion.GL32;
     }
 }

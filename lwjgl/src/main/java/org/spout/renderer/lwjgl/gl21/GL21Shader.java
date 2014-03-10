@@ -24,7 +24,7 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.lwjgl.gl20;
+package org.spout.renderer.lwjgl.gl21;
 
 import gnu.trove.TCollections;
 import gnu.trove.map.TIntObjectMap;
@@ -40,18 +40,18 @@ import org.spout.renderer.api.gl.Shader;
 import org.spout.renderer.lwjgl.LWJGLUtil;
 
 /**
- * An OpenGL 2.0 implementation of {@link Shader}.
+ * An OpenGL 2.1 implementation of {@link Shader}.
  *
  * @see Shader
  */
-public class GL20Shader extends Shader {
+public class GL21Shader extends Shader {
     private ShaderType type;
     // Map of the attribute names to their vao index (optional for GL30 as they can be defined in the shader instead)
     private final TObjectIntMap<String> attributeLayouts = new TObjectIntHashMap<>();
     // Map of the texture units to their names
     private final TIntObjectMap<String> textureLayouts = new TIntObjectHashMap<>();
 
-    protected GL20Shader() {
+    protected GL21Shader() {
     }
 
     @Override
@@ -146,6 +146,6 @@ public class GL20Shader extends Shader {
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL20;
+        return GLVersion.GL21;
     }
 }

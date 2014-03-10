@@ -77,7 +77,12 @@ public abstract class Program extends Creatable implements GLVersioned {
     /**
      * Binds this program to the OpenGL context.
      */
-    public abstract void use();
+    public abstract void bind();
+
+    /**
+     * Unbinds this program from the OpenGL context.
+     */
+    public abstract void unbind();
 
     /**
      * Binds the sampler to the texture unit. The binding is done according to the texture layout, which must be set in the program for the textures that will be used before any binding can be done.

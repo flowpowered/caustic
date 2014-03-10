@@ -24,33 +24,28 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.lwjgl.gl20;
+package org.spout.renderer.lwjgl.gl32;
 
 import java.nio.ByteBuffer;
 
-import org.lwjgl.opengl.APPLEVertexArrayObject;
-import org.lwjgl.opengl.ARBVertexArrayObject;
-import org.lwjgl.opengl.ContextCapabilities;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GLContext;
+import org.lwjgl.opengl.GL30;
 
 import org.spout.renderer.api.data.VertexAttribute;
 import org.spout.renderer.api.data.VertexAttribute.DataType;
+import org.spout.renderer.api.data.VertexAttribute.UploadMode;
 import org.spout.renderer.api.data.VertexData;
 import org.spout.renderer.api.gl.VertexArray;
 import org.spout.renderer.lwjgl.LWJGLUtil;
 
 /**
- * An OpenGL 2.0 implementation of {@link VertexArray}.
- * <p/>
- * Vertex arrays will be used if the ARB or APPLE extension is supported by the hardware. Else, since core OpenGL doesn't support them until
- * 3.0, the vertex attributes will have to be redefined on each render call.
+ * An OpenGL 3.2 implementation of {@link VertexArray}.
  *
  * @see VertexArray
  */
-public class GL20VertexArray extends VertexArray {
+public class GL32VertexArray extends VertexArray {
     private static final int[] EMPTY_ARRAY = {};
     // Buffers IDs
     private int indicesBufferID = 0;
@@ -64,31 +59,15 @@ public class GL20VertexArray extends VertexArray {
     private int indicesOffset = 0;
     // Drawing mode
     private DrawingMode drawingMode = DrawingMode.TRIANGLES;
-    // The available vao extension
-    private final VertexArrayExtension extension;
-    // Attribute properties for when we don't have a vao extension
-    private int[] attributeSizes;
-    private int[] attributeTypes;
-    private boolean[] attributeNormalizing;
 
-    protected GL20VertexArray() {
-        final ContextCapabilities capabilities = GLContext.getCapabilities();
-        if (capabilities.GL_ARB_vertex_array_object) {
-            extension = VertexArrayExtension.ARB;
-        } else if (capabilities.GL_APPLE_vertex_array_object) {
-            extension = VertexArrayExtension.APPLE;
-        } else {
-            extension = VertexArrayExtension.NONE;
-        }
+    protected GL32VertexArray() {
     }
 
     @Override
     public void create() {
         checkNotCreated();
-        if (extension.has()) {
-            // Generate the vao
-            id = extension.glGenVertexArrays();
-        }
+        // Generate the vao
+        id = GL30.glGenVertexArrays();
         // Update state
         super.create();
         // Check for errors
@@ -98,21 +77,20 @@ public class GL20VertexArray extends VertexArray {
     @Override
     public void destroy() {
         checkCreated();
+        // Unbind any bound buffer
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+        // Unbind the indices buffer
+        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
         // Delete the indices buffer
         GL15.glDeleteBuffers(indicesBufferID);
+        // Unbind the vao
+        GL30.glBindVertexArray(0);
         // Delete the attribute buffers
         for (int attributeBufferID : attributeBufferIDs) {
             GL15.glDeleteBuffers(attributeBufferID);
         }
-        if (extension.has()) {
-            // Delete the vao
-            extension.glDeleteVertexArrays(id);
-        } else {
-            // Else delete the attribute properties
-            attributeSizes = null;
-            attributeTypes = null;
-            attributeNormalizing = null;
-        }
+        // Delete the vao
+        GL30.glDeleteVertexArrays(id);
         // Reset the IDs and data
         indicesBufferID = 0;
         attributeBufferIDs = EMPTY_ARRAY;
@@ -151,9 +129,7 @@ public class GL20VertexArray extends VertexArray {
         indicesOffset = Math.min(indicesOffset, indicesCount - 1);
         indicesDrawCount = Math.min(indicesDrawCount, indicesCount - indicesOffset);
         // Bind the vao
-        if (extension.has()) {
-            extension.glBindVertexArray(id);
-        }
+        GL30.glBindVertexArray(id);
         // Create a new array of attribute buffers ID of the correct size
         final int attributeCount = vertexData.getAttributeCount();
         final int[] newAttributeBufferIDs = new int[attributeCount];
@@ -170,12 +146,6 @@ public class GL20VertexArray extends VertexArray {
         // Copy the old valid attribute buffer sizes
         final int[] newAttributeBufferSizes = new int[attributeCount];
         System.arraycopy(attributeBufferSizes, 0, newAttributeBufferSizes, 0, Math.min(attributeBufferSizes.length, newAttributeBufferSizes.length));
-        // If we don't have a vao, we have to save the properties manually
-        if (!extension.has()) {
-            attributeSizes = new int[attributeCount];
-            attributeTypes = new int[attributeCount];
-            attributeNormalizing = new boolean[attributeCount];
-        }
         // Upload the new vertex data
         for (int i = 0; i < attributeCount; i++) {
             final VertexAttribute attribute = vertexData.getAttribute(i);
@@ -196,24 +166,21 @@ public class GL20VertexArray extends VertexArray {
             // Update the buffer size to the new one
             newAttributeBufferSizes[i] = newBufferSize;
             // Next, we add the pointer to the data in the vao
-            if (extension.has()) {
-                // As a float, normalized or not
-                GL20.glVertexAttribPointer(i, attribute.getSize(), attribute.getType().getGLConstant(), attribute.getUploadMode().normalize(), 0, 0);
-                // Enable the attribute
-                GL20.glEnableVertexAttribArray(i);
+            // We have three ways to interpret integer data
+            if (attribute.getType().isInteger() && attribute.getUploadMode() == UploadMode.KEEP_INT) {
+                // Directly as an int
+                GL30.glVertexAttribIPointer(i, attribute.getSize(), attribute.getType().getGLConstant(), 0, 0);
             } else {
-                // Else we save the properties for rendering
-                attributeSizes[i] = attribute.getSize();
-                attributeTypes[i] = attribute.getType().getGLConstant();
-                attributeNormalizing[i] = attribute.getUploadMode().normalize();
+                // Or as a float, normalized or not
+                GL20.glVertexAttribPointer(i, attribute.getSize(), attribute.getType().getGLConstant(), attribute.getUploadMode().normalize(), 0, 0);
             }
+            // Finally enable the attribute
+            GL20.glEnableVertexAttribArray(i);
         }
         // Unbind the last vbo
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
         // Unbind the vao
-        if (extension.has()) {
-            extension.glBindVertexArray(0);
-        }
+        GL30.glBindVertexArray(0);
         // Update the attribute buffer IDs to the new ones
         attributeBufferIDs = newAttributeBufferIDs;
         // Update the attribute buffer sizes to the new ones
@@ -249,75 +216,22 @@ public class GL20VertexArray extends VertexArray {
     @Override
     public void draw() {
         checkCreated();
-        if (extension.has()) {
-            // Bind the vao
-            extension.glBindVertexArray(id);
-        } else {
-            // Enable the vertex attributes
-            for (int i = 0; i < attributeBufferIDs.length; i++) {
-                // Bind the buffer
-                GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, attributeBufferIDs[i]);
-                // Define the attribute
-                GL20.glVertexAttribPointer(i, attributeSizes[i], attributeTypes[i], attributeNormalizing[i], 0, 0);
-                // Enable it
-                GL20.glEnableVertexAttribArray(i);
-            }
-            // Unbind the last buffer
-            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-        }
-        // Bind the index buffer
+        // Bind the vao
+        GL30.glBindVertexArray(id);
+        // Bind the indices buffer
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesBufferID);
         // Draw all indices with the provided mode
-        GL11.glDrawElements(drawingMode.getGLConstant(), indicesCount, GL11.GL_UNSIGNED_INT, indicesOffset * DataType.INT.getByteSize());
-        // Unbind the index buffer
+        GL11.glDrawElements(drawingMode.getGLConstant(), indicesDrawCount, GL11.GL_UNSIGNED_INT, indicesOffset * DataType.INT.getByteSize());
+        // Unbind the indices buffer
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
+        // Unbind the vao
+        GL30.glBindVertexArray(0);
         // Check for errors
         LWJGLUtil.checkForGLError();
     }
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL20;
-    }
-
-    private static enum VertexArrayExtension {
-        NONE,
-        ARB,
-        APPLE;
-
-        private boolean has() {
-            return this != NONE;
-        }
-
-        private int glGenVertexArrays() {
-            switch (this) {
-                case ARB:
-                    return ARBVertexArrayObject.glGenVertexArrays();
-                case APPLE:
-                    return APPLEVertexArrayObject.glGenVertexArraysAPPLE();
-                default:
-                    return 0;
-            }
-        }
-
-        private void glBindVertexArray(int array) {
-            switch (this) {
-                case ARB:
-                    ARBVertexArrayObject.glBindVertexArray(array);
-                    break;
-                case APPLE:
-                    APPLEVertexArrayObject.glBindVertexArrayAPPLE(array);
-            }
-        }
-
-        private void glDeleteVertexArrays(int array) {
-            switch (this) {
-                case ARB:
-                    ARBVertexArrayObject.glDeleteVertexArrays(array);
-                    break;
-                case APPLE:
-                    APPLEVertexArrayObject.glDeleteVertexArraysAPPLE(array);
-            }
-        }
+        return GLVersion.GL32;
     }
 }
