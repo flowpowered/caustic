@@ -24,22 +24,23 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.lwjgl.gl30;
+package org.spout.renderer.lwjgl.gl21;
 
-import org.spout.renderer.lwjgl.gl20.GL20Shader;
+import org.lwjgl.opengl.ContextAttribs;
+
+import org.spout.renderer.lwjgl.gl20.GL20Context;
 
 /**
- * An OpenGL 3.0 implementation of {@link org.spout.renderer.api.gl.Shader}.
  *
- * @see org.spout.renderer.api.gl.Shader
  */
-public class GL30Shader extends GL20Shader {
-    protected GL30Shader() {
+public class GL21Context extends GL20Context {
+    @Override
+    protected ContextAttribs createContextAttributes() {
+        return new ContextAttribs(2, 1);
     }
-    // TODO: add GL30 specific stuff
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL30;
+        return GLVersion.GL21;
     }
 }

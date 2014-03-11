@@ -24,23 +24,29 @@
  * License and see <http://spout.in/licensev1> for the full license, including
  * the MIT license.
  */
-package org.spout.renderer.lwjgl.gl30;
+package org.spout.renderer.lwjgl.gl32;
 
-import org.spout.renderer.lwjgl.gl20.GL20Program;
+import org.lwjgl.opengl.ContextAttribs;
+
+import org.spout.renderer.lwjgl.gl30.GL30Context;
 
 /**
- * An OpenGL 3.0 implementation of {@link org.spout.renderer.api.gl.Program}.
+ * An OpenGL 3.2 implementation of {@link org.spout.renderer.api.gl.Context}.
  *
- * @see org.spout.renderer.api.gl.Program
+ * @see org.spout.renderer.api.gl.Context
  */
-public class GL30Program extends GL20Program {
-    // TODO: Support unsigned int scalars and vectors
-
-    protected GL30Program() {
+public class GL32Context extends GL30Context {
+    @Override
+    protected ContextAttribs createContextAttributes() {
+        ContextAttribs contextAttribs = new ContextAttribs(3, 2);
+        if (org.lwjgl.LWJGLUtil.getPlatform() == org.lwjgl.LWJGLUtil.PLATFORM_MACOSX) {
+            contextAttribs = contextAttribs.withProfileCore(true);
+        }
+        return contextAttribs;
     }
 
     @Override
     public GLVersion getGLVersion() {
-        return GLVersion.GL30;
+        return GLVersion.GL32;
     }
 }

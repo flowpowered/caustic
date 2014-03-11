@@ -56,9 +56,6 @@ import org.spout.renderer.lwjgl.LWJGLUtil;
  * @see org.spout.renderer.api.gl.Context
  */
 public class GL20Context extends Context {
-    protected GL20Context() {
-    }
-
     @Override
     public void create() {
         checkNotCreated();

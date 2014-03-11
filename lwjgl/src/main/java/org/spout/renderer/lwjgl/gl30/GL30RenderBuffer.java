@@ -44,9 +44,6 @@ public class GL30RenderBuffer extends RenderBuffer {
     private int width = 1;
     private int height = 1;
 
-    protected GL30RenderBuffer() {
-    }
-
     @Override
     public void create() {
         checkNotCreated();

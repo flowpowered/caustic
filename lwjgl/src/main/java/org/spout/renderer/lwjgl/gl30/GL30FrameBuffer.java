@@ -50,9 +50,6 @@ import org.spout.renderer.lwjgl.LWJGLUtil;
 public class GL30FrameBuffer extends FrameBuffer {
     private final TIntSet outputBuffers = new TIntHashSet();
 
-    protected GL30FrameBuffer() {
-    }
-
     @Override
     public void create() {
         checkNotCreated();

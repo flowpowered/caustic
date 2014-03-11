@@ -57,9 +57,6 @@ public class GL20Texture extends Texture {
     protected int width = 1;
     protected int height = 1;
 
-    protected GL20Texture() {
-    }
-
     @Override
     public void create() {
         checkNotCreated();

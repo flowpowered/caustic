@@ -60,9 +60,6 @@ public class GL30VertexArray extends VertexArray {
     // Drawing mode
     private DrawingMode drawingMode = DrawingMode.TRIANGLES;
 
-    protected GL30VertexArray() {
-    }
-
     @Override
     public void create() {
         checkNotCreated();

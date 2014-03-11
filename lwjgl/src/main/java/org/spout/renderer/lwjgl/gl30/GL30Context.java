@@ -35,6 +35,8 @@ import org.spout.renderer.api.gl.Shader;
 import org.spout.renderer.api.gl.Texture;
 import org.spout.renderer.api.gl.VertexArray;
 import org.spout.renderer.lwjgl.gl20.GL20Context;
+import org.spout.renderer.lwjgl.gl20.GL20Program;
+import org.spout.renderer.lwjgl.gl20.GL20Shader;
 
 /**
  * An OpenGL 3.0 implementation of {@link org.spout.renderer.api.gl.Context}.
@@ -42,12 +44,9 @@ import org.spout.renderer.lwjgl.gl20.GL20Context;
  * @see org.spout.renderer.api.gl.Context
  */
 public class GL30Context extends GL20Context {
-    protected GL30Context() {
-    }
-
     @Override
     protected ContextAttribs createContextAttributes() {
-        return new ContextAttribs(3, 0).withForwardCompatible(true);
+        return new ContextAttribs(3, 0);
     }
 
     @Override
@@ -57,7 +56,7 @@ public class GL30Context extends GL20Context {
 
     @Override
     public Program newProgram() {
-        return new GL30Program();
+        return new GL20Program();
     }
 
     @Override
@@ -67,7 +66,7 @@ public class GL30Context extends GL20Context {
 
     @Override
     public Shader newShader() {
-        return new GL30Shader();
+        return new GL20Shader();
     }
 
     @Override

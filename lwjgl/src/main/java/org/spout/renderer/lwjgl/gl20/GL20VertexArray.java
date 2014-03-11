@@ -71,7 +71,7 @@ public class GL20VertexArray extends VertexArray {
     private int[] attributeTypes;
     private boolean[] attributeNormalizing;
 
-    protected GL20VertexArray() {
+    public GL20VertexArray() {
         final ContextCapabilities capabilities = GLContext.getCapabilities();
         if (capabilities.GL_ARB_vertex_array_object) {
             extension = VertexArrayExtension.ARB;

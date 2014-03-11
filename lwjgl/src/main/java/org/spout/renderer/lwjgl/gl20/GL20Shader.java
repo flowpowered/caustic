@@ -51,9 +51,6 @@ public class GL20Shader extends Shader {
     // Map of the texture units to their names
     private final TIntObjectMap<String> textureLayouts = new TIntObjectHashMap<>();
 
-    protected GL20Shader() {
-    }
-
     @Override
     public void create() {
         checkNotCreated();

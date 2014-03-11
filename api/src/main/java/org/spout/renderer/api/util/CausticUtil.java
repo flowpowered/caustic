@@ -48,6 +48,7 @@ import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TFloatArrayList;
 
 import org.spout.renderer.api.GLVersioned;
+import org.spout.renderer.api.GLVersioned.GLVersion;
 import org.spout.renderer.api.data.VertexAttribute.DataType;
 import org.spout.renderer.api.gl.Texture.Format;
 
@@ -102,15 +103,17 @@ public final class CausticUtil {
     }
 
     /**
-     * Checks if two OpenGL versioned object have the same version. Throws an exception if that's not the case.
+     * Checks if two OpenGL versioned object have compatible version. Throws an exception if that's not the case.
      *
      * @param required The required version
      * @param object The object to check the version of
-     * @throws IllegalStateException If the object versions to not match
+     * @throws IllegalStateException If the object versions are not compatible
      */
     public static void checkVersion(GLVersioned required, GLVersioned object) {
-        if (required.getGLVersion() != object.getGLVersion()) {
-            throw new IllegalStateException("Version mismatch: expected " + required.getGLVersion() + ", got " + object.getGLVersion());
+        final GLVersion requiredVersion = required.getGLVersion();
+        final GLVersion objectVersion = object.getGLVersion();
+        if (objectVersion.getMajor() != requiredVersion.getMajor() && objectVersion.getMinor() > requiredVersion.getMinor()) {
+            throw new IllegalStateException("Versions not compatible: expected " + requiredVersion + " or lower in minor versions, got " + objectVersion);
         }
     }
 

@@ -41,9 +41,6 @@ import org.spout.renderer.lwjgl.gl20.GL20Texture;
  * @see org.spout.renderer.api.gl.Texture
  */
 public class GL30Texture extends GL20Texture {
-    protected GL30Texture() {
-    }
-
     @Override
     public void setImageData(ByteBuffer imageData, int width, int height) {
         checkCreated();
