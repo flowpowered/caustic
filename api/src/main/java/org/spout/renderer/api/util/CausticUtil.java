@@ -103,7 +103,8 @@ public final class CausticUtil {
     }
 
     /**
-     * Checks if two OpenGL versioned object have compatible version. Throws an exception if that's not the case.
+     * Checks if two OpenGL versioned object have compatible version. Throws an exception if that's not the case. A version is determined to be compatible with another is it's lower than the said
+     * version. This isn't always true when deprecation is involved, but it's an acceptable way of doing this in most implementations.
      *
      * @param required The required version
      * @param object The object to check the version of
@@ -112,8 +113,8 @@ public final class CausticUtil {
     public static void checkVersion(GLVersioned required, GLVersioned object) {
         final GLVersion requiredVersion = required.getGLVersion();
         final GLVersion objectVersion = object.getGLVersion();
-        if (objectVersion.getMajor() != requiredVersion.getMajor() && objectVersion.getMinor() > requiredVersion.getMinor()) {
-            throw new IllegalStateException("Versions not compatible: expected " + requiredVersion + " or lower in minor versions, got " + objectVersion);
+        if (objectVersion.getMajor() > requiredVersion.getMajor() && objectVersion.getMinor() > requiredVersion.getMinor()) {
+            throw new IllegalStateException("Versions not compatible: expected " + requiredVersion + " or lower, got " + objectVersion);
         }
     }
 
