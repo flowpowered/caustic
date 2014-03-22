@@ -40,12 +40,9 @@ import org.spout.renderer.api.model.Model;
 import org.spout.renderer.api.util.Rectangle;
 
 /**
- * Represents an action that can be executed with {@link #execute(org.spout.renderer.api.gl.Context)}. Actions can be chained using {@link #setNext(Action)}. Calling {@link
- * #executeChain(org.spout.renderer.api.gl.Context)} will execute this action, and all of the chained actions, in order.
+ * Represents a rendering action that can be executed with {@link #execute(org.spout.renderer.api.gl.Context)}.
  */
 public abstract class Action {
-    private Action next;
-
     /**
      * Executes this actions with the desired rendering context.
      *
@@ -54,37 +51,10 @@ public abstract class Action {
     public abstract void execute(Context context);
 
     /**
-     * Executes this action followed by the rest of the chain, in order, with the desired rendering context.
-     *
-     * @param context The rendering context.
-     */
-    public void executeChain(Context context) {
-        execute(context);
-        if (next != null) {
-            next.executeChain(context);
-        }
-    }
-
-    /**
-     * Sets the action immediately following this one.
-     *
-     * @param next The next action
-     */
-    public void setNext(Action next) {
-        if (next == null) {
-            throw new IllegalArgumentException("Next action cannot be null");
-        }
-        if (next == this) {
-            throw new IllegalArgumentException("Next action cannot be the action itself");
-        }
-        this.next = next;
-    }
-
-    /**
      * An action that sets the color for clearing color buffers in the context.
      */
     public static class SetClearColorAction extends Action {
-        private final Vector4f color;
+        private Vector4f color;
 
         /**
          * Constructs a clear color setting action with the desired clearing color.
@@ -92,6 +62,24 @@ public abstract class Action {
          * @param color The clearing color
          */
         public SetClearColorAction(Vector4f color) {
+            this.color = color;
+        }
+
+        /**
+         * Returns the clearing color.
+         *
+         * @return The color
+         */
+        public Vector4f getClearColor() {
+            return color;
+        }
+
+        /**
+         * Sets the clearing color.
+         *
+         * @param color The clearing color
+         */
+        public void setClearColor(Vector4f color) {
             this.color = color;
         }
 
@@ -115,7 +103,7 @@ public abstract class Action {
      * An action that sets the view port in the context.
      */
     public static class SetViewPortAction extends Action {
-        private final Rectangle viewPort;
+        private Rectangle viewPort;
 
         /**
          * Constructs a view port setting action with the desired view port.
@@ -123,6 +111,24 @@ public abstract class Action {
          * @param viewPort The view port
          */
         public SetViewPortAction(Rectangle viewPort) {
+            this.viewPort = viewPort;
+        }
+
+        /**
+         * Returns the view port.
+         *
+         * @return The view port
+         */
+        public Rectangle getViewPort() {
+            return viewPort;
+        }
+
+        /**
+         * Sets the view port.
+         *
+         * @param viewPort The view port
+         */
+        public void setViewPort(Rectangle viewPort) {
             this.viewPort = viewPort;
         }
 
@@ -136,7 +142,7 @@ public abstract class Action {
      * An action that enables capabilities in the context.
      */
     public static class EnableCapabilitiesAction extends Action {
-        private final Capability[] capabilities;
+        private Capability[] capabilities;
 
         /**
          * Constructs a capability enabling action with the desired capabilities to enable.
@@ -144,6 +150,24 @@ public abstract class Action {
          * @param capabilities The capabilities
          */
         public EnableCapabilitiesAction(Capability... capabilities) {
+            this.capabilities = capabilities;
+        }
+
+        /**
+         * Returns the enabled capabilities.
+         *
+         * @return The capabilities
+         */
+        public Capability[] getCapabilities() {
+            return capabilities;
+        }
+
+        /**
+         * Sets the capabilities to enable.
+         *
+         * @param capabilities The capabilities
+         */
+        public void setCapabilities(Capability[] capabilities) {
             this.capabilities = capabilities;
         }
 
@@ -159,7 +183,7 @@ public abstract class Action {
      * An action that disables capabilities in the context.
      */
     public static class DisableCapabilitiesAction extends Action {
-        private final Capability[] capabilities;
+        private Capability[] capabilities;
 
         /**
          * Constructs a capability disabling action with the desired capabilities to disable.
@@ -167,6 +191,24 @@ public abstract class Action {
          * @param capabilities The capabilities
          */
         public DisableCapabilitiesAction(Capability... capabilities) {
+            this.capabilities = capabilities;
+        }
+
+        /**
+         * Returns the disabled capabilities.
+         *
+         * @return The capabilities
+         */
+        public Capability[] getCapabilities() {
+            return capabilities;
+        }
+
+        /**
+         * Sets the capabilities to enable.
+         *
+         * @param capabilities The capabilities
+         */
+        public void setCapabilities(Capability[] capabilities) {
             this.capabilities = capabilities;
         }
 
@@ -182,7 +224,7 @@ public abstract class Action {
      * An action that binds a frame buffer to the context.
      */
     public static class BindFrameBufferAction extends Action {
-        private final FrameBuffer frameBuffer;
+        private FrameBuffer frameBuffer;
 
         /**
          * Constructs a frame buffer binding action with the desired frame buffer to bind.
@@ -190,6 +232,24 @@ public abstract class Action {
          * @param frameBuffer The frame buffer
          */
         public BindFrameBufferAction(FrameBuffer frameBuffer) {
+            this.frameBuffer = frameBuffer;
+        }
+
+        /**
+         * Returns the frame buffer.
+         *
+         * @return The frame buffer
+         */
+        public FrameBuffer getFrameBuffer() {
+            return frameBuffer;
+        }
+
+        /**
+         * Sets the frame buffer to bind
+         *
+         * @param frameBuffer The frame buffer
+         */
+        public void setFrameBuffer(FrameBuffer frameBuffer) {
             this.frameBuffer = frameBuffer;
         }
 
@@ -203,7 +263,7 @@ public abstract class Action {
      * An action that unbinds a frame buffer from the context.
      */
     public static class UnbindFrameBufferAction extends Action {
-        private final FrameBuffer frameBuffer;
+        private FrameBuffer frameBuffer;
 
         /**
          * Constructs a frame buffer unbinding action with the desired frame buffer to unbind.
@@ -211,6 +271,24 @@ public abstract class Action {
          * @param frameBuffer The frame buffer
          */
         public UnbindFrameBufferAction(FrameBuffer frameBuffer) {
+            this.frameBuffer = frameBuffer;
+        }
+
+        /**
+         * Returns the frame buffer.
+         *
+         * @return The frame buffer
+         */
+        public FrameBuffer getFrameBuffer() {
+            return frameBuffer;
+        }
+
+        /**
+         * Sets the frame buffer to unbind
+         *
+         * @param frameBuffer The frame buffer
+         */
+        public void setFrameBuffer(FrameBuffer frameBuffer) {
             this.frameBuffer = frameBuffer;
         }
 
@@ -224,7 +302,7 @@ public abstract class Action {
      * An action that sets the camera in the context.
      */
     public static class SetCameraAction extends Action {
-        private final Camera camera;
+        private Camera camera;
 
         /**
          * Constructs a camera setting action with the desired camera.
@@ -232,6 +310,24 @@ public abstract class Action {
          * @param camera The camera
          */
         public SetCameraAction(Camera camera) {
+            this.camera = camera;
+        }
+
+        /**
+         * Returns the camera.
+         *
+         * @return The camera
+         */
+        public Camera getCamera() {
+            return camera;
+        }
+
+        /**
+         * Sets the camera to use.
+         *
+         * @param camera The camera
+         */
+        public void setCamera(Camera camera) {
             this.camera = camera;
         }
 
@@ -245,20 +341,38 @@ public abstract class Action {
      * An action that enables the depth mask.
      */
     public static class SetDepthMaskAction extends Action {
-        private final boolean value;
+        private boolean enabled;
 
         /**
          * Constructs a new depth mask setting action with the desired depth mask status.
          *
-         * @param value The depth mask status
+         * @param enabled The depth mask status
          */
-        public SetDepthMaskAction(boolean value) {
-            this.value = value;
+        public SetDepthMaskAction(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        /**
+         * Returns the depth mask value for the action.
+         *
+         * @return The depth mask value
+         */
+        public boolean getEnabled() {
+            return enabled;
+        }
+
+        /**
+         * Sets the depth mask value for the action.
+         *
+         * @param enabled The depth mask value
+         */
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
         }
 
         @Override
         public void execute(Context context) {
-            context.setDepthMask(value);
+            context.setDepthMask(enabled);
         }
     }
 
@@ -266,7 +380,7 @@ public abstract class Action {
      * An action that set the blending functions.
      */
     public static class SetBlendingFunctions extends Action {
-        private final BlendFunction source, destination;
+        private BlendFunction source, destination;
 
         /**
          * Constructs a new blending function setting action with the desired source and destination blending functions.
@@ -275,6 +389,35 @@ public abstract class Action {
          * @param destination The destination blending function
          */
         public SetBlendingFunctions(BlendFunction source, BlendFunction destination) {
+            this.source = source;
+            this.destination = destination;
+        }
+
+        /**
+         * Returns the source blending function.
+         *
+         * @return The source blending function
+         */
+        public BlendFunction getSource() {
+            return source;
+        }
+
+        /**
+         * Returns the destination blending function.
+         *
+         * @return The destination blending function
+         */
+        public BlendFunction getDestination() {
+            return destination;
+        }
+
+        /**
+         * Sets the blending functions.
+         *
+         * @param source The source blending function
+         * @param destination The destination blending function
+         */
+        public void setSource(BlendFunction source, BlendFunction destination) {
             this.source = source;
             this.destination = destination;
         }
@@ -290,7 +433,7 @@ public abstract class Action {
      * java.util.Arrays#sort(Object[])}) so that models with the same materials are not reordered. This grouping improves performance by reducing the amount of rendering calls.
      */
     public static class RenderModelsAction extends Action {
-        private final Collection<Model> models;
+        private Collection<Model> models;
 
         /**
          * Constructs a model rendering action with the models to render
@@ -298,6 +441,24 @@ public abstract class Action {
          * @param models The models
          */
         public RenderModelsAction(Collection<Model> models) {
+            this.models = models;
+        }
+
+        /**
+         * Returns the models to render.
+         *
+         * @return The models
+         */
+        public Collection<Model> getModels() {
+            return models;
+        }
+
+        /**
+         * Sets the models to render.
+         *
+         * @param models The models
+         */
+        public void setModels(Collection<Model> models) {
             this.models = models;
         }
 

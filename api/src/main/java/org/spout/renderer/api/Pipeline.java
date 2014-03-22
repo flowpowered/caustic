@@ -27,6 +27,8 @@
 package org.spout.renderer.api;
 
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 import com.flowpowered.math.vector.Vector4f;
 
@@ -54,18 +56,15 @@ import org.spout.renderer.api.util.Rectangle;
  * added.
  */
 public class Pipeline {
-    private final Action first;
+    private final List<Action> actions;
 
     /**
-     * Constructs a new pipeline from the first action to execute the chain from. The next action is linked in the first action and so on.
+     * Constructs a new pipeline from the list of actions.
      *
-     * @param first The first action of the chain
+     * @param actions The list of actions
      */
-    protected Pipeline(Action first) {
-        if (first == null) {
-            throw new IllegalArgumentException("First action cannot be null");
-        }
-        this.first = first;
+    protected Pipeline(List<Action> actions) {
+        this.actions = actions;
     }
 
     /**
@@ -74,15 +73,16 @@ public class Pipeline {
      * @param context The context to use.
      */
     public void run(Context context) {
-        first.executeChain(context);
+        for (Action action : actions) {
+            action.execute(context);
+        }
     }
 
     /**
      * Used to built a pipeline through chained calls.
      */
     public static class PipelineBuilder {
-        private Action first = null;
-        private Action current;
+        private final List<Action> actions = new LinkedList<>();
 
         /**
          * Builds the next action in the chain. The action sets the clear color to use when clearing color buffers.
@@ -217,12 +217,7 @@ public class Pipeline {
          * @return The builder itself, for chained calls
          */
         public PipelineBuilder doAction(Action action) {
-            if (first == null) {
-                first = action;
-            } else {
-                current.setNext(action);
-            }
-            current = action;
+            actions.add(action);
             return this;
         }
 
@@ -232,7 +227,7 @@ public class Pipeline {
          * @return The built pipeline
          */
         public Pipeline build() {
-            return new Pipeline(first);
+            return new Pipeline(actions);
         }
     }
 }
