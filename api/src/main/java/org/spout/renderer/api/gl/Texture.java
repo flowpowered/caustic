@@ -28,6 +28,7 @@ package org.spout.renderer.api.gl;
 
 import java.nio.ByteBuffer;
 
+import com.flowpowered.math.vector.Vector2i;
 import com.flowpowered.math.vector.Vector4f;
 
 import org.spout.renderer.api.Creatable;
@@ -169,6 +170,15 @@ public abstract class Texture extends Creatable implements GLVersioned {
      * @return The image data in the desired format
      */
     public abstract ByteBuffer getImageData(InternalFormat format);
+
+    /**
+     * Returns a vector containing the dimensions of the texture.
+     *
+     * @return The size of the texture
+     */
+    public Vector2i getSize() {
+        return new Vector2i(getWidth(), getHeight());
+    }
 
     /**
      * Returns the width of the image.
