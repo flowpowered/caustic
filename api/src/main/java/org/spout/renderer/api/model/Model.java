@@ -51,6 +51,10 @@ public class Model implements Comparable<Model> {
     private boolean updateMatrix = true;
     // Model uniforms
     private final UniformHolder uniforms = new UniformHolder();
+    // Optional parent model
+    private Model parent = null;
+    private Matrix4f lastParentMatrix = null;
+    private Matrix4f childMatrix = null;
 
     /**
      * An empty constructor for child classes only.
@@ -154,8 +158,20 @@ public class Model implements Comparable<Model> {
      */
     public Matrix4f getMatrix() {
         if (updateMatrix) {
-            matrix = Matrix4f.createScaling(scale.toVector4(1)).rotate(rotation).translate(position);
+            final Matrix4f matrix = Matrix4f.createScaling(scale.toVector4(1)).rotate(rotation).translate(position);
+            if (parent == null) {
+                this.matrix = matrix;
+            } else {
+                childMatrix = matrix;
+            }
             updateMatrix = false;
+        }
+        if (parent != null) {
+            final Matrix4f parentMatrix = parent.getMatrix();
+            if (parentMatrix != lastParentMatrix) {
+                matrix = parentMatrix.mul(childMatrix);
+                lastParentMatrix = parentMatrix;
+            }
         }
         return matrix;
     }
@@ -233,6 +249,27 @@ public class Model implements Comparable<Model> {
      */
     public UniformHolder getUniforms() {
         return uniforms;
+    }
+
+    /**
+     * Returns the parent model. This model's position, rotation and scale are relative to that model if not null.
+     *
+     * @return The parent model, can be null for no parent
+     */
+    public Model getParent() {
+        return parent;
+    }
+
+    /**
+     * Sets the parent model. This model's position, rotation and scale will be relative to that model if not null.
+     *
+     * @param parent The parent model, or null for no parent
+     */
+    public void setParent(Model parent) {
+        if (parent == this) {
+            throw new IllegalArgumentException("The model can't be its own parent");
+        }
+        this.parent = parent;
     }
 
     @Override
