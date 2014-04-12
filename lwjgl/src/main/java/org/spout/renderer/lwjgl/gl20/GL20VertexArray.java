@@ -149,7 +149,7 @@ public class GL20VertexArray extends VertexArray {
         indicesDrawCount = indicesCount;
         // Ensure that the indices offset and count fits inside the valid part of the buffer
         indicesOffset = Math.min(indicesOffset, indicesCount - 1);
-        indicesDrawCount = Math.min(indicesDrawCount, indicesCount - indicesOffset);
+        indicesDrawCount = indicesDrawCount - indicesOffset;
         // Bind the vao
         if (extension.has()) {
             extension.glBindVertexArray(id);
@@ -223,11 +223,11 @@ public class GL20VertexArray extends VertexArray {
     }
 
     @Override
-    public void setDrawingMode(DrawingMode drawingMode) {
-        if (drawingMode == null) {
+    public void setDrawingMode(DrawingMode mode) {
+        if (mode == null) {
             throw new IllegalArgumentException("Drawing mode cannot be null");
         }
-        this.drawingMode = drawingMode;
+        this.drawingMode = mode;
     }
 
     @Override

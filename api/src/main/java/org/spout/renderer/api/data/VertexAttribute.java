@@ -239,11 +239,13 @@ public class VertexAttribute implements Cloneable {
         private final int glConstant;
         private final int byteSize;
         private final boolean integer;
+        private final int multiplyShift;
 
         private DataType(int glConstant, int byteSize, boolean integer) {
             this.glConstant = glConstant;
             this.byteSize = byteSize;
             this.integer = integer;
+            multiplyShift = (int) (Math.log(byteSize) / Math.log(2));
         }
 
         /**
@@ -272,6 +274,15 @@ public class VertexAttribute implements Cloneable {
         public boolean isInteger() {
             return integer;
         }
+
+        /**
+         * Returns the shift amount equivalent to multiplying by the number of bytes in this data type.
+         *
+         * @return The shift amount corresponding to the multiplication by the byte size
+         */
+        public int getMultiplyShift() {
+            return multiplyShift;
+        }
     }
 
     /**
@@ -286,8 +297,22 @@ public class VertexAttribute implements Cloneable {
          */
         KEEP_INT;
 
+        /**
+         * Returns true if this upload mode converts integer data to normalized floats.
+         *
+         * @return Whether or not this upload mode converts integer data to normalized floats
+         */
         public boolean normalize() {
             return this == TO_FLOAT_NORMALIZE;
+        }
+
+        /**
+         * Returns true if this upload mode converts the data to floats.
+         *
+         * @return Whether or not this upload mode converts the data to floats
+         */
+        public boolean toFloat() {
+            return this == TO_FLOAT || this == TO_FLOAT_NORMALIZE;
         }
     }
 }

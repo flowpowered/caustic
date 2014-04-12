@@ -24,6 +24,7 @@
 		<module>api</module>
 		<module>lwjgl</module>
 		<module>android</module>
+		<module>software</module>
 	</modules>
 
 	<!-- Build properties -->

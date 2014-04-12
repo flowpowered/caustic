@@ -26,6 +26,7 @@
  */
 package org.spout.renderer.api.gl;
 
+import java.util.Collection;
 import java.util.Set;
 
 import com.flowpowered.math.matrix.Matrix2f;
@@ -201,7 +202,7 @@ public abstract class Program extends Creatable implements GLVersioned {
      *
      * @return The attached shaders
      */
-    public abstract Set<Shader> getShaders();
+    public abstract Collection<Shader> getShaders();
 
     /**
      * Returns an set containing all of the uniform names for this program.
