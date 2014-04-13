@@ -41,7 +41,7 @@ import org.spout.renderer.api.util.CausticUtil;
 /**
  * Represents and implementation of an OpenGL or OpenGLES version. Also manages the implementations statically.
  */
-public final class GLImplementation {
+public class GLImplementation {
     private static final Map<GLImplementation, Constructor<Context>> implementations = Collections.synchronizedMap(new HashMap<GLImplementation, Constructor<Context>>());
     private final GLVersion version;
     private final String contextName;
