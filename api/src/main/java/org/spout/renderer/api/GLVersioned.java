@@ -77,6 +77,15 @@ public interface GLVersioned {
         }
 
         /**
+         * Returns the full version number of the version.
+         *
+         * @return The full version number
+         */
+        public int getFull() {
+            return major * 10 + minor;
+        }
+
+        /**
          * Returns the major version number of the version.
          *
          * @return The major version number
@@ -101,6 +110,15 @@ public interface GLVersioned {
          */
         public boolean isES() {
             return es;
+        }
+
+        /**
+         * Returns the full GLSL version availble with the OpenGL version.
+         *
+         * @return The GLSL version
+         */
+        public int getGLSLFull() {
+            return glslMajor * 100 + glslMinor * 10;
         }
 
         /**
