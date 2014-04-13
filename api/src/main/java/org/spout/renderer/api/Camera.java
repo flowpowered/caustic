@@ -46,7 +46,7 @@ public class Camera {
      *
      * @param projection The projection matrix
      */
-    private Camera(Matrix4f projection) {
+    public Camera(Matrix4f projection) {
         this.projection = projection;
     }
 
