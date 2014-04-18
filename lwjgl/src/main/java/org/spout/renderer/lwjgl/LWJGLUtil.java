@@ -47,20 +47,21 @@ public final class LWJGLUtil {
     public static final GLImplementation GL21_IMPL = new GLImplementation(GLVersion.GL21, GL21Context.class.getName());
     public static final GLImplementation GL30_IMPL = new GLImplementation(GLVersion.GL30, GL30Context.class.getName());
     public static final GLImplementation GL32_IMPL = new GLImplementation(GLVersion.GL32, GL32Context.class.getName());
+    private static final String NATIVES_DIRECTORY = "natives";
     private static final String[] WINDOWS_NATIVE_LIBRARIES = {
             "jinput-dx8_64.dll", "jinput-dx8.dll", "jinput-raw_64.dll", "jinput-raw.dll",
             "jinput-wintab.dll", "lwjgl.dll", "lwjgl64.dll", "OpenAL32.dll", "OpenAL64.dll"
     };
-    private static final String WINDOWS_NATIVES_DIRECTORY = "natives/windows/";
+    private static final String WINDOWS_NATIVES_DIRECTORY = NATIVES_DIRECTORY + File.separator + "windows";
     private static final String[] MACOSX_NATIVE_LIBRARIES = {
             "libjinput-osx.jnilib", "liblwjgl.jnilib", "openal.dylib"
     };
-    private static final String MACOSX_NATIVES_DIRECTORY = "natives/mac/";
+    private static final String MACOSX_NATIVES_DIRECTORY = NATIVES_DIRECTORY + File.separator + "mac";
     private static final String[] LINUX_NATIVE_LIBRARIES = {
             "liblwjgl.so", "liblwjgl64.so", "libopenal.so", "libopenal64.so", "libjinput-linux.so",
             "libjinput-linux64.so"
     };
-    private static final String LINUX_NATIVES_DIRECTORY = "natives/linux/";
+    private static final String LINUX_NATIVES_DIRECTORY = NATIVES_DIRECTORY + File.separator + "linux";
 
     private LWJGLUtil() {
     }
@@ -74,11 +75,9 @@ public final class LWJGLUtil {
      * @return Whether or not the operation succeeded.
      */
     public static boolean deployNatives(File directory) {
-        final String[] nativeLibs = getNativeLibraries();
-        final String nativesDirectory = getNativesDirectory();
-        final File nativesDir = new File(directory, nativesDirectory);
+        final File nativesDir = new File(directory, getNativesDirectory());
         nativesDir.mkdirs();
-        for (String nativeLib : nativeLibs) {
+        for (String nativeLib : getNativeLibraries()) {
             final File nativeFile = new File(nativesDir, nativeLib);
             if (!nativeFile.exists()) {
                 try {
