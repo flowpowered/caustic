@@ -45,6 +45,7 @@ public class ShaderBuffer implements InBuffer, OutBuffer {
     private final IntBuffer buffer;
     private final DataFormat[] externalFormats;
     private int position = 0;
+    private int count;
 
     ShaderBuffer(DataFormat[] externalFormats) {
         this.externalFormats = new DataFormat[externalFormats.length];
@@ -78,20 +79,15 @@ public class ShaderBuffer implements InBuffer, OutBuffer {
 
     @Override
     public int readInt() {
+        count = 0;
         final int i = readInt0();
         position++;
         return i;
     }
 
     @Override
-    public float readFloat() {
-        final float f = readFloat0();
-        position++;
-        return f;
-    }
-
-    @Override
     public Vector2i readVector2i() {
+        count = 0;
         final Vector2i v = new Vector2i(readInt0(), readInt0());
         position++;
         return v;
@@ -99,6 +95,7 @@ public class ShaderBuffer implements InBuffer, OutBuffer {
 
     @Override
     public Vector3i readVector3i() {
+        count = 0;
         final Vector3i v = new Vector3i(readInt0(), readInt0(), readInt0());
         position++;
         return v;
@@ -106,13 +103,23 @@ public class ShaderBuffer implements InBuffer, OutBuffer {
 
     @Override
     public Vector4i readVector4i() {
+        count = 0;
         final Vector4i v = new Vector4i(readInt0(), readInt0(), readInt0(), readInt0());
         position++;
         return v;
     }
 
     @Override
+    public float readFloat() {
+        count = 0;
+        final float f = readFloat0();
+        position++;
+        return f;
+    }
+
+    @Override
     public Vector2f readVector2f() {
+        count = 0;
         final Vector2f v = new Vector2f(readFloat0(), readFloat0());
         position++;
         return v;
@@ -120,6 +127,7 @@ public class ShaderBuffer implements InBuffer, OutBuffer {
 
     @Override
     public Vector3f readVector3f() {
+        count = 0;
         final Vector3f v = new Vector3f(readFloat0(), readFloat0(), readFloat0());
         position++;
         return v;
@@ -127,51 +135,54 @@ public class ShaderBuffer implements InBuffer, OutBuffer {
 
     @Override
     public Vector4f readVector4f() {
+        count = 0;
         final Vector4f v = new Vector4f(readFloat0(), readFloat0(), readFloat0(), readFloat0());
         position++;
         return v;
     }
 
     private int readInt0() {
-        final DataType type = externalFormats[position].getType();
+        final DataFormat format = externalFormats[position];
+        if (count++ >= format.getCount()) {
+            return 0;
+        }
         final int i = buffer.get();
-        switch (type) {
+        switch (format.getType()) {
             case INT:
                 return i;
             case FLOAT:
                 return (int) Float.intBitsToFloat(i);
             default:
-                throw new IllegalStateException("Unsupported type in input buffer: " + type);
+                throw new IllegalStateException("Unsupported type in input buffer: " + format.getType());
         }
     }
 
     private float readFloat0() {
-        final DataType type = externalFormats[position].getType();
+        final DataFormat format = externalFormats[position];
+        if (count++ >= format.getCount()) {
+            return 0;
+        }
         final int i = buffer.get();
-        switch (type) {
+        switch (format.getType()) {
             case INT:
                 return (float) i;
             case FLOAT:
                 return Float.intBitsToFloat(i);
             default:
-                throw new IllegalStateException("Unsupported type in input buffer: " + type);
+                throw new IllegalStateException("Unsupported type in input buffer: " + format.getType());
         }
     }
 
     @Override
     public void writeInt(int i) {
+        count = 0;
         writeInt0(i);
         position++;
     }
 
     @Override
-    public void writeFloat(float f) {
-        writeFloat0(f);
-        position++;
-    }
-
-    @Override
     public void writeVector2i(Vector2i v) {
+        count = 0;
         writeInt0(v.getX());
         writeInt0(v.getY());
         position++;
@@ -179,6 +190,7 @@ public class ShaderBuffer implements InBuffer, OutBuffer {
 
     @Override
     public void writeVector3i(Vector3i v) {
+        count = 0;
         writeInt0(v.getX());
         writeInt0(v.getY());
         writeInt0(v.getZ());
@@ -187,6 +199,7 @@ public class ShaderBuffer implements InBuffer, OutBuffer {
 
     @Override
     public void writeVector4i(Vector4i v) {
+        count = 0;
         writeInt0(v.getX());
         writeInt0(v.getY());
         writeInt0(v.getZ());
@@ -195,7 +208,15 @@ public class ShaderBuffer implements InBuffer, OutBuffer {
     }
 
     @Override
+    public void writeFloat(float f) {
+        count = 0;
+        writeFloat0(f);
+        position++;
+    }
+
+    @Override
     public void writeVector2f(Vector2f v) {
+        count = 0;
         writeFloat0(v.getX());
         writeFloat0(v.getY());
         position++;
@@ -203,6 +224,7 @@ public class ShaderBuffer implements InBuffer, OutBuffer {
 
     @Override
     public void writeVector3f(Vector3f v) {
+        count = 0;
         writeFloat0(v.getX());
         writeFloat0(v.getY());
         writeFloat0(v.getZ());
@@ -211,6 +233,7 @@ public class ShaderBuffer implements InBuffer, OutBuffer {
 
     @Override
     public void writeVector4f(Vector4f v) {
+        count = 0;
         writeFloat0(v.getX());
         writeFloat0(v.getY());
         writeFloat0(v.getZ());
@@ -219,8 +242,11 @@ public class ShaderBuffer implements InBuffer, OutBuffer {
     }
 
     private void writeInt0(int i) {
-        final DataType type = externalFormats[position].getType();
-        switch (type) {
+        final DataFormat format = externalFormats[position];
+        if (count++ >= format.getCount()) {
+            return;
+        }
+        switch (format.getType()) {
             case INT:
                 buffer.put(i);
                 break;
@@ -228,13 +254,16 @@ public class ShaderBuffer implements InBuffer, OutBuffer {
                 buffer.put(Float.floatToIntBits((float) i));
                 break;
             default:
-                throw new IllegalStateException("Unsupported type in output buffer: " + type);
+                throw new IllegalStateException("Unsupported type in output buffer: " + format.getType());
         }
     }
 
     private void writeFloat0(float f) {
-        final DataType type = externalFormats[position].getType();
-        switch (type) {
+        final DataFormat format = externalFormats[position];
+        if (count++ >= format.getCount()) {
+            return;
+        }
+        switch (format.getType()) {
             case INT:
                 buffer.put((int) f);
                 break;
@@ -242,7 +271,7 @@ public class ShaderBuffer implements InBuffer, OutBuffer {
                 buffer.put(Float.floatToIntBits(f));
                 break;
             default:
-                throw new IllegalStateException("Unsupported type in output buffer: " + type);
+                throw new IllegalStateException("Unsupported type in output buffer: " + format.getType());
         }
     }
 }
