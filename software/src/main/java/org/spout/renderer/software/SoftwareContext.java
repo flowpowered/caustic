@@ -145,7 +145,7 @@ public class SoftwareContext extends Context {
 
     @Override
     public void setViewPort(Rectangle viewPort) {
-
+        renderer.setViewPort(viewPort);
     }
 
     @Override

@@ -34,6 +34,7 @@ import org.spout.renderer.api.data.VertexAttribute.UploadMode;
 import org.spout.renderer.api.data.VertexData;
 import org.spout.renderer.api.gl.Shader.ShaderType;
 import org.spout.renderer.api.gl.VertexArray;
+import org.spout.renderer.api.util.Rectangle;
 
 /**
  *
@@ -45,7 +46,7 @@ public class SoftwareVertexArray extends VertexArray {
     private ByteBuffer[] attributeBuffers;
     private DataFormat[] attributeFormats;
     private ByteBuffer indicesBuffer;
-    private DrawingMode mode;
+    private DrawingMode mode = DrawingMode.TRIANGLES;
     private int offset = 0, count = -1, totalCount = 0;
 
     public SoftwareVertexArray(SoftwareRenderer renderer) {
@@ -117,6 +118,15 @@ public class SoftwareVertexArray extends VertexArray {
 
     @Override
     public void draw() {
+        switch (mode) {
+            case POINTS:
+                drawPoints();
+                break;
+        }
+    }
+
+    private void drawPoints() {
+        final Rectangle viewPort = renderer.getViewPort();
         final SoftwareProgram program = renderer.getProgram();
 
         final ShaderImplementation vertexShader = program.getShader(ShaderType.VERTEX).getImplementation();
@@ -146,19 +156,27 @@ public class SoftwareVertexArray extends VertexArray {
             vertexShader.main(vertexIn, vertexOut);
             vertexOut.flip();
 
+            float x = Float.intBitsToFloat(vertexOut.readRaw());
+            float y = Float.intBitsToFloat(vertexOut.readRaw());
+            float z = Float.intBitsToFloat(vertexOut.readRaw());
+            float w = Float.intBitsToFloat(vertexOut.readRaw());
+            final float wInverse = 1 / w;
+            x *= wInverse;
+            y *= wInverse;
+            z *= wInverse;
+            if (x < -1 || x > 1 || y < -1 || y > 1 || z < -1 || z > 1) {
+                continue;
+            }
+            x = (x + 1) / 2 * viewPort.getWidth() + viewPort.getX();
+            y = (y + 1) / 2 * viewPort.getHeight() + viewPort.getY();
+            z = (z + 1) / 2;
+            w = wInverse;
+
             fragmentIn.clear();
-            final int xRaw = vertexOut.readRaw();
-            final int yRaw = vertexOut.readRaw();
-            final int zRaw = vertexOut.readRaw();
-            final int wRaw = vertexOut.readRaw();
-            fragmentIn.writeRaw(xRaw);
-            fragmentIn.writeRaw(yRaw);
-            fragmentIn.writeRaw(zRaw);
-            fragmentIn.writeRaw(wRaw);
-            final float x = Float.intBitsToFloat(xRaw);
-            final float y = Float.intBitsToFloat(yRaw);
-            //final float z = Float.intBitsToFloat(zRaw);
-            //final float w = Float.intBitsToFloat(wRaw);
+            fragmentIn.writeRaw(Float.floatToIntBits(x));
+            fragmentIn.writeRaw(Float.floatToIntBits(y));
+            fragmentIn.writeRaw(Float.floatToIntBits(z));
+            fragmentIn.writeRaw(Float.floatToIntBits(w));
             for (int ii = 1; ii < vertexOutputFormat.length; ii++) {
                 final DataFormat format = vertexOutputFormat[ii];
                 for (int iii = 0; iii < format.getCount(); iii++) {

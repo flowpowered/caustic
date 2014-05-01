@@ -38,6 +38,8 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.util.Arrays;
 
+import org.spout.renderer.api.util.Rectangle;
+
 /**
  *
  */
@@ -45,10 +47,19 @@ public class SoftwareRenderer extends Canvas {
     private int width = 100, height = 100;
     private int scale = 4;
     private BufferedImage image;
+    private final Rectangle viewPort = new Rectangle(width, height);
     private int[] pixels;
     private SoftwareProgram program;
 
     SoftwareRenderer() {
+    }
+
+    Rectangle getViewPort() {
+        return viewPort;
+    }
+
+    void setViewPort(Rectangle viewPort) {
+        this.viewPort.set(viewPort);
     }
 
     SoftwareProgram getProgram() {
