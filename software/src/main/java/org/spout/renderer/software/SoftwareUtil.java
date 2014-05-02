@@ -38,11 +38,11 @@ import org.spout.renderer.api.util.CausticUtil;
  *
  */
 public final class SoftwareUtil {
+    private static final float BYTE_RANGE = Byte.MAX_VALUE - Byte.MIN_VALUE;
+    private static final float SHORT_RANGE = Short.MAX_VALUE - Short.MIN_VALUE;
+    private static final float INT_RANGE = (float) Integer.MAX_VALUE - Integer.MIN_VALUE;
     private static final int BYTE_MASK = 0xFF;
     private static final int SHORT_MASK = 0xFFFF;
-    private static final float BYTE_MAX = Byte.MAX_VALUE;
-    private static final float SHORT_MAX = Byte.MAX_VALUE;
-    private static final float INT_MAX = Byte.MAX_VALUE;
     public static final GLImplementation SOFT_IMPL = new GLImplementation(null, SoftwareContext.class.getName());
 
     private SoftwareUtil() {
@@ -158,17 +158,20 @@ public final class SoftwareUtil {
     }
 
     static float toFloat(DataType type, int value, boolean normalize) {
+        final float f;
         switch (type) {
             case BYTE:
-                final byte b = (byte) (value & BYTE_MASK);
-                return normalize ? b / BYTE_MAX : b;
+                f = (byte) (value & BYTE_MASK);
+                return normalize ? (f - Byte.MIN_VALUE) / BYTE_RANGE : f;
             case SHORT:
-                final short s = (short) (value & SHORT_MASK);
-                return normalize ? s / SHORT_MAX : s;
+                f = (short) (value & SHORT_MASK);
+                return normalize ? (f - Short.MIN_VALUE) / SHORT_RANGE : f;
             case INT:
-                return normalize ? value / INT_MAX : value;
+                f = value;
+                return normalize ? (f - Integer.MIN_VALUE) / INT_RANGE : f;
             case FLOAT:
-                return Float.intBitsToFloat(value);
+                f = Float.intBitsToFloat(value);
+                return f;
             default:
                 throw new IllegalArgumentException("Unsupported data type: " + type);
         }
@@ -180,5 +183,9 @@ public final class SoftwareUtil {
 
     static int pack(float r, float g, float b, float a) {
         return ((int) (a * 255) & 0xFF) << 24 | ((int) (r * 255) & 0xFF) << 16 | ((int) (g * 255) & 0xFF) << 8 | (int) (b * 255) & 0xFF;
+    }
+
+    static short denormalizeToShort(float f) {
+        return (short) (f * SHORT_RANGE + Short.MIN_VALUE);
     }
 }
