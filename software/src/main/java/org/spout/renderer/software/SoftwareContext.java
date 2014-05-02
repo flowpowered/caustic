@@ -125,17 +125,17 @@ public class SoftwareContext extends Context {
 
     @Override
     public void disableCapability(Capability capability) {
-
+        renderer.setCapabilityEnabled(capability, false);
     }
 
     @Override
     public void enableCapability(Capability capability) {
-
+        renderer.setCapabilityEnabled(capability, true);
     }
 
     @Override
     public void setDepthMask(boolean enabled) {
-
+        renderer.enableDepthWriting(enabled);
     }
 
     @Override

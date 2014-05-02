@@ -41,7 +41,7 @@ import org.spout.renderer.api.util.CausticUtil;
 /**
  *
  */
-public class ShaderBuffer implements InBuffer, OutBuffer {
+class ShaderBuffer implements InBuffer, OutBuffer {
     private final IntBuffer buffer;
     private final DataFormat[] externalFormats;
     private int position = 0;

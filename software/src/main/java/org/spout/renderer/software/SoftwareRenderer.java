@@ -38,20 +38,24 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.util.Arrays;
 
+import org.spout.renderer.api.gl.Context.Capability;
 import org.spout.renderer.api.util.Rectangle;
 
 /**
  *
  */
-public class SoftwareRenderer extends Canvas {
+class SoftwareRenderer extends Canvas {
     private final JFrame frame;
     private int width, height;
     private int scale = 4;
     private boolean initialized = false;
+    private int capabilities = 0;
     private final Rectangle viewPort = new Rectangle(width, height);
     private int clearColor;
     private BufferedImage image;
     private int[] pixels;
+    private short[] depths;
+    private boolean depthWriting = true;
     private SoftwareProgram program;
 
     SoftwareRenderer() {
@@ -97,8 +101,24 @@ public class SoftwareRenderer extends Canvas {
         this.viewPort.set(viewPort);
     }
 
+    void setCapabilityEnabled(Capability capability, boolean enabled) {
+        if (enabled) {
+            capabilities |= 1 << capability.ordinal();
+        } else {
+            capabilities &= ~(1 << capability.ordinal());
+        }
+    }
+
+    boolean isEnabled(Capability capability) {
+        return (capabilities & 1 << capability.ordinal()) != 0;
+    }
+
     void setClearColor(int clearColor) {
         this.clearColor = clearColor;
+    }
+
+    void enableDepthWriting(boolean enabled) {
+        depthWriting = enabled;
     }
 
     SoftwareProgram getProgram() {
@@ -111,7 +131,6 @@ public class SoftwareRenderer extends Canvas {
 
     void init() {
         updateImage();
-        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         createBufferStrategy(3);
         viewPort.setSize(width, height);
@@ -126,7 +145,9 @@ public class SoftwareRenderer extends Canvas {
         setMaximumSize(size);
         image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
+        depths = new short[width * height];
         frame.pack();
+        frame.setLocationRelativeTo(null);
     }
 
     void render() {
@@ -139,12 +160,23 @@ public class SoftwareRenderer extends Canvas {
 
     void clearPixels() {
         Arrays.fill(pixels, clearColor);
+        Arrays.fill(depths, Short.MAX_VALUE);
     }
 
-    void writePixel(int x, int y, int color) {
+    void writePixel(int x, int y, short z, int color) {
         if (x < 0 || x >= width || y < 0 || y >= width) {
             throw new IllegalArgumentException("(" + x + ", " + y + ") not within (0, 0) to (" + (width - 1) + ", " + (height - 1) + ")");
         }
-        pixels[x + y * width] = color;
+        final int i = x + y * width;
+        if (isEnabled(Capability.DEPTH_TEST)) {
+            if (z < depths[i]) {
+                pixels[i] = color;
+                if (depthWriting) {
+                    depths[i] = z;
+                }
+            }
+        } else {
+            pixels[i] = color;
+        }
     }
 }

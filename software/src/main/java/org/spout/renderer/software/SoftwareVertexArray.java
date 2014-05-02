@@ -32,6 +32,7 @@ import org.spout.renderer.api.data.VertexAttribute;
 import org.spout.renderer.api.data.VertexAttribute.DataType;
 import org.spout.renderer.api.data.VertexAttribute.UploadMode;
 import org.spout.renderer.api.data.VertexData;
+import org.spout.renderer.api.gl.Context.Capability;
 import org.spout.renderer.api.gl.Shader.ShaderType;
 import org.spout.renderer.api.gl.VertexArray;
 import org.spout.renderer.api.util.Rectangle;
@@ -126,7 +127,10 @@ public class SoftwareVertexArray extends VertexArray {
     }
 
     private void drawPoints() {
+        // Get some renderer properties
         final Rectangle viewPort = renderer.getViewPort();
+        final boolean clampDepth = renderer.isEnabled(Capability.DEPTH_CLAMP);
+        // Get the shader program
         final SoftwareProgram program = renderer.getProgram();
 
         final ShaderImplementation vertexShader = program.getShader(ShaderType.VERTEX).getImplementation();
@@ -164,7 +168,7 @@ public class SoftwareVertexArray extends VertexArray {
             x *= wInverse;
             y *= wInverse;
             z *= wInverse;
-            if (x < -1 || x > 1 || y < -1 || y > 1 || z < -1 || z > 1) {
+            if (x < -1 || x > 1 || y < -1 || y > 1 || !clampDepth && (z < -1 || z > 1)) {
                 continue;
             }
             x = (x + 1) / 2 * viewPort.getWidth() + viewPort.getX();
@@ -193,8 +197,7 @@ public class SoftwareVertexArray extends VertexArray {
             final float g = Float.intBitsToFloat(fragmentOut.readRaw());
             final float b = Float.intBitsToFloat(fragmentOut.readRaw());
             final float a = Float.intBitsToFloat(fragmentOut.readRaw());
-            final int color = SoftwareUtil.pack(r, g, b, a);
-            renderer.writePixel((int) x, (int) y, color);
+            renderer.writePixel((int) x, (int) y, SoftwareUtil.denormalizeToShort(z), SoftwareUtil.pack(r, g, b, a));
         }
     }
 
