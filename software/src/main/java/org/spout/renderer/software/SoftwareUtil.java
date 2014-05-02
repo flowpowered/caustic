@@ -28,6 +28,8 @@ package org.spout.renderer.software;
 
 import java.nio.ByteBuffer;
 
+import com.flowpowered.math.vector.Vector4f;
+
 import org.spout.renderer.api.GLImplementation;
 import org.spout.renderer.api.data.VertexAttribute.DataType;
 import org.spout.renderer.api.util.CausticUtil;
@@ -170,5 +172,13 @@ public final class SoftwareUtil {
             default:
                 throw new IllegalArgumentException("Unsupported data type: " + type);
         }
+    }
+
+    static int pack(Vector4f v) {
+        return pack(v.getX(), v.getY(), v.getZ(), v.getW());
+    }
+
+    static int pack(float r, float g, float b, float a) {
+        return ((int) (a * 255) & 0xFF) << 24 | ((int) (r * 255) & 0xFF) << 16 | ((int) (g * 255) & 0xFF) << 8 | (int) (b * 255) & 0xFF;
     }
 }

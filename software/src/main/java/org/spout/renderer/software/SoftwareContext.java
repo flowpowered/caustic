@@ -85,27 +85,27 @@ public class SoftwareContext extends Context {
 
     @Override
     public String getWindowTitle() {
-        return null;
+        return renderer.getWindowTitle();
     }
 
     @Override
     public void setWindowTitle(String title) {
-
+        renderer.setWindowTitle(title);
     }
 
     @Override
     public void setWindowSize(Vector2i windowSize) {
-
+        renderer.setWindowSize(windowSize.getX(), windowSize.getY());
     }
 
     @Override
     public int getWindowWidth() {
-        return 0;
+        return renderer.getWindowWidth();
     }
 
     @Override
     public int getWindowHeight() {
-        return 0;
+        return renderer.getWindowHeight();
     }
 
     @Override
@@ -115,7 +115,7 @@ public class SoftwareContext extends Context {
 
     @Override
     public void setClearColor(Vector4f color) {
-
+        renderer.setClearColor(SoftwareUtil.pack(color));
     }
 
     @Override

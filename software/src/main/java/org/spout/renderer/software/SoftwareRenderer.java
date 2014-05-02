@@ -44,14 +44,49 @@ import org.spout.renderer.api.util.Rectangle;
  *
  */
 public class SoftwareRenderer extends Canvas {
-    private int width = 100, height = 100;
+    private final JFrame frame;
+    private int width, height;
     private int scale = 4;
-    private BufferedImage image;
+    private boolean initialized = false;
     private final Rectangle viewPort = new Rectangle(width, height);
+    private int clearColor;
+    private BufferedImage image;
     private int[] pixels;
     private SoftwareProgram program;
 
     SoftwareRenderer() {
+        frame = new JFrame("Caustic");
+        final JPanel panel = new JPanel(new BorderLayout());
+        panel.add(this, BorderLayout.CENTER);
+        frame.setContentPane(panel);
+        frame.setResizable(false);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    }
+
+    int getWindowHeight() {
+        return height;
+    }
+
+    int getWindowWidth() {
+        return width;
+    }
+
+    void setWindowSize(int width, int height) {
+        if (this.width != width || this.height != height) {
+            this.width = width;
+            this.height = height;
+            if (initialized) {
+                updateImage();
+            }
+        }
+    }
+
+    void setWindowTitle(String title) {
+        frame.setTitle(title);
+    }
+
+    String getWindowTitle() {
+        return frame.getTitle();
     }
 
     Rectangle getViewPort() {
@@ -60,6 +95,10 @@ public class SoftwareRenderer extends Canvas {
 
     void setViewPort(Rectangle viewPort) {
         this.viewPort.set(viewPort);
+    }
+
+    void setClearColor(int clearColor) {
+        this.clearColor = clearColor;
     }
 
     SoftwareProgram getProgram() {
@@ -71,6 +110,15 @@ public class SoftwareRenderer extends Canvas {
     }
 
     void init() {
+        updateImage();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+        createBufferStrategy(3);
+        viewPort.setSize(width, height);
+        initialized = true;
+    }
+
+    private void updateImage() {
         final Dimension size = new Dimension(width * scale, height * scale);
         setSize(size);
         setPreferredSize(size);
@@ -78,29 +126,19 @@ public class SoftwareRenderer extends Canvas {
         setMaximumSize(size);
         image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
-        final JFrame frame = new JFrame("Test");
-        final JPanel panel = new JPanel(new BorderLayout());
-        panel.add(this, BorderLayout.CENTER);
-        frame.setContentPane(panel);
         frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setResizable(false);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-        createBufferStrategy(3);
     }
 
     void render() {
         final BufferStrategy bufferStrategy = getBufferStrategy();
         final Graphics graphics = bufferStrategy.getDrawGraphics();
-        //graphics.fillRect(0, 0, getWidth(), getHeight());
         graphics.drawImage(image, 0, 0, width * scale, height * scale, null);
         graphics.dispose();
         bufferStrategy.show();
     }
 
     void clearPixels() {
-        Arrays.fill(pixels, 0);
+        Arrays.fill(pixels, clearColor);
     }
 
     void writePixel(int x, int y, int color) {

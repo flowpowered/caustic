@@ -193,7 +193,7 @@ public class SoftwareVertexArray extends VertexArray {
             final float g = Float.intBitsToFloat(fragmentOut.readRaw());
             final float b = Float.intBitsToFloat(fragmentOut.readRaw());
             final float a = Float.intBitsToFloat(fragmentOut.readRaw());
-            final int color = ((int) (a * 255) & 0xFF) << 24 | ((int) (r * 255) & 0xFF) << 16 | ((int) (g * 255) & 0xFF) << 8 | (int) (b * 255) & 0xFF;
+            final int color = SoftwareUtil.pack(r, g, b, a);
             renderer.writePixel((int) x, (int) y, color);
         }
     }
