@@ -41,7 +41,7 @@ import org.spout.renderer.api.util.Rectangle;
  */
 public class SoftwareVertexArray extends VertexArray {
     private static final DataType INDICES_TYPE = DataType.INT;
-    private static final DataFormat[] OUTPUT = {new DataFormat(DataType.INT, 1)};
+    private static final DataFormat[] FRAGMENT_OUTPUT = {new DataFormat(DataType.FLOAT, 4)};
     private final SoftwareRenderer renderer;
     private ByteBuffer[] attributeBuffers;
     private DataFormat[] attributeFormats;
@@ -136,7 +136,7 @@ public class SoftwareVertexArray extends VertexArray {
 
         final ShaderImplementation fragmentShader = program.getShader(ShaderType.FRAGMENT).getImplementation();
         final ShaderBuffer fragmentIn = new ShaderBuffer(vertexOutputFormat);
-        final ShaderBuffer fragmentOut = new ShaderBuffer(OUTPUT);
+        final ShaderBuffer fragmentOut = new ShaderBuffer(FRAGMENT_OUTPUT);
 
         for (int i = 0; i < count; i++) {
             vertexIn.clear();
@@ -189,7 +189,11 @@ public class SoftwareVertexArray extends VertexArray {
             fragmentShader.main(fragmentIn, fragmentOut);
             fragmentOut.flip();
 
-            final int color = fragmentOut.readRaw();
+            final float r = Float.intBitsToFloat(fragmentOut.readRaw());
+            final float g = Float.intBitsToFloat(fragmentOut.readRaw());
+            final float b = Float.intBitsToFloat(fragmentOut.readRaw());
+            final float a = Float.intBitsToFloat(fragmentOut.readRaw());
+            final int color = ((int) (a * 255) & 0xFF) << 24 | ((int) (r * 255) & 0xFF) << 16 | ((int) (g * 255) & 0xFF) << 8 | (int) (b * 255) & 0xFF;
             renderer.writePixel((int) x, (int) y, color);
         }
     }
