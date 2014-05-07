@@ -135,27 +135,16 @@ public class MeshGenerator {
         final VertexAttribute positionsAttribute = new VertexAttribute("positions", DataType.FLOAT, 3);
         destination.addAttribute(0, positionsAttribute);
         final TFloatList positions = new TFloatArrayList();
-        final VertexAttribute normalsAttribute = new VertexAttribute("normals", DataType.FLOAT, 3);
-        destination.addAttribute(1, normalsAttribute);
-        final TFloatList normals = new TFloatArrayList();
         final TIntList indices = destination.getIndices();
         // Add all of the corners
         addVector(positions, p0);
-        addVector(normals, p0.normalize());
         addVector(positions, p1);
-        addVector(normals, p1.normalize());
         addVector(positions, p2);
-        addVector(normals, p2.normalize());
         addVector(positions, p3);
-        addVector(normals, p3.normalize());
         addVector(positions, p4);
-        addVector(normals, p4.normalize());
         addVector(positions, p5);
-        addVector(normals, p5.normalize());
         addVector(positions, p6);
-        addVector(normals, p6.normalize());
         addVector(positions, p7);
-        addVector(normals, p7.normalize());
         // Top face
         addAll(indices, 4, 5, 5, 6, 6, 7, 7, 4);
         // Bottom face
@@ -164,7 +153,6 @@ public class MeshGenerator {
         addAll(indices, 6, 2, 7, 3, 4, 0, 5, 1);
         // Put the mesh in the vertex data
         positionsAttribute.setData(positions);
-        normalsAttribute.setData(normals);
         return destination;
     }
 
