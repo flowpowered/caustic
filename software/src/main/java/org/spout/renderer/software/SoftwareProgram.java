@@ -170,6 +170,6 @@ public class SoftwareProgram extends Program {
 
     @Override
     public GLVersion getGLVersion() {
-        return null;
+        return GLVersion.SOFTWARE;
     }
 }

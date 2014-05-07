@@ -47,7 +47,7 @@ import org.spout.renderer.api.util.Rectangle;
 class SoftwareRenderer extends Canvas {
     private final JFrame frame;
     private int width, height;
-    private int scale = 4;
+    private int scale = 1;
     private boolean initialized = false;
     private int capabilities = 0;
     private final Rectangle viewPort = new Rectangle(width, height);

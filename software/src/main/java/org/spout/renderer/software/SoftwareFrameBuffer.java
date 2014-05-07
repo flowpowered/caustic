@@ -66,6 +66,6 @@ public class SoftwareFrameBuffer extends FrameBuffer {
 
     @Override
     public GLVersion getGLVersion() {
-        return null;
+        return GLVersion.SOFTWARE;
     }
 }

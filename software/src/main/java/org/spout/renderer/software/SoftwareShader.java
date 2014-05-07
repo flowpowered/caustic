@@ -91,6 +91,6 @@ public class SoftwareShader extends Shader {
 
     @Override
     public GLVersion getGLVersion() {
-        return null;
+        return GLVersion.SOFTWARE;
     }
 }

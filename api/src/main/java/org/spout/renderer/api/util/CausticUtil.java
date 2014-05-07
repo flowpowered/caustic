@@ -111,6 +111,9 @@ public final class CausticUtil {
      * @throws IllegalStateException If the object versions are not compatible
      */
     public static void checkVersion(GLVersioned required, GLVersioned object) {
+        if (!debug) {
+            return;
+        }
         final GLVersion requiredVersion = required.getGLVersion();
         final GLVersion objectVersion = object.getGLVersion();
         if (objectVersion.getMajor() > requiredVersion.getMajor() && objectVersion.getMinor() > requiredVersion.getMinor()) {

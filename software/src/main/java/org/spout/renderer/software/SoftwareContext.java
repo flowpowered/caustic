@@ -155,6 +155,6 @@ public class SoftwareContext extends Context {
 
     @Override
     public GLVersion getGLVersion() {
-        return null;
+        return GLVersion.SOFTWARE;
     }
 }

@@ -61,7 +61,9 @@ public interface GLVersioned {
         GLES11(1, 1, true, 1, 0),
         GLES20(2, 0, true, 1, 0),
         GLES30(3, 0, true, 3, 0),
-        GLES31(3, 1, true, 3, 0);
+        GLES31(3, 1, true, 3, 0),
+        SOFTWARE(0, 0, false, 0, 0),
+        OTHER(0, 0, false, 0, 0);
         private final int major;
         private final int minor;
         private final boolean es;
@@ -113,7 +115,7 @@ public interface GLVersioned {
         }
 
         /**
-         * Returns the full GLSL version availble with the OpenGL version.
+         * Returns the full GLSL version available with the OpenGL version.
          *
          * @return The GLSL version
          */

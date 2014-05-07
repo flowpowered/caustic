@@ -43,20 +43,24 @@ import org.spout.renderer.api.util.CausticUtil;
  */
 class ShaderBuffer implements InBuffer, OutBuffer {
     private final IntBuffer buffer;
-    private final DataFormat[] externalFormats;
+    private final DataFormat[] formats;
     private int position = 0;
     private int count = 0;
 
-    ShaderBuffer(DataFormat[] externalFormats) {
-        this.externalFormats = new DataFormat[externalFormats.length];
+    ShaderBuffer(DataFormat[] formats) {
+        this.formats = new DataFormat[formats.length];
         int capacity = 0;
-        for (int i = 0; i < externalFormats.length; i++) {
-            final DataFormat format = externalFormats[i];
+        for (int i = 0; i < formats.length; i++) {
+            final DataFormat format = formats[i];
             final int count = format.getCount();
-            this.externalFormats[i] = format.getType().isInteger() ? new DataFormat(DataType.INT, count) : format;
+            this.formats[i] = format.getType().isInteger() ? new DataFormat(DataType.INT, count) : format;
             capacity += count;
         }
         buffer = CausticUtil.createIntBuffer(capacity);
+    }
+
+    DataFormat[] getFormat() {
+        return formats;
     }
 
     void clear() {
@@ -69,12 +73,34 @@ class ShaderBuffer implements InBuffer, OutBuffer {
         position = 0;
     }
 
+    void rewind() {
+        buffer.rewind();
+    }
+
+    int position() {
+        return buffer.position();
+    }
+
+    void position(int position) {
+        buffer.position(position);
+    }
+
+    int remaining() {
+        return buffer.remaining();
+    }
+
     int readRaw() {
         return buffer.get();
     }
 
     void writeRaw(int value) {
         buffer.put(value);
+    }
+
+    void writeRaw(ShaderBuffer buffer) {
+        while (buffer.remaining() > 0) {
+            writeRaw(buffer.readRaw());
+        }
     }
 
     @Override
@@ -194,7 +220,7 @@ class ShaderBuffer implements InBuffer, OutBuffer {
     }
 
     private int readInt0() {
-        final DataFormat format = externalFormats[position];
+        final DataFormat format = formats[position];
         if (++count > format.getCount()) {
             return 0;
         }
@@ -210,7 +236,7 @@ class ShaderBuffer implements InBuffer, OutBuffer {
     }
 
     private float readFloat0() {
-        final DataFormat format = externalFormats[position];
+        final DataFormat format = formats[position];
         if (++count > format.getCount()) {
             return 0;
         }
@@ -226,7 +252,7 @@ class ShaderBuffer implements InBuffer, OutBuffer {
     }
 
     private void writeInt0(int i) {
-        final DataFormat format = externalFormats[position];
+        final DataFormat format = formats[position];
         if (++count > format.getCount()) {
             return;
         }
@@ -243,7 +269,7 @@ class ShaderBuffer implements InBuffer, OutBuffer {
     }
 
     private void writeFloat0(float f) {
-        final DataFormat format = externalFormats[position];
+        final DataFormat format = formats[position];
         if (++count > format.getCount()) {
             return;
         }
@@ -260,7 +286,7 @@ class ShaderBuffer implements InBuffer, OutBuffer {
     }
 
     private void advance() {
-        final DataFormat format = externalFormats[position];
+        final DataFormat format = formats[position];
         int n = Math.max(format.getCount() - count, 0);
         buffer.position(buffer.position() + n);
         position++;

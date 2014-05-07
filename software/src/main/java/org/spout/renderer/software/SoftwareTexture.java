@@ -194,6 +194,6 @@ public class SoftwareTexture extends Texture {
 
     @Override
     public GLVersion getGLVersion() {
-        return null;
+        return GLVersion.SOFTWARE;
     }
 }

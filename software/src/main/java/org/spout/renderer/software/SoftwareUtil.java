@@ -28,9 +28,11 @@ package org.spout.renderer.software;
 
 import java.nio.ByteBuffer;
 
+import com.flowpowered.math.GenericMath;
 import com.flowpowered.math.vector.Vector4f;
 
 import org.spout.renderer.api.GLImplementation;
+import org.spout.renderer.api.GLVersioned.GLVersion;
 import org.spout.renderer.api.data.VertexAttribute.DataType;
 import org.spout.renderer.api.util.CausticUtil;
 
@@ -43,7 +45,7 @@ public final class SoftwareUtil {
     private static final float INT_RANGE = (float) Integer.MAX_VALUE - Integer.MIN_VALUE;
     private static final int BYTE_MASK = 0xFF;
     private static final int SHORT_MASK = 0xFFFF;
-    public static final GLImplementation SOFT_IMPL = new GLImplementation(null, SoftwareContext.class.getName());
+    public static final GLImplementation SOFT_IMPL = new GLImplementation(GLVersion.SOFTWARE, SoftwareContext.class.getName());
 
     private SoftwareUtil() {
     }
@@ -185,7 +187,36 @@ public final class SoftwareUtil {
         return ((int) (a * 255) & 0xFF) << 24 | ((int) (r * 255) & 0xFF) << 16 | ((int) (g * 255) & 0xFF) << 8 | (int) (b * 255) & 0xFF;
     }
 
+    static float clamp(float f, float low, float high) {
+        if (f < low) {
+            return low;
+        }
+        if (f > high) {
+            return high;
+        }
+        return f;
+    }
+
     static short denormalizeToShort(float f) {
         return (short) (f * SHORT_RANGE + Short.MIN_VALUE);
+    }
+
+    static void lerp(ShaderBuffer inA, ShaderBuffer inB, float percent, int start, ShaderBuffer out) {
+        final DataFormat[] formats = inA.getFormat();
+        for (int i = start; i < formats.length; i++) {
+            final DataFormat format = formats[i];
+            final DataType type = format.getType();
+            final int count = format.getCount();
+            for (int ii = 0; ii < count; ii++) {
+                switch (type) {
+                    case INT:
+                        out.writeRaw((int) GenericMath.lerp(inA.readRaw(), inB.readRaw(), percent));
+                        break;
+                    case FLOAT:
+                        out.writeRaw(Float.floatToIntBits(GenericMath.lerp(Float.intBitsToFloat(inA.readRaw()), Float.intBitsToFloat(inB.readRaw()), percent)));
+                        break;
+                }
+            }
+        }
     }
 }
