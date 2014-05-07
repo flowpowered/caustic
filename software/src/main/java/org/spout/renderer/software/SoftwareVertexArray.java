@@ -331,8 +331,9 @@ public class SoftwareVertexArray extends VertexArray {
                 percent2 *= t;
             }
 
-            // A line outside will degenerate to a point
-            if (w1 == w2) {
+            // A line outside will remain outside
+            if (x1 < -w1 || x1 > w1 || y1 < -w1 || y1 > w1 || !clampDepth && (z1 < -w1 || z1 > w1)) {
+                // TODO: find a better check for this
                 continue;
             }
 
