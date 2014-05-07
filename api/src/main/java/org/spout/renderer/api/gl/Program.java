@@ -88,20 +88,6 @@ public abstract class Program extends Creatable implements GLVersioned {
     public abstract void bindSampler(int unit);
 
     /**
-     * Uploads the uniform to this program.
-     *
-     * @param uniform The uniform to upload
-     */
-    public abstract void upload(Uniform uniform);
-
-    /**
-     * Uploads the uniforms to this program.
-     *
-     * @param uniforms The uniforms to upload
-     */
-    public abstract void upload(UniformHolder uniforms);
-
-    /**
      * Sets a uniform boolean in the shader to the desired value.
      *
      * @param name The name of the uniform to set
@@ -202,7 +188,7 @@ public abstract class Program extends Creatable implements GLVersioned {
      *
      * @return The attached shaders
      */
-    public abstract Collection<Shader> getShaders();
+    public abstract Collection<? extends Shader> getShaders();
 
     /**
      * Returns an set containing all of the uniform names for this program.
@@ -210,6 +196,26 @@ public abstract class Program extends Creatable implements GLVersioned {
      * @return A set of all the uniform names
      */
     public abstract Set<String> getUniformNames();
+
+    /**
+     * Uploads the uniform to this program.
+     *
+     * @param uniform The uniform to upload
+     */
+    public void upload(Uniform uniform) {
+        uniform.upload(this);
+    }
+
+    /**
+     * Uploads the uniforms to this program.
+     *
+     * @param uniforms The uniforms to upload
+     */
+    public void upload(UniformHolder uniforms) {
+        for (Uniform uniform : uniforms) {
+            uniform.upload(this);
+        }
+    }
 
     /**
      * Gets the ID for this program as assigned by OpenGL.

@@ -26,6 +26,11 @@
  */
 package org.spout.renderer.software;
 
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import org.spout.renderer.api.data.VertexAttribute.DataType;
 import org.spout.renderer.api.gl.Shader.ShaderType;
 
@@ -34,6 +39,7 @@ import org.spout.renderer.api.gl.Shader.ShaderType;
  */
 public abstract class ShaderImplementation {
     private final DataFormat[] outputFormat;
+    private final Map<String, Field> uniforms = new HashMap<>();
 
     protected ShaderImplementation() {
         this(null);
@@ -41,11 +47,21 @@ public abstract class ShaderImplementation {
 
     protected ShaderImplementation(DataFormat[] outputFormat) {
         if (getType() == ShaderType.VERTEX) {
-            if (outputFormat.length <= 0 || outputFormat[0].getCount() != 4 || outputFormat[0].getType() != DataType.FLOAT) {
+            if (outputFormat == null || outputFormat.length <= 0 || outputFormat[0].getCount() != 4 || outputFormat[0].getType() != DataType.FLOAT) {
                 throw new IllegalArgumentException("Vertex shader output format must have 4 floats as the first output type in the declared format");
             }
         }
         this.outputFormat = outputFormat;
+        findUniforms();
+    }
+
+    private void findUniforms() {
+        for (Field field : getClass().getDeclaredFields()) {
+            if (field.isAnnotationPresent(Uniform.class)) {
+                field.setAccessible(true);
+                uniforms.put(field.getName(), field);
+            }
+        }
     }
 
     public abstract void main(InBuffer in, OutBuffer out);
@@ -54,5 +70,22 @@ public abstract class ShaderImplementation {
 
     DataFormat[] getOutputFormat() {
         return outputFormat;
+    }
+
+    void setUniform(String name, Object o) {
+        final Field field = uniforms.get(name);
+        if (field != null) {
+            try {
+                field.set(this, o);
+            } catch (IllegalAccessException ex) {
+                throw new IllegalStateException("Could not set uniform in shader", ex);
+            } catch (IllegalArgumentException ex) {
+                throw new IllegalStateException("Uniform \"" + name + "\" is not of type \"" + o.getClass().getCanonicalName() + "\"", ex);
+            }
+        }
+    }
+
+    Set<String> getUniformNames() {
+        return uniforms.keySet();
     }
 }

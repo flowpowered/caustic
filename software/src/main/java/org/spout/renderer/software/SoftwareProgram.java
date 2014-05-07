@@ -29,6 +29,7 @@ package org.spout.renderer.software;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -39,18 +40,17 @@ import com.flowpowered.math.vector.Vector2f;
 import com.flowpowered.math.vector.Vector3f;
 import com.flowpowered.math.vector.Vector4f;
 
-import org.spout.renderer.api.data.Uniform;
-import org.spout.renderer.api.data.UniformHolder;
 import org.spout.renderer.api.gl.Program;
 import org.spout.renderer.api.gl.Shader;
 import org.spout.renderer.api.gl.Shader.ShaderType;
+import org.spout.renderer.api.util.CausticUtil;
 
 /**
  *
  */
 public class SoftwareProgram extends Program {
     private final SoftwareRenderer renderer;
-    private final Map<ShaderType, Shader> shaders = new EnumMap<>(ShaderType.class);
+    private final Map<ShaderType, SoftwareShader> shaders = new EnumMap<>(ShaderType.class);
 
     public SoftwareProgram(SoftwareRenderer renderer) {
         this.renderer = renderer;
@@ -58,11 +58,12 @@ public class SoftwareProgram extends Program {
 
     @Override
     public void attachShader(Shader shader) {
-        shaders.put(shader.getType(), shader);
+        CausticUtil.checkVersion(this, shader);
+        shaders.put(shader.getType(), (SoftwareShader) shader);
     }
 
     SoftwareShader getShader(ShaderType type) {
-        return (SoftwareShader) shaders.get(type);
+        return shaders.get(type);
     }
 
     @Override
@@ -75,7 +76,7 @@ public class SoftwareProgram extends Program {
 
     @Override
     public void link() {
-
+        // Nothing to do
     }
 
     @Override
@@ -89,83 +90,83 @@ public class SoftwareProgram extends Program {
     }
 
     @Override
-    public void upload(Uniform uniform) {
-
-    }
-
-    @Override
-    public void upload(UniformHolder uniforms) {
-
-    }
-
-    @Override
     public void setUniform(String name, boolean b) {
-
+        setUniform(name, (Object) b);
     }
 
     @Override
     public void setUniform(String name, int i) {
-
+        setUniform(name, (Object) i);
     }
 
     @Override
     public void setUniform(String name, float f) {
-
+        setUniform(name, (Object) f);
     }
 
     @Override
     public void setUniform(String name, float[] fs) {
-
+        setUniform(name, (Object) fs);
     }
 
     @Override
     public void setUniform(String name, Vector2f v) {
-
+        setUniform(name, (Object) v);
     }
 
     @Override
     public void setUniform(String name, Vector2f[] vs) {
-
+        setUniform(name, (Object) vs);
     }
 
     @Override
     public void setUniform(String name, Vector3f v) {
-
+        setUniform(name, (Object) v);
     }
 
     @Override
     public void setUniform(String name, Vector3f[] vs) {
-
+        setUniform(name, (Object) vs);
     }
 
     @Override
     public void setUniform(String name, Vector4f v) {
-
+        setUniform(name, (Object) v);
     }
 
     @Override
     public void setUniform(String name, Matrix2f m) {
-
+        setUniform(name, (Object) m);
     }
 
     @Override
     public void setUniform(String name, Matrix3f m) {
-
+        setUniform(name, (Object) m);
     }
 
     @Override
     public void setUniform(String name, Matrix4f m) {
+        setUniform(name, (Object) m);
+    }
 
+    private void setUniform(String name, Object o) {
+        for (SoftwareShader shader : shaders.values()) {
+            shader.getImplementation().setUniform(name, o);
+        }
     }
 
     @Override
-    public Collection<Shader> getShaders() {
+    public Collection<SoftwareShader> getShaders() {
         return Collections.unmodifiableCollection(shaders.values());
     }
 
     @Override
     public Set<String> getUniformNames() {
-        return null;
+        final Set<String> names = new HashSet<>();
+        for (SoftwareShader shader : shaders.values()) {
+            names.addAll(shader.getImplementation().getUniformNames());
+        }
+        return names;
     }
 
     @Override
