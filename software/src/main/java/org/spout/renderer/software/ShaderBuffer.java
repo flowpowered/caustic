@@ -160,6 +160,11 @@ class ShaderBuffer implements InBuffer, OutBuffer {
     }
 
     @Override
+    public void skip() {
+        advance();
+    }
+
+    @Override
     public void writeInt(int i) {
         writeInt0(i);
         advance();

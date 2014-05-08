@@ -52,4 +52,6 @@ public interface InBuffer {
     Vector3f readVector3f();
 
     Vector4f readVector4f();
+
+    void skip();
 }
