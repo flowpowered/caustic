@@ -156,7 +156,7 @@ public class SoftwareVertexArray extends VertexArray {
             float z = Float.intBitsToFloat(vertexOut.readRaw());
             float w = Float.intBitsToFloat(vertexOut.readRaw());
             // Perform clipping, ignoring z clipping when depth clamping is active
-            if (w == 0 || x < -w || x > w || y < -w || y > w || !clampDepth && (z < -w || z > w)) {
+            if (!isInside(x, y, z, w, clampDepth)) {
                 continue;
             }
             // Compute the NDC coordinates
@@ -216,11 +216,13 @@ public class SoftwareVertexArray extends VertexArray {
             float y2 = Float.intBitsToFloat(vertexOut2.readRaw());
             float z2 = Float.intBitsToFloat(vertexOut2.readRaw());
             float w2 = Float.intBitsToFloat(vertexOut2.readRaw());
-
+            // Track the percentage of the line remaining after clipping on both ends
             float percent1 = 1, percent2 = 1;
-
             // Perform clipping on the first point, ignoring z clipping when depth clamping is active
             if (x1 < -w1) {
+                if (x2 < -w1) {
+                    continue;
+                }
                 final float dx = x1 - x2, dy = y1 - y2, dz = z1 - z2, dw = w2 - w1;
                 float t = (-w2 - x2) / (dx - dw);
                 y1 = t * dy + y2;
@@ -230,6 +232,9 @@ public class SoftwareVertexArray extends VertexArray {
                 percent1 *= t;
             }
             if (x1 > w1) {
+                if (x2 > w2) {
+                    continue;
+                }
                 final float dx = x1 - x2, dy = y1 - y2, dz = z1 - z2, dw = w1 - w2;
                 float t = (w2 - x2) / (dx - dw);
                 y1 = t * dy + y2;
@@ -239,6 +244,9 @@ public class SoftwareVertexArray extends VertexArray {
                 percent1 *= t;
             }
             if (y1 < -w1) {
+                if (y2 < -w2) {
+                    continue;
+                }
                 final float dx = x1 - x2, dy = y1 - y2, dz = z1 - z2, dw = w2 - w1;
                 float t = (-w2 - y2) / (dy - dw);
                 x1 = t * dx + x2;
@@ -248,6 +256,9 @@ public class SoftwareVertexArray extends VertexArray {
                 percent1 *= t;
             }
             if (y1 > w1) {
+                if (y2 > w2) {
+                    continue;
+                }
                 final float dx = x1 - x2, dy = y1 - y2, dz = z1 - z2, dw = w1 - w2;
                 float t = (w2 - y2) / (dy - dw);
                 x1 = t * dx + x2;
@@ -256,25 +267,32 @@ public class SoftwareVertexArray extends VertexArray {
                 y1 = w1;
                 percent1 *= t;
             }
-            if (!clampDepth && z1 < -w1) {
-                final float dx = x1 - x2, dy = y1 - y2, dz = z1 - z2, dw = w2 - w1;
-                float t = (-w2 - z2) / (dz - dw);
-                x1 = t * dx + x2;
-                y1 = t * dy + y2;
-                w1 = t * dw + w2;
-                z1 = -w1;
-                percent1 *= t;
+            if (!clampDepth) {
+                if (z1 < -w1) {
+                    if (z2 < -w2) {
+                        continue;
+                    }
+                    final float dx = x1 - x2, dy = y1 - y2, dz = z1 - z2, dw = w2 - w1;
+                    float t = (-w2 - z2) / (dz - dw);
+                    x1 = t * dx + x2;
+                    y1 = t * dy + y2;
+                    w1 = t * dw + w2;
+                    z1 = -w1;
+                    percent1 *= t;
+                }
+                if (z1 > w1) {
+                    if (z2 > w2) {
+                        continue;
+                    }
+                    final float dx = x1 - x2, dy = y1 - y2, dz = z1 - z2, dw = w1 - w2;
+                    float t = (w2 - z2) / (dz - dw);
+                    x1 = t * dx + x2;
+                    y1 = t * dy + y2;
+                    w1 = t * dw + w2;
+                    z1 = w1;
+                    percent1 *= t;
+                }
             }
-            if (!clampDepth && z1 > w1) {
-                final float dx = x1 - x2, dy = y1 - y2, dz = z1 - z2, dw = w1 - w2;
-                float t = (w2 - z2) / (dz - dw);
-                x1 = t * dx + x2;
-                y1 = t * dy + y2;
-                w1 = t * dw + w2;
-                z1 = w1;
-                percent1 *= t;
-            }
-
             // Perform clipping on the second point, ignoring z clipping when depth clamping is active
             if (x2 < -w2) {
                 final float dx = x2 - x1, dy = y2 - y1, dz = z2 - z1, dw = w1 - w2;
@@ -312,37 +330,31 @@ public class SoftwareVertexArray extends VertexArray {
                 y2 = w2;
                 percent2 *= t;
             }
-            if (!clampDepth && z2 < -w2) {
-                final float dx = x2 - x1, dy = y2 - y1, dz = z2 - z1, dw = w1 - w2;
-                float t = (-w1 - z1) / (dz - dw);
-                x2 = t * dx + x1;
-                y2 = t * dy + y1;
-                w2 = t * dw + w1;
-                z2 = -w2;
-                percent2 *= t;
+            if (!clampDepth) {
+                if (z2 < -w2) {
+                    final float dx = x2 - x1, dy = y2 - y1, dz = z2 - z1, dw = w1 - w2;
+                    float t = (-w1 - z1) / (dz - dw);
+                    x2 = t * dx + x1;
+                    y2 = t * dy + y1;
+                    w2 = t * dw + w1;
+                    z2 = -w2;
+                    percent2 *= t;
+                }
+                if (z2 > w2) {
+                    final float dx = x2 - x1, dy = y2 - y1, dz = z2 - z1, dw = w2 - w1;
+                    float t = (w1 - z1) / (dz - dw);
+                    x2 = t * dx + x1;
+                    y2 = t * dy + y1;
+                    w2 = t * dw + w1;
+                    z2 = w2;
+                    percent2 *= t;
+                }
             }
-            if (!clampDepth && z2 > w2) {
-                final float dx = x2 - x1, dy = y2 - y1, dz = z2 - z1, dw = w2 - w1;
-                float t = (w1 - z1) / (dz - dw);
-                x2 = t * dx + x1;
-                y2 = t * dy + y1;
-                w2 = t * dw + w1;
-                z2 = w2;
-                percent2 *= t;
-            }
-
-            // A line outside will remain outside
-            if (x1 < -w1 || x1 > w1 || y1 < -w1 || y1 > w1 || !clampDepth && (z1 < -w1 || z1 > w1)) {
-                // TODO: find a better check for this
-                continue;
-            }
-
             // The end percent is the percentage that was cut off times the percentage left over from clipping
             // the first point; inverted to get the remaining amount instead of the cut amount
             percent2 = 1 - percent1 * (1 - percent2);
             // The start percent is what's remaining from clipping the first point
             percent1 = 1 - percent1;
-
             // Compute the NDC coordinates of the first point
             final float wInverse1 = 1 / w1;
             x1 *= wInverse1;
@@ -354,7 +366,6 @@ public class SoftwareVertexArray extends VertexArray {
             z1 = SoftwareUtil.clamp((z1 + 1) / 2, 0, 1);
             // Store 1/w in w to so that the fragment position vector is the same as in OpenGL
             w1 = wInverse1;
-
             // Compute the NDC coordinates of the second point
             final float wInverse2 = 1 / w2;
             x2 *= wInverse2;
@@ -366,7 +377,6 @@ public class SoftwareVertexArray extends VertexArray {
             z2 = SoftwareUtil.clamp((z2 + 1) / 2, 0, 1);
             // Store 1/w in w to so that the fragment position vector is the same as in OpenGL
             w2 = wInverse2;
-
             final float xDiff = x2 - x1;
             final float yDiff = y2 - y1;
             // If the two ends of the line are at the same position, use the closest
@@ -471,6 +481,10 @@ public class SoftwareVertexArray extends VertexArray {
                 }
             }
         }
+    }
+
+    private boolean isInside(float x, float y, float z, float w, boolean clampDepth) {
+        return w != 0 && x >= -w && x <= w && y >= -w && y <= w && (clampDepth || z >= -w && z <= w);
     }
 
     private void readVertex(ShaderImplementation shader, ShaderBuffer in, ShaderBuffer out, int index) {
