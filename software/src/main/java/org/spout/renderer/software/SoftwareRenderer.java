@@ -33,6 +33,8 @@ import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
@@ -49,6 +51,7 @@ class SoftwareRenderer extends Canvas {
     private int width, height;
     private int scale = 1;
     private boolean initialized = false;
+    private volatile boolean closeRequested = false;
     private int capabilities = 0;
     private final Rectangle viewPort = new Rectangle(width, height);
     private int clearColor;
@@ -64,7 +67,8 @@ class SoftwareRenderer extends Canvas {
         panel.add(this, BorderLayout.CENTER);
         frame.setContentPane(panel);
         frame.setResizable(false);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        frame.addWindowListener(new WindowCloseListener());
     }
 
     int getWindowHeight() {
@@ -91,6 +95,12 @@ class SoftwareRenderer extends Canvas {
 
     String getWindowTitle() {
         return frame.getTitle();
+    }
+
+    boolean isCloseRequested() {
+        final boolean oldCloseRequested = closeRequested;
+        closeRequested = false;
+        return oldCloseRequested;
     }
 
     Rectangle getViewPort() {
@@ -150,6 +160,15 @@ class SoftwareRenderer extends Canvas {
         frame.setLocationRelativeTo(null);
     }
 
+    void dispose() {
+        frame.dispose();
+        image = null;
+        pixels = null;
+        depths = null;
+        program = null;
+        initialized = false;
+    }
+
     void render() {
         final BufferStrategy bufferStrategy = getBufferStrategy();
         final Graphics graphics = bufferStrategy.getDrawGraphics();
@@ -177,6 +196,13 @@ class SoftwareRenderer extends Canvas {
             }
         } else {
             pixels[i] = color;
+        }
+    }
+
+    private class WindowCloseListener extends WindowAdapter {
+        @Override
+        public void windowClosing(WindowEvent event) {
+            closeRequested = true;
         }
     }
 }

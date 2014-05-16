@@ -228,6 +228,13 @@ public abstract class Context extends Creatable implements GLVersioned {
     public abstract ByteBuffer readFrame(Rectangle size, InternalFormat format);
 
     /**
+     * Returns true if an external process (such as the user) is requesting for the window to be closed. This value is reset once this method has been called.
+     *
+     * @return Whether or not the window is being requested to close
+     */
+    public abstract boolean isWindowCloseRequested();
+
+    /**
      * Uploads the renderer uniforms to the desired program.
      *
      * @param program The program to upload to

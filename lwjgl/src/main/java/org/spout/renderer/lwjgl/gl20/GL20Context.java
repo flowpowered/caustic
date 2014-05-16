@@ -231,6 +231,11 @@ public class GL20Context extends Context {
     }
 
     @Override
+    public boolean isWindowCloseRequested() {
+        return Display.isCloseRequested();
+    }
+
+    @Override
     public GLVersion getGLVersion() {
         return GLVersion.GL20;
     }

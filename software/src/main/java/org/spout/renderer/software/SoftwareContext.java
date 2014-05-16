@@ -49,8 +49,14 @@ public class SoftwareContext extends Context {
 
     @Override
     public void create() {
-        renderer.init();
         super.create();
+        renderer.init();
+    }
+
+    @Override
+    public void destroy() {
+        renderer.dispose();
+        super.destroy();
     }
 
     @Override
@@ -151,6 +157,11 @@ public class SoftwareContext extends Context {
     @Override
     public ByteBuffer readFrame(Rectangle size, InternalFormat format) {
         return null;
+    }
+
+    @Override
+    public boolean isWindowCloseRequested() {
+        return renderer.isCloseRequested();
     }
 
     @Override
