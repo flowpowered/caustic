@@ -87,7 +87,7 @@ public final class ColladaFileLoader {
      *
      * @param in input stream to load data from
      * @param positions list to store positions
-     * @param textureCoords list to store texcoords
+     * @param textureCoords list to store texture coordinates
      * @param normals list to store normals
      * @param indices list to store indices
      * @return vec3 the sizes of each component
@@ -138,24 +138,14 @@ public final class ColladaFileLoader {
                 throw new MalformedColladaFileException("Positions source cannot be empty.");
             }
 
-            // load the texcoords
-            if (!semanticMap.containsKey(SEMANTIC_TEXCOORD)) {
-                logger.warning("Collada file is missing texture coordinates.");
-            } else {
+            // load the texture coords
+            if (semanticMap.containsKey(SEMANTIC_TEXCOORD)) {
                 loadSources(getElementById(doc, semanticMap.get(SEMANTIC_TEXCOORD).substring(1)), rawTextureCoords);
-                if (rawTextureCoords.isEmpty()) {
-                    logger.warning("Texture coordinates source is empty.");
-                }
             }
 
             // load the normals
-            if (!semanticMap.containsKey(SEMANTIC_NORMAL)) {
-                logger.warning("Collada file is missing normals.");
-            } else {
+            if (semanticMap.containsKey(SEMANTIC_NORMAL)) {
                 loadSources(getElementById(doc, semanticMap.get(SEMANTIC_NORMAL).substring(1)), rawNormals);
-                if (rawNormals.isEmpty()) {
-                    logger.warning("Normals source is empty.");
-                }
             }
 
             // load the indices
@@ -173,21 +163,21 @@ public final class ColladaFileLoader {
         }
 
         final int vertSize = 3;
-        final int texcoordSize = textureCoords.isEmpty() ? 0 : STEP_TEXCOORD;
+        final int texCoordsSize = textureCoords.isEmpty() ? 0 : STEP_TEXCOORD;
         final int normalSize = normals.isEmpty() ? 0 : STEP_NORMAL;
 
-        return new Vector3f(vertSize, texcoordSize, normalSize);
+        return new Vector3f(vertSize, texCoordsSize, normalSize);
     }
 
     private static void loadIndices(int[] rawIndices, TObjectIntMap<String> offsets, TIntList indices,
                                     TFloatList rawTextureCoords, TFloatList textureCoords,
                                     TFloatList rawNormals, TFloatList normals) {
         final int positionOffset = offsets.get(SEMANTIC_VERTEX);
-        final int texcoordOffset = offsets.get(SEMANTIC_TEXCOORD);
+        final int texCoordsOffset = offsets.get(SEMANTIC_TEXCOORD);
         final int normalOffset = offsets.get(SEMANTIC_NORMAL);
-        final int components = texcoordOffset == -1 ? normalOffset == -1 ? 1 : 2 : 3;
+        final int components = texCoordsOffset == -1 ? normalOffset == -1 ? 1 : 2 : 3;
 
-        if (texcoordOffset != -1) {
+        if (texCoordsOffset != -1) {
             textureCoords.fill(0, rawTextureCoords.size(), 0);
         }
         if (normalOffset != -1) {
@@ -195,17 +185,17 @@ public final class ColladaFileLoader {
         }
 
         for (int i = 0; i < rawIndices.length; i += components) {
-            int positionIndex = rawIndices[i + positionOffset];
+            final int positionIndex = rawIndices[i + positionOffset];
             indices.add(positionIndex);
-            if (texcoordOffset != -1) {
-                int texcoordIndex = rawIndices[i + texcoordOffset] * STEP_TEXCOORD;
+            if (texCoordsOffset != -1) {
+                final int texCoordsIndex = rawIndices[i + texCoordsOffset] * STEP_TEXCOORD;
                 for (int s = 0; s < STEP_TEXCOORD; s++) {
-                    textureCoords.set(positionIndex * STEP_TEXCOORD + s, rawTextureCoords.get(texcoordIndex + s));
+                    textureCoords.set(positionIndex * STEP_TEXCOORD + s, rawTextureCoords.get(texCoordsIndex + s));
                 }
             }
 
             if (normalOffset != -1) {
-                int normalIndex = rawIndices[i + normalOffset] * STEP_NORMAL;
+                final int normalIndex = rawIndices[i + normalOffset] * STEP_NORMAL;
                 for (int s = 0; s < STEP_NORMAL; s++) {
                     normals.set(positionIndex * STEP_NORMAL + s, rawNormals.get(normalIndex + s));
                 }
@@ -214,8 +204,8 @@ public final class ColladaFileLoader {
     }
 
     private static int[] parseIndices(Element triTag) {
-        String[] rawIndices = triTag.getElementsByTagName(ELEMENT_INDICES).item(0).getTextContent().split(ARRAY_SEPARATOR);
-        int[] indices = new int[rawIndices.length];
+        final String[] rawIndices = triTag.getElementsByTagName(ELEMENT_INDICES).item(0).getTextContent().split(ARRAY_SEPARATOR);
+        final int[] indices = new int[rawIndices.length];
         for (int i = 0; i < rawIndices.length; i++) {
             indices[i] = Integer.parseInt(rawIndices[i]);
         }
@@ -224,10 +214,10 @@ public final class ColladaFileLoader {
 
     private static Element getElementById(Document doc, String id) {
         try {
-            XPathFactory factory = XPathFactory.newInstance();
-            XPath xp = factory.newXPath();
-            String src = String.format("//*[@id='%s']", id);
-            XPathExpression bin = xp.compile(src);
+            final XPathFactory factory = XPathFactory.newInstance();
+            final XPath xp = factory.newXPath();
+            final String src = String.format("//*[@id='%s']", id);
+            final XPathExpression bin = xp.compile(src);
             return (Element) ((NodeList) bin.evaluate(doc, XPathConstants.NODESET)).item(0);
         } catch (XPathExpressionException e) {
             logger.log(Level.WARNING, "Couldn't obtain element " + id + " in Collada file", e);
@@ -240,14 +230,14 @@ public final class ColladaFileLoader {
     }
 
     private static void loadInput(Element parent, Map<String, String> sources, TObjectIntMap<String> offsets) {
-        NodeList nodes = parent.getChildNodes();
+        final NodeList nodes = parent.getChildNodes();
         for (int i = 0; i < nodes.getLength(); i++) {
-            Node node = nodes.item(i);
+            final Node node = nodes.item(i);
             if (!node.getNodeName().equals(ELEMENT_INPUT)) {
                 continue;
             }
-            Element input = (Element) node;
-            String semantic = input.getAttribute(ATTRIBUTE_SEMANTIC);
+            final Element input = (Element) node;
+            final String semantic = input.getAttribute(ATTRIBUTE_SEMANTIC);
             sources.put(semantic, input.getAttribute(ATTRIBUTE_SOURCE));
             if (offsets != null) {
                 offsets.put(semantic, Integer.parseInt(input.getAttribute(ATTRIBUTE_OFFSET)));
@@ -256,7 +246,7 @@ public final class ColladaFileLoader {
     }
 
     private static void loadSources(Element parent, TFloatList target) {
-        String[] rawSrc = parent.getElementsByTagName(ELEMENT_FLOAT_ARRAY).item(0).getTextContent().split(ARRAY_SEPARATOR);
+        final String[] rawSrc = parent.getElementsByTagName(ELEMENT_FLOAT_ARRAY).item(0).getTextContent().split(ARRAY_SEPARATOR);
         for (String v : rawSrc) {
             target.add(Float.parseFloat(v));
         }
