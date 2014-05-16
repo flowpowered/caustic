@@ -54,12 +54,12 @@ public class MeshGenerator {
      * ^
      * | y
      * |
-     * | x
+     * |     x
      * ------->
      * \
-     * \
-     * \ z
-     * V
+     *  \
+     *   \ z
+     *    V
      * The axis system
      */
 
@@ -72,11 +72,11 @@ public class MeshGenerator {
      */
     public static VertexData generateCrosshairs(VertexData destination, float length) {
         /*
-         * \ |
-         * \|
+         *   \ |
+         *    \|
          * ----O-----
-         * |\
-         * | \
+         *     |\
+         *     | \
          */
         // Model data buffers
         if (destination == null) {
@@ -111,12 +111,12 @@ public class MeshGenerator {
     public static VertexData generateWireCuboid(VertexData destination, Vector3f size) {
         /*
          * 4------5
-         * |\ |\
+         * |\     |\
          * | 7------6
-         * | | | |
+         * | |    | |
          * 0-|----1 |
-         * \| \|
-         * 3------2
+         *  \|     \|
+         *   3------2
          */
         // Corner positions
         final Vector3f p = size.div(2);
@@ -135,42 +135,24 @@ public class MeshGenerator {
         final VertexAttribute positionsAttribute = new VertexAttribute("positions", DataType.FLOAT, 3);
         destination.addAttribute(0, positionsAttribute);
         final TFloatList positions = new TFloatArrayList();
-        final VertexAttribute normalsAttribute = new VertexAttribute("normals", DataType.FLOAT, 3);
-        destination.addAttribute(1, normalsAttribute);
-        final TFloatList normals = new TFloatArrayList();
         final TIntList indices = destination.getIndices();
         // Add all of the corners
         addVector(positions, p0);
-        addVector(normals, p0.normalize());
         addVector(positions, p1);
-        addVector(normals, p1.normalize());
         addVector(positions, p2);
-        addVector(normals, p2.normalize());
         addVector(positions, p3);
-        addVector(normals, p3.normalize());
         addVector(positions, p4);
-        addVector(normals, p4.normalize());
         addVector(positions, p5);
-        addVector(normals, p5.normalize());
         addVector(positions, p6);
-        addVector(normals, p6.normalize());
         addVector(positions, p7);
-        addVector(normals, p7.normalize());
-        // Face x
-        addAll(indices, 1, 2, 2, 6, 6, 5, 5, 1);
-        // Face y
+        // Top face
         addAll(indices, 4, 5, 5, 6, 6, 7, 7, 4);
-        // Face z
-        addAll(indices, 2, 3, 3, 7, 7, 6, 6, 2);
-        // Face -x
-        addAll(indices, 0, 3, 3, 7, 7, 4, 4, 0);
-        // Face -y
+        // Bottom face
         addAll(indices, 0, 1, 1, 2, 2, 3, 3, 0);
-        // Face -z
-        addAll(indices, 0, 1, 1, 5, 5, 4, 4, 0);
+        // Sides
+        addAll(indices, 6, 2, 7, 3, 4, 0, 5, 1);
         // Put the mesh in the vertex data
         positionsAttribute.setData(positions);
-        normalsAttribute.setData(normals);
         return destination;
     }
 
@@ -184,8 +166,8 @@ public class MeshGenerator {
     public static VertexData generatePlane(VertexData destination, Vector2f size) {
         /*
          * 2-----3
-         * | |
-         * | |
+         * |     |
+         * |     |
          * 0-----1
          */
         // Corner positions
@@ -255,12 +237,12 @@ public class MeshGenerator {
     public static VertexData generateCuboid(VertexData destination, Vector3f size) {
         /*
          * 4------5
-         * |\ |\
+         * |\     |\
          * | 7------6
-         * | | | |
+         * | |    | |
          * 0-|----1 |
-         * \| \|
-         * 3------2
+         *  \|     \|
+         *   3------2
          */
         // Corner positions
         final Vector3f p = size.div(2);

@@ -51,8 +51,6 @@ import gnu.trove.map.hash.TObjectIntHashMap;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
-import org.spout.renderer.api.data.Uniform;
-import org.spout.renderer.api.data.UniformHolder;
 import org.spout.renderer.api.gl.Program;
 import org.spout.renderer.api.gl.Shader;
 import org.spout.renderer.api.util.CausticUtil;
@@ -186,18 +184,6 @@ public class GL20Program extends Program {
             throw new IllegalArgumentException("No texture layout has been set for the unit: " + unit);
         }
         setUniform(textureLayouts.get(unit), unit);
-    }
-
-    @Override
-    public void upload(Uniform uniform) {
-        uniform.upload(this);
-    }
-
-    @Override
-    public void upload(UniformHolder uniforms) {
-        for (Uniform uniform : uniforms) {
-            uniform.upload(this);
-        }
     }
 
     // TODO: Support int and boolean vectors

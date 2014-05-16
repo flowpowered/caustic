@@ -52,9 +52,9 @@ public abstract class VertexArray extends Creatable implements GLVersioned {
     /**
      * Sets the model's drawing mode.
      *
-     * @param drawingMode The drawing mode to use
+     * @param mode The drawing mode to use
      */
-    public abstract void setDrawingMode(DrawingMode drawingMode);
+    public abstract void setDrawingMode(DrawingMode mode);
 
     /**
      * Sets the starting offset in the indices buffer. Defaults to 0.
