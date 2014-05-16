@@ -12,7 +12,7 @@
 	<parent>
 		<groupId>org.spout</groupId>
 		<artifactId>caustic</artifactId>
-		<version>2.0.2-SNAPSHOT</version>
+		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
 	<!-- Build properties -->
@@ -22,13 +22,14 @@
 
 	<!-- Project dependencies -->
 	<dependencies>
-		<!-- Include in final JAR -->
+		<!-- Provided -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>caustic-api</artifactId>
 			<version>${project.version}</version>
-			<scope>compile</scope>
+			<scope>provided</scope>
 		</dependency>
+		<!-- Include in final JAR -->
 		<dependency>
 			<groupId>org.lwjgl.lwjgl</groupId>
 			<artifactId>lwjgl</artifactId>
