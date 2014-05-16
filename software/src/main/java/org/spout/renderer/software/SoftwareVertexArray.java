@@ -162,7 +162,7 @@ public class SoftwareVertexArray extends VertexArray {
             // Compute the NDC coordinates
             final float wInverse = 1 / w;
             x *= wInverse;
-            y *= wInverse;
+            y *= -wInverse;
             z *= wInverse;
             // Normalize and convert to window coordinates
             x = (x + 1) / 2 * (viewPort.getWidth() - 1) + viewPort.getX();
@@ -376,7 +376,7 @@ public class SoftwareVertexArray extends VertexArray {
             // Compute the NDC coordinates of the first point
             final float wInverse1 = 1 / w1;
             x1 *= wInverse1;
-            y1 *= wInverse1;
+            y1 *= -wInverse1;
             z1 *= wInverse1;
             // Normalize and convert to window coordinates
             x1 = (x1 + 1) / 2 * (viewPort.getWidth() - 1) + viewPort.getX();
@@ -387,7 +387,7 @@ public class SoftwareVertexArray extends VertexArray {
             // Compute the NDC coordinates of the second point
             final float wInverse2 = 1 / w2;
             x2 *= wInverse2;
-            y2 *= wInverse2;
+            y2 *= -wInverse2;
             z2 *= wInverse2;
             // Normalize and convert to window coordinates
             x2 = (x2 + 1) / 2 * (viewPort.getWidth() - 1) + viewPort.getX();
