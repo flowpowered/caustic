@@ -295,6 +295,9 @@ public class SoftwareVertexArray extends VertexArray {
             }
             // Perform clipping on the second point, ignoring z clipping when depth clamping is active
             if (x2 < -w2) {
+                if (x1 < -w1) {
+                    continue;
+                }
                 final float dx = x2 - x1, dy = y2 - y1, dz = z2 - z1, dw = w2 - w1;
                 float t = (-w1 - x1) / (dx + dw);
                 y2 = t * dy + y1;
@@ -304,6 +307,9 @@ public class SoftwareVertexArray extends VertexArray {
                 percent2 *= t;
             }
             if (x2 > w2) {
+                if (x1 > w1) {
+                    continue;
+                }
                 final float dx = x2 - x1, dy = y2 - y1, dz = z2 - z1, dw = w2 - w1;
                 float t = (w1 - x1) / (dx - dw);
                 y2 = t * dy + y1;
@@ -313,6 +319,9 @@ public class SoftwareVertexArray extends VertexArray {
                 percent2 *= t;
             }
             if (y2 < -w2) {
+                if (y1 < -w1) {
+                    continue;
+                }
                 final float dx = x2 - x1, dy = y2 - y1, dz = z2 - z1, dw = w2 - w1;
                 float t = (-w1 - y1) / (dy + dw);
                 x2 = t * dx + x1;
@@ -322,6 +331,9 @@ public class SoftwareVertexArray extends VertexArray {
                 percent2 *= t;
             }
             if (y2 > w2) {
+                if (y1 > w1) {
+                    continue;
+                }
                 final float dx = x2 - x1, dy = y2 - y1, dz = z2 - z1, dw = w2 - w1;
                 float t = (w1 - y1) / (dy - dw);
                 x2 = t * dx + x1;
@@ -332,6 +344,9 @@ public class SoftwareVertexArray extends VertexArray {
             }
             if (!clampDepth) {
                 if (z2 < -w2) {
+                    if (z1 < -w1) {
+                        continue;
+                    }
                     final float dx = x2 - x1, dy = y2 - y1, dz = z2 - z1, dw = w2 - w1;
                     float t = (-w1 - z1) / (dz + dw);
                     x2 = t * dx + x1;
@@ -341,6 +356,9 @@ public class SoftwareVertexArray extends VertexArray {
                     percent2 *= t;
                 }
                 if (z2 > w2) {
+                    if (z1 > w1) {
+                        continue;
+                    }
                     final float dx = x2 - x1, dy = y2 - y1, dz = z2 - z1, dw = w2 - w1;
                     float t = (w1 - z1) / (dz - dw);
                     x2 = t * dx + x1;
