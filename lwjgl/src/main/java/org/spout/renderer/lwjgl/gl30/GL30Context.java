@@ -26,6 +26,7 @@
  */
 package org.spout.renderer.lwjgl.gl30;
 
+import org.lwjgl.LWJGLUtil;
 import org.lwjgl.opengl.ContextAttribs;
 
 import org.spout.renderer.api.gl.FrameBuffer;
@@ -37,6 +38,7 @@ import org.spout.renderer.api.gl.VertexArray;
 import org.spout.renderer.lwjgl.gl20.GL20Context;
 import org.spout.renderer.lwjgl.gl20.GL20Program;
 import org.spout.renderer.lwjgl.gl20.GL20Shader;
+import org.spout.renderer.lwjgl.gl20.GL20VertexArray;
 
 /**
  * An OpenGL 3.0 implementation of {@link org.spout.renderer.api.gl.Context}.
@@ -76,6 +78,9 @@ public class GL30Context extends GL20Context {
 
     @Override
     public VertexArray newVertexArray() {
+        if (LWJGLUtil.getPlatform() == LWJGLUtil.PLATFORM_MACOSX) {
+            return new GL20VertexArray();
+        }
         return new GL30VertexArray();
     }
 

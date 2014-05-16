@@ -28,7 +28,9 @@ package org.spout.renderer.lwjgl.gl32;
 
 import org.lwjgl.opengl.ContextAttribs;
 
+import org.spout.renderer.api.gl.VertexArray;
 import org.spout.renderer.lwjgl.gl30.GL30Context;
+import org.spout.renderer.lwjgl.gl30.GL30VertexArray;
 
 /**
  * An OpenGL 3.2 implementation of {@link org.spout.renderer.api.gl.Context}.
@@ -43,6 +45,11 @@ public class GL32Context extends GL30Context {
             contextAttribs = contextAttribs.withProfileCore(true);
         }
         return contextAttribs;
+    }
+
+    @Override
+    public VertexArray newVertexArray() {
+        return new GL30VertexArray();
     }
 
     @Override
