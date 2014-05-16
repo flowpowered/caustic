@@ -103,6 +103,7 @@ public class StringModel extends Model {
 
     /**
      * Creates a new string model, from the OpenGL context, the font shader program, the glyphs to support, the font to render with and the window width (used to get scale for the model).
+     * Anti-aliasing will be automatically done based on the font size.
      *
      * @param context The OpenGL context
      * @param fontProgram The program of shaders responsible to for rendering the font
@@ -111,6 +112,21 @@ public class StringModel extends Model {
      * @param windowWidth The window with
      */
     public StringModel(Context context, Program fontProgram, CharSequence glyphs, Font font, int windowWidth) {
+        this(context, fontProgram, glyphs, font, AntiAliasing.AUTO, windowWidth);
+    }
+
+    /**
+     * Creates a new string model, from the OpenGL context, the font shader program, the glyphs to support, the font to render with, the window width (used to get scale for the model) and the
+     * anti-aliasing mode.
+     *
+     * @param context The OpenGL context
+     * @param fontProgram The program of shaders responsible to for rendering the font
+     * @param glyphs The glyphs
+     * @param font The font
+     * @param antiAliasing The anti-aliasing mode
+     * @param windowWidth The window with
+     */
+    public StringModel(Context context, Program fontProgram, CharSequence glyphs, Font font, AntiAliasing antiAliasing, int windowWidth) {
         if (context == null) {
             throw new IllegalStateException("GL version cannot be null");
         }
@@ -126,6 +142,8 @@ public class StringModel extends Model {
         if (windowWidth <= 0) {
             throw new IllegalStateException("The window width must be greater than zero");
         }
+        // Remove duplicate glyphs
+        glyphs = removeDuplicates(glyphs);
         // Stores the first vertex index for each glyph
         glyphIndexes = new TCharIntHashMap(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, Character.MIN_VALUE, -1);
         // Stores the offset (width) of each glyph
@@ -152,7 +170,7 @@ public class StringModel extends Model {
         // Create the texture
         final int width = (int) Math.ceil(size.getWidth()) + glyphs.length() * glyphPadding * 2;
         final int height = (int) Math.ceil(size.getHeight());
-        final Texture texture = generateTexture(context, glyphs, widths, font, width, height);
+        final Texture texture = generateTexture(context, glyphs, widths, font, antiAliasing, width, height);
         // Set the line height, for new lines
         lineHeight = fontMetrics.getHeight();
         // Create the material
@@ -316,7 +334,7 @@ public class StringModel extends Model {
         return vertexArray;
     }
 
-    private Texture generateTexture(Context context, CharSequence glyphs, TCharIntMap glyphWidths, Font font, int width, int height) {
+    private Texture generateTexture(Context context, CharSequence glyphs, TCharIntMap glyphWidths, Font font, AntiAliasing antiAliasing, int width, int height) {
         final Texture texture = context.newTexture();
         // Create an image for the texture
         final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -324,7 +342,7 @@ public class StringModel extends Model {
         // Draw the glyphs in white on a transparent background
         graphics.setColor(java.awt.Color.WHITE);
         graphics.setFont(font);
-        ((Graphics2D) graphics).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+        ((Graphics2D) graphics).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, antiAliasing.getConstant());
         final FontMetrics fontMetrics = graphics.getFontMetrics();
         int x = 0;
         final int y = fontMetrics.getAscent();
@@ -350,5 +368,39 @@ public class StringModel extends Model {
 
     private static void add(TIntList list, int... f) {
         list.add(f);
+    }
+
+    private static CharSequence removeDuplicates(CharSequence chars) {
+        String results = "";
+        final int length = chars.length();
+        outer:
+        for (int i = 0; i < length; i++) {
+            final char c = chars.charAt(i);
+            for (int ii = i + 1; ii < length; ii++) {
+                if (c == chars.charAt(ii)) {
+                    continue outer;
+                }
+            }
+            results += c;
+        }
+        return results;
+    }
+
+    /**
+     * An enum of the various available anti-aliasing policies.
+     */
+    public static enum AntiAliasing {
+        ON(RenderingHints.VALUE_TEXT_ANTIALIAS_ON),
+        OFF(RenderingHints.VALUE_TEXT_ANTIALIAS_OFF),
+        AUTO(RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+        private final Object constant;
+
+        private AntiAliasing(Object constant) {
+            this.constant = constant;
+        }
+
+        private Object getConstant() {
+            return constant;
+        }
     }
 }
