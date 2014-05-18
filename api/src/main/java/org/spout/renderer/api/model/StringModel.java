@@ -61,6 +61,7 @@ import org.spout.renderer.api.gl.Program;
 import org.spout.renderer.api.gl.Texture;
 import org.spout.renderer.api.gl.Texture.FilterMode;
 import org.spout.renderer.api.gl.Texture.Format;
+import org.spout.renderer.api.gl.Texture.InternalFormat;
 import org.spout.renderer.api.gl.VertexArray;
 import org.spout.renderer.api.util.CausticUtil;
 
@@ -337,7 +338,7 @@ public class StringModel extends Model {
     private Texture generateTexture(Context context, CharSequence glyphs, TCharIntMap glyphWidths, Font font, AntiAliasing antiAliasing, int width, int height) {
         final Texture texture = context.newTexture();
         // Create an image for the texture
-        final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
         final Graphics graphics = image.getGraphics();
         // Draw the glyphs in white on a transparent background
         graphics.setColor(java.awt.Color.WHITE);
@@ -356,9 +357,9 @@ public class StringModel extends Model {
         graphics.dispose();
         // Generate the texture
         texture.create();
-        texture.setFormat(Format.RGBA);
+        texture.setFormat(Format.RED, InternalFormat.R8);
         texture.setFilters(FilterMode.NEAREST, FilterMode.NEAREST);
-        texture.setImageData(CausticUtil.getImageData(image, Format.RGBA), width, height);
+        texture.setImageData(CausticUtil.getImageData(image, Format.RED), width, height);
         return texture;
     }
 

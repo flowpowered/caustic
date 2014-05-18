@@ -12,9 +12,9 @@ uniform sampler2D diffuse;
 uniform vec4 fontColor;
 
 void main() {
-    vec4 color = texture(diffuse, textureUV);
+    float color = texture(diffuse, textureUV).r;
 
-    if (color.a <= 0) {
+    if (color <= 0) {
         discard;
     }
 
