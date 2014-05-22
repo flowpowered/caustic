@@ -67,7 +67,7 @@ public class GL20Context extends Context {
             }
             Display.create(pixelFormat, createContextAttributes());
         } catch (LWJGLException ex) {
-            throw new IllegalStateException("Unable to create OpenGL context: " + ex.getMessage());
+            throw new IllegalStateException("Unable to create OpenGL. ", ex);
         }
         // Check for errors
         LWJGLUtil.checkForGLError();
