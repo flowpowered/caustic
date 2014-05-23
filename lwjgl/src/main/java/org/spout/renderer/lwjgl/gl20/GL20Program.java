@@ -29,7 +29,9 @@ package org.spout.renderer.lwjgl.gl20;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -62,6 +64,14 @@ import org.spout.renderer.lwjgl.LWJGLUtil;
  * @see Program
  */
 public class GL20Program extends Program {
+    // Represents an unset value for a uniform
+    private static final Object UNSET = new Object() {
+        @Override
+        public String toString() {
+            return "UNSET";
+        }
+    };
+    // Set of all shaders in this program
     private final Set<Shader> shaders = new HashSet<>();
     // Map of the attribute names to their vao index (optional for GL30 as they can be defined in the shader instead)
     private final TObjectIntMap<String> attributeLayouts = new TObjectIntHashMap<>();
@@ -69,6 +79,8 @@ public class GL20Program extends Program {
     private final TIntObjectMap<String> textureLayouts = new TIntObjectHashMap<>();
     // Map of the uniform names to their locations
     private final TObjectIntMap<String> uniforms = new TObjectIntHashMap<>(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, -1);
+    // Map of the uniform names to their values
+    private final Map<String, Object> uniformValues = new HashMap<>();
 
     @Override
     public void create() {
@@ -91,6 +103,7 @@ public class GL20Program extends Program {
         attributeLayouts.clear();
         textureLayouts.clear();
         uniforms.clear();
+        uniformValues.clear();
         // Update the state
         super.destroy();
     }
@@ -164,6 +177,7 @@ public class GL20Program extends Program {
             // Simplify array names
             final String name = new String(nameBytes).trim().replaceFirst("\\[\\d+\\]", "");
             uniforms.put(name, GL20.glGetUniformLocation(id, name));
+            uniformValues.put(name, UNSET);
         }
         // Check for errors
         LWJGLUtil.checkForGLError();
@@ -190,37 +204,40 @@ public class GL20Program extends Program {
     @Override
     public void setUniform(String name, boolean b) {
         checkCreated();
-        if (!uniforms.containsKey(name)) {
+        if (!isDirty(name, b)) {
             return;
         }
         GL20.glUniform1i(uniforms.get(name), b ? 1 : 0);
+        uniformValues.put(name, b);
         LWJGLUtil.checkForGLError();
     }
 
     @Override
     public void setUniform(String name, int i) {
         checkCreated();
-        if (!uniforms.containsKey(name)) {
+        if (!isDirty(name, i)) {
             return;
         }
         GL20.glUniform1i(uniforms.get(name), i);
+        uniformValues.put(name, i);
         LWJGLUtil.checkForGLError();
     }
 
     @Override
     public void setUniform(String name, float f) {
         checkCreated();
-        if (!uniforms.containsKey(name)) {
+        if (!isDirty(name, f)) {
             return;
         }
         GL20.glUniform1f(uniforms.get(name), f);
+        uniformValues.put(name, f);
         LWJGLUtil.checkForGLError();
     }
 
     @Override
     public void setUniform(String name, float[] fs) {
         checkCreated();
-        if (!uniforms.containsKey(name)) {
+        if (!isDirty(name, fs)) {
             return;
         }
         final FloatBuffer floatBuffer = CausticUtil.createFloatBuffer(fs.length);
@@ -229,23 +246,25 @@ public class GL20Program extends Program {
         }
         floatBuffer.flip();
         GL20.glUniform1(uniforms.get(name), floatBuffer);
+        uniformValues.put(name, fs);
         LWJGLUtil.checkForGLError();
     }
 
     @Override
     public void setUniform(String name, Vector2f v) {
         checkCreated();
-        if (!uniforms.containsKey(name)) {
+        if (!isDirty(name, v)) {
             return;
         }
         GL20.glUniform2f(uniforms.get(name), v.getX(), v.getY());
+        uniformValues.put(name, v);
         LWJGLUtil.checkForGLError();
     }
 
     @Override
     public void setUniform(String name, Vector2f[] vs) {
         checkCreated();
-        if (!uniforms.containsKey(name)) {
+        if (!isDirty(name, vs)) {
             return;
         }
         final FloatBuffer vectorBuffer = CausticUtil.createFloatBuffer(vs.length * 2);
@@ -255,23 +274,25 @@ public class GL20Program extends Program {
         }
         vectorBuffer.flip();
         GL20.glUniform2(uniforms.get(name), vectorBuffer);
+        uniformValues.put(name, vs);
         LWJGLUtil.checkForGLError();
     }
 
     @Override
     public void setUniform(String name, Vector3f v) {
         checkCreated();
-        if (!uniforms.containsKey(name)) {
+        if (!isDirty(name, v)) {
             return;
         }
         GL20.glUniform3f(uniforms.get(name), v.getX(), v.getY(), v.getZ());
+        uniformValues.put(name, v);
         LWJGLUtil.checkForGLError();
     }
 
     @Override
     public void setUniform(String name, Vector3f[] vs) {
         checkCreated();
-        if (!uniforms.containsKey(name)) {
+        if (!isDirty(name, vs)) {
             return;
         }
         final FloatBuffer vectorBuffer = CausticUtil.createFloatBuffer(vs.length * 3);
@@ -282,56 +303,66 @@ public class GL20Program extends Program {
         }
         vectorBuffer.flip();
         GL20.glUniform3(uniforms.get(name), vectorBuffer);
+        uniformValues.put(name, vs);
         LWJGLUtil.checkForGLError();
     }
 
     @Override
     public void setUniform(String name, Vector4f v) {
         checkCreated();
-        if (!uniforms.containsKey(name)) {
+        if (!isDirty(name, v)) {
             return;
         }
         GL20.glUniform4f(uniforms.get(name), v.getX(), v.getY(), v.getZ(), v.getW());
+        uniformValues.put(name, v);
         LWJGLUtil.checkForGLError();
     }
 
     @Override
     public void setUniform(String name, Matrix2f m) {
         checkCreated();
-        if (!uniforms.containsKey(name)) {
+        if (!isDirty(name, m)) {
             return;
         }
         final FloatBuffer buffer = CausticUtil.createFloatBuffer(4);
         buffer.put(m.toArray(true));
         buffer.flip();
         GL20.glUniformMatrix2(uniforms.get(name), false, buffer);
+        uniformValues.put(name, m);
         LWJGLUtil.checkForGLError();
     }
 
     @Override
     public void setUniform(String name, Matrix3f m) {
         checkCreated();
-        if (!uniforms.containsKey(name)) {
+        if (!isDirty(name, m)) {
             return;
         }
         final FloatBuffer buffer = CausticUtil.createFloatBuffer(9);
         buffer.put(m.toArray(true));
         buffer.flip();
         GL20.glUniformMatrix3(uniforms.get(name), false, buffer);
+        uniformValues.put(name, m);
         LWJGLUtil.checkForGLError();
     }
 
     @Override
     public void setUniform(String name, Matrix4f m) {
         checkCreated();
-        if (!uniforms.containsKey(name)) {
+        if (!isDirty(name, m)) {
             return;
         }
         final FloatBuffer buffer = CausticUtil.createFloatBuffer(16);
         buffer.put(m.toArray(true));
         buffer.flip();
         GL20.glUniformMatrix4(uniforms.get(name), false, buffer);
+        uniformValues.put(name, m);
         LWJGLUtil.checkForGLError();
+    }
+
+    private boolean isDirty(String name, Object newValue) {
+        final Object oldValue = uniformValues.get(name);
+        return oldValue != null && (oldValue == UNSET || !oldValue.equals(newValue));
     }
 
     @Override
