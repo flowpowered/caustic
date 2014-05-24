@@ -50,11 +50,19 @@ public abstract class VertexArray extends Creatable implements GLVersioned {
     public abstract void setData(VertexData vertexData);
 
     /**
-     * Sets the model's drawing mode.
+     * Sets the vertex array's drawing mode.
      *
      * @param mode The drawing mode to use
      */
     public abstract void setDrawingMode(DrawingMode mode);
+
+    /**
+     * Sets the vertex array's polygon mode. This describes how to rasterize each primitive. The default is {@link org.spout.renderer.api.gl.VertexArray.PolygonMode#FILL}. This can be used to draw
+     * only the wireframes of the polygons.
+     *
+     * @param mode The polygon mode
+     */
+    public abstract void setPolygonMode(PolygonMode mode);
 
     /**
      * Sets the starting offset in the indices buffer. Defaults to 0.
@@ -86,7 +94,7 @@ public abstract class VertexArray extends Creatable implements GLVersioned {
     }
 
     /**
-     * Represents the different drawing modes for the model
+     * Represents the different drawing modes for the vertex array
      */
     public static enum DrawingMode {
         POINTS(0x0), // GL11.GL_POINTS
@@ -104,11 +112,34 @@ public abstract class VertexArray extends Creatable implements GLVersioned {
         private final int glConstant;
 
         private DrawingMode(int constant) {
-            this.glConstant = constant;
+            glConstant = constant;
         }
 
         /**
          * Returns the OpenGL constant associated to the drawing mode
+         *
+         * @return The OpenGL constant
+         */
+        public int getGLConstant() {
+            return glConstant;
+        }
+    }
+
+    /**
+     * Represents the different polygon modes for the vertex array
+     */
+    public static enum PolygonMode {
+        POINT(0x1B00), // GL11.GL_POINT
+        LINE(0x1B01), // GL11.GL_LINE
+        FILL(0x1B02); // GL11.GL_FILL
+        private final int glConstant;
+
+        private PolygonMode(int constant) {
+            glConstant = constant;
+        }
+
+        /**
+         * Returns the OpenGL constant associated to the polygon mode
          *
          * @return The OpenGL constant
          */

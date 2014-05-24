@@ -50,6 +50,7 @@ public class SoftwareVertexArray extends VertexArray {
     private DataFormat[] attributeFormats;
     private ByteBuffer indicesBuffer;
     private DrawingMode mode = DrawingMode.TRIANGLES;
+    private PolygonMode polygonMode = PolygonMode.FILL;
     private int offset = 0, count = -1, totalCount = 0;
 
     public SoftwareVertexArray(SoftwareRenderer renderer) {
@@ -105,6 +106,14 @@ public class SoftwareVertexArray extends VertexArray {
             throw new IllegalArgumentException("Drawing mode cannot be null");
         }
         this.mode = mode;
+    }
+
+    @Override
+    public void setPolygonMode(PolygonMode mode) {
+        if (mode == null) {
+            throw new IllegalArgumentException("Polygon mode cannot be null");
+        }
+        polygonMode = mode;
     }
 
     @Override

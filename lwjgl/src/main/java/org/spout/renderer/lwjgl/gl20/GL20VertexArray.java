@@ -64,6 +64,8 @@ public class GL20VertexArray extends VertexArray {
     private int indicesOffset = 0;
     // Drawing mode
     private DrawingMode drawingMode = DrawingMode.TRIANGLES;
+    // Polygon mode
+    private PolygonMode polygonMode = PolygonMode.FILL;
     // The available vao extension
     private final VertexArrayExtension extension;
     // Attribute properties for when we don't have a vao extension
@@ -231,6 +233,14 @@ public class GL20VertexArray extends VertexArray {
     }
 
     @Override
+    public void setPolygonMode(PolygonMode mode) {
+        if (mode == null) {
+            throw new IllegalArgumentException("Polygon mode cannot be null");
+        }
+        polygonMode = mode;
+    }
+
+    @Override
     public void setIndicesOffset(int offset) {
         indicesOffset = Math.min(offset, indicesCount - 1);
         indicesDrawCount = Math.min(indicesDrawCount, indicesCount - indicesOffset);
@@ -267,6 +277,8 @@ public class GL20VertexArray extends VertexArray {
         }
         // Bind the index buffer
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesBufferID);
+        // Set the polygon mode
+        GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, polygonMode.getGLConstant());
         // Draw all indices with the provided mode
         GL11.glDrawElements(drawingMode.getGLConstant(), indicesDrawCount, GL11.GL_UNSIGNED_INT, indicesOffset * DataType.INT.getByteSize());
         // Unbind the indices buffer
