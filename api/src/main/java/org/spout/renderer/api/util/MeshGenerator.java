@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.flowpowered.math.TrigMath;
 import com.flowpowered.math.vector.Vector2f;
 import com.flowpowered.math.vector.Vector3f;
 
@@ -488,9 +489,9 @@ public class MeshGenerator {
         for (int angle = 0; angle < 360; angle += 15) {
             final double angleRads = Math.toRadians(angle);
             rims.add(new Vector3f(
-                    radius * (float) Math.cos(angleRads),
+                    radius * TrigMath.cos(angleRads),
                     halfHeight,
-                    radius * (float) -Math.sin(angleRads)));
+                    radius * -TrigMath.sin(angleRads)));
         }
         // Model data buffers
         if (destination == null) {
@@ -562,9 +563,9 @@ public class MeshGenerator {
         for (int angle = 0; angle < 360; angle += 15) {
             final double angleRads = Math.toRadians(angle);
             rim.add(new Vector3f(
-                    radius * (float) Math.cos(angleRads),
+                    radius * TrigMath.cos(angleRads),
                     -halfHeight,
-                    radius * (float) -Math.sin(angleRads)));
+                    radius * -TrigMath.sin(angleRads)));
         }
         // Model data buffers
         if (destination == null) {
@@ -615,6 +616,135 @@ public class MeshGenerator {
         positionsAttribute.setData(positions);
         normalsAttribute.setData(normals);
         return destination;
+    }
+
+    /**
+     * Generates a capsule shape solid mesh. The center is at the middle of the capsule. A capsule is two aligned and mirrored hemispheres joined by a cylinder.
+     *
+     * @param destination Where to save the mesh (can be null)
+     * @param radius The radius of the cap sphere
+     * @param height The height (distance between the centers of the two spheres)
+     * @return The vertex data
+     */
+    public static VertexData generateCapsule(VertexData destination, float radius, float height) {
+        // Model data buffers
+        if (destination == null) {
+            destination = new VertexData();
+        }
+        final VertexAttribute positionsAttribute = new VertexAttribute("positions", DataType.FLOAT, 3);
+        destination.addAttribute(0, positionsAttribute);
+        final TFloatList positions = new TFloatArrayList();
+        final VertexAttribute normalsAttribute = new VertexAttribute("normals", DataType.FLOAT, 3);
+        destination.addAttribute(1, normalsAttribute);
+        final TFloatList normals = new TFloatArrayList();
+        final TIntList indices = destination.getIndices();
+        // Start with the top hemisphere
+        final float halfHeight = height / 2;
+        final Vector3f top = new Vector3f(0, halfHeight + radius, 0);
+        // Add the point for the top of the hemisphere
+        addVector(positions, top);
+        addVector(normals, top.normalize());
+        // Next use spherical coordinates to separate the surface of thehemi sphere into a grid
+        final int thetaSections = 30, phiSections = 10;
+        final int thetaIncrement = 360 / thetaSections, phiIncrement = 90 / phiSections;
+        // For every point on that grid
+        for (int phi = phiIncrement; phi <= 90; phi += phiIncrement) {
+            for (int theta = thetaIncrement / 2; theta <= 360; theta += thetaIncrement) {
+                // Compute the point in cartesian coordinates
+                final double radPhi = Math.toRadians(phi);
+                final double radTheta = Math.toRadians(theta);
+                final float sinPhi = TrigMath.sin(radPhi);
+                final Vector3f p = new Vector3f(
+                        radius * sinPhi * TrigMath.sin(radTheta),
+                        radius * TrigMath.cos(radPhi),
+                        radius * sinPhi * TrigMath.cos(radTheta));
+                // Add it to the positions
+                addVector(positions, p.add(0, halfHeight, 0));
+                addVector(normals, p.normalize());
+                // Add the indices
+                final int i0 = computeIndex(phiIncrement, phi, thetaSections, thetaIncrement, theta);
+                final int i1 = computeIndex(phiIncrement, phi, thetaSections, thetaIncrement, theta + thetaIncrement);
+                final int i2 = computeIndex(phiIncrement, phi - phiIncrement, thetaSections, thetaIncrement, theta);
+                final int i3 = computeIndex(phiIncrement, phi - phiIncrement, thetaSections, thetaIncrement, theta + thetaIncrement);
+                // Special case for the top apex vertex
+                if (i2 == i3) {
+                    addAll(indices, i0, i1, i3);
+                } else {
+                    addAll(indices, i0, i1, i3, i0, i3, i2);
+                }
+            }
+        }
+        // Do the middle cylindrical portion
+        final int twoTimesThetaSections = thetaSections * 2;
+        // Get the offset in the positions of the middle cylinder
+        int indexOffset = positions.size() / 3;
+        // For every point on the top and bottom of the cylinder
+        for (int theta = thetaIncrement / 2, i = 0; theta <= 360; theta += thetaIncrement, i += 2) {
+            // Compute the point in cartesian coordinates of a circle
+            final double radTheta = Math.toRadians(theta);
+            final Vector3f p = new Vector3f(radius * TrigMath.sin(radTheta), 0, radius * TrigMath.cos(radTheta));
+            // Derive the top and bottom points of the cylinder from it
+            final Vector3f tp = p.add(0, halfHeight, 0);
+            final Vector3f bp = p.sub(0, halfHeight, 0);
+            // Compute the normal (same for both)
+            final Vector3f n = p.normalize();
+            // Add them to the positions
+            addVector(positions, tp);
+            addVector(normals, n);
+            addVector(positions, bp);
+            addVector(normals, n);
+            // Add the indices
+            final int i0 = i + indexOffset;
+            final int i1 = i + 1 + indexOffset;
+            final int i2 = (i + 2) % twoTimesThetaSections + indexOffset;
+            final int i3 = (i + 3) % twoTimesThetaSections + indexOffset;
+            addAll(indices, i0, i1, i2, i1, i3, i2);
+        }
+        // End with the bottom hemisphere
+        final Vector3f bottom = top.negate();
+        // Get the offset in the positions of the bottom hemisphere
+        indexOffset = positions.size() / 3;
+        // Add the point for the top of the hemisphere
+        addVector(positions, bottom);
+        addVector(normals, bottom.normalize());
+        // For every point on the grid
+        for (int phi = phiIncrement; phi <= 90; phi += phiIncrement) {
+            for (int theta = thetaIncrement / 2; theta <= 360; theta += thetaIncrement) {
+                // Compute the point in cartesian coordinates
+                final double radPhi = Math.toRadians(phi);
+                final double radTheta = Math.toRadians(theta);
+                final float sinPhi = TrigMath.sin(radPhi);
+                Vector3f p = new Vector3f(
+                        -radius * sinPhi * TrigMath.sin(radTheta),
+                        -radius * TrigMath.cos(radPhi),
+                        -radius * sinPhi * TrigMath.cos(radTheta));
+                // Add it to the positions
+                addVector(positions, p.sub(0, halfHeight, 0));
+                addVector(normals, p.normalize());
+                // Add the indices
+                final int i0 = computeIndex(phiIncrement, phi, thetaSections, thetaIncrement, theta) + indexOffset;
+                final int i1 = computeIndex(phiIncrement, phi, thetaSections, thetaIncrement, theta + thetaIncrement) + indexOffset;
+                final int i2 = computeIndex(phiIncrement, phi - phiIncrement, thetaSections, thetaIncrement, theta) + indexOffset;
+                final int i3 = computeIndex(phiIncrement, phi - phiIncrement, thetaSections, thetaIncrement, theta + thetaIncrement) + indexOffset;
+                // Special case for the bottom apex vertex
+                if (i2 == i3) {
+                    addAll(indices, i0, i3, i1);
+                } else {
+                    addAll(indices, i0, i3, i1, i0, i2, i3);
+                }
+            }
+        }
+        // Put the mesh in the vertex data
+        positionsAttribute.setData(positions);
+        normalsAttribute.setData(normals);
+        return destination;
+    }
+
+    private static int computeIndex(int phiIncrement, int phi, int thetaSections, int thetaIncrement, int theta) {
+        if (phi == 0) {
+            return 0;
+        }
+        return 1 + (phi / phiIncrement - 1) * thetaSections + (theta % 360) / thetaIncrement;
     }
 
     private static Vector3f mean(Vector3f v0, Vector3f v1) {
