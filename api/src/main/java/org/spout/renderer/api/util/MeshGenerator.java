@@ -674,36 +674,10 @@ public class MeshGenerator {
                 }
             }
         }
-        // Do the middle cylindrical portion
-        final int twoTimesThetaSections = thetaSections * 2;
-        // Get the offset in the positions of the middle cylinder
-        int indexOffset = positions.size() / 3;
-        // For every point on the top and bottom of the cylinder
-        for (int theta = thetaIncrement / 2, i = 0; theta <= 360; theta += thetaIncrement, i += 2) {
-            // Compute the point in cartesian coordinates of a circle
-            final double radTheta = Math.toRadians(theta);
-            final Vector3f p = new Vector3f(radius * TrigMath.sin(radTheta), 0, radius * TrigMath.cos(radTheta));
-            // Derive the top and bottom points of the cylinder from it
-            final Vector3f tp = p.add(0, halfHeight, 0);
-            final Vector3f bp = p.sub(0, halfHeight, 0);
-            // Compute the normal (same for both)
-            final Vector3f n = p.normalize();
-            // Add them to the positions
-            addVector(positions, tp);
-            addVector(normals, n);
-            addVector(positions, bp);
-            addVector(normals, n);
-            // Add the indices
-            final int i0 = i + indexOffset;
-            final int i1 = i + 1 + indexOffset;
-            final int i2 = (i + 2) % twoTimesThetaSections + indexOffset;
-            final int i3 = (i + 3) % twoTimesThetaSections + indexOffset;
-            addAll(indices, i0, i1, i2, i1, i3, i2);
-        }
-        // End with the bottom hemisphere
+        // Next do the bottom hemisphere
         final Vector3f bottom = top.negate();
         // Get the offset in the positions of the bottom hemisphere
-        indexOffset = positions.size() / 3;
+        final int bottomIndexOffset = positions.size() / 3;
         // Add the point for the top of the hemisphere
         addVector(positions, bottom);
         addVector(normals, bottom.normalize());
@@ -714,18 +688,18 @@ public class MeshGenerator {
                 final double radPhi = Math.toRadians(phi);
                 final double radTheta = Math.toRadians(theta);
                 final float sinPhi = TrigMath.sin(radPhi);
-                Vector3f p = new Vector3f(
-                        -radius * sinPhi * TrigMath.sin(radTheta),
+                final Vector3f p = new Vector3f(
+                        radius * sinPhi * TrigMath.sin(radTheta),
                         -radius * TrigMath.cos(radPhi),
-                        -radius * sinPhi * TrigMath.cos(radTheta));
+                        radius * sinPhi * TrigMath.cos(radTheta));
                 // Add it to the positions
                 addVector(positions, p.sub(0, halfHeight, 0));
                 addVector(normals, p.normalize());
                 // Add the indices
-                final int i0 = computeIndex(phiIncrement, phi, thetaSections, thetaIncrement, theta) + indexOffset;
-                final int i1 = computeIndex(phiIncrement, phi, thetaSections, thetaIncrement, theta + thetaIncrement) + indexOffset;
-                final int i2 = computeIndex(phiIncrement, phi - phiIncrement, thetaSections, thetaIncrement, theta) + indexOffset;
-                final int i3 = computeIndex(phiIncrement, phi - phiIncrement, thetaSections, thetaIncrement, theta + thetaIncrement) + indexOffset;
+                final int i0 = computeIndex(phiIncrement, phi, thetaSections, thetaIncrement, theta) + bottomIndexOffset;
+                final int i1 = computeIndex(phiIncrement, phi, thetaSections, thetaIncrement, theta + thetaIncrement) + bottomIndexOffset;
+                final int i2 = computeIndex(phiIncrement, phi - phiIncrement, thetaSections, thetaIncrement, theta) + bottomIndexOffset;
+                final int i3 = computeIndex(phiIncrement, phi - phiIncrement, thetaSections, thetaIncrement, theta + thetaIncrement) + bottomIndexOffset;
                 // Special case for the bottom apex vertex
                 if (i2 == i3) {
                     addAll(indices, i0, i3, i1);
@@ -733,6 +707,15 @@ public class MeshGenerator {
                     addAll(indices, i0, i3, i1, i0, i2, i3);
                 }
             }
+        }
+        // Finally join both hemispheres
+        for (int theta = thetaIncrement / 2, i = 0; theta <= 360; theta += thetaIncrement, i += 2) {
+            // Add the indices
+            final int i0 = computeIndex(phiIncrement, 90, thetaSections, thetaIncrement, theta);
+            final int i1 = computeIndex(phiIncrement, 90, thetaSections, thetaIncrement, theta + thetaIncrement);
+            final int i2 = computeIndex(phiIncrement, 90, thetaSections, thetaIncrement, theta) + bottomIndexOffset;
+            final int i3 = computeIndex(phiIncrement, 90, thetaSections, thetaIncrement, theta + thetaIncrement) + bottomIndexOffset;
+            addAll(indices, i1, i0, i2, i1, i2, i3);
         }
         // Put the mesh in the vertex data
         positionsAttribute.setData(positions);
