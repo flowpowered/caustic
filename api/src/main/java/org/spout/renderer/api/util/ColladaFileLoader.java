@@ -41,7 +41,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.flowpowered.math.vector.Vector3f;
+import com.flowpowered.math.vector.Vector3i;
 
 import gnu.trove.list.TFloatList;
 import gnu.trove.list.TIntList;
@@ -82,28 +82,24 @@ public final class ColladaFileLoader {
     }
 
     /**
-     * Loads the .dae file into the provided lists. The file is parsed using DOM as COLLADA is valid XML. This method only loads the mesh data into the provided list. The input stream is closed after
-     * loading all data. The Vector3 returned contains the new sizes for each of the provided float lists.
+     * Loads the .dae file into the provided lists. The file is parsed using DOM as COLLADA is valid XML. This method only loads the mesh data into the provided list. Passing null lists for the
+     * texture coords or normals will result in no loading of their data.  The input stream is closed after loading all data. The Vector3 returned contains the new sizes of the vertices (in
+     * components) for each of the provided float lists.
      *
      * @param in input stream to load data from
      * @param positions list to store positions
      * @param textureCoords list to store texture coordinates
-     * @param normals list to store normals
-     * @param indices list to store indices
+     * @param normals list to store normals or null to ignore them
+     * @param indices list to store indices or null to ignore them
      * @return vec3 the sizes of each component
      */
-    public static Vector3f loadMesh(InputStream in, TFloatList positions, TFloatList textureCoords, TFloatList normals, TIntList indices) {
+    public static Vector3i loadMesh(InputStream in, TFloatList positions, TFloatList textureCoords, TFloatList normals, TIntList indices) {
         try {
             // load the doc into memory
             final DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
             final DocumentBuilder builder = builderFactory.newDocumentBuilder();
             final Document doc = builder.parse(in);
             doc.getDocumentElement().normalize();
-
-            positions.clear();
-            textureCoords.clear();
-            normals.clear();
-            indices.clear();
 
             // find where everything is stored in the document by id
             // NOTE: Blender's Collada exporter has a bug that doesn't change 'polylist' to 'triangles'
@@ -139,12 +135,12 @@ public final class ColladaFileLoader {
             }
 
             // load the texture coords
-            if (semanticMap.containsKey(SEMANTIC_TEXCOORD)) {
+            if (textureCoords != null && semanticMap.containsKey(SEMANTIC_TEXCOORD)) {
                 loadSources(getElementById(doc, semanticMap.get(SEMANTIC_TEXCOORD).substring(1)), rawTextureCoords);
             }
 
             // load the normals
-            if (semanticMap.containsKey(SEMANTIC_NORMAL)) {
+            if (normals != null && semanticMap.containsKey(SEMANTIC_NORMAL)) {
                 loadSources(getElementById(doc, semanticMap.get(SEMANTIC_NORMAL).substring(1)), rawNormals);
             }
 
@@ -163,10 +159,10 @@ public final class ColladaFileLoader {
         }
 
         final int vertSize = 3;
-        final int texCoordsSize = textureCoords.isEmpty() ? 0 : STEP_TEXCOORD;
-        final int normalSize = normals.isEmpty() ? 0 : STEP_NORMAL;
+        final int texCoordsSize = textureCoords == null || textureCoords.isEmpty() ? 0 : STEP_TEXCOORD;
+        final int normalSize = normals == null || normals.isEmpty() ? 0 : STEP_NORMAL;
 
-        return new Vector3f(vertSize, texCoordsSize, normalSize);
+        return new Vector3i(vertSize, texCoordsSize, normalSize);
     }
 
     private static void loadIndices(int[] rawIndices, TObjectIntMap<String> offsets, TIntList indices,
@@ -177,24 +173,24 @@ public final class ColladaFileLoader {
         final int normalOffset = offsets.get(SEMANTIC_NORMAL);
         final int components = texCoordsOffset == -1 ? normalOffset == -1 ? 1 : 2 : 3;
 
-        if (texCoordsOffset != -1) {
+        if (textureCoords != null && texCoordsOffset != -1) {
             textureCoords.fill(0, rawTextureCoords.size(), 0);
         }
-        if (normalOffset != -1) {
+        if (normals != null && normalOffset != -1) {
             normals.fill(0, rawNormals.size(), 0);
         }
 
         for (int i = 0; i < rawIndices.length; i += components) {
             final int positionIndex = rawIndices[i + positionOffset];
             indices.add(positionIndex);
-            if (texCoordsOffset != -1) {
+            if (textureCoords != null && texCoordsOffset != -1) {
                 final int texCoordsIndex = rawIndices[i + texCoordsOffset] * STEP_TEXCOORD;
                 for (int s = 0; s < STEP_TEXCOORD; s++) {
                     textureCoords.set(positionIndex * STEP_TEXCOORD + s, rawTextureCoords.get(texCoordsIndex + s));
                 }
             }
 
-            if (normalOffset != -1) {
+            if (normals != null && normalOffset != -1) {
                 final int normalIndex = rawIndices[i + normalOffset] * STEP_NORMAL;
                 for (int s = 0; s < STEP_NORMAL; s++) {
                     normals.set(positionIndex * STEP_NORMAL + s, rawNormals.get(normalIndex + s));
