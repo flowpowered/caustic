@@ -585,16 +585,19 @@ public class MeshGenerator {
         // Add the bottom face center vertex
         addVector(positions, new Vector3f(0, -halfHeight, 0));// 0
         addVector(normals, bottomNormal);
+        // The square of the radius of the cone on the xy plane
+        final float radiusSquared = radius * radius / 4;
         // Add all the faces section by section, turning around the y axis
         final int rimSize = rim.size();
         for (int i = 0; i < rimSize; i++) {
             // Get the bottom vertex position and the side normal
             final Vector3f b = rim.get(i);
-            final Vector3f bn = new Vector3f(b.getX(), 0, b.getZ()).normalize();
+            final Vector3f bn = new Vector3f(b.getX() / radiusSquared, halfHeight - b.getY(), b.getZ() / radiusSquared).normalize();
             // Average the current and next normal to get the top normal
             final int nextI = i == rimSize - 1 ? 0 : i + 1;
             final Vector3f nextB = rim.get(nextI);
-            final Vector3f tn = mean(bn, new Vector3f(nextB.getX(), 0, nextB.getZ()).normalize());
+            final Vector3f nextBN = new Vector3f(nextB.getX() / radiusSquared, halfHeight - nextB.getY(), nextB.getZ() / radiusSquared).normalize();
+            final Vector3f tn = bn.add(nextBN).normalize();
             // Top side vertex
             addVector(positions, top);// index
             addVector(normals, tn);
@@ -728,13 +731,6 @@ public class MeshGenerator {
             return 0;
         }
         return 1 + (phi / phiIncrement - 1) * thetaSections + (theta % 360) / thetaIncrement;
-    }
-
-    private static Vector3f mean(Vector3f v0, Vector3f v1) {
-        return new Vector3f(
-                (v0.getX() + v1.getX()) / 2,
-                (v0.getY() + v1.getY()) / 2,
-                (v0.getZ() + v1.getZ()) / 2);
     }
 
     private static void addVector(TFloatList to, Vector3f v) {
