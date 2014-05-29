@@ -83,17 +83,18 @@ public final class ColladaFileLoader {
 
     /**
      * Loads the .dae file into the provided lists. The file is parsed using DOM as COLLADA is valid XML. This method only loads the mesh data into the provided list. Passing null lists for the
-     * texture coords or normals will result in no loading of their data.  The input stream is closed after loading all data. The Vector3 returned contains the new sizes of the vertices (in
-     * components) for each of the provided float lists.
+     * texture coords or normals will result in no loading of their data.  The input stream is closed after loading all data. The number of components for each attribute is returned in a Vector3, x
+     * being the number of position components, y the number of normal components and z the number of texture coord components.
      *
      * @param in input stream to load data from
      * @param positions list to store positions
-     * @param textureCoords list to store texture coordinates
      * @param normals list to store normals or null to ignore them
+     * @param textureCoords list to store texture coordinates
      * @param indices list to store indices or null to ignore them
-     * @return vec3 the sizes of each component
+     * @return A Vector3 containing, in order, the number of components for the positions, normals and texture coords
+     * @throws MalformedColladaFileException If any errors occur during loading
      */
-    public static Vector3i loadMesh(InputStream in, TFloatList positions, TFloatList textureCoords, TFloatList normals, TIntList indices) {
+    public static Vector3i load(InputStream in, TFloatList positions, TFloatList normals, TFloatList textureCoords, TIntList indices) {
         try {
             // load the doc into memory
             final DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
@@ -162,7 +163,7 @@ public final class ColladaFileLoader {
         final int texCoordsSize = textureCoords == null || textureCoords.isEmpty() ? 0 : STEP_TEXCOORD;
         final int normalSize = normals == null || normals.isEmpty() ? 0 : STEP_NORMAL;
 
-        return new Vector3i(vertSize, texCoordsSize, normalSize);
+        return new Vector3i(vertSize, normalSize, texCoordsSize);
     }
 
     private static void loadIndices(int[] rawIndices, TObjectIntMap<String> offsets, TIntList indices,

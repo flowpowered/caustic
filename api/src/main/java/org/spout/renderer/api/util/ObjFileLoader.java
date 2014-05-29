@@ -52,19 +52,19 @@ public final class ObjFileLoader {
     private static final String INDEX_LIST_PREFIX = "f";
 
     /**
-     * Loads a .obj file, storing the data in the provided lists. After loading, the input stream will be closed.The number of components for each attribute is returned in a Vector3, x being the
-     * number of position components, y the number of texture coord components and z the number of normal components. Note that normal and/or texture coord attributes might be missing from the .obj
+     * Loads a .obj file, storing the data in the provided lists. After loading, the input stream will be closed. The number of components for each attribute is returned in a Vector3, x being the
+     * number of position components, y the number of normal components and z the number of texture coord components. Note that normal and/or texture coord attributes might be missing from the .obj
      * file. If this is the case, their lists will be empty. Passing null lists for the texture coords or normals will result in no loading of their data. The indices are stored in the indices list.
      *
      * @param stream The input stream for the .obj file
      * @param positions The list in which to store the positions
-     * @param textureCoords The list in which to store the texture coords
      * @param normals The list in which to store the normals or null to ignore them
+     * @param textureCoords The list in which to store the texture coords
      * @param indices The list in which to store the indices or null to ignore them
-     * @return A Vector3 containing, in order, the number of components for the positions, texture coords and normals
+     * @return A Vector3 containing, in order, the number of components for the positions, normals and texture coords
      * @throws MalformedObjFileException If any errors occur during loading
      */
-    public static Vector3i load(InputStream stream, TFloatList positions, TFloatList textureCoords, TFloatList normals, TIntList indices) {
+    public static Vector3i load(InputStream stream, TFloatList positions, TFloatList normals, TFloatList textureCoords, TIntList indices) {
         int positionSize = -1;
         final TFloatList rawTextureCoords = new TFloatArrayList();
         int textureCoordSize = -1;
@@ -131,7 +131,7 @@ public final class ObjFileLoader {
         } catch (Exception ex) {
             throw new MalformedObjFileException(line, ex);
         }
-        return new Vector3i(positionSize, textureCoordSize, normalSize).max(0, 0, 0);
+        return new Vector3i(positionSize, normalSize, textureCoordSize).max(0, 0, 0);
     }
 
     private static void parseComponents(TFloatList destination, String line) {
