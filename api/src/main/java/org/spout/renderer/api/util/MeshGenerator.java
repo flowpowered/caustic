@@ -388,7 +388,7 @@ public class MeshGenerator {
     }
 
     /**
-     * Converts a standard triangle model to a wireframe model, with the option to de-triangulation it (convert faces of triangles back to a polygon). This assumes that the positions have 3
+     * Converts a standard triangle model to a wireframe model, with the option to perform de-triangulation (convert faces of triangles back to a polygon). This assumes that the positions have 3
      * components, in the x, y, z order. No excess data is kept. The final model will have no duplicate vertices or edges.
      *
      * @param positions The position list
@@ -431,9 +431,9 @@ public class MeshGenerator {
         final Set<Vector2i> edges = new HashSet<>();
         final Set<Vector2i> cancelled = new HashSet<>();
         for (int i = 0; i < indicesSize; i += 3) {
-            int i0 = indices.get(i);
-            int i1 = indices.get(i + 1);
-            int i2 = indices.get(i + 2);
+            final int i0 = indices.get(i);
+            final int i1 = indices.get(i + 1);
+            final int i2 = indices.get(i + 2);
             // If we need to remove unnecessary edges
             if (deTriangulation) {
                 // Get the points of the triangle
@@ -443,9 +443,9 @@ public class MeshGenerator {
                 // Test with all the other triangles
                 for (int ii = i + 3; ii < indicesSize; ii += 3) {
                     // Get the indices of the other triangle
-                    int ii0 = indices.get(ii);
-                    int ii1 = indices.get(ii + 1);
-                    int ii2 = indices.get(ii + 2);
+                    final int ii0 = indices.get(ii);
+                    final int ii1 = indices.get(ii + 1);
+                    final int ii2 = indices.get(ii + 2);
                     // Get the vertices of the other triangle
                     final Vector3f p10 = new Vector3f(positions.get(ii0 * 3), positions.get(ii0 * 3 + 1), positions.get(ii0 * 3 + 2));
                     final Vector3f p11 = new Vector3f(positions.get(ii1 * 3), positions.get(ii1 * 3 + 1), positions.get(ii1 * 3 + 2));
@@ -1276,7 +1276,7 @@ public class MeshGenerator {
                 v00.getY(), v01.getY(), v11.getY(),
                 v00.getZ(), v01.getZ(), v11.getZ());
         final float d1 = m1.determinant();
-        if (Math.abs(d0) > GenericMath.FLT_EPSILON || Math.abs(d1) > GenericMath.FLT_EPSILON) {
+        if (Math.abs(d0) > GenericMath.FLT_EPSILON * 10 || Math.abs(d1) > GenericMath.FLT_EPSILON * 10) {
             return null;
         }
         final Vector3f v02 = p00.sub(p02);
