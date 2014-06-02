@@ -220,23 +220,6 @@
 					</archive>
 				</configuration>
 			</plugin>
-			<!-- Dependency addition plugin -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>2.2</version>
-				<executions>
-					<execution>
-						<configuration>
-							<minimizeJar>false</minimizeJar>
-						</configuration>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 			<!-- Coveralls reporting plugin  -->
 			<plugin>
 				<groupId>org.eluder.coveralls</groupId>

@@ -23,14 +23,13 @@
 
 	<!-- Project dependencies -->
 	<dependencies>
-		<!-- Provided -->
+		<!-- Compile -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>caustic-api</artifactId>
 			<version>${project.version}</version>
-			<scope>provided</scope>
+			<scope>compile</scope>
 		</dependency>
-		<!-- Include in final JAR -->
 		<dependency>
 			<groupId>com.google.android</groupId>
 			<artifactId>android</artifactId>
