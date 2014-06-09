@@ -182,10 +182,18 @@ class SoftwareRenderer extends Canvas {
         Arrays.fill(depths, Short.MAX_VALUE);
     }
 
+    int readPixelColor(int x, int y) {
+        checkBounds(x, y);
+        return pixels[x + y * width];
+    }
+
+    int readPixelDepth(int x, int y) {
+        checkBounds(x, y);
+        return depths[x + y * width];
+    }
+
     void writePixel(int x, int y, short z, int color) {
-        if (x < 0 || x >= width || y < 0 || y >= width) {
-            throw new IllegalArgumentException("(" + x + ", " + y + ") not within (0, 0) to (" + (width - 1) + ", " + (height - 1) + ")");
-        }
+        checkBounds(x, y);
         final int i = x + y * width;
         if (isEnabled(Capability.DEPTH_TEST)) {
             if (z < depths[i]) {
@@ -196,6 +204,12 @@ class SoftwareRenderer extends Canvas {
             }
         } else {
             pixels[i] = color;
+        }
+    }
+
+    private void checkBounds(int x, int y) {
+        if (x < 0 || x >= width || y < 0 || y >= width) {
+            throw new IllegalArgumentException("(" + x + ", " + y + ") not within (0, 0) to (" + (width - 1) + ", " + (height - 1) + ")");
         }
     }
 

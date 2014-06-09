@@ -219,4 +219,27 @@ public final class SoftwareUtil {
             }
         }
     }
+
+    static float baryLerp(float a, float b, float c, float r, float s, float t) {
+        return r * a + s * b + t * c;
+    }
+
+    static void baryLerp(ShaderBuffer inA, ShaderBuffer inB, ShaderBuffer inC, float r, float s, float t, int start, ShaderBuffer out) {
+        final DataFormat[] formats = inA.getFormat();
+        for (int i = start; i < formats.length; i++) {
+            final DataFormat format = formats[i];
+            final DataType type = format.getType();
+            final int count = format.getCount();
+            for (int ii = 0; ii < count; ii++) {
+                switch (type) {
+                    case INT:
+                        out.writeRaw((int) (r * inA.readRaw() + s * inB.readRaw() + t * inC.readRaw()));
+                        break;
+                    case FLOAT:
+                        out.writeRaw(Float.floatToIntBits(r * Float.intBitsToFloat(inA.readRaw()) + s * Float.intBitsToFloat(inB.readRaw()) + t * Float.intBitsToFloat(inC.readRaw())));
+                        break;
+                }
+            }
+        }
+    }
 }

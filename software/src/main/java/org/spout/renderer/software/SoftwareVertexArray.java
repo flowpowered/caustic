@@ -137,6 +137,9 @@ public class SoftwareVertexArray extends VertexArray {
             case LINES:
                 drawLines();
                 break;
+            case TRIANGLES:
+                drawTriangles();
+                break;
         }
     }
 
@@ -157,7 +160,7 @@ public class SoftwareVertexArray extends VertexArray {
         final ShaderBuffer fragmentOut = new ShaderBuffer(FRAGMENT_OUTPUT);
         // For all indices that need to be drawn
         for (int i = 0; i < count; i++) {
-            // Compute the point vertex
+            // Compute the point
             readVertex(vertexShader, vertexIn, vertexOut, i);
             // Read the first 4 floats, which is the vertex position
             float x = Float.intBitsToFloat(vertexOut.readRaw());
@@ -218,7 +221,7 @@ public class SoftwareVertexArray extends VertexArray {
             float y1 = Float.intBitsToFloat(vertexOut1.readRaw());
             float z1 = Float.intBitsToFloat(vertexOut1.readRaw());
             float w1 = Float.intBitsToFloat(vertexOut1.readRaw());
-            // Compute second the point vertex
+            // Compute the second point
             readVertex(vertexShader, vertexIn, vertexOut2, i + 1);
             // Read the first 4 floats, which is the vertex position
             float x2 = Float.intBitsToFloat(vertexOut2.readRaw());
@@ -510,6 +513,206 @@ public class SoftwareVertexArray extends VertexArray {
         }
     }
 
+    private void drawTriangles() {
+        // Get some renderer properties
+        final Rectangle viewPort = renderer.getViewPort();
+        final boolean clampDepth = renderer.isEnabled(Capability.DEPTH_CLAMP);
+        // Get the shader program
+        final SoftwareProgram program = renderer.getProgram();
+        // Get the vertex shader implementation, and create appropriate in and out buffers
+        final ShaderImplementation vertexShader = program.getShader(ShaderType.VERTEX).getImplementation();
+        final DataFormat[] vertexOutputFormat = vertexShader.getOutputFormat();
+        final ShaderBuffer vertexIn = new ShaderBuffer(attributeFormats);
+        final ShaderBuffer vertexOut1 = new ShaderBuffer(vertexOutputFormat);
+        final ShaderBuffer vertexOut2 = new ShaderBuffer(vertexOutputFormat);
+        final ShaderBuffer vertexOut3 = new ShaderBuffer(vertexOutputFormat);
+        // Get the fragment shader implementation, and create appropriate in and out buffers
+        final ShaderImplementation fragmentShader = program.getShader(ShaderType.FRAGMENT).getImplementation();
+        final ShaderBuffer fragmentIn = new ShaderBuffer(vertexOutputFormat);
+        final ShaderBuffer fragmentOut = new ShaderBuffer(FRAGMENT_OUTPUT);
+        // For all indices that need to be drawn
+        for (int i = 0; i < count; i += 3) {
+            // Compute the first point
+            readVertex(vertexShader, vertexIn, vertexOut1, i);
+            // Read the first 4 floats, which is the vertex position
+            float x1 = Float.intBitsToFloat(vertexOut1.readRaw());
+            float y1 = Float.intBitsToFloat(vertexOut1.readRaw());
+            float z1 = Float.intBitsToFloat(vertexOut1.readRaw());
+            float w1 = Float.intBitsToFloat(vertexOut1.readRaw());
+            // Compute the second point
+            readVertex(vertexShader, vertexIn, vertexOut2, i + 1);
+            // Read the first 4 floats, which is the vertex position
+            float x2 = Float.intBitsToFloat(vertexOut2.readRaw());
+            float y2 = Float.intBitsToFloat(vertexOut2.readRaw());
+            float z2 = Float.intBitsToFloat(vertexOut2.readRaw());
+            float w2 = Float.intBitsToFloat(vertexOut2.readRaw());
+            // Compute the third point
+            readVertex(vertexShader, vertexIn, vertexOut3, i + 2);
+            // Read the first 4 floats, which is the vertex position
+            float x3 = Float.intBitsToFloat(vertexOut3.readRaw());
+            float y3 = Float.intBitsToFloat(vertexOut3.readRaw());
+            float z3 = Float.intBitsToFloat(vertexOut3.readRaw());
+            float w3 = Float.intBitsToFloat(vertexOut3.readRaw());
+            // Compute the NDC coordinates of the first point
+            final float wInverse1 = 1 / w1;
+            x1 *= wInverse1;
+            y1 *= -wInverse1;
+            z1 *= wInverse1;
+            // Normalize and convert to window coordinates
+            x1 = (x1 + 1) / 2 * (viewPort.getWidth() - 1) + viewPort.getX();
+            y1 = (y1 + 1) / 2 * (viewPort.getHeight() - 1) + viewPort.getY();
+            z1 = SoftwareUtil.clamp((z1 + 1) / 2, 0, 1);
+            // Store 1/w in w to so that the fragment position vector is the same as in OpenGL
+            w1 = wInverse1;
+            // Compute the NDC coordinates of the second point
+            final float wInverse2 = 1 / w2;
+            x2 *= wInverse2;
+            y2 *= -wInverse2;
+            z2 *= wInverse2;
+            // Normalize and convert to window coordinates
+            x2 = (x2 + 1) / 2 * (viewPort.getWidth() - 1) + viewPort.getX();
+            y2 = (y2 + 1) / 2 * (viewPort.getHeight() - 1) + viewPort.getY();
+            z2 = SoftwareUtil.clamp((z2 + 1) / 2, 0, 1);
+            // Store 1/w in w to so that the fragment position vector is the same as in OpenGL
+            w2 = wInverse2;
+            // Compute the NDC coordinates of the third point
+            final float wInverse3 = 1 / w3;
+            x3 *= wInverse3;
+            y3 *= -wInverse3;
+            z3 *= wInverse3;
+            // Normalize and convert to window coordinates
+            x3 = (x3 + 1) / 2 * (viewPort.getWidth() - 1) + viewPort.getX();
+            y3 = (y3 + 1) / 2 * (viewPort.getHeight() - 1) + viewPort.getY();
+            z3 = SoftwareUtil.clamp((z3 + 1) / 2, 0, 1);
+            // Store 1/w in w to so that the fragment position vector is the same as in OpenGL
+            w3 = wInverse3;
+            // TODO: back face culling and clipping
+            drawTriangle(
+                    vertexOut1, x1, y1, z1, w1,
+                    vertexOut2, x2, y2, z2, w2,
+                    vertexOut3, x3, y3, z3, w3,
+                    fragmentShader, fragmentIn, fragmentOut);
+        }
+    }
+
+    // Based on http://devmaster.net/posts/6145/advanced-rasterization
+    private void drawTriangle(ShaderBuffer out1, float x1, float y1, float z1, float w1,
+                              ShaderBuffer out2, float x2, float y2, float z2, float w2,
+                              ShaderBuffer out3, float x3, float y3, float z3, float w3,
+                              ShaderImplementation fragmentShader, ShaderBuffer fragmentIn, ShaderBuffer fragmentOut) {
+        // (28).(4) (in bits) fixed-point coordinates
+        final int fy1 = Math.round(y1 * 16);
+        final int fy2 = Math.round(y2 * 16);
+        final int fy3 = Math.round(y3 * 16);
+        final int fx1 = Math.round(x1 * 16);
+        final int fx2 = Math.round(x2 * 16);
+        final int fx3 = Math.round(x3 * 16);
+        // Deltas
+        final int dx12 = fx1 - fx2;
+        final int dx23 = fx2 - fx3;
+        final int dx31 = fx3 - fx1;
+        final int dy12 = fy1 - fy2;
+        final int dy23 = fy2 - fy3;
+        final int dy31 = fy3 - fy1;
+        // Fixed-point deltas
+        final int fdx12 = dx12 << 4;
+        final int fdx23 = dx23 << 4;
+        final int fdx31 = dx31 << 4;
+        final int fdy12 = dy12 << 4;
+        final int fdy23 = dy23 << 4;
+        final int fdy31 = dy31 << 4;
+        // Block size, standard 8x8 (must be power of two), here 2^3
+        final int block = 1 << 3;
+        // Bounding rectangle, start in the corner of the 8x8 block
+        final int minX = Math.min(fx1, Math.min(fx2, fx3)) + 0xf >> 4 & ~(block - 1);
+        final int maxX = Math.max(fx1, Math.max(fx2, fx3)) + 0xf >> 4;
+        final int minY = Math.min(fy1, Math.min(fy2, fy3)) + 0xf >> 4 & ~(block - 1);
+        final int maxY = Math.max(fy1, Math.max(fy2, fy3)) + 0xf >> 4;
+        // Determinant of deltas to compute the normalized barycentric coordinates for interpolation
+        final float det = dx23 * dy12 - dy23 * dx12;
+        // Barycentric coordinates
+        int c1 = dy12 * fx1 - dx12 * fy1;
+        int c2 = dy23 * fx2 - dx23 * fy2;
+        int c3 = dy31 * fx3 - dx31 * fy3;
+        // Correct for fill convention
+        if (dy12 < 0 || dy12 == 0 && dx12 > 0) {
+            c1++;
+        }
+        if (dy23 < 0 || dy23 == 0 && dx23 > 0) {
+            c2++;
+        }
+        if (dy31 < 0 || dy31 == 0 && dx31 > 0) {
+            c3++;
+        }
+        // Loop through blocks
+        for (int by = minY; by < maxY; by += block) {
+            for (int bx = minX; bx < maxX; bx += block) {
+                // Corners of block
+                final int bx0 = bx << 4;
+                final int bx1 = bx + block - 1 << 4;
+                final int by0 = by << 4;
+                final int by1 = by + block - 1 << 4;
+                // Evaluate half-space functions
+                final boolean a00 = c1 + dx12 * by0 - dy12 * bx0 <= 0;
+                final boolean a10 = c1 + dx12 * by0 - dy12 * bx1 <= 0;
+                final boolean a01 = c1 + dx12 * by1 - dy12 * bx0 <= 0;
+                final boolean a11 = c1 + dx12 * by1 - dy12 * bx1 <= 0;
+                final boolean b00 = c2 + dx23 * by0 - dy23 * bx0 <= 0;
+                final boolean b10 = c2 + dx23 * by0 - dy23 * bx1 <= 0;
+                final boolean b01 = c2 + dx23 * by1 - dy23 * bx0 <= 0;
+                final boolean b11 = c2 + dx23 * by1 - dy23 * bx1 <= 0;
+                final boolean c00 = c3 + dx31 * by0 - dy31 * bx0 <= 0;
+                final boolean c10 = c3 + dx31 * by0 - dy31 * bx1 <= 0;
+                final boolean c01 = c3 + dx31 * by1 - dy31 * bx0 <= 0;
+                final boolean c11 = c3 + dx31 * by1 - dy31 * bx1 <= 0;
+                // Skip the block when outside an edge
+                if (a00 && a10 && a01 && a11 || b00 && b10 && b01 && b11 || c00 && c10 && c01 && c11) {
+                    continue;
+                }
+                // Compute the barycentric coordinates
+                int cy1 = c1 + dx12 * by0 - dy12 * bx0;
+                int cy2 = c2 + dx23 * by0 - dy23 * bx0;
+                int cy3 = c3 + dx31 * by0 - dy31 * bx0;
+                // Iterate the block
+                for (int y = by; y < by + block; y++) {
+                    int cx1 = cy1;
+                    int cx2 = cy2;
+                    int cx3 = cy3;
+                    for (int x = bx; x < bx + block; x++) {
+                        // Only draw pixels inside the triangle
+                        if (cx1 > 0 && cx2 > 0 && cx3 > 0) {
+                            // Compute the normalized barycentric coordinates
+                            final float t = cx1 / det;
+                            final float r = cx2 / det;
+                            final float s = 1 - t - r;
+                            // Lerp the rest of the data using the barycentric coordinates
+                            final float z = SoftwareUtil.baryLerp(z1, z2, z3, r, s, t);
+                            final float w = SoftwareUtil.baryLerp(w1, w2, w3, r, s, t);
+                            fragmentIn.clear();
+                            fragmentIn.writeRaw(Float.floatToIntBits(x));
+                            fragmentIn.writeRaw(Float.floatToIntBits(y));
+                            fragmentIn.writeRaw(Float.floatToIntBits(z));
+                            fragmentIn.writeRaw(Float.floatToIntBits(w));
+                            out1.position(4);
+                            out2.position(4);
+                            out3.position(4);
+                            SoftwareUtil.baryLerp(out1, out2, out3, r, s, t, 1, fragmentIn);
+                            fragmentIn.flip();
+                            // Shade and write the fragment
+                            writeFragment(fragmentShader, fragmentIn, fragmentOut, x, y, z);
+                        }
+                        cx1 -= fdy12;
+                        cx2 -= fdy23;
+                        cx3 -= fdy31;
+                    }
+                    cy1 += fdx12;
+                    cy2 += fdx23;
+                    cy3 += fdx31;
+                }
+            }
+        }
+    }
+
     private boolean isInside(float x, float y, float z, float w, boolean clampDepth) {
         return w != 0 && x >= -w && x <= w && y >= -w && y <= w && (clampDepth || z >= -w && z <= w);
     }
@@ -523,7 +726,7 @@ public class SoftwareVertexArray extends VertexArray {
             final DataType type = format.getType();
             final int size = format.getCount();
             for (int ii = 0; ii < size; ii++) {
-                // Here conversion from byte and short to int is implicit
+                // Here conversion from byte or short to int is implicit
                 final int x = readComponent(buffer, type, size, index, ii);
                 in.writeRaw(x);
             }
@@ -547,6 +750,7 @@ public class SoftwareVertexArray extends VertexArray {
         final float a = Float.intBitsToFloat(out.readRaw());
         // Write at the fragment coordinates and depth (converted from [0, 1] to the full short range)
         // the output color packed into an int
+        // TODO: do depth test before shading
         renderer.writePixel(x, y, SoftwareUtil.denormalizeToShort(z), SoftwareUtil.pack(r, g, b, a));
     }
 
