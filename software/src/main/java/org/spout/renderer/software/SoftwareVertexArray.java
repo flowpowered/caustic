@@ -531,6 +531,10 @@ public class SoftwareVertexArray extends VertexArray {
         final ShaderImplementation fragmentShader = program.getShader(ShaderType.FRAGMENT).getImplementation();
         final ShaderBuffer fragmentIn = new ShaderBuffer(vertexOutputFormat);
         final ShaderBuffer fragmentOut = new ShaderBuffer(FRAGMENT_OUTPUT);
+        // Arrays for storing the vertices for clipping
+        final float[] inVertices = new float[6 * 4];
+        final float[] outVertices = new float[6 * 4];
+        final float[] tempVertex = new float[4];
         // For all indices that need to be drawn
         for (int i = 0; i < count; i += 3) {
             // Compute the first point
@@ -554,60 +558,176 @@ public class SoftwareVertexArray extends VertexArray {
             float y3 = Float.intBitsToFloat(vertexOut3.readRaw());
             float z3 = Float.intBitsToFloat(vertexOut3.readRaw());
             float w3 = Float.intBitsToFloat(vertexOut3.readRaw());
-            // Compute the NDC coordinates of the first point
-            final float wInverse1 = 1 / w1;
-            x1 *= wInverse1;
-            y1 *= -wInverse1;
-            z1 *= wInverse1;
-            // Normalize and convert to window coordinates
-            x1 = (x1 + 1) / 2 * (viewPort.getWidth() - 1) + viewPort.getX();
-            y1 = (y1 + 1) / 2 * (viewPort.getHeight() - 1) + viewPort.getY();
-            z1 = SoftwareUtil.clamp((z1 + 1) / 2, 0, 1);
-            // Store 1/w in w to so that the fragment position vector is the same as in OpenGL
-            w1 = wInverse1;
-            // Compute the NDC coordinates of the second point
-            final float wInverse2 = 1 / w2;
-            x2 *= wInverse2;
-            y2 *= -wInverse2;
-            z2 *= wInverse2;
-            // Normalize and convert to window coordinates
-            x2 = (x2 + 1) / 2 * (viewPort.getWidth() - 1) + viewPort.getX();
-            y2 = (y2 + 1) / 2 * (viewPort.getHeight() - 1) + viewPort.getY();
-            z2 = SoftwareUtil.clamp((z2 + 1) / 2, 0, 1);
-            // Store 1/w in w to so that the fragment position vector is the same as in OpenGL
-            w2 = wInverse2;
-            // Compute the NDC coordinates of the third point
-            final float wInverse3 = 1 / w3;
-            x3 *= wInverse3;
-            y3 *= -wInverse3;
-            z3 *= wInverse3;
-            // Normalize and convert to window coordinates
-            x3 = (x3 + 1) / 2 * (viewPort.getWidth() - 1) + viewPort.getX();
-            y3 = (y3 + 1) / 2 * (viewPort.getHeight() - 1) + viewPort.getY();
-            z3 = SoftwareUtil.clamp((z3 + 1) / 2, 0, 1);
-            // Store 1/w in w to so that the fragment position vector is the same as in OpenGL
-            w3 = wInverse3;
             // Cull back facing triangles if needed
             if (cullFace) {
                 // Get the edge vectors
-                final float dx31 = x3 - x1;
-                final float dy31 = y3 - y1;
-                final float dx21 = x2 - x1;
-                final float dy21 = y2 - y1;
+                final float dx31 = x3 / w3 - x1 / w1;
+                final float dy31 = y3 / w3 - y1 / w1;
+                final float dx21 = x2 / w2 - x1 / w1;
+                final float dy21 = y2 / w2 - y1 / w1;
                 // Compute the z component of the cross product
-                if (dx31 * dy21 - dy31 * dx21 < 0) {
-                    // A negative value is back facing
+                if (dy31 * dx21 - dx31 * dy21 <= GenericMath.FLT_EPSILON) {
+                    // A zero or negative value is back facing
                     continue;
                 }
             }
-            // TODO: clipping
-            // Draw the triangle
-            drawTriangle(
-                    vertexOut1, x1, y1, z1, w1,
-                    vertexOut2, x2, y2, z2, w2,
-                    vertexOut3, x3, y3, z3, w3,
-                    fragmentShader, fragmentIn, fragmentOut);
+            // Copy the vertices to the list
+            outVertices[0] = x1;
+            outVertices[1] = y1;
+            outVertices[2] = z1;
+            outVertices[3] = w1;
+            outVertices[4] = x2;
+            outVertices[5] = y2;
+            outVertices[6] = z2;
+            outVertices[7] = w2;
+            outVertices[8] = x3;
+            outVertices[9] = y3;
+            outVertices[10] = z3;
+            outVertices[11] = w3;
+            int outSize = 3;
+            // Perform clipping using the Sutherland–Hodgman algorithm
+            for (int p = 0; p < 6; p++) {
+                System.arraycopy(outVertices, 0, inVertices, 0, outSize * 4);
+                final int inSize = outSize;
+                outSize = 0;
+                if (inSize == 0) {
+                    break;
+                }
+                final int lastInIndex = (inSize - 1) * 4;
+                float sx = inVertices[lastInIndex];
+                float sy = inVertices[lastInIndex + 1];
+                float sz = inVertices[lastInIndex + 2];
+                float sw = inVertices[lastInIndex + 3];
+                for (int e = 0; e < inSize; e++) {
+                    final int ei = e * 4;
+                    final float ex = inVertices[ei];
+                    final float ey = inVertices[ei + 1];
+                    final float ez = inVertices[ei + 2];
+                    final float ew = inVertices[ei + 3];
+                    if (isInside(ex, ey, ez, ew, p)) {
+                        if (!isInside(sx, sy, sz, sw, p)) {
+                            computeIntersection(sx, sy, sz, sw, ex, ey, ez, ew, p, tempVertex);
+                            System.arraycopy(tempVertex, 0, outVertices, outSize * 4, 4);
+                            outSize++;
+                        }
+                        final int nextOutIndex = outSize * 4;
+                        outVertices[nextOutIndex] = ex;
+                        outVertices[nextOutIndex + 1] = ey;
+                        outVertices[nextOutIndex + 2] = ez;
+                        outVertices[nextOutIndex + 3] = ew;
+                        outSize++;
+                    } else if (isInside(sx, sy, sz, sw, p)) {
+                        computeIntersection(sx, sy, sz, sw, ex, ey, ez, ew, p, tempVertex);
+                        System.arraycopy(tempVertex, 0, outVertices, outSize * 4, 4);
+                        outSize++;
+                    }
+                    sx = ex;
+                    sy = ey;
+                    sz = ez;
+                    sw = ew;
+                }
+            }
+            // If the out list is empty the triangle is completely clipped
+            if (outSize < 3) {
+                continue;
+            }
+            // Convert all the vertices to NDC and then window coordinates
+            for (int v = 0; v < outSize; v++) {
+                // Get the vertex components
+                final int vi = v * 4;
+                float x = outVertices[vi];
+                float y = outVertices[vi + 1];
+                float z = outVertices[vi + 2];
+                float w = outVertices[vi + 3];
+                // Compute the NDC coordinates of the point
+                final float wInverse = 1 / w;
+                x *= wInverse;
+                y *= -wInverse;
+                z *= wInverse;
+                // Normalize and convert to window coordinates
+                outVertices[vi] = (x + 1) / 2 * (viewPort.getWidth() - 1) + viewPort.getX();
+                outVertices[vi + 1] = (y + 1) / 2 * (viewPort.getHeight() - 1) + viewPort.getY();
+                outVertices[vi + 2] = SoftwareUtil.clamp((z + 1) / 2, 0, 1);
+                // Store 1/w in w to so that the fragment position vector is the same as in OpenGL
+                outVertices[vi + 3] = wInverse;
+            }
+            // Draw the triangles
+            final int triangleCount = outSize - 2;
+            for (int n = 0; n < triangleCount; n++) {
+                // Grab the vertices, having a new triangle every two vertices
+                int vi = n * 8;
+                x1 = outVertices[vi];
+                y1 = outVertices[vi + 1];
+                z1 = outVertices[vi + 2];
+                w1 = outVertices[vi + 3];
+                vi += 4;
+                x2 = outVertices[vi];
+                y2 = outVertices[vi + 1];
+                z2 = outVertices[vi + 2];
+                w2 = outVertices[vi + 3];
+                vi = (vi + 4) % (outSize * 4);
+                x3 = outVertices[vi];
+                y3 = outVertices[vi + 1];
+                z3 = outVertices[vi + 2];
+                w3 = outVertices[vi + 3];
+                // Draw the triangle
+                drawTriangle(
+                        vertexOut1, x1, y1, z1, w1,
+                        vertexOut2, x2, y2, z2, w2,
+                        vertexOut3, x3, y3, z3, w3,
+                        fragmentShader, fragmentIn, fragmentOut);
+            }
         }
+    }
+
+    private boolean isInside(float x, float y, float z, float w, int plane) {
+        switch (plane) {
+            case 0:
+                return x >= -w;
+            case 1:
+                return x <= w;
+            case 2:
+                return y >= -w;
+            case 3:
+                return y <= w;
+            case 4:
+                return z >= -w;
+            case 5:
+                return z <= w;
+            default:
+                throw new IllegalArgumentException("Unknown plane: " + plane);
+        }
+    }
+
+    private void computeIntersection(float sx, float sy, float sz, float sw, float ex, float ey, float ez, float ew, int plane, float[] intersection) {
+        final float dx = ex - sx, dy = ey - sy, dz = ez - sz, dw = ew - sw;
+        final float t;
+        switch (plane) {
+            case 0:
+                t = (-sw - sx) / (dx + dw);
+                break;
+            case 1:
+                t = (sw - sx) / (dx - dw);
+                break;
+            case 2:
+                t = (-sw - sy) / (dy + dw);
+                break;
+            case 3:
+                t = (sw - sy) / (dy - dw);
+                break;
+            case 4:
+                t = (-sw - sz) / (dz + dw);
+                break;
+            case 5:
+                t = (sw - sz) / (dz - dw);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown plane: " + plane);
+        }
+        intersection[0] = t * dx + sx;
+        intersection[1] = t * dy + sy;
+        intersection[2] = t * dz + sz;
+        intersection[3] = t * dw + sw;
     }
 
     // Based on http://devmaster.net/posts/6145/advanced-rasterization
