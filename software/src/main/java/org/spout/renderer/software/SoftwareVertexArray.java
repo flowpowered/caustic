@@ -534,7 +534,16 @@ public class SoftwareVertexArray extends VertexArray {
         // Arrays for storing the vertices for clipping
         final float[] inVertices = new float[6 * 4];
         final float[] outVertices = new float[6 * 4];
+        final ShaderBuffer[] inBuffers = new ShaderBuffer[6];
+        final ShaderBuffer[] outBuffers = new ShaderBuffer[6];
+        // Temporary vertex storage and buffers for new vertices
         final float[] tempVertex = new float[4];
+        final ShaderBuffer[] extraBuffers = {
+                new ShaderBuffer(vertexOutputFormat), new ShaderBuffer(vertexOutputFormat),
+                new ShaderBuffer(vertexOutputFormat), new ShaderBuffer(vertexOutputFormat),
+                new ShaderBuffer(vertexOutputFormat), new ShaderBuffer(vertexOutputFormat),
+                new ShaderBuffer(vertexOutputFormat), new ShaderBuffer(vertexOutputFormat)
+        };
         // For all indices that need to be drawn
         for (int i = 0; i < count; i += 3) {
             // Compute the first point
@@ -576,18 +585,23 @@ public class SoftwareVertexArray extends VertexArray {
             outVertices[1] = y1;
             outVertices[2] = z1;
             outVertices[3] = w1;
+            outBuffers[0] = vertexOut1;
             outVertices[4] = x2;
             outVertices[5] = y2;
             outVertices[6] = z2;
             outVertices[7] = w2;
+            outBuffers[1] = vertexOut2;
             outVertices[8] = x3;
             outVertices[9] = y3;
             outVertices[10] = z3;
             outVertices[11] = w3;
+            outBuffers[2] = vertexOut3;
             int outSize = 3;
             // Perform clipping using the Sutherland–Hodgman algorithm
+            int remainingBuffers = extraBuffers.length;
             for (int p = 0; p < 6; p++) {
                 System.arraycopy(outVertices, 0, inVertices, 0, outSize * 4);
+                System.arraycopy(outBuffers, 0, inBuffers, 0, outSize);
                 final int inSize = outSize;
                 outSize = 0;
                 if (inSize == 0) {
@@ -598,16 +612,23 @@ public class SoftwareVertexArray extends VertexArray {
                 float sy = inVertices[lastInIndex + 1];
                 float sz = inVertices[lastInIndex + 2];
                 float sw = inVertices[lastInIndex + 3];
+                ShaderBuffer sb = inBuffers[inSize - 1];
                 for (int e = 0; e < inSize; e++) {
                     final int ei = e * 4;
                     final float ex = inVertices[ei];
                     final float ey = inVertices[ei + 1];
                     final float ez = inVertices[ei + 2];
                     final float ew = inVertices[ei + 3];
+                    final ShaderBuffer eb = inBuffers[e];
                     if (isInside(ex, ey, ez, ew, p)) {
                         if (!isInside(sx, sy, sz, sw, p)) {
-                            computeIntersection(sx, sy, sz, sw, ex, ey, ez, ew, p, tempVertex);
+                            final ShaderBuffer newBuffer = extraBuffers[--remainingBuffers];
+                            computeIntersection(
+                                    sx, sy, sz, sw, sb,
+                                    ex, ey, ez, ew, eb,
+                                    p, tempVertex, newBuffer);
                             System.arraycopy(tempVertex, 0, outVertices, outSize * 4, 4);
+                            outBuffers[outSize] = newBuffer;
                             outSize++;
                         }
                         final int nextOutIndex = outSize * 4;
@@ -615,16 +636,23 @@ public class SoftwareVertexArray extends VertexArray {
                         outVertices[nextOutIndex + 1] = ey;
                         outVertices[nextOutIndex + 2] = ez;
                         outVertices[nextOutIndex + 3] = ew;
+                        outBuffers[outSize] = eb;
                         outSize++;
                     } else if (isInside(sx, sy, sz, sw, p)) {
-                        computeIntersection(sx, sy, sz, sw, ex, ey, ez, ew, p, tempVertex);
+                        final ShaderBuffer newBuffer = extraBuffers[--remainingBuffers];
+                        computeIntersection(
+                                sx, sy, sz, sw, sb,
+                                ex, ey, ez, ew, eb,
+                                p, tempVertex, newBuffer);
                         System.arraycopy(tempVertex, 0, outVertices, outSize * 4, 4);
+                        outBuffers[outSize] = newBuffer;
                         outSize++;
                     }
                     sx = ex;
                     sy = ey;
                     sz = ez;
                     sw = ew;
+                    sb = eb;
                 }
             }
             // If the out list is empty the triangle is completely clipped
@@ -651,30 +679,32 @@ public class SoftwareVertexArray extends VertexArray {
                 // Store 1/w in w to so that the fragment position vector is the same as in OpenGL
                 outVertices[vi + 3] = wInverse;
             }
+            // Get the first common vertex
+            x1 = outVertices[0];
+            y1 = outVertices[1];
+            z1 = outVertices[2];
+            w1 = outVertices[3];
+            final ShaderBuffer out1 = outBuffers[0];
             // Draw the triangles
             final int triangleCount = outSize - 2;
             for (int n = 0; n < triangleCount; n++) {
-                // Grab the vertices, having a new triangle every two vertices
-                int vi = n * 8;
-                x1 = outVertices[vi];
-                y1 = outVertices[vi + 1];
-                z1 = outVertices[vi + 2];
-                w1 = outVertices[vi + 3];
-                vi += 4;
+                // Grab the other two vertices in a fan configuration
+                final int vi = (n + 1) * 4;
                 x2 = outVertices[vi];
                 y2 = outVertices[vi + 1];
                 z2 = outVertices[vi + 2];
                 w2 = outVertices[vi + 3];
-                vi = (vi + 4) % (outSize * 4);
-                x3 = outVertices[vi];
-                y3 = outVertices[vi + 1];
-                z3 = outVertices[vi + 2];
-                w3 = outVertices[vi + 3];
+                final ShaderBuffer out2 = outBuffers[n + 1];
+                x3 = outVertices[vi + 4];
+                y3 = outVertices[vi + 5];
+                z3 = outVertices[vi + 6];
+                w3 = outVertices[vi + 7];
+                final ShaderBuffer out3 = outBuffers[n + 2];
                 // Draw the triangle
                 drawTriangle(
-                        vertexOut1, x1, y1, z1, w1,
-                        vertexOut2, x2, y2, z2, w2,
-                        vertexOut3, x3, y3, z3, w3,
+                        out1, x1, y1, z1, w1,
+                        out2, x2, y2, z2, w2,
+                        out3, x3, y3, z3, w3,
                         fragmentShader, fragmentIn, fragmentOut);
             }
         }
@@ -699,8 +729,12 @@ public class SoftwareVertexArray extends VertexArray {
         }
     }
 
-    private void computeIntersection(float sx, float sy, float sz, float sw, float ex, float ey, float ez, float ew, int plane, float[] intersection) {
+    private void computeIntersection(float sx, float sy, float sz, float sw, ShaderBuffer sb,
+                                     float ex, float ey, float ez, float ew, ShaderBuffer eb,
+                                     int plane, float[] intersection, ShaderBuffer vertexOut) {
+        // Compute the deltas
         final float dx = ex - sx, dy = ey - sy, dz = ez - sz, dw = ew - sw;
+        // Compute the coefficient of intersection t for the proper plane
         final float t;
         switch (plane) {
             case 0:
@@ -724,10 +758,17 @@ public class SoftwareVertexArray extends VertexArray {
             default:
                 throw new IllegalArgumentException("Unknown plane: " + plane);
         }
+        // Compute the coordinates of intersection
         intersection[0] = t * dx + sx;
         intersection[1] = t * dy + sy;
         intersection[2] = t * dz + sz;
         intersection[3] = t * dw + sw;
+        // Lerp the other attributes
+        vertexOut.position(4);
+        sb.position(4);
+        eb.position(4);
+        SoftwareUtil.lerp(sb, eb, t, 1, vertexOut);
+        vertexOut.flip();
     }
 
     // Based on http://devmaster.net/posts/6145/advanced-rasterization
