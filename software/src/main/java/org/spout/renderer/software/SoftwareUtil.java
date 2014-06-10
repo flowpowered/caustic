@@ -184,7 +184,10 @@ public final class SoftwareUtil {
     }
 
     static int pack(float r, float g, float b, float a) {
-        return ((int) (a * 255) & 0xFF) << 24 | ((int) (r * 255) & 0xFF) << 16 | ((int) (g * 255) & 0xFF) << 8 | (int) (b * 255) & 0xFF;
+        return ((int) (clamp(a, 0, 1) * BYTE_RANGE) & 0xFF) << 24
+                | ((int) (clamp(r, 0, 1) * BYTE_RANGE) & 0xFF) << 16
+                | ((int) (clamp(g, 0, 1) * BYTE_RANGE) & 0xFF) << 8
+                | (int) (clamp(b, 0, 1) * BYTE_RANGE) & 0xFF;
     }
 
     static float clamp(float f, float low, float high) {
@@ -198,7 +201,7 @@ public final class SoftwareUtil {
     }
 
     static short denormalizeToShort(float f) {
-        return (short) (f * SHORT_RANGE + Short.MIN_VALUE);
+        return (short) (clamp(f, 0, 1) * SHORT_RANGE + Short.MIN_VALUE);
     }
 
     static void lerp(ShaderBuffer inA, ShaderBuffer inB, float percent, int start, ShaderBuffer out) {
