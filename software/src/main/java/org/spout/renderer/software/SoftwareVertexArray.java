@@ -517,6 +517,7 @@ public class SoftwareVertexArray extends VertexArray {
         // Get some renderer properties
         final Rectangle viewPort = renderer.getViewPort();
         final boolean clampDepth = renderer.isEnabled(Capability.DEPTH_CLAMP);
+        final boolean cullFace = renderer.isEnabled(Capability.CULL_FACE);
         // Get the shader program
         final SoftwareProgram program = renderer.getProgram();
         // Get the vertex shader implementation, and create appropriate in and out buffers
@@ -586,7 +587,21 @@ public class SoftwareVertexArray extends VertexArray {
             z3 = SoftwareUtil.clamp((z3 + 1) / 2, 0, 1);
             // Store 1/w in w to so that the fragment position vector is the same as in OpenGL
             w3 = wInverse3;
-            // TODO: back face culling and clipping
+            // Cull back facing triangles if needed
+            if (cullFace) {
+                // Get the edge vectors
+                final float dx31 = x3 - x1;
+                final float dy31 = y3 - y1;
+                final float dx21 = x2 - x1;
+                final float dy21 = y2 - y1;
+                // Compute the z component of the cross product
+                if (dx31 * dy21 - dy31 * dx21 < 0) {
+                    // A negative value is back facing
+                    continue;
+                }
+            }
+            // TODO: clipping
+            // Draw the triangle
             drawTriangle(
                     vertexOut1, x1, y1, z1, w1,
                     vertexOut2, x2, y2, z2, w2,
