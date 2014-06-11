@@ -599,7 +599,9 @@ public class SoftwareVertexArray extends VertexArray {
             int outSize = 3;
             // Perform clipping using the Sutherland–Hodgman algorithm
             int remainingBuffers = extraBuffers.length;
-            for (int p = 0; p < 6; p++) {
+            // Skip the z and -z planes if we are clamping depth
+            final int planes = clampDepth ? 4 : 6;
+            for (int p = 0; p < planes; p++) {
                 System.arraycopy(outVertices, 0, inVertices, 0, outSize * 4);
                 System.arraycopy(outBuffers, 0, inBuffers, 0, outSize);
                 final int inSize = outSize;
