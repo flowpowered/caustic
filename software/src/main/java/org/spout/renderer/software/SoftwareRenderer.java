@@ -41,6 +41,7 @@ import java.awt.image.DataBufferInt;
 import java.util.Arrays;
 
 import org.spout.renderer.api.gl.Context.Capability;
+import org.spout.renderer.api.util.CausticUtil;
 import org.spout.renderer.api.util.Rectangle;
 
 /**
@@ -207,7 +208,7 @@ class SoftwareRenderer extends Canvas {
     }
 
     private void checkBounds(int x, int y) {
-        if (x < 0 || x >= width || y < 0 || y >= width) {
+        if (CausticUtil.isDebugEnabled() && (x < 0 || x >= width || y < 0 || y >= width)) {
             throw new IllegalArgumentException("(" + x + ", " + y + ") not within (0, 0) to (" + (width - 1) + ", " + (height - 1) + ")");
         }
     }
