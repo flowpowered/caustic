@@ -192,18 +192,17 @@ class SoftwareRenderer extends Canvas {
         return depths[x + y * width];
     }
 
+    boolean testDepth(int x, int y, short z) {
+        final int i = x + y * width;
+        return !isEnabled(Capability.DEPTH_TEST) || z < depths[i];
+    }
+
     void writePixel(int x, int y, short z, int color) {
         checkBounds(x, y);
         final int i = x + y * width;
-        if (isEnabled(Capability.DEPTH_TEST)) {
-            if (z < depths[i]) {
-                pixels[i] = color;
-                if (depthWriting) {
-                    depths[i] = z;
-                }
-            }
-        } else {
-            pixels[i] = color;
+        pixels[i] = color;
+        if (isEnabled(Capability.DEPTH_TEST) && depthWriting) {
+            depths[i] = z;
         }
     }
 

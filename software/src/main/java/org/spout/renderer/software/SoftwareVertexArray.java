@@ -915,6 +915,10 @@ public class SoftwareVertexArray extends VertexArray {
     }
 
     private void writeFragment(ShaderImplementation shader, ShaderBuffer in, ShaderBuffer out, int x, int y, float z) {
+        final short dnZ = SoftwareUtil.denormalizeToShort(z);
+        if (!renderer.testDepth(x, y, dnZ)) {
+            return;
+        }
         // Clear the out buffer, run the fragment shader, and flip the out
         out.clear();
         shader.main(in, out);
@@ -926,8 +930,7 @@ public class SoftwareVertexArray extends VertexArray {
         final float a = Float.intBitsToFloat(out.readRaw());
         // Write at the fragment coordinates and depth (converted from [0, 1] to the full short range)
         // the output color packed into an int
-        // TODO: do depth test before shading
-        renderer.writePixel(x, y, SoftwareUtil.denormalizeToShort(z), SoftwareUtil.pack(r, g, b, a));
+        renderer.writePixel(x, y, dnZ, SoftwareUtil.pack(r, g, b, a));
     }
 
     private int readComponent(ByteBuffer buffer, DataType type, int attributeSize, int index, int offset) {
