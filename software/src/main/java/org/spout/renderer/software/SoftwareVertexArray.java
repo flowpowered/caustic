@@ -532,10 +532,10 @@ public class SoftwareVertexArray extends VertexArray {
         final ShaderBuffer fragmentIn = new ShaderBuffer(vertexOutputFormat);
         final ShaderBuffer fragmentOut = new ShaderBuffer(FRAGMENT_OUTPUT);
         // Arrays for storing the vertices for clipping
-        final float[] inVertices = new float[6 * 4];
-        final float[] outVertices = new float[6 * 4];
-        final ShaderBuffer[] inBuffers = new ShaderBuffer[6];
-        final ShaderBuffer[] outBuffers = new ShaderBuffer[6];
+        final float[] inVertices = new float[7 * 4];
+        final float[] outVertices = new float[7 * 4];
+        final ShaderBuffer[] inBuffers = new ShaderBuffer[7];
+        final ShaderBuffer[] outBuffers = new ShaderBuffer[7];
         // Temporary vertex storage and buffers for new vertices
         final float[] tempVertex = new float[4];
         final ShaderBuffer[] extraBuffers = {
@@ -681,6 +681,7 @@ public class SoftwareVertexArray extends VertexArray {
                 // Store 1/w in w to so that the fragment position vector is the same as in OpenGL
                 outVertices[vi + 3] = wInverse;
             }
+            // TODO: this is wrong when clipping with the z planes
             // Get the first common vertex
             x1 = outVertices[0];
             y1 = outVertices[1];
