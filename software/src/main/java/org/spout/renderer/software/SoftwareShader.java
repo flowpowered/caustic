@@ -58,6 +58,7 @@ public class SoftwareShader extends Shader {
         } catch (InstantiationException | IllegalAccessException ex) {
             throw new IllegalArgumentException("Cannot instantiate new shader from shader class " + shaderClass.getCanonicalName(), ex);
         }
+        shader.doReflection();
     }
 
     protected ShaderImplementation getImplementation() {

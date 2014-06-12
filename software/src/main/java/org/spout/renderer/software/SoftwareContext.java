@@ -81,7 +81,7 @@ public class SoftwareContext extends Context {
 
     @Override
     public Texture newTexture() {
-        return new SoftwareTexture();
+        return new SoftwareTexture(renderer);
     }
 
     @Override

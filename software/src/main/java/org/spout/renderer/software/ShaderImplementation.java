@@ -31,6 +31,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import gnu.trove.map.TIntObjectMap;
+import gnu.trove.map.hash.TIntObjectHashMap;
+
 import org.spout.renderer.api.data.VertexAttribute.DataType;
 import org.spout.renderer.api.gl.Shader.ShaderType;
 
@@ -40,6 +43,7 @@ import org.spout.renderer.api.gl.Shader.ShaderType;
 public abstract class ShaderImplementation {
     private final DataFormat[] outputFormat;
     private final Map<String, Field> uniforms = new HashMap<>();
+    private final TIntObjectMap<Sampler> samplers = new TIntObjectHashMap<>();
 
     protected ShaderImplementation() {
         this(null);
@@ -52,7 +56,15 @@ public abstract class ShaderImplementation {
             }
         }
         this.outputFormat = outputFormat;
+    }
+
+    public abstract void main(InBuffer in, OutBuffer out);
+
+    public abstract ShaderType getType();
+
+    void doReflection() {
         findUniforms();
+        findSamplers();
     }
 
     private void findUniforms() {
@@ -64,9 +76,30 @@ public abstract class ShaderImplementation {
         }
     }
 
-    public abstract void main(InBuffer in, OutBuffer out);
-
-    public abstract ShaderType getType();
+    private void findSamplers() {
+        for (Field field : getClass().getDeclaredFields()) {
+            if (Sampler.class.isAssignableFrom(field.getType())) {
+                field.setAccessible(true);
+                final Sampler sampler;
+                try {
+                    sampler = (Sampler) field.get(this);
+                } catch (IllegalAccessException ex) {
+                    throw new IllegalStateException("Can't access sampler \"" + field.getName() + "\" in shader implementation", ex);
+                }
+                if (sampler == null) {
+                    throw new IllegalArgumentException("Sampler \"" + field.getName() + "\" hasn't been initialized");
+                }
+                final TextureLayout layoutAnnotation = field.getAnnotation(TextureLayout.class);
+                final int layout;
+                if (layoutAnnotation != null) {
+                    layout = layoutAnnotation.value();
+                } else {
+                    layout = samplers.size();
+                }
+                samplers.put(layout, sampler);
+            }
+        }
+    }
 
     DataFormat[] getOutputFormat() {
         return outputFormat;
@@ -82,6 +115,13 @@ public abstract class ShaderImplementation {
             } catch (IllegalArgumentException ex) {
                 throw new IllegalStateException("Uniform \"" + name + "\" is not of type \"" + o.getClass().getCanonicalName() + "\"", ex);
             }
+        }
+    }
+
+    void bindTexture(int unit, SoftwareTexture texture) {
+        final Sampler sampler = samplers.get(unit);
+        if (sampler != null) {
+            sampler.setTexture(texture);
         }
     }
 

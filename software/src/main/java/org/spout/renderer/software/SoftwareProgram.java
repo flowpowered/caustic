@@ -52,7 +52,7 @@ public class SoftwareProgram extends Program {
     private final SoftwareRenderer renderer;
     private final Map<ShaderType, SoftwareShader> shaders = new EnumMap<>(ShaderType.class);
 
-    public SoftwareProgram(SoftwareRenderer renderer) {
+    SoftwareProgram(SoftwareRenderer renderer) {
         this.renderer = renderer;
     }
 
@@ -86,7 +86,13 @@ public class SoftwareProgram extends Program {
 
     @Override
     public void bindSampler(int unit) {
-
+        final SoftwareTexture texture = renderer.getTexture(unit);
+        if (texture == null) {
+            throw new IllegalArgumentException("No texture bound at unit " + unit);
+        }
+        for (SoftwareShader shader : shaders.values()) {
+            shader.getImplementation().bindTexture(unit, texture);
+        }
     }
 
     @Override

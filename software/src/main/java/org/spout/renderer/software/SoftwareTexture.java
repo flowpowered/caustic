@@ -38,18 +38,28 @@ import org.spout.renderer.api.util.CausticUtil;
  *
  */
 public class SoftwareTexture extends Texture {
+    private final SoftwareRenderer renderer;
+    private int unit = -1;
     private ByteBuffer data;
     private int width, height;
     private InternalFormat format;
 
+    SoftwareTexture(SoftwareRenderer renderer) {
+        this.renderer = renderer;
+    }
+
     @Override
     public void bind(int unit) {
-
+        renderer.bindTexture(unit, this);
+        this.unit = unit;
     }
 
     @Override
     public void unbind() {
-
+        if (unit >= 0) {
+            renderer.unbindTexture(unit);
+            unit = -1;
+        }
     }
 
     @Override
@@ -190,6 +200,35 @@ public class SoftwareTexture extends Texture {
     @Override
     public int getHeight() {
         return height;
+    }
+
+    Vector4f sample(float x, float y) {
+        x *= width - 1;
+        y *= height - 1;
+        final DataType type = format.getComponentType();
+        final int i = ((int) x + (int) y * width) * format.getComponentCount();
+        final float r, g, b, a;
+        if (format.hasRed()) {
+            r = SoftwareUtil.readAsFloat(data, type, i);
+        } else {
+            r = 0;
+        }
+        if (format.hasGreen()) {
+            g = SoftwareUtil.readAsFloat(data, type, i + 1);
+        } else {
+            g = 0;
+        }
+        if (format.hasBlue()) {
+            b = SoftwareUtil.readAsFloat(data, type, i + 2);
+        } else {
+            b = 0;
+        }
+        if (format.hasAlpha()) {
+            a = SoftwareUtil.readAsFloat(data, type, i + 3);
+        } else {
+            a = 1;
+        }
+        return new Vector4f(r, g, b, a);
     }
 
     @Override

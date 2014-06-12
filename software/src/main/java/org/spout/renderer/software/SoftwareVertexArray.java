@@ -53,7 +53,7 @@ public class SoftwareVertexArray extends VertexArray {
     private PolygonMode polygonMode = PolygonMode.FILL;
     private int offset = 0, count = -1, totalCount = 0;
 
-    public SoftwareVertexArray(SoftwareRenderer renderer) {
+    SoftwareVertexArray(SoftwareRenderer renderer) {
         this.renderer = renderer;
     }
 

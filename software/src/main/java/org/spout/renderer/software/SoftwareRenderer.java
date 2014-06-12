@@ -40,6 +40,9 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.util.Arrays;
 
+import gnu.trove.map.TIntObjectMap;
+import gnu.trove.map.hash.TIntObjectHashMap;
+
 import org.spout.renderer.api.gl.Context.Capability;
 import org.spout.renderer.api.util.CausticUtil;
 import org.spout.renderer.api.util.Rectangle;
@@ -61,6 +64,7 @@ class SoftwareRenderer extends Canvas {
     private short[] depths;
     private boolean depthWriting = true;
     private SoftwareProgram program;
+    private final TIntObjectMap<SoftwareTexture> textures = new TIntObjectHashMap<>();
 
     SoftwareRenderer() {
         frame = new JFrame("Caustic");
@@ -138,6 +142,18 @@ class SoftwareRenderer extends Canvas {
 
     void setProgram(SoftwareProgram program) {
         this.program = program;
+    }
+
+    void bindTexture(int unit, SoftwareTexture texture) {
+        textures.put(unit, texture);
+    }
+
+    void unbindTexture(int unit) {
+        textures.remove(unit);
+    }
+
+    SoftwareTexture getTexture(int unit) {
+        return textures.get(unit);
     }
 
     void init() {

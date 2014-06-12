@@ -45,6 +45,7 @@ public final class SoftwareUtil {
     private static final float INT_RANGE = (float) Integer.MAX_VALUE - Integer.MIN_VALUE;
     private static final int BYTE_MASK = 0xFF;
     private static final int SHORT_MASK = 0xFFFF;
+    private static final long INT_MASK = 0xFFFFFFFFl;
     public static final GLImplementation SOFT_IMPL = new GLImplementation(GLVersion.SOFTWARE, SoftwareContext.class.getName());
 
     private SoftwareUtil() {
@@ -82,10 +83,13 @@ public final class SoftwareUtil {
     static int read(ByteBuffer data, DataType type) {
         switch (type) {
             case BYTE:
+            case UNSIGNED_BYTE:
                 return data.get();
             case SHORT:
+            case UNSIGNED_SHORT:
                 return data.getShort();
             case INT:
+            case UNSIGNED_INT:
             case FLOAT:
                 return data.getInt();
             default:
@@ -97,10 +101,13 @@ public final class SoftwareUtil {
         i <<= type.getMultiplyShift();
         switch (type) {
             case BYTE:
+            case UNSIGNED_BYTE:
                 return data.get(i);
             case SHORT:
+            case UNSIGNED_SHORT:
                 return data.getShort(i);
             case INT:
+            case UNSIGNED_INT:
             case FLOAT:
                 return data.getInt(i);
             default:
@@ -111,12 +118,15 @@ public final class SoftwareUtil {
     static void write(ByteBuffer data, DataType type, int value) {
         switch (type) {
             case BYTE:
+            case UNSIGNED_BYTE:
                 data.put((byte) (value & BYTE_MASK));
                 break;
             case SHORT:
+            case UNSIGNED_SHORT:
                 data.putShort((short) (value & SHORT_MASK));
                 break;
             case INT:
+            case UNSIGNED_INT:
             case FLOAT:
                 data.putInt(value);
                 break;
@@ -129,15 +139,40 @@ public final class SoftwareUtil {
         i <<= type.getMultiplyShift();
         switch (type) {
             case BYTE:
+            case UNSIGNED_BYTE:
                 data.put(i, (byte) (value & BYTE_MASK));
                 break;
             case SHORT:
+            case UNSIGNED_SHORT:
                 data.putShort(i, (short) (value & SHORT_MASK));
                 break;
             case INT:
+            case UNSIGNED_INT:
             case FLOAT:
                 data.putInt(i, value);
                 break;
+            default:
+                throw new IllegalArgumentException("Unsupported data type: " + type);
+        }
+    }
+
+    static float readAsFloat(ByteBuffer data, DataType type, int i) {
+        i <<= type.getMultiplyShift();
+        switch (type) {
+            case BYTE:
+                return (data.get(i) - Byte.MIN_VALUE) / BYTE_RANGE;
+            case UNSIGNED_BYTE:
+                return ((short) data.get(i) & BYTE_MASK) / BYTE_RANGE;
+            case SHORT:
+                return (data.getShort(i) - Short.MIN_VALUE) / SHORT_RANGE;
+            case UNSIGNED_SHORT:
+                return ((int) data.getShort(i) & SHORT_MASK) / SHORT_RANGE;
+            case INT:
+                return (data.getInt(i) - Integer.MIN_VALUE) / INT_RANGE;
+            case UNSIGNED_INT:
+                return ((long) data.getInt(i) & INT_MASK) / INT_RANGE;
+            case FLOAT:
+                return data.getFloat(i);
             default:
                 throw new IllegalArgumentException("Unsupported data type: " + type);
         }
@@ -165,12 +200,21 @@ public final class SoftwareUtil {
             case BYTE:
                 f = (byte) (value & BYTE_MASK);
                 return normalize ? (f - Byte.MIN_VALUE) / BYTE_RANGE : f;
+            case UNSIGNED_BYTE:
+                f = (short) value & BYTE_MASK;
+                return normalize ? f / BYTE_RANGE : f;
             case SHORT:
                 f = (short) (value & SHORT_MASK);
                 return normalize ? (f - Short.MIN_VALUE) / SHORT_RANGE : f;
+            case UNSIGNED_SHORT:
+                f = value & SHORT_MASK;
+                return normalize ? f / SHORT_RANGE : f;
             case INT:
                 f = value;
                 return normalize ? (f - Integer.MIN_VALUE) / INT_RANGE : f;
+            case UNSIGNED_INT:
+                f = (long) value & INT_MASK;
+                return normalize ? f / INT_RANGE : f;
             case FLOAT:
                 f = Float.intBitsToFloat(value);
                 return f;
