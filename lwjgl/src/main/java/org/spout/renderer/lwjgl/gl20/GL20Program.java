@@ -29,7 +29,6 @@ package org.spout.renderer.lwjgl.gl20;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -170,22 +169,21 @@ public class GL20Program extends Program {
         // Load uniforms
         uniforms.clear();
         final int uniformCount = GL20.glGetProgrami(id, GL20.GL_ACTIVE_UNIFORMS);
-        final IntBuffer length = CausticUtil.createIntBuffer(1);
+        final IntBuffer lengthBuffer = CausticUtil.createIntBuffer(1);
         final IntBuffer ignored1 = CausticUtil.createIntBuffer(1);
         final IntBuffer ignored2 = CausticUtil.createIntBuffer(1);
         final ByteBuffer nameBuffer = CausticUtil.createByteBuffer(256);
         final byte[] nameBytes = new byte[256];
         for (int i = 0; i < uniformCount; i++) {
-            length.clear();
+            lengthBuffer.clear();
             ignored1.clear();
             ignored2.clear();
             nameBuffer.clear();
-            GL20.glGetActiveUniform(id, i, length, ignored1, ignored2, nameBuffer);
-            final int l = length.get();
-            nameBuffer.get(nameBytes, 0, l);
-            Arrays.fill(nameBytes, l, 256, (byte) 0);
+            GL20.glGetActiveUniform(id, i, lengthBuffer, ignored1, ignored2, nameBuffer);
+            final int length = lengthBuffer.get();
+            nameBuffer.get(nameBytes, 0, length);
             // Simplify array names
-            final String name = new String(nameBytes).trim().replaceFirst("\\[\\d+\\]", "");
+            final String name = new String(nameBytes, 0, length).replaceFirst("\\[\\d+\\]", "");
             uniforms.put(name, GL20.glGetUniformLocation(id, name));
             uniformValues.put(name, UNSET);
         }
