@@ -169,11 +169,12 @@ public class GL20Program extends Program {
         // Load uniforms
         uniforms.clear();
         final int uniformCount = GL20.glGetProgrami(id, GL20.GL_ACTIVE_UNIFORMS);
+        final int maxLength = GL20.glGetProgrami(id, GL20.GL_ACTIVE_UNIFORM_MAX_LENGTH);
         final IntBuffer lengthBuffer = CausticUtil.createIntBuffer(1);
         final IntBuffer ignored1 = CausticUtil.createIntBuffer(1);
         final IntBuffer ignored2 = CausticUtil.createIntBuffer(1);
-        final ByteBuffer nameBuffer = CausticUtil.createByteBuffer(256);
-        final byte[] nameBytes = new byte[256];
+        final ByteBuffer nameBuffer = CausticUtil.createByteBuffer(maxLength);
+        final byte[] nameBytes = new byte[maxLength];
         for (int i = 0; i < uniformCount; i++) {
             lengthBuffer.clear();
             ignored1.clear();
