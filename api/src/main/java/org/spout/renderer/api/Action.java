@@ -433,14 +433,14 @@ public abstract class Action {
      * java.util.Arrays#sort(Object[])}) so that models with the same materials are not reordered. This grouping improves performance by reducing the amount of rendering calls.
      */
     public static class RenderModelsAction extends Action {
-        private Collection<Model> models;
+        private Collection<? extends Model> models;
 
         /**
          * Constructs a model rendering action with the models to render
          *
          * @param models The models
          */
-        public RenderModelsAction(Collection<Model> models) {
+        public RenderModelsAction(Collection<? extends Model> models) {
             this.models = models;
         }
 
@@ -449,7 +449,7 @@ public abstract class Action {
          *
          * @return The models
          */
-        public Collection<Model> getModels() {
+        public Collection<? extends Model> getModels() {
             return models;
         }
 
@@ -458,7 +458,7 @@ public abstract class Action {
          *
          * @param models The models
          */
-        public void setModels(Collection<Model> models) {
+        public void setModels(Collection<? extends Model> models) {
             this.models = models;
         }
 

@@ -197,7 +197,7 @@ public class Pipeline {
          * @param models The models to render
          * @return The builder itself, for chained calls
          */
-        public PipelineBuilder renderModels(Collection<Model> models) {
+        public PipelineBuilder renderModels(Collection<? extends Model> models) {
             return doAction(new RenderModelsAction(models));
         }
 
