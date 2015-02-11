@@ -1,16 +1,32 @@
 # Source language and JDK version to use
 language: java
-jdk: oraclejdk7
+jdk: oraclejdk8
 
-# Compile and package JAR and set build properties
-install: mvn package -DbuildNumber=$TRAVIS_BUILD_NUMBER -DciSystem=travis -Dcommit=${TRAVIS_COMMIT:0:7}
+# Pre-install Maven dependencies
+install: mvn dependency:go-offline
 
-# Perform steps after compilation/test success
+# Compile and test source
+script: mvn clean -DbuildNumber=$TRAVIS_BUILD_NUMBER -DciSystem=travis -Dcommit=${TRAVIS_COMMIT:0:7}
+
+# Fetch resources, run deployment goal/task, and generate Javadocs and reports
 after_success:
-  # Get files for use with build, namely the custom Maven settings.xml
-  - "git clone https://github.com/flow/travis-ci-resources.git target/travis"
-  # Check if commit is not a pull request, if repo is official, and branch is master, generate and deploy artifacts and reports
-  - "[[ $TRAVIS_PULL_REQUEST == false ]] && [[ $TRAVIS_REPO_SLUG == flow/Caustic ]] && [[ $TRAVIS_BRANCH == master ]] && mvn javadoc:jar source:jar cobertura:cobertura coveralls:cobertura -DserviceJobId=$TRAVIS_JOB_ID deploy --settings target/travis/settings.xml"
+  # Get files for use with build, namely the custom Maven settings.xml and scripts
+  - "git clone https://github.com/flow/travis-ci-resources.git $HOME/build/flow/travis"
+  # DEVELOP: Check if commit is not a pull request, if repo is official, if branch is not master; then deploy artifacts
+  - "[[ $TRAVIS_PULL_REQUEST == false ]] && [[ $TRAVIS_REPO_SLUG == flow/caustic ]] && [[ $TRAVIS_BRANCH == develop ]] && mvn deploy --settings $HOME/build/flow/travis/settings.xml"
+  # RELEASE: Check if commit is not a pull request, if repo is official, if branch is master; then run deployment script
+  - "[[ $TRAVIS_PULL_REQUEST == false ]] && [[ $TRAVIS_REPO_SLUG == flow/caustic ]] && [[ $TRAVIS_BRANCH == master ]] && $HOME/build/flow/travis/deploy.sh && $HOME/build/flow/travis/gh-pages.sh"
+  # Generate Javadocs and report for Coveralls.io
+  - "mvn javadoc:javadoc cobertura:cobertura coveralls:report -DserviceJobId=$TRAVIS_JOB_ID"
+
+# RELEASE: Deploy main JAR to GitHub Releases
+deploy:
+  provider: releases
+  api-key: $GITHUB_TOKEN
+  file: "target/caustic-`cat version.txt`.jar"
+  skip_cleanup: true
+  on:
+    branch: master
 
 # Notification services
 notifications:
@@ -26,5 +42,7 @@ env:
     # Make the log output cleaner
     - TERM=dumb
     # Super secure, encrypted variables! Ssssh!
-    - secure: "XuzfBWuHSSP0u0SOQXn8DdrEGPlxlH0w6KrOaUlcOWmG1KK/KYBuE6FYs6eEhe2Q438S83Dp4ec6mgzCS5RSaoseyZR0CC4T0NsQEPksoV37CX0vM1/kPAcilPubT0B6oO2fa4XKuCwiNflb6nw5m9hoo91I673vpjsobZBj0Fw="
-    - secure: "aDZk1Qxvg+DaTEs+mzsQHDKAVHxiLvTLxjcfQzOIiMQj80bNTY0ntsw85CRQu6DGEPlHfb+zEjb/965HqbTomAayjEXhImun/m0+oAQXQhJoBqI2ThiGOed/KvgGyiMKoMSM71HBkEBowoUanRpNzHrC9scJHrVDei7JnvYtfVQ="
+    - secure: "VFecbQ+pXBMbLfEDZDmT4Hsh7BP5vxQPzL3uyjKpB6ZnUw1rAkjwyTLfXT/ONdu8683gDUgbf6DawQ2TkAQBGRQjEDZL2fKp2oXw8mX0t0WKpLjL6uqC8QuRwKLOk9rWuOTiuk8IU6gNTHeD+wFatnMxKrwIc54IY+deK/Wo0PE="
+    - secure: "RtHTH8NllkaVBFHpX8+54Vlao8FEuRCDuTkCyYq5EN+hOXTQ64lQhhQneE+L7XwFj8hP7VYEckLLZ/whkj6hXJVZw5EtYJ+WnB9OvoRa+hI48PTzCXeNd8dafNQhu32A2iIKyVdc0UmjsM/rchrLBDovdVpVzfzfnACoCNVYOlM="
+    - secure: "bKD7Z1RbmfTRQHZ05c75a/X05QFnS51ejhCp+mpk7t9NIlWgV3xE9xhlKWS3x+A6xv8xYIrsQctex0zYxuKwZNjtb9rfeF5Yuf3PADAlDjaUykupo27jAp4Vi2SrTouMSlOmlnkDZ8b+RHI4v8Cb/Q01p1manZMAeouBtcms0tg="
+    - secure: "Z43e9QaVLJN2v+of2K3p5NwYvn9TSG6bV4R7aLwJvMBIbDJ07LIdPGwWOJ1D2MxjhGOT/GVoyWO1ri/fO7uxAziIqes6xjoQALZOl3jlhU7VG1qEsoCtlEUZcX/CUgeKX9CK1Xg143AmrcOPLdYx7d2kXJOt/gMRToXsiUaY/x8="
