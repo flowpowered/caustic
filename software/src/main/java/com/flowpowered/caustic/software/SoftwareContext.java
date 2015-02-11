@@ -97,6 +97,11 @@ public class SoftwareContext extends Context {
     }
 
     @Override
+    public void setResizable(boolean resizable) {
+        renderer.setWindowResizable(resizable);
+    }
+
+    @Override
     public void setWindowSize(Vector2i windowSize) {
         renderer.setWindowSize(windowSize.getX(), windowSize.getY());
     }

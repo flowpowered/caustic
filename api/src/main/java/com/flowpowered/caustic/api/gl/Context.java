@@ -27,7 +27,6 @@ import java.nio.ByteBuffer;
 
 import com.flowpowered.math.vector.Vector2i;
 import com.flowpowered.math.vector.Vector4f;
-
 import com.flowpowered.caustic.api.Camera;
 import com.flowpowered.caustic.api.Creatable;
 import com.flowpowered.caustic.api.GLVersioned;
@@ -108,6 +107,12 @@ public abstract class Context extends Creatable implements GLVersioned {
      * @param title The window title
      */
     public abstract void setWindowTitle(String title);
+
+    /**
+     * Sets if the window can be re-sized.
+     * @param resizable Whether or not the window can be re-sized
+     */
+    public abstract void setResizable(boolean resizable);
 
     /**
      * Sets the window size.
