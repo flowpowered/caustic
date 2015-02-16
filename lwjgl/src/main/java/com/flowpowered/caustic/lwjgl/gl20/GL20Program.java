@@ -34,13 +34,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.flowpowered.math.matrix.Matrix2f;
-import com.flowpowered.math.matrix.Matrix3f;
-import com.flowpowered.math.matrix.Matrix4f;
-import com.flowpowered.math.vector.Vector2f;
-import com.flowpowered.math.vector.Vector3f;
-import com.flowpowered.math.vector.Vector4f;
-
 import gnu.trove.impl.Constants;
 import gnu.trove.iterator.TObjectIntIterator;
 import gnu.trove.map.TIntObjectMap;
@@ -50,6 +43,13 @@ import gnu.trove.map.hash.TObjectIntHashMap;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
+
+import com.flowpowered.math.matrix.Matrix2f;
+import com.flowpowered.math.matrix.Matrix3f;
+import com.flowpowered.math.matrix.Matrix4f;
+import com.flowpowered.math.vector.Vector2f;
+import com.flowpowered.math.vector.Vector3f;
+import com.flowpowered.math.vector.Vector4f;
 
 import com.flowpowered.caustic.api.gl.Program;
 import com.flowpowered.caustic.api.gl.Shader;

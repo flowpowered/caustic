@@ -25,12 +25,6 @@ package com.flowpowered.caustic.lwjgl.gl20;
 
 import java.nio.ByteBuffer;
 
-import com.flowpowered.caustic.api.data.VertexAttribute;
-import com.flowpowered.caustic.api.data.VertexAttribute.DataType;
-import com.flowpowered.caustic.api.data.VertexData;
-import com.flowpowered.caustic.api.gl.VertexArray;
-import com.flowpowered.caustic.lwjgl.LWJGLUtil;
-
 import org.lwjgl.opengl.APPLEVertexArrayObject;
 import org.lwjgl.opengl.ARBVertexArrayObject;
 import org.lwjgl.opengl.ContextCapabilities;
@@ -38,6 +32,12 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GLContext;
+
+import com.flowpowered.caustic.api.data.VertexAttribute;
+import com.flowpowered.caustic.api.data.VertexAttribute.DataType;
+import com.flowpowered.caustic.api.data.VertexData;
+import com.flowpowered.caustic.api.gl.VertexArray;
+import com.flowpowered.caustic.lwjgl.LWJGLUtil;
 
 /**
  * An OpenGL 2.0 implementation of {@link VertexArray}.

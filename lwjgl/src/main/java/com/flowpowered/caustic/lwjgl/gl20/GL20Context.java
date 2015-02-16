@@ -25,6 +25,13 @@ package com.flowpowered.caustic.lwjgl.gl20;
 
 import java.nio.ByteBuffer;
 
+import org.lwjgl.LWJGLException;
+import org.lwjgl.opengl.ContextAttribs;
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.PixelFormat;
+
 import com.flowpowered.caustic.api.gl.Context;
 import com.flowpowered.caustic.api.gl.FrameBuffer;
 import com.flowpowered.caustic.api.gl.Program;
@@ -38,13 +45,6 @@ import com.flowpowered.caustic.api.util.Rectangle;
 import com.flowpowered.caustic.lwjgl.LWJGLUtil;
 import com.flowpowered.math.vector.Vector2i;
 import com.flowpowered.math.vector.Vector4f;
-
-import org.lwjgl.LWJGLException;
-import org.lwjgl.opengl.ContextAttribs;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.PixelFormat;
 
 /**
  * An OpenGL 2.0 implementation of {@link com.flowpowered.caustic.api.gl.Context}.

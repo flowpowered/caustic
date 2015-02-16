@@ -25,17 +25,17 @@ package com.flowpowered.caustic.lwjgl.gl30;
 
 import java.nio.ByteBuffer;
 
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
+
 import com.flowpowered.caustic.api.data.VertexAttribute;
 import com.flowpowered.caustic.api.data.VertexAttribute.DataType;
 import com.flowpowered.caustic.api.data.VertexAttribute.UploadMode;
 import com.flowpowered.caustic.api.data.VertexData;
 import com.flowpowered.caustic.api.gl.VertexArray;
 import com.flowpowered.caustic.lwjgl.LWJGLUtil;
-
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL15;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
 
 /**
  * An OpenGL 3.0 implementation of {@link VertexArray}.

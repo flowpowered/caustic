@@ -10,5 +10,5 @@ read -p "New version: " NEW_VERSION || die_with "Prompt for new version failed"
 if ! echo $NEW_VERSION | grep -i -- '-SNAPSHOT' >/dev/null; then echo "WARNING: changing to a release version!"; fi
 
 echo "Updating the project version in build.gradle, pom.xml and README.md to $NEW_VERSION"
-sed -ri "s/"`echo $CURRENT_VERSION | sed 's/\./\\\\./g'`"/$NEW_VERSION/g" build.gradle pom.xml README.md || die_with "Failed to update the project version!"
-chmod 644 build.gradle pom.xml README.md
+find . \( -name "pom.xml" -o -name "README.md" \) -exec sed -i "s/$CURRENT_VERSION/$NEW_VERSION/g" {} \; die_with "Failed to update the project version!"
+chmod -R 644 pom.xml README.md

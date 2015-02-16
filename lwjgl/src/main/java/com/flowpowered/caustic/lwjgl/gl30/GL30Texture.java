@@ -25,12 +25,12 @@ package com.flowpowered.caustic.lwjgl.gl30;
 
 import java.nio.ByteBuffer;
 
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL30;
+
 import com.flowpowered.caustic.api.data.VertexAttribute.DataType;
 import com.flowpowered.caustic.lwjgl.LWJGLUtil;
 import com.flowpowered.caustic.lwjgl.gl20.GL20Texture;
-
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL30;
 
 /**
  * An OpenGL 3.0 implementation of {@link com.flowpowered.caustic.api.gl.Texture}.

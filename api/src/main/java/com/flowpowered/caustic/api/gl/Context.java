@@ -27,6 +27,7 @@ import java.nio.ByteBuffer;
 
 import com.flowpowered.math.vector.Vector2i;
 import com.flowpowered.math.vector.Vector4f;
+
 import com.flowpowered.caustic.api.Camera;
 import com.flowpowered.caustic.api.Creatable;
 import com.flowpowered.caustic.api.GLVersioned;
