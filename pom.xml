@@ -9,7 +9,7 @@
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <inceptionYear>2013</inceptionYear>
-    <url>https://flowpowered.com</url>
+    <url>https://flowpowered.com/caustic</url>
     <description>Parent Maven project for the Caustic OpenGL rendering library.</description>
 
     <!-- Parent information -->

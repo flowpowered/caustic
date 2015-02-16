@@ -2,9 +2,6 @@
 language: java
 jdk: oraclejdk8
 
-# Pre-install Maven dependencies
-install: mvn dependency:go-offline
-
 # Compile and test source
 script: mvn clean install -DbuildNumber=$TRAVIS_BUILD_NUMBER -DciSystem=travis -Dcommit=${TRAVIS_COMMIT:0:7}
 
@@ -45,4 +42,4 @@ env:
     - secure: "VFecbQ+pXBMbLfEDZDmT4Hsh7BP5vxQPzL3uyjKpB6ZnUw1rAkjwyTLfXT/ONdu8683gDUgbf6DawQ2TkAQBGRQjEDZL2fKp2oXw8mX0t0WKpLjL6uqC8QuRwKLOk9rWuOTiuk8IU6gNTHeD+wFatnMxKrwIc54IY+deK/Wo0PE="
     - secure: "RtHTH8NllkaVBFHpX8+54Vlao8FEuRCDuTkCyYq5EN+hOXTQ64lQhhQneE+L7XwFj8hP7VYEckLLZ/whkj6hXJVZw5EtYJ+WnB9OvoRa+hI48PTzCXeNd8dafNQhu32A2iIKyVdc0UmjsM/rchrLBDovdVpVzfzfnACoCNVYOlM="
     - secure: "bKD7Z1RbmfTRQHZ05c75a/X05QFnS51ejhCp+mpk7t9NIlWgV3xE9xhlKWS3x+A6xv8xYIrsQctex0zYxuKwZNjtb9rfeF5Yuf3PADAlDjaUykupo27jAp4Vi2SrTouMSlOmlnkDZ8b+RHI4v8Cb/Q01p1manZMAeouBtcms0tg="
-    - secure: "Z43e9QaVLJN2v+of2K3p5NwYvn9TSG6bV4R7aLwJvMBIbDJ07LIdPGwWOJ1D2MxjhGOT/GVoyWO1ri/fO7uxAziIqes6xjoQALZOl3jlhU7VG1qEsoCtlEUZcX/CUgeKX9CK1Xg143AmrcOPLdYx7d2kXJOt/gMRToXsiUaY/x8="
+    - secure: "YpuIE54CJ0s3lcGn0eBUxiMy2OJWBBCk+s+q9cMGixVZEt262+Ek2y1aZ02cx7moedYwnFlmr8oZt6X4l1LKKPO7O+woL10OWtS2iZTZk49V1MO4getIn8NRjQ/NGqgr2FOobIU6ygrp5RND662slO+07CN+hxTExVHuedfvJ9E="
