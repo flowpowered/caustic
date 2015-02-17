@@ -1,6 +1,6 @@
 # Caustic [![License](http://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat)][License] [![Flattr this](http://img.shields.io/badge/flattr-donate-lightgrey.svg?style=flat)][Donate] [![Build Status](http://img.shields.io/travis/flow/caustic/develop.svg?style=flat)](https://travis-ci.org/flow/caustic) [![Coverage Status](http://img.shields.io/coveralls/flow/caustic/develop.svg?style=flat)](https://coveralls.io/r/flow/caustic)
 
-OpenGL rendering API and library, with support for LWJGL.
+Simple, general purpose rendering API with a LWJGL implementation and utilities.
 
 ## Getting Started
 * [Examples and code snippets](https://github.com/flow/examples/tree/master/caustic)
