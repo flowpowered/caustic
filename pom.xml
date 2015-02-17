@@ -117,7 +117,7 @@
                 <directory>.</directory>
                 <targetPath>.</targetPath>
                 <includes>
-                    <include>LICENSE.txt</include>
+                    <include>${project.root}/LICENSE.txt</include>
                 </includes>
             </resource>
             <resource>

@@ -2,6 +2,9 @@
 language: java
 jdk: oraclejdk8
 
+# Do something so that Gradle isn't run
+install: echo "Gradle run suppressed, using Maven instead"
+
 # Compile and test source
 script: mvn clean install -DbuildNumber=$TRAVIS_BUILD_NUMBER -DciSystem=travis -Dcommit=${TRAVIS_COMMIT:0:7}
 
