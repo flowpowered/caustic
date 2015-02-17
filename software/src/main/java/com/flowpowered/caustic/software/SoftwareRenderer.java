@@ -37,12 +37,12 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.util.Arrays;
 
-import gnu.trove.map.TIntObjectMap;
-import gnu.trove.map.hash.TIntObjectHashMap;
-
 import com.flowpowered.caustic.api.gl.Context.Capability;
 import com.flowpowered.caustic.api.util.CausticUtil;
 import com.flowpowered.caustic.api.util.Rectangle;
+
+import gnu.trove.map.TIntObjectMap;
+import gnu.trove.map.hash.TIntObjectHashMap;
 
 /**
  *
@@ -79,6 +79,10 @@ class SoftwareRenderer extends Canvas {
 
     int getWindowWidth() {
         return width;
+    }
+
+    void setWindowResizable(boolean resizable) {
+        frame.setResizable(resizable);
     }
 
     void setWindowSize(int width, int height) {
@@ -171,7 +175,9 @@ class SoftwareRenderer extends Canvas {
         pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
         depths = new short[width * height];
         frame.pack();
-        frame.setLocationRelativeTo(null);
+        if (!frame.isResizable()) {
+            frame.setLocationRelativeTo(null);
+        }
     }
 
     void dispose() {
@@ -189,6 +195,11 @@ class SoftwareRenderer extends Canvas {
         graphics.drawImage(image, 0, 0, width * scale, height * scale, null);
         graphics.dispose();
         bufferStrategy.show();
+        if (frame.isResizable() && getWidth() != width && getHeight() != height) {
+            width = getWidth();
+            height = getHeight();
+            updateImage();
+        }
     }
 
     void clearPixels() {

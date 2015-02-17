@@ -1,0 +1,10 @@
+// Project information
+ext.projectName = 'Caustic Software'
+archivesBaseName = 'caustic-software'
+ext.packaging = 'jar'
+ext.description = 'Software implementation of the Caustic rendering library API.'
+
+// Project dependencies
+dependencies {
+    compile 'com.flowpowered:caustic-api:1.0.0-SNAPSHOT'
+}

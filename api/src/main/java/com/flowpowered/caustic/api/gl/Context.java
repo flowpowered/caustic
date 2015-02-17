@@ -110,6 +110,12 @@ public abstract class Context extends Creatable implements GLVersioned {
     public abstract void setWindowTitle(String title);
 
     /**
+     * Sets if the window can be re-sized.
+     * @param resizable Whether or not the window can be re-sized
+     */
+    public abstract void setResizable(boolean resizable);
+
+    /**
      * Sets the window size.
      *
      * @param width The width

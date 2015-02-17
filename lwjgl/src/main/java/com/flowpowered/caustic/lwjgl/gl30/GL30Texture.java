@@ -47,6 +47,10 @@ public class GL30Texture extends GL20Texture {
         if (height <= 0) {
             throw new IllegalArgumentException("Height must be greater than zero");
         }
+        // Back up the old values
+        int oldWidth = this.width;
+        int oldHeight = this.height;
+        // Update the texture width and height
         this.width = width;
         this.height = height;
         // Bind the texture
@@ -55,8 +59,15 @@ public class GL30Texture extends GL20Texture {
         GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
         // Upload the texture
         final boolean hasInternalFormat = internalFormat != null;
-        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, hasInternalFormat ? internalFormat.getGLConstant() : format.getGLConstant(), width, height, 0, format.getGLConstant(),
-                hasInternalFormat ? internalFormat.getComponentType().getGLConstant() : DataType.UNSIGNED_BYTE.getGLConstant(), imageData);
+        // Check if we can only upload without reallocating
+        if (imageData != null && width == oldWidth && height == oldHeight) {
+            GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, width, height, format.getGLConstant(),
+                    hasInternalFormat ? internalFormat.getComponentType().getGLConstant() : DataType.UNSIGNED_BYTE.getGLConstant(), imageData);
+        } else {
+            // Reallocate and upload the image
+            GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, hasInternalFormat ? internalFormat.getGLConstant() : format.getGLConstant(), width, height, 0, format.getGLConstant(),
+                    hasInternalFormat ? internalFormat.getComponentType().getGLConstant() : DataType.UNSIGNED_BYTE.getGLConstant(), imageData);
+        }
         // Generate mipmaps if necessary
         if (minFilter.needsMipMaps() && imageData != null) {
             GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);

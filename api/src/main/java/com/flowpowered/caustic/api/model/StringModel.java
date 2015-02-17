@@ -34,10 +34,6 @@ import java.awt.image.BufferedImage;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.flowpowered.math.GenericMath;
-import com.flowpowered.math.vector.Vector2f;
-import com.flowpowered.math.vector.Vector4f;
-
 import gnu.trove.impl.Constants;
 import gnu.trove.list.TFloatList;
 import gnu.trove.list.TIntList;
@@ -48,6 +44,10 @@ import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TCharFloatHashMap;
 import gnu.trove.map.hash.TCharIntHashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
+
+import com.flowpowered.math.GenericMath;
+import com.flowpowered.math.vector.Vector2f;
+import com.flowpowered.math.vector.Vector4f;
 
 import com.flowpowered.caustic.api.Material;
 import com.flowpowered.caustic.api.data.VertexAttribute;

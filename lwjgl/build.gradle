@@ -1,0 +1,12 @@
+// Project information
+ext.projectName = 'Caustic LWJGL'
+archivesBaseName = 'caustic-lwjgl'
+ext.packaging = 'jar'
+ext.description = 'LWJGL implementation of the Caustic rendering library API.'
+
+// Project dependencies
+dependencies {
+    compile 'com.flowpowered:caustic-api:1.0.0-SNAPSHOT'
+    compile 'org.lwjgl.lwjgl:lwjgl:2.9.1'
+    compile 'org.lwjgl.lwjgl:lwjgl_util:2.9.1'
+}

@@ -1,15 +1,14 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <!-- Project information -->
     <name>Caustic</name>
     <groupId>com.flowpowered</groupId>
     <artifactId>caustic</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>pom</packaging>
     <inceptionYear>2013</inceptionYear>
-    <url>https://flowpowered.com</url>
+    <url>https://flowpowered.com/caustic</url>
     <description>Parent Maven project for the Caustic OpenGL rendering library.</description>
 
     <!-- Parent information -->
@@ -23,8 +22,7 @@
     <modules>
         <module>api</module>
         <module>lwjgl</module>
-        <module>android</module>
-        <module>software</module>
+        <!--<module>software</module>-->
     </modules>
 
     <!-- Build properties -->
@@ -118,7 +116,7 @@
                 <directory>.</directory>
                 <targetPath>.</targetPath>
                 <includes>
-                    <include>LICENSE.txt</include>
+                    <include>${project.root}/LICENSE.txt</include>
                 </includes>
             </resource>
             <resource>

@@ -25,9 +25,6 @@ package com.flowpowered.caustic.lwjgl.gl20;
 
 import java.nio.ByteBuffer;
 
-import com.flowpowered.math.vector.Vector2i;
-import com.flowpowered.math.vector.Vector4f;
-
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.opengl.Display;
@@ -46,6 +43,8 @@ import com.flowpowered.caustic.api.gl.VertexArray;
 import com.flowpowered.caustic.api.util.CausticUtil;
 import com.flowpowered.caustic.api.util.Rectangle;
 import com.flowpowered.caustic.lwjgl.LWJGLUtil;
+import com.flowpowered.math.vector.Vector2i;
+import com.flowpowered.math.vector.Vector4f;
 
 /**
  * An OpenGL 2.0 implementation of {@link com.flowpowered.caustic.api.gl.Context}.
@@ -128,6 +127,11 @@ public class GL20Context extends Context {
     @Override
     public void setWindowTitle(String title) {
         Display.setTitle(title);
+    }
+
+    @Override
+    public void setResizable(boolean resizable) {
+        Display.setResizable(resizable);
     }
 
     @Override

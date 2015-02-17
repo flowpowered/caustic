@@ -26,8 +26,6 @@ package com.flowpowered.caustic.lwjgl.gl20;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
-import com.flowpowered.math.vector.Vector4f;
-
 import org.lwjgl.opengl.EXTTextureFilterAnisotropic;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
@@ -38,6 +36,7 @@ import com.flowpowered.caustic.api.data.VertexAttribute.DataType;
 import com.flowpowered.caustic.api.gl.Texture;
 import com.flowpowered.caustic.api.util.CausticUtil;
 import com.flowpowered.caustic.lwjgl.LWJGLUtil;
+import com.flowpowered.math.vector.Vector4f;
 
 /**
  * An OpenGL 2.0 implementation of {@link Texture}.
@@ -199,6 +198,10 @@ public class GL20Texture extends Texture {
         if (height <= 0) {
             throw new IllegalArgumentException("Height must be greater than zero");
         }
+        // Back up the old values
+        int oldWidth = this.width;
+        int oldHeight = this.height;
+        // Update the texture width and height
         this.width = width;
         this.height = height;
         // Bind the texture
@@ -210,12 +213,17 @@ public class GL20Texture extends Texture {
             GLU.gluBuild2DMipmaps(GL11.GL_TEXTURE_2D, hasInternalFormat ? internalFormat.getGLConstant() : format.getGLConstant(), width, height, format.getGLConstant(),
                     hasInternalFormat ? internalFormat.getComponentType().getGLConstant() : DataType.UNSIGNED_BYTE.getGLConstant(), imageData);
         } else {
-            // Else just make it a normal texture
-            // Use byte alignment
+            // Else just make it a normal texture, use byte alignment
             GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
-            // Upload the image
-            GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, hasInternalFormat ? internalFormat.getGLConstant() : format.getGLConstant(), width, height, 0, format.getGLConstant(),
-                    hasInternalFormat ? internalFormat.getComponentType().getGLConstant() : DataType.UNSIGNED_BYTE.getGLConstant(), imageData);
+            // Check if we can only upload without reallocating
+            if (imageData != null && width == oldWidth && height == oldHeight) {
+                GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, width, height, format.getGLConstant(),
+                        hasInternalFormat ? internalFormat.getComponentType().getGLConstant() : DataType.UNSIGNED_BYTE.getGLConstant(), imageData);
+            } else {
+                // Reallocate and upload the image
+                GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, hasInternalFormat ? internalFormat.getGLConstant() : format.getGLConstant(), width, height, 0, format.getGLConstant(),
+                        hasInternalFormat ? internalFormat.getComponentType().getGLConstant() : DataType.UNSIGNED_BYTE.getGLConstant(), imageData);
+            }
         }
         // Unbind the texture
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);

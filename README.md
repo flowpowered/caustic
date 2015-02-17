@@ -1,6 +1,6 @@
 # Caustic [![License](http://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat)][License] [![Flattr this](http://img.shields.io/badge/flattr-donate-lightgrey.svg?style=flat)][Donate] [![Build Status](http://img.shields.io/travis/flow/caustic/develop.svg?style=flat)](https://travis-ci.org/flow/caustic) [![Coverage Status](http://img.shields.io/coveralls/flow/caustic/develop.svg?style=flat)](https://coveralls.io/r/flow/caustic)
 
-
+OpenGL rendering API and library, with support for LWJGL.
 
 ## Getting Started
 * [Examples and code snippets](https://github.com/flow/examples/tree/master/caustic)
@@ -14,6 +14,13 @@ The latest and greatest source can be found here on [GitHub](https://github.com/
     git clone git://github.com/flow/caustic.git
 
 Or download the latest [development archive](https://github.com/flow/caustic/archive/develop.zip) or the latest [stable archive](https://github.com/flow/caustic/archive/master.zip).
+
+## Dependencies
+We love open-source libraries! This project uses are few of them to make things easier. If you aren't using Maven or Gradle, you'll need these!
+* [com.flowpowered:flow-math](https://oss.sonatype.org/#nexus-search;gav~com.flowpowered~flow-math~~~)
+* [net.sf.trove4j:trove4j](https://oss.sonatype.org/#nexus-search;gav~net.sf.trove4j~trove4j~~~)
+* [org.lwjgl.lwjgl:lwjgl](https://oss.sonatype.org/#nexus-search;gav~org.lwjgl.lwjgl~lwjgl~~~)
+* [org.lwjgl.lwjgl:lwjgl_util](https://oss.sonatype.org/#nexus-search;gav~org.lwjgl.lwjgl~lwjgl_util~~~)
 
 ## Test Dependencies
 The following dependencies are only needed if you compiling the tests included with this project. Gotta test 'em all!
@@ -43,7 +50,7 @@ If you're using [Maven](https://maven.apache.org/download.html) to manage projec
     <dependency>
         <groupId>com.flowpowered</groupId>
         <artifactId>caustic</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
     </dependency>
 
 If you're using [Gradle](https://www.gradle.org/) to manage project dependencies, simply include the following in your `build.gradle` file:
@@ -52,7 +59,7 @@ If you're using [Gradle](https://www.gradle.org/) to manage project dependencies
         mavenCentral()
     }
     dependencies {
-        compile 'com.flowpowered:caustic:1.0.0-SNAPSHOT'
+        compile 'com.flowpowered:caustic:1.0.0'
     }
 
 If you plan on using snapshots and do not already have the snapshot repo in your repository list, you will need to add this as well:

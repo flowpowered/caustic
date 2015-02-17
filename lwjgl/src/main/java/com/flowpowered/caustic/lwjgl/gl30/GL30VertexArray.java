@@ -112,12 +112,13 @@ public class GL30VertexArray extends VertexArray {
         }
         // Unbind the indices buffer
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
-        // Update the count to the new one
+        // Update the total indices count
         indicesCount = newIndicesCount;
-        indicesDrawCount = indicesCount;
+        // Ensure the count fits under the total one
+        indicesDrawCount = indicesDrawCount <= 0 ? indicesCount : Math.min(indicesDrawCount, indicesCount);
         // Ensure that the indices offset and count fits inside the valid part of the buffer
-        indicesOffset = Math.min(indicesOffset, indicesCount - 1);
-        indicesDrawCount = indicesDrawCount - indicesOffset;
+        indicesOffset = Math.min(indicesOffset, indicesDrawCount - 1);
+        indicesDrawCount -= indicesOffset;
         // Bind the vao
         GL30.glBindVertexArray(id);
         // Create a new array of attribute buffers ID of the correct size
@@ -203,12 +204,8 @@ public class GL30VertexArray extends VertexArray {
 
     @Override
     public void setIndicesCount(int count) {
-        if (count < 0) {
-            indicesDrawCount = indicesCount;
-        } else {
-            indicesDrawCount = count;
-        }
-        indicesDrawCount = Math.min(indicesDrawCount, indicesCount - indicesOffset);
+        indicesDrawCount = count <= 0 ? indicesCount : count;
+        indicesDrawCount = Math.min(count, indicesCount - indicesOffset);
     }
 
     @Override

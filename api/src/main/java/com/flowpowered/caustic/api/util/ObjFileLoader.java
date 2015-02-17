@@ -26,12 +26,12 @@ package com.flowpowered.caustic.api.util;
 import java.io.InputStream;
 import java.util.Scanner;
 
-import com.flowpowered.math.vector.Vector3i;
-
 import gnu.trove.list.TFloatList;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TFloatArrayList;
 import gnu.trove.list.array.TIntArrayList;
+
+import com.flowpowered.math.vector.Vector3i;
 
 /**
  * A static loading class for standard .obj model files. This class will load positions, normals can texture coordinates. Missing normals are not calculated. Normals are expected to be of unit length.
