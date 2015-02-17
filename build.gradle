@@ -9,7 +9,7 @@ apply plugin: 'license'
 // Project information
 ext.projectName = 'Caustic'
 group = 'com.flowpowered'
-version = '1.0.0-SNAPSHOT'
+version = '1.0.1-SNAPSHOT'
 ext.packaging = 'pom'
 ext.inceptionYear = '2013'
 ext.url = 'https://flowpowered.com/caustic'
@@ -34,7 +34,7 @@ allprojects {
     // Project information
     ext.projectName = 'Caustic'
     group = 'com.flowpowered'
-    version = '1.0.0-SNAPSHOT'
+    version = '1.0.1-SNAPSHOT'
     ext.packaging = 'pom'
     ext.inceptionYear = '2013'
     ext.url = 'https://flowpowered.com/caustic'
