@@ -26,17 +26,17 @@ package com.flowpowered.caustic.lwjgl.gl20;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
-import org.lwjgl.opengl.EXTTextureFilterAnisotropic;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GL14;
-import org.lwjgl.util.glu.GLU;
-
 import com.flowpowered.caustic.api.data.VertexAttribute.DataType;
 import com.flowpowered.caustic.api.gl.Texture;
 import com.flowpowered.caustic.api.util.CausticUtil;
 import com.flowpowered.caustic.lwjgl.LWJGLUtil;
 import com.flowpowered.math.vector.Vector4f;
+
+import org.lwjgl.opengl.EXTTextureFilterAnisotropic;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL14;
+import org.lwjgl.util.glu.GLU;
 
 /**
  * An OpenGL 2.0 implementation of {@link Texture}.
@@ -50,8 +50,8 @@ public class GL20Texture extends Texture {
     // The min filter, to check if we need mip maps
     protected FilterMode minFilter = FilterMode.NEAREST_MIPMAP_LINEAR;
     // Texture image dimensions
-    protected int width = 1;
-    protected int height = 1;
+    protected int width = 0;
+    protected int height = 0;
 
     @Override
     public void create() {
