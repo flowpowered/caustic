@@ -28,9 +28,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.logging.Level;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.glu.GLU;
-
 import com.flowpowered.caustic.api.GLImplementation;
 import com.flowpowered.caustic.api.GLVersioned.GLVersion;
 import com.flowpowered.caustic.api.util.CausticUtil;
@@ -38,6 +35,9 @@ import com.flowpowered.caustic.lwjgl.gl20.GL20Context;
 import com.flowpowered.caustic.lwjgl.gl21.GL21Context;
 import com.flowpowered.caustic.lwjgl.gl30.GL30Context;
 import com.flowpowered.caustic.lwjgl.gl32.GL32Context;
+
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.glu.GLU;
 
 public final class LWJGLUtil {
     public static final GLImplementation GL20_IMPL = new GLImplementation(GLVersion.GL20, GL20Context.class.getName());
@@ -51,7 +51,7 @@ public final class LWJGLUtil {
     };
     private static final String WINDOWS_NATIVES_DIRECTORY = NATIVES_DIRECTORY + File.separator + "windows";
     private static final String[] MACOSX_NATIVE_LIBRARIES = {
-            "libjinput-osx.jnilib", "liblwjgl.jnilib", "openal.dylib"
+            "libjinput-osx.jnilib", "liblwjgl.dylib", "openal.dylib"
     };
     private static final String MACOSX_NATIVES_DIRECTORY = NATIVES_DIRECTORY + File.separator + "mac";
     private static final String[] LINUX_NATIVE_LIBRARIES = {
