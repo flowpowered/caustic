@@ -23,13 +23,15 @@
  */
 package com.flowpowered.caustic.api.model;
 
-import com.flowpowered.math.imaginary.Quaternionf;
-import com.flowpowered.math.matrix.Matrix4f;
-import com.flowpowered.math.vector.Vector3f;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.flowpowered.caustic.api.Material;
 import com.flowpowered.caustic.api.data.UniformHolder;
 import com.flowpowered.caustic.api.gl.VertexArray;
+import com.flowpowered.math.imaginary.Quaternionf;
+import com.flowpowered.math.matrix.Matrix4f;
+import com.flowpowered.math.vector.Vector3f;
 
 /**
  * Represents a model. Each model has it's own position and rotation and set of uniforms. The vertex array provides the vertex data (mesh), while the material provides uniforms and textures for the
@@ -50,6 +52,7 @@ public class Model implements Comparable<Model> {
     private final UniformHolder uniforms = new UniformHolder();
     // Optional parent model
     private Model parent = null;
+    private final Set<Model> children = new HashSet<>();
     private Matrix4f lastParentMatrix = null;
     private Matrix4f childMatrix = null;
 
@@ -258,6 +261,15 @@ public class Model implements Comparable<Model> {
     }
 
     /**
+     * Returns the children models.
+     *
+     * @return The children models
+     */
+    public Set<Model> getChildren() {
+        return children;
+    }
+
+    /**
      * Sets the parent model. This model's position, rotation and scale will be relative to that model if not null.
      *
      * @param parent The parent model, or null for no parent
@@ -265,6 +277,11 @@ public class Model implements Comparable<Model> {
     public void setParent(Model parent) {
         if (parent == this) {
             throw new IllegalArgumentException("The model can't be its own parent");
+        }
+        if (parent == null) {
+            this.parent.children.remove(this);
+        } else {
+            parent.children.add(this);
         }
         this.parent = parent;
     }
